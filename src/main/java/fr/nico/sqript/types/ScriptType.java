@@ -1,0 +1,47 @@
+package fr.nico.sqript.types;
+
+import fr.nico.sqript.meta.Primitive;
+import fr.nico.sqript.meta.Type;
+import fr.nico.sqript.structures.ScriptElement;
+
+import javax.annotation.Nullable;
+
+public abstract class ScriptType<T>  extends ScriptElement<T> {
+
+    public ScriptType(T object) {
+        super(object);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        return o instanceof ScriptType && ((ScriptType)o).getObject().equals(this.getObject());
+    }
+
+    @Override
+    public int hashCode() {
+        return getObject().hashCode();
+    }
+
+    /**
+     * Gets the name of the given type class
+     * @param type class
+     * @return the name of the given type class
+     */
+    public static String getTypeName(Class<? extends ScriptType> type){
+        if(type.isAnnotationPresent(Primitive.class)){
+            return (type.getAnnotation(Primitive.class)).name();
+        }else if(type.isAnnotationPresent(Type.class)){
+            return (type.getAnnotation(Type.class)).name();
+        }
+        return null;
+    }
+
+    /**
+     * Parse this element to another element with another type
+     * @param typeName
+     * @return the parsed element
+     */
+    @Nullable
+    public abstract ScriptElement parse(String typeName);
+
+}

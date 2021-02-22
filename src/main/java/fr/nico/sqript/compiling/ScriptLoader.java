@@ -1,0 +1,123 @@
+package fr.nico.sqript.compiling;
+
+import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.blocks.ScriptBlock;
+import fr.nico.sqript.meta.Block;
+import fr.nico.sqript.meta.BlockDefinition;
+import fr.nico.sqript.structures.IScript;
+import fr.nico.sqript.structures.ScriptInstance;
+import fr.nico.sqript.structures.ScriptLoop;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Chargement du script. Converti un ensemble de lignes en un ensemble de blocs (et sous-blocs) pouvant être exécutés selon un ScriptContext donné (lors du runtime).
+ */
+public class ScriptLoader
+{
+    public File file;
+    public String name;
+
+    public ScriptLoader(File file) {
+        this.file = file;
+        this.name = file.getName().replaceFirst("[.][^.]+$", "");
+    }
+
+    public ScriptInstance load() {
+        try {
+            return loadScript();
+        } catch (Exception e) {
+            ScriptManager.log.error("Error while loading " + name + " : ");
+            if (e instanceof ScriptException) {
+                for (String s : e.getMessage().split("\n"))
+                    ScriptManager.log.error(s);
+            }
+            if (ScriptManager.FULL_DEBUG)
+                e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void dispScriptTree(IScript s, int i) {
+        String tab = "";
+        for (int j = 0; j < i; j++) tab += "|    ";
+        ScriptManager.log.info(tab + (s.parent != null ? s.parent.getClass().getSimpleName() + " >> " : "") + s.getClass().getSimpleName() + " -> " + ((s.next != null ? s.next.getClass().getSimpleName(): "[null]")));
+        if (s instanceof ScriptLoop) {
+            ScriptLoop sl = (ScriptLoop) s;
+            if (sl.getWrapped() != null)
+                dispScriptTree(sl.getWrapped(), i + 1);
+            else
+                System.out.println(tab + " No wrapped IScript's !");
+            if (sl instanceof ScriptLoop.ScriptLoopIF) {
+                ScriptLoop.ScriptLoopIF si = (ScriptLoop.ScriptLoopIF) sl;
+                if (si.elseContainer != null) dispScriptTree(si.elseContainer, i);
+            }
+        } else if (s instanceof ScriptBlock) {
+            dispScriptTree(((ScriptBlock) s).getRoot(), i + 1);
+        }
+        if (s.next != null)
+            dispScriptTree(s.next, i);
+    }
+
+    public static List<ScriptLine> stringToLines(File file, ScriptInstance instance) throws IOException {
+        List<ScriptLine> scriptlines = new ArrayList<>();
+        int i = 0;
+        for (String s : Files.readAllLines(file.toPath())) {
+            scriptlines.add(new ScriptLine(s, i, instance));
+            i++;
+        }
+        return scriptlines;
+    }
+
+
+    public ScriptInstance loadScript() throws Exception {
+        ScriptManager.log.info("Loading : " + file.getName());
+        ScriptInstance instance = new ScriptInstance(name,file);
+        long c = System.currentTimeMillis();
+        List<ScriptLine> lines = stringToLines(file,instance);
+        List<ScriptLine> block = new ArrayList<>();
+        for (int i = 0; i < lines.size(); i++) {
+            ScriptLine line = lines.get(i);
+            //If it's not the last line, and is a commentary
+            if ((line != lines.get(lines.size() - 1)) && (line.text == null || line.text.isEmpty() || line.text.matches("\\s*#.*")))
+                continue;
+
+            //Else, we add the line to the actual block
+            if (!line.text.matches("\\s*#.*") && (ScriptDecoder.getTabLevel(line.text) > 0 || block.isEmpty())) {
+                block.add(line);
+            }
+
+            if ((block.size() > 1 && ScriptDecoder.getTabLevel(line.text) == 0) || line == lines.get(lines.size() - 1)) {//si nouveau trigger ou derniere ligne du fichier
+                //The block is ended, we process it
+                ScriptLine head = block.remove(0);
+
+                BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
+                if(blockDefinition==null)
+                    throw new ScriptException.ScriptUnknownTokenException(head);
+                if(blockDefinition.getSide().isValid()){
+                    Class scriptBlockClass = blockDefinition.getBlockClass();
+                    ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(head);
+                    scriptBlock.setLine(line);
+                    scriptBlock.init(instance,new ScriptBlock.ScriptLineBlock("main",block));
+                }
+                block.clear();
+                block.add(line);//Adding the current header
+            }
+
+        }
+        ScriptManager.log.info("Compiled " + file.getName() + ", it took : " + (System.currentTimeMillis() - c) + " ms");
+        return instance;
+    }
+
+
+
+
+    
+
+
+}
