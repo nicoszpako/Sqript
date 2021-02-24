@@ -19,6 +19,11 @@ public abstract class ScriptAction extends IScript {
         return getParameters().get(index-1);
     }
 
+    public Object getParameter(int index, ScriptContext context) throws ScriptException {
+        return getParameters().get(index-1).get(context).getObject();
+    }
+
+
     public void setParameters(List<ScriptExpression> parameters) {
         this.parameters = parameters;
     }

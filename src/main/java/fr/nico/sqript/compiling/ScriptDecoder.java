@@ -355,6 +355,7 @@ public class ScriptDecoder {
                                     arrayInstancier.setMatchedIndex(0);
                                     arrayInstancier.setLine(finalParameter);
                                     operands.add(arrayInstancier);
+                                    //@(id of this operand / arity of this operand)
                                     finalString.append("@{").append(operands.size()).append("/").append(group.length).append("}");
                                     finalString.append("(");
                                     alreadyExprArray = true;
@@ -362,12 +363,14 @@ public class ScriptDecoder {
 
                                 for (String parameter : group) {
                                     if (!parameter.isEmpty() && !parameter.matches("^\\s*$"))
-                                        finalString.append(getExpressions(parameter)).append(",");
+                                        finalString.append(getExpressions(parameter));
                                     else {
-                                        finalString.append("@{").append(operands.size()).append("/").append(0).append("}").append(",");
+                                        finalString.append("@{").append(operands.size()).append("/").append(0).append("}");
                                         operands.add(null);
 
                                     }
+                                    finalString.append(',');
+
                                 }
                                 finalString = new StringBuilder(finalString.substring(0, finalString.length() - 1));
 
@@ -380,14 +383,18 @@ public class ScriptDecoder {
                                 if (group[0]!=null && !group[0].isEmpty() && !group[0].matches("^\\s*$"))
                                     finalString.append(getExpressions(group[0]));
                                 else {
-                                    finalString.append("@{").append(operands.size()).append("/").append(0).append("}").append(",");
+                                    finalString.append("@{").append(operands.size()).append("/").append(0).append("}");
                                     operands.add(null);
 
                                 }
+                                finalString.append(',');
                             }
-                            if (j < subGroups.length - 1) finalString.append(",");
+                            //if (j < subGroups.length - 1) finalString.append(",");
                         }
-                        if (subGroups.length > 0) finalString.append(")");
+                        if (subGroups.length > 0){
+                            finalString.deleteCharAt(finalString.length()-1);
+                            finalString.append(")");
+                        }
                         text = text.replaceFirst(Pattern.quote(part) + "(?![^{]*\\})", finalString.toString());
 
                     } else {

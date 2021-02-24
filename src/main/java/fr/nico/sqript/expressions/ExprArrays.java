@@ -3,6 +3,7 @@ package fr.nico.sqript.expressions;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.types.IIndexedCollection;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeDictionary;
@@ -41,33 +42,33 @@ public class ExprArrays extends ScriptExpression{
     public ScriptType get(ScriptContext context, ScriptType[] parameters) {
         switch(getMatchedIndex()){
             case 0://new array
-                TypeArray a = new TypeArray();
-                a.getObject().addAll(Arrays.asList(parameters));
-                return a;
+                TypeArray array = new TypeArray();
+                array.getObject().addAll(Arrays.asList(parameters));
+                return array;
             case 1: //size of array
-                a = (TypeArray) parameters[0];
-                return new TypeNumber(a.getObject().size());
+                IIndexedCollection a = (IIndexedCollection) parameters[0];
+                return new TypeNumber(a.size());
             case 2: //random element of
-                a = (TypeArray) parameters[0];
-                return a.getObject().get(new Random().nextInt(a.getObject().size()));
+                a = (IIndexedCollection) parameters[0];
+                return a.get(new Random().nextInt(a.size()));
             case 3: //first element of
-                a = (TypeArray) parameters[0];
-                return a.getObject().get(0);
+                a = (IIndexedCollection) parameters[0];
+                return a.get(0);
             case 4: //last element of
-                a = (TypeArray) parameters[0];
-                return a.getObject().get(a.getObject().size()-1);
+                a = (IIndexedCollection) parameters[0];
+                return a.get(a.size()-1);
             case 5: //array[int] expression
                 if(parameters[0] instanceof TypeArray){
-                    a = (TypeArray) parameters[0];
+                    a = (IIndexedCollection) parameters[0];
                     TypeNumber n = (TypeNumber) parameters[1];
-                    return a.getObject().get(n.getObject().intValue());
+                    return a.get(n.getObject().intValue());
                 }else if(parameters[0] instanceof TypeDictionary){
                     TypeDictionary d = (TypeDictionary) parameters[0]; //A simple wrapper for the HashMap
                     return d.getObject().get(parameters[1]);
                 }
                 break;
             case 6: //numbers from a to b
-                TypeArray array = new TypeArray();
+                array = new TypeArray();
                 TypeNumber b1 = (TypeNumber) parameters[0];
                 TypeNumber b2 = (TypeNumber) parameters[1];
                 for(double i = b1.getObject();i<=b2.getObject();i++){
@@ -91,22 +92,22 @@ public class ExprArrays extends ScriptExpression{
                 return array;
             case 9: //element is in
                 ScriptType b = parameters[0];
-                a = (TypeArray) parameters[1];
-                for(ScriptType i : a.getObject()){
+                array = (TypeArray) parameters[1];
+                for(ScriptType i : array.getObject()){
                     if(b.equals(i))return TypeBoolean.TRUE();
                 }
                 return TypeBoolean.FALSE();
             case 10: //element is not in
                 b = parameters[0];
-                a = (TypeArray) parameters[1];
-                for(ScriptType i : a.getObject()){
+                array = (TypeArray) parameters[1];
+                for(ScriptType i : array.getObject()){
                     if(b.equals(i))return TypeBoolean.FALSE();
                 }
                 return TypeBoolean.TRUE();
             case 11://contains
                 b = parameters[1];
-                a = (TypeArray) parameters[0];
-                for(ScriptType i : a.getObject()){
+                array = (TypeArray) parameters[0];
+                for(ScriptType i : array.getObject()){
                     if(b.equals(i))return TypeBoolean.TRUE();
                 }
                 return TypeBoolean.FALSE();

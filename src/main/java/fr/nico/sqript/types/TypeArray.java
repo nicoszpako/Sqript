@@ -20,7 +20,7 @@ import java.util.Objects;
 @Type(name = "array",
         parsableAs = {}
 )
-public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISerialisable{
+public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISerialisable,IIndexedCollection{
 
     @Nullable
     @Override
@@ -122,4 +122,13 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISer
         }
     }
 
+    @Override
+    public ScriptType<?> get(int index) {
+        return getObject().get(index);
+    }
+
+    @Override
+    public int size() {
+        return getObject().size();
+    }
 }

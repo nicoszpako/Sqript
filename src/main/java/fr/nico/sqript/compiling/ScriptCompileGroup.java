@@ -24,11 +24,11 @@ public class ScriptCompileGroup {
 
     //Using integer to be able to return "null" reference if variable wasn't found
     public Integer getHashFor(String parameter){
-        System.out.println("Getting hash for : "+parameter);
+        //System.out.println("Getting hash for : "+parameter);
         for(ScriptAccessor s : declaredVariables){
-            System.out.println("Comparing "+parameter +" with "+s.pattern.pattern());
+            //System.out.println("Comparing "+parameter +" with "+s.pattern.pattern());
             if(s.pattern.matcher(parameter).matches()){
-                System.out.println("Matched ! ");
+                //System.out.println("Matched ! ");
                 return s.hash;//TODO Dynamic type matching
             }
         }

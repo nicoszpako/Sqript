@@ -42,7 +42,7 @@ public class ActSend extends ScriptAction {
                     SqriptForge.channel.sendToServer(msg);
                 }
                 break;
-            case 1:
+            case 2:
                 value = getParameter(1).get(context);
                 ScriptType dest = getParameter(2).get(context);
                 if (value instanceof TypeString) {

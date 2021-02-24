@@ -7,6 +7,8 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeDate;
 import fr.nico.sqript.types.primitive.TypeNumber;
 
+import java.util.Arrays;
+
 @Expression(name = "Date Expressions",
         description = "Manipulate dates",
         examples = "15 minutes and 4 seconds",
@@ -19,6 +21,7 @@ public class ExprDate extends ScriptExpression{
 
         @Override
         public ScriptType get(ScriptContext context, ScriptType[] parameters) {
+            System.out.println("Date parameters :" + Arrays.toString(parameters));
             switch (getMatchedIndex()){
                 case 0:
                     long total = 0;

@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "sqript",
+  "name": "Sqript",
+  "description": "Sqript scripting language.",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "http://sqript.fr/",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["Nico-#0002"],
+  "credits": "Nico-, Yanis et Aymeric de l'équipe DynamX",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

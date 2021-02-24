@@ -18,7 +18,7 @@ import java.util.Objects;
 @Type(name = "dictionary",
         parsableAs = {}
 )
-public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> implements ISerialisable{
+public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> implements ISerialisable,IIndexedCollection{
 
     @Nullable
     @Override
@@ -122,5 +122,13 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
     }
 
 
+    @Override
+    public ScriptType<?> get(int index) {
+        return getObject().values().toArray(new ScriptType[0])[index];
+    }
 
+    @Override
+    public int size() {
+        return getObject().size();
+    }
 }

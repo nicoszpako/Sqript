@@ -101,6 +101,7 @@ public class ScriptLoader
                     throw new ScriptException.ScriptUnknownTokenException(head);
                 if(blockDefinition.getSide().isValid()){
                     Class scriptBlockClass = blockDefinition.getBlockClass();
+
                     ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(head);
                     scriptBlock.setLine(line);
                     scriptBlock.init(instance,new ScriptBlock.ScriptLineBlock("main",block));

@@ -18,6 +18,8 @@ import java.text.DecimalFormat;
 
 public class TypeNumber extends PrimitiveType<Double> implements ISerialisable {
 
+
+
     @Override
     public ScriptElement parse(String typeName) {
         return null;
@@ -38,7 +40,9 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable {
         super(d);
     }
 
-
+    public TypeNumber(float f) {
+        this((double)f);
+    }
 
     public TypeNumber(int d){
         this((double)d);

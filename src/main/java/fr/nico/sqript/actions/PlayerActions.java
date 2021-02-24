@@ -2,36 +2,39 @@ package fr.nico.sqript.actions;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.types.ScriptType;
-import fr.nico.sqript.types.TypeBlockPos;
 import fr.nico.sqript.types.TypeItemStack;
-import fr.nico.sqript.types.TypePlayer;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-@Action(name = "Network Actions",
-        description ="Network related actions",
+import java.util.ArrayList;
+
+@Action(name = "Player Actions",
+        description ="Player related actions",
         examples = {"teleport player at location at 5 8 9"
         },
         patterns = {
-                "teleport {player} to {blockpos}",
+                "teleport {player} to {array}",
                 "give {resource} to {player}",
+                "kick {player} [with message {string}]",
         }
 )
-public class ActPlayers extends ScriptAction {
+public class PlayerActions extends ScriptAction {
 
     @Override
     public void execute(ScriptContext context) throws ScriptException {
         switch (getMatchedIndex()) {
             case 0:
                 EntityPlayer player = (EntityPlayer) getParameters().get(0).get(context).getObject();
-                TypeBlockPos pos = (TypeBlockPos) getParameters().get(1).get(context);
-                player.setPositionAndUpdate(pos.getObject().getX(), pos.getObject().getY(), pos.getObject().getZ());
+                ArrayList pos = (ArrayList) getParameters().get(1).get(context).getObject();
+                player.setPositionAndUpdate((double)pos.get(0), (double)pos.get(1),(double) pos.get(2));
                 return;
             case 1:
                 ScriptType param = getParameter(1).get(context);
@@ -51,6 +54,10 @@ public class ActPlayers extends ScriptAction {
                     return;
                 player = (EntityPlayer) getParameter(2).get(context).getObject();
                 player.addItemStackToInventory(item);
+            case 2:
+                EntityPlayerMP playermp = (EntityPlayerMP) getParameter(0,context);
+                playermp.connection.disconnect(new TextComponentString(((String) getParameter(1,context)).replaceAll("&","\247")));
+
         }
     }
 }

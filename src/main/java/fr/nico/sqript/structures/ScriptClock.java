@@ -21,6 +21,10 @@ public class ScriptClock {
 
     public boolean stopped = false;
 
+    public void start() throws ScriptException {
+        start(current.next);
+    }
+
     //Starts a new ScriptClock with the given root IScript.
     public void start(IScript next) throws ScriptException {
         do{

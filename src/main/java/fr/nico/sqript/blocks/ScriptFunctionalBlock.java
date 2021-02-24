@@ -70,7 +70,6 @@ public class ScriptFunctionalBlock extends ScriptBlock {
             }else{
                 parameters = new String[0];
             }
-
         }
     }
 

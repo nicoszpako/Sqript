@@ -1,14 +1,18 @@
 package fr.nico.sqript.expressions;
 
-import fr.nico.sqript.types.TypeBlockPos;
+import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.types.TypePlayer;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
+import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 @Expression(name = "Player Expressions",
@@ -18,7 +22,9 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
             "location of {player}:blockpos",
             "all players:array",
             "player (named|with username) {string}:player",
-            "{+player}['s] name:player"
+            "{+player}['s] name:player",
+            "{+player}['s] health:number",
+            "{+player}['s] hunger:number",
         }
 )
 public class ExprPlayers extends ScriptExpression {
@@ -28,7 +34,7 @@ public class ExprPlayers extends ScriptExpression {
         switch(getMatchedIndex()){
             case 0:
                 EntityPlayer player = (EntityPlayer) parameters[0].getObject();
-                return new TypeBlockPos(player.getPosition());
+                return new TypeArray(SqriptUtils.locactionToArray(player));
             case 1:
                 synchronized (FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld()){
                     TypeArray a = new TypeArray();
@@ -43,12 +49,29 @@ public class ExprPlayers extends ScriptExpression {
             case 3:
                 player = (EntityPlayer) parameters[0].getObject();
                 return new TypeString(player.getName());
+            case 4:
+                player = (EntityPlayer) parameters[0].getObject();
+                return new TypeNumber(player.getHealth());
+            case 5:
+                player = (EntityPlayer) parameters[0].getObject();
+                return new TypeNumber(player.getFoodStats().getFoodLevel());
+
         }
         return null;
     }
 
     @Override
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) {
+        switch(getMatchedIndex()) {
+            case 4:
+                EntityPlayer player = (EntityPlayer) parameters[0].getObject();
+                float health = ((TypeNumber)to).getObject().floatValue();
+                player.setHealth(health);
+            case 5:
+                player = (EntityPlayer) parameters[0].getObject();
+                float hunger = ((TypeNumber)to).getObject().floatValue();
+                player.getFoodStats().setFoodLevel((int) hunger);
+        }
         return false;
     }
 }

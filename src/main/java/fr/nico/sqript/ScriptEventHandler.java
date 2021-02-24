@@ -1,14 +1,17 @@
 package fr.nico.sqript;
 
-import fr.nico.sqript.events.EvtOnDrawNameplate;
-import fr.nico.sqript.events.EvtOnPlayerHit;
-import fr.nico.sqript.events.PlayerEvents;
 import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.events.EvtOnDrawNameplate;
+import fr.nico.sqript.events.PlayerEvents;
 import fr.nico.sqript.structures.ScriptContext;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -25,10 +28,27 @@ public class ScriptEventHandler {
     @SideOnly(Side.CLIENT)
     public void onRenderLiving(RenderLivingEvent.Specials.Pre event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            if (event.isCancelable()) {
-                ScriptContext context = ScriptManager.callEventAndGetContext(new EvtOnDrawNameplate((EntityPlayer)event.getEntity()));
-                if((Boolean)context.returnValue.element.getObject())event.setCanceled(true);
+            if(ScriptManager.callEvent(new EvtOnDrawNameplate((EntityPlayer)event.getEntity()))) {
+                event.setCanceled(true);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingJump(LivingEvent.LivingJumpEvent event) {
+        if (event.getEntity() instanceof EntityPlayer) {
+            if(ScriptManager.callEvent(new PlayerEvents.EvtOnPlayerJump((EntityPlayer)event.getEntity()))) {
+                event.getEntity().motionY = 0;
+            }
+        }
+    }
+
+
+    @SubscribeEvent
+    @SideOnly(Side.SERVER)
+    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event){
+        if(ScriptManager.callEvent(new PlayerEvents.EvtOnPlayerLogin(event.player))){
+            ((EntityPlayerMP)event.player).connection.disconnect(new TextComponentString("Disconnected."));
         }
     }
 
@@ -36,7 +56,7 @@ public class ScriptEventHandler {
     public void onPlayerHit(LivingAttackEvent event){
         if(event.getEntity() instanceof EntityPlayer){
             if(event.getSource().getImmediateSource() instanceof EntityPlayer){
-                if(ScriptManager.callEvent(new EvtOnPlayerHit((EntityPlayer)event.getEntity(),(EntityPlayer)event.getSource().getImmediateSource()))){
+                if(ScriptManager.callEvent(new PlayerEvents.EvtOnPlayerHit((EntityPlayer)event.getEntity(),(EntityPlayer)event.getSource().getImmediateSource()))){
                     event.setCanceled(true);
                 }
             }
