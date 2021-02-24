@@ -79,7 +79,7 @@ public class ScriptFunctionalBlock extends ScriptBlock {
         super.init(scriptInstance,block);
         System.out.println("Loaded function : "+name);
         setRoot(getMainField().compile(createCompileGroup()));
-        System.out.println(getRoot()==null);
+        //System.out.println(getRoot()==null);
         scriptInstance.registerBlock(this);
     }
 }

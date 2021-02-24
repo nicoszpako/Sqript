@@ -13,5 +13,5 @@ public @interface Event {
     String[] examples();
     String[] patterns();
     String[] accessors();
-    Side side() default Side.RELATIVE;
+    Side side() default Side.SERVER;
 }

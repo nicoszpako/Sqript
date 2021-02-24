@@ -46,4 +46,8 @@ public class ScriptTimer {
         }
     }
 
+    public static void reload() {
+        delayedClocks.clear();
+        loopingClocks.clear();
+    }
 }

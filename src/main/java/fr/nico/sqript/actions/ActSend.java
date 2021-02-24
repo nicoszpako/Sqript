@@ -33,6 +33,7 @@ public class ActSend extends ScriptAction {
 
     @Override
     public void execute(ScriptContext context) throws ScriptException {
+
         switch (getMatchedIndex()) {
             case 0:
                 ScriptType value = getParameter(1).get(context);
@@ -42,7 +43,7 @@ public class ActSend extends ScriptAction {
                     SqriptForge.channel.sendToServer(msg);
                 }
                 break;
-            case 2:
+            case 1:
                 value = getParameter(1).get(context);
                 ScriptType dest = getParameter(2).get(context);
                 if (value instanceof TypeString) {

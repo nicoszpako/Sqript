@@ -8,8 +8,6 @@ public enum Side {
 
         CLIENT,
 
-        RELATIVE,
-
         BOTH;
 
 
@@ -18,8 +16,6 @@ public enum Side {
                         return SERVER;
                 if(value.equalsIgnoreCase("client"))
                         return CLIENT;
-                if(value.equalsIgnoreCase("relative"))
-                        return RELATIVE;
                 if(value.equalsIgnoreCase("both"))
                         return BOTH;
                 return BOTH;
@@ -31,7 +27,7 @@ public enum Side {
                                 return FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.SERVER;
                         case CLIENT:
                                 return FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT;
-                        case RELATIVE: case BOTH: default:return true;
+                        case BOTH: default:return true;
                 }
         }
 

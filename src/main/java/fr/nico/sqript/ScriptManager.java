@@ -2,6 +2,7 @@ package fr.nico.sqript;
 
 import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.blocks.ScriptBlock;
+import fr.nico.sqript.blocks.ScriptBlockCommand;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptLoader;
 import fr.nico.sqript.events.EvtOnScriptLoad;
@@ -45,6 +46,10 @@ public class ScriptManager {
     public static Map<Class<? extends ScriptElement<?>>, TypeDefinition> types = new HashMap<>();
     public static Map<Class<? extends PrimitiveType<?>>, TypeDefinition> primitives = new HashMap<>();
     public static Map<Class<? extends ScriptNativeFunction>, NativeDefinition> nativeFunctions = new HashMap<>();
+
+    //Commands
+    public static List<ScriptBlockCommand> clientCommands = new ArrayList<>();
+    public static List<ScriptBlockCommand> serverCommands = new ArrayList<>();
 
     //Operations between types
     public static HashMap<ScriptOperator, HashMap<Class, HashMap<Class, IOperation>>> binaryOperations = new HashMap<>();
@@ -284,6 +289,10 @@ public class ScriptManager {
 
     public static void reload() {
         scripts.clear();
+        clientCommands.clear();
+        serverCommands.clear();
+        ScriptTimer.reload();
         loadScripts(scriptDir);
+        SqriptForge.registerCommands();
     }
 }
