@@ -54,10 +54,11 @@ public class PlayerActions extends ScriptAction {
                     return;
                 player = (EntityPlayer) getParameter(2).get(context).getObject();
                 player.addItemStackToInventory(item);
+                break;
             case 2:
                 EntityPlayerMP playermp = (EntityPlayerMP) getParameter(0,context);
                 playermp.connection.disconnect(new TextComponentString(((String) getParameter(1,context)).replaceAll("&","\247")));
-
+                break;
         }
     }
 }

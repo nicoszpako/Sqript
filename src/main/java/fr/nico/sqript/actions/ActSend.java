@@ -84,7 +84,7 @@ public class ActSend extends ScriptAction {
                     }
 
                 }
-
+                break;
 
         }
 

@@ -38,7 +38,8 @@ public class ScriptEventHandler {
     public void onLivingJump(LivingEvent.LivingJumpEvent event) {
         if (event.getEntity() instanceof EntityPlayer) {
             if(ScriptManager.callEvent(new PlayerEvents.EvtOnPlayerJump((EntityPlayer)event.getEntity()))) {
-                event.getEntity().motionY = 0;
+                event.getEntityLiving().setVelocity(0,0,0);
+                event.getEntityLiving().velocityChanged = true;
             }
         }
     }

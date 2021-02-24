@@ -22,6 +22,7 @@ public class ActPrint extends ScriptAction {
             case 0:
                 ScriptExpression firstParameter = getParameters().get(0);
                 ScriptManager.log.info(line.scriptInstance.getName()+" : "+firstParameter.get(context));
+                break;
         }
 
     }
