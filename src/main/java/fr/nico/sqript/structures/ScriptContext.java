@@ -1,6 +1,8 @@
 package fr.nico.sqript.structures;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.types.ScriptType;
+import sun.font.Script;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -32,7 +34,13 @@ public class ScriptContext {
     //If a child context has this accessor, to null, it will try to give the return to his parent, and recursively.
     public ScriptAccessor returnValue = null;
 
-
+    /**
+     * Utility method which creates a ScriptContext extending the global one
+     * @return A ScriptContext extending the global one
+     */
+    public static ScriptContext fromGlobal(){
+        return new ScriptContext(ScriptManager.GLOBAL_CONTEXT);
+    }
 
     public ScriptContext(){}
 

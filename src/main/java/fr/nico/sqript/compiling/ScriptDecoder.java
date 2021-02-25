@@ -111,7 +111,7 @@ public class ScriptDecoder {
 
     public static boolean checkAllMatches(String test, List<String> matches) {
         for (String s : matches) {
-            //System.out.println("Checking "+test+" with "+"(" + s + ")(?![^\\[(]*(?:\\]|\\)))");
+            //System.out.println("Checking "+test+" with "+ s );
             Pattern p = Pattern.compile(s);
             Matcher m = p.matcher(test);
             if (m.find()) {
@@ -183,12 +183,12 @@ public class ScriptDecoder {
                 if (s.word) {
                     b = "("+(s.unary?"":"\\)")+"\\s+|^|})";
                     //c = "\\s\\(+" + c;
-                    c = "\\s\\(+";
+                    c = "\\s+\\(";
                 }
                 //System.out.println("Checking with : "+"(" + b + Pattern.quote(s.symbol) + c + ")");
                 Pattern p = Pattern.compile("(" + b + Pattern.quote(s.symbol) + c + ")");
                 m = p.matcher(t);
-                //System.out.println("Trying to match  : "+text+" with regex : "+"(" + b + Pattern.quote(s.symbol) + c + ")");
+                //System.out.println("Trying to match  : "+t+" with regex : "+"(" + b + Pattern.quote(s.symbol) + c + ")");
                 if (m.find()) {
                     if (s.unary && !s.postfixed) {//Check if this one is unary
                         boolean isUnary = false;
@@ -528,7 +528,7 @@ public class ScriptDecoder {
             }
         }
 
-        //Check if it is a normal expression
+        //Check if it is an expression
         ExpressionDefinition def = null;
         int[] index = null;
         for (ExpressionDefinition expressionDefinition : ScriptManager.expressions) {
@@ -804,6 +804,7 @@ public class ScriptDecoder {
                         }
                     }
                 } else {//While-loop and for-loop
+                    //System.out.println(c+" "+lines.get(c+1).text+" "+tabLevel+" | "+lines.size());
                     if (c + 1 < lines.size() && ScriptDecoder.getTabLevel(lines.get(c + 1).text) == tabLevel)
                         throw new ScriptException.ScriptIndentationErrorException(lines.get(c + 1));
                     List<ScriptLine> forContainer = new ArrayList<>();
@@ -1107,7 +1108,7 @@ public class ScriptDecoder {
 
 
 
-    public static BlockDefinition findBlockDefinition(ScriptLine head) throws Exception {
+    public static BlockDefinition findBlockDefinition(ScriptLine head) {
         for(BlockDefinition d : ScriptManager.blocks){
             Matcher m = d.getRegex().matcher(head.text);
             if(m.matches())

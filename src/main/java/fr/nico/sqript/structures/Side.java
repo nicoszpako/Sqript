@@ -18,16 +18,28 @@ public enum Side {
                         return CLIENT;
                 if(value.equalsIgnoreCase("both"))
                         return BOTH;
-                return BOTH;
+                return null;
         }
 
-        public boolean isValid(){
+        public boolean isStrictlyValid(){
                 switch(this){
                         case SERVER:
                                 return FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.SERVER;
                         case CLIENT:
                                 return FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT;
-                        case BOTH: default:return true;
+                        case BOTH: default:
+                                return true;
+                }
+        }
+
+        public boolean isEffectivelyValid(){
+                switch(this){
+                        case SERVER:
+                                return FMLCommonHandler.instance().getEffectiveSide() == net.minecraftforge.fml.relauncher.Side.SERVER;
+                        case CLIENT:
+                                return FMLCommonHandler.instance().getEffectiveSide() == net.minecraftforge.fml.relauncher.Side.CLIENT;
+                        case BOTH: default:
+                                return true;
                 }
         }
 

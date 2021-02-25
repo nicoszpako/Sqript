@@ -17,14 +17,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,11 +30,17 @@ import java.util.List;
 @Block(name = "command",
         description = "Command blocks",
         examples = "command /heal:",
-        regex = "^command /.*")
+        regex = "^command /.*",
+        fields = {
+        "side","description","usage","aliases"
+        }
+)
 public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
     ScriptParameterDefinition[] argumentsDefinitions;
     private final String name;
+
+
     public ScriptBlockCommand(ScriptLine head) {
         final String def = ScriptDecoder.splitAtDoubleDot(head.text.replaceFirst("command\\s+/", ""))[0];
         final String[] args = def.split(" ");
@@ -52,10 +56,6 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         this.argumentsDefinitions = parameterDefinitions.toArray(new ScriptParameterDefinition[0]);
     }
 
-    @Override
-    public void init(ScriptInstance instance, ScriptLineBlock block) throws Exception {
-        super.init(instance,block);
-    }
 
     @Override
     protected void load() throws Exception {
@@ -63,7 +63,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         if (fieldDefined("side"))
             this.setSide(fr.nico.sqript.structures.Side.from(getSubBlock("side").getRawHead()));
 
-        if (!side.isValid())
+        if (!side.isEffectivelyValid())
             return;
 
         ScriptCompileGroup compileGroup = new ScriptCompileGroup();
@@ -73,8 +73,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         }
         compileGroup.add("(sender|player|console|server)", "sender".hashCode());
 
-        if (fieldDefined("execute"))
-            this.setRoot(getSubBlock("execute").compile(compileGroup));
+        this.setRoot(getMainField().compile(compileGroup));
 
         if (fieldDefined("description"))
             this.setDescription(getSubBlock("description").getRawHead());
@@ -85,11 +84,11 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         if (fieldDefined("aliases"))
             this.setAliases(getSubBlock("aliases").getContent().stream().map(s -> s.text).toArray(String[]::new));
 
-        if (side == fr.nico.sqript.structures.Side.BOTH || side == fr.nico.sqript.structures.Side.CLIENT && side.isValid()) {
+        if (side == fr.nico.sqript.structures.Side.BOTH || (side == fr.nico.sqript.structures.Side.CLIENT && side.isEffectivelyValid())) {
             SqriptForge.registerClientCommand(this);
         }
-        if (side == fr.nico.sqript.structures.Side.BOTH || side == fr.nico.sqript.structures.Side.SERVER && side.isValid()){
-            //Registering it so it can be registered by forge later
+
+        if (side == fr.nico.sqript.structures.Side.BOTH || (side == fr.nico.sqript.structures.Side.SERVER && side.isEffectivelyValid())){
             SqriptForge.registerServerCommand(this);
         }
     }
@@ -148,8 +147,6 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         String args = "";
         for(String s: strings)args+=s+" ";
         Minecraft.getMinecraft().getConnection().getNetworkManager().sendPacket(new CPacketChatMessage("/"+getName()+" "+args));
-        if(side!= fr.nico.sqript.structures.Side.BOTH)
-            return;
     }
 
     @Override
@@ -157,8 +154,10 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
     public void execute(MinecraftServer minecraftServer, ICommandSender iCommandSender, String[] strings) throws CommandException {
         //System.out.println("executing");
 
-        if((side != fr.nico.sqript.structures.Side.CLIENT && FMLCommonHandler.instance().getSide() == Side.CLIENT)){
+        if((side != fr.nico.sqript.structures.Side.CLIENT && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)){
             executeOnServer(strings);
+            if(side == fr.nico.sqript.structures.Side.SERVER)
+                return;
         }
 
         ScriptContext c = new ScriptContext(ScriptManager.GLOBAL_CONTEXT);

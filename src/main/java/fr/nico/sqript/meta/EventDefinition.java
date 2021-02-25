@@ -9,14 +9,44 @@ import javax.annotation.Nullable;
 
 public class EventDefinition {
 
-    final String[] example;
-    final String name;
-    final String[] description;
-    final String[] patterns;
-    final Side side;
+    private final String[] example;
+    private final String name;
+    private final String[] description;
+    private final String[] patterns;
+    private final Side side;
+    public Class<? extends ScriptEvent> eventClass;
     String[] accessors;
-    public TransformedPattern[] transformedPatterns;
-    public TransformedPattern[] transformedAccessors;
+    private TransformedPattern[] transformedPatterns;
+    private TransformedPattern[] transformedAccessors;
+
+    public EventDefinition(String name, String[] description, String[] example, Class<? extends ScriptEvent> eventClass, Side side, @Nullable String... patterns) {
+        this.name = name;
+        this.example = example;
+        this.description = description;
+        this.patterns = patterns;
+        this.side = side;
+        this.eventClass = eventClass;
+        if(patterns!=null){
+            this.transformedPatterns = new TransformedPattern[patterns.length];
+            for(int i = 0;i<this.patterns.length;i++){
+                try {
+                    String[] t = this.patterns[i].split(":",2);
+                    this.transformedPatterns[i]=ScriptDecoder.transformPattern(t[0]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    public Side getSide() {
+        return side;
+    }
+
+    public String[] getAccessors() {
+        return accessors;
+    }
 
     public EventDefinition setAccessors(String... data){
         accessors = data;
@@ -34,39 +64,20 @@ public class EventDefinition {
         return this;
     }
 
+    public TransformedPattern[] getTransformedPatterns() {
+        return transformedPatterns;
+    }
+
+    public TransformedPattern[] getTransformedAccessors() {
+        return transformedAccessors;
+    }
+
     public int getMatchedPatternIndex(String line){
         for (int i = 0; i < transformedPatterns.length ; i++) {
-            //System.out.println("Checking if "+line+" matches "+transformedPatterns[i].regex);
+            //System.out.println("Checking if "+line+" matches "+transformedPatterns[i].getPattern().pattern());
             if(transformedPatterns[i].getPattern().matcher(line).matches())return i;
         }
         return -1;
-    }
-
-    public Class<? extends ScriptEvent> cls;
-
-    public Class<? extends ScriptEvent> getEventClass() {
-        return cls;
-    }
-
-    public EventDefinition(String name, String[] description, String[] example, Class<? extends ScriptEvent> cls, Side side, @Nullable String... patterns) {
-        this.name = name;
-        this.example = example;
-        this.description = description;
-        this.patterns = patterns;
-        this.side = side;
-        this.cls=cls;
-        if(patterns!=null){
-            this.transformedPatterns = new TransformedPattern[patterns.length];
-            for(int i = 0;i<this.patterns.length;i++){
-                try {
-                    String[] t = this.patterns[i].split(":",2);
-                    this.transformedPatterns[i]=ScriptDecoder.transformPattern(t[0]);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
     }
 
     public String getName() {
@@ -79,6 +90,10 @@ public class EventDefinition {
 
     public String[] getDescription() {
         return description;
+    }
+
+    public Class<? extends ScriptEvent> getEventClass() {
+        return eventClass;
     }
 
     public String[] getPatterns() {

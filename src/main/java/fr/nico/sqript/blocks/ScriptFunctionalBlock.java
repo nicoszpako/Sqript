@@ -75,11 +75,11 @@ public class ScriptFunctionalBlock extends ScriptBlock {
 
 
     @Override
-    public void init(ScriptInstance scriptInstance, ScriptLineBlock block) throws Exception {
-        super.init(scriptInstance,block);
+    public void init(ScriptLineBlock block) throws Exception {
+        super.init(block);
         System.out.println("Loaded function : "+name);
         setRoot(getMainField().compile(createCompileGroup()));
         //System.out.println(getRoot()==null);
-        scriptInstance.registerBlock(this);
+        getScriptInstance().registerBlock(this);
     }
 }

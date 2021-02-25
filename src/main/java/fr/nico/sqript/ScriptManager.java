@@ -224,7 +224,13 @@ public class ScriptManager {
     private static void loadScriptElements() {
         loadBlocks();
         loadOperators();
+        buildOperators();
 
+        //Chargement des opérateurs
+        //TODO : Fire event
+    }
+
+    private static void buildOperators() {
         for (ScriptOperator s : operators) {
             if(s.word && !s.unary){
                 ScriptDecoder.operators_list.add("(\\)\\s+|^)" + Pattern.quote(s.symbol) + "(\\s+\\()");
@@ -234,8 +240,6 @@ public class ScriptManager {
                 ScriptDecoder.operators_list.add(Pattern.quote(s.symbol));
             }
         }
-        //Chargement des opérateurs
-        //TODO : Fire event
     }
 
     private static void loadBlocks() {

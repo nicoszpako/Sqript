@@ -17,8 +17,8 @@ public class ScriptBlockFunction extends ScriptFunctionalBlock {
     }
 
     @Override
-    public void init(ScriptInstance scriptInstance, ScriptLineBlock block) throws Exception {
-        super.init(scriptInstance,block);
+    public void init(ScriptLineBlock block) throws Exception {
+        super.init(block);
         setRoot(getMainField().compile(createCompileGroup()));
     }
 }

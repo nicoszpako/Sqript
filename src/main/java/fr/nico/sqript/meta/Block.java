@@ -11,6 +11,7 @@ public @interface Block {
     String name();
     String description();
     String[] examples();
+    String[] fields() default {};
     String regex();
     Side side() default Side.BOTH;
 

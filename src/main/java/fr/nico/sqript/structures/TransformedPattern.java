@@ -14,55 +14,12 @@ public class TransformedPattern {
 
     ScriptParameterDefinition[] parameterDefinitions = new ScriptParameterDefinition[0];
 
-    public Pattern getPattern() {
-        return pattern;
-    }
-
-    public ScriptParameterDefinition[] getTypes() {
-        return parameterDefinitions;
-    }
-
     public TransformedPattern(String pattern) {
         this.pattern = Pattern.compile(pattern);
     }
 
     public TransformedPattern(Pattern pattern) {
         this.pattern = pattern;
-    }
-
-    public int getAllMarks(Matcher m){
-        int r = 0;
-        //System.out.println("argsCount = "+marksCount);
-        for (int i = 0; i < marksCount; i++) {
-            try{
-                if(m.group("m"+i)!=null)
-                {
-                    r = r | (1 << i);
-                    //System.out.println("r="+r);
-                }
-            }catch(Exception ignored){}
-        }
-        return r;
-    }
-
-    public String[] getAllArguments(String match){
-        List<String> r = new ArrayList<>();
-        Matcher m = pattern.matcher(match);
-        //System.out.println("Match : "+match);
-        //System.out.println("Pattern : "+pattern.pattern());
-        //System.out.println("ArgsCount : "+argsCount);
-        //System.out.println("Pattern is : "+pattern.pattern());
-        if(m.find())
-            for (int i = 0; i < argsCount; i++) {
-                String s = null;
-                try {
-                    s = m.group("a"+i);
-                }catch(Exception ignored){
-                    ignored.printStackTrace();
-                }
-                r.add(s);
-            }
-        return r.toArray(new String[0]);
     }
 
     public TransformedPattern(Pattern pattern, int marksCount, int argsCount) {
@@ -76,5 +33,53 @@ public class TransformedPattern {
         this.marksCount = marksCount;
         this.argsCount = argsCount;
         this.parameterDefinitions = parameterDefinitions;
+    }
+
+    public Pattern getPattern() {
+        return pattern;
+    }
+
+    public ScriptParameterDefinition[] getTypes() {
+        return parameterDefinitions;
+    }
+
+    /**
+     * Returns a binary sequence on which each nth bit will be 1 if the nth mark is validated
+     * @param line The line to check marks
+     * @return
+     */
+    public int getAllMarks(String line){
+        int r = 0;
+        Matcher m = getPattern().matcher(line);
+        for (int i = 0; i < marksCount; i++) {
+            try{
+                if(m.group("m"+i)!=null)
+                {
+                    r = r | (1 << i);
+                }
+            }catch(Exception ignored){}
+        }
+        return r;
+    }
+
+    /**
+     * Extracts the arguments of a String using this pattern.
+     * @param match
+     * @return
+     */
+    public String[] getAllArguments(String match){
+        List<String> r = new ArrayList<>();
+        Matcher m = pattern.matcher(match);
+        if(m.find())
+            for (int i = 0; i < argsCount; i++) {
+                String s = null;
+                try {
+                    s = m.group("a"+i);
+                }catch(Exception ignored){
+                    ignored.printStackTrace();
+                }
+                r.add(s);
+            }
+        return r.toArray(new String[0]);
     }
 }

@@ -1,9 +1,14 @@
 package fr.nico.sqript.events;
 
+import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeItemStack;
 import fr.nico.sqript.types.TypePlayer;
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 
 public class PlayerEvents{
 
@@ -18,6 +23,43 @@ public class PlayerEvents{
             super(new ScriptAccessor(new TypePlayer(player),"player"));
         }
 
+    }
+
+
+    @Event(name = "Item right clicked",
+            description = "Called when a player right clicks an item",
+            examples = "on click on stick:",
+            patterns = "[item] click [with {itemstack}] [with (1;left|2;right) hand]",
+            accessors = {"player:player","[click[ed]] item:itemstack"
+            }
+    )
+    public static class EvtOnItemRightClick extends ScriptEvent {
+
+        public ItemStack clickedItem;
+        public EnumHand hand;
+
+        public EvtOnItemRightClick(EntityPlayer player, ItemStack clicked, EnumHand hand) {
+            super(new ScriptAccessor(new TypePlayer(player),"player"),new ScriptAccessor(new TypeItemStack(clicked),"[click[ed]] item"));
+            this.clickedItem = clicked;
+            this.hand = hand;
+        }
+
+        @Override
+        public boolean check(ScriptType[] parameters, int marks) {
+            boolean hand = true;
+            if (this.hand == EnumHand.MAIN_HAND)
+                hand = ((marks >> 2) & 1)==1;
+
+            if (this.hand == EnumHand.OFF_HAND)
+                hand = ((marks >> 1) & 1)==1;
+
+            hand = hand | marks == 0; //Case in which no hand has been configured
+
+            if(parameters.length==0 || parameters[0] == null)
+                return hand;
+
+            return (((TypeResource)parameters[0]).getObject().equals(clickedItem.getItem().getRegistryName())) && hand;
+        }
     }
 
     @Event(name = "Player attacked",

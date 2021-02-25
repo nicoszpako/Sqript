@@ -32,7 +32,7 @@ public class ActionDefinition {
                 m.reset();
                 boolean found = m.find();
                 //System.out.println("Find = "+found);
-                return new int[]{i,found?transformedPatterns[i].getAllMarks(m):0};
+                return new int[]{i,found?transformedPatterns[i].getAllMarks(line):0};
             }
         }
         return new int[0];

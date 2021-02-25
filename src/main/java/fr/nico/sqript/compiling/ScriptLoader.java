@@ -2,15 +2,14 @@ package fr.nico.sqript.compiling;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.blocks.ScriptBlock;
-import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.meta.BlockDefinition;
 import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptInstance;
 import fr.nico.sqript.structures.ScriptLoop;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,7 @@ public class ScriptLoader
             if (sl.getWrapped() != null)
                 dispScriptTree(sl.getWrapped(), i + 1);
             else
-                System.out.println(tab + " No wrapped IScript's !");
+                //System.out.println(tab + " No wrapped IScript's !");
             if (sl instanceof ScriptLoop.ScriptLoopIF) {
                 ScriptLoop.ScriptLoopIF si = (ScriptLoop.ScriptLoopIF) sl;
                 if (si.elseContainer != null) dispScriptTree(si.elseContainer, i);
@@ -75,7 +74,7 @@ public class ScriptLoader
     }
 
 
-    public ScriptInstance loadScript() throws Exception {
+    public ScriptInstance loadScript() throws ScriptException, IOException {
         ScriptManager.log.info("Loading : " + file.getName());
         ScriptInstance instance = new ScriptInstance(name,file);
         long c = System.currentTimeMillis();
@@ -99,12 +98,20 @@ public class ScriptLoader
                 BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
                 if(blockDefinition==null)
                     throw new ScriptException.ScriptUnknownTokenException(head);
-                if(blockDefinition.getSide().isValid()){
+                if(blockDefinition.getSide().isStrictlyValid()){
                     Class scriptBlockClass = blockDefinition.getBlockClass();
+                    //System.out.println("Loading : "+scriptBlockClass.getSimpleName());
+                    try{
+                        ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(head);
+                        scriptBlock.setLine(line);
+                        scriptBlock.setScriptInstance(instance);
+                        scriptBlock.init(new ScriptBlock.ScriptLineBlock("main",block));
+                    } catch (InvocationTargetException exception){
+                        throw (ScriptException) exception.getTargetException();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-                    ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(head);
-                    scriptBlock.setLine(line);
-                    scriptBlock.init(instance,new ScriptBlock.ScriptLineBlock("main",block));
                 }
                 block.clear();
                 block.add(line);//Adding the current header

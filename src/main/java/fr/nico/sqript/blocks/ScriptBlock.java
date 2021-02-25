@@ -1,13 +1,14 @@
 package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.compiling.*;
+import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptInstance;
 import fr.nico.sqript.types.ScriptType;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +18,10 @@ public abstract class ScriptBlock extends IScript {
     private ScriptLineBlock mainField;
     private IScript root;
     private ScriptInstance scriptInstance;
-    public ScriptBlock() {}
+
+    public ScriptBlock() {
+    }
+
     /***
      * @param head The very first line of the block (e.g : "on jump:")
      * @throws ScriptException.ScriptSyntaxException When the head of the block doesn't match the required pattern
@@ -43,32 +47,33 @@ public abstract class ScriptBlock extends IScript {
         this.scriptInstance = scriptInstance;
     }
 
-    public ScriptLineBlock getSubBlock(String label){
-        for(ScriptLineBlock f : mainField.getSubBlocks()){
-            if(f.getLabel().equalsIgnoreCase(label))
+    public ScriptLineBlock getSubBlock(String label) {
+        for (ScriptLineBlock f : mainField.getSubBlocks()) {
+            if (f.getLabel().equalsIgnoreCase(label))
                 return f;
         }
         return null;
     }
 
 
-    public boolean fieldDefined(String label){
-        return getSubBlock(label)!=null;
+    public boolean fieldDefined(String label) {
+        return getSubBlock(label) != null;
     }
 
     /**
      * Should not be overridden, except for very special behaviors.
+     *
      * @param block The full ScriptLineBlock of the block
      * @throws Exception
      */
-    public void init(ScriptInstance scriptInstance, ScriptLineBlock block) throws Exception {
+    public void init(ScriptLineBlock block) throws Exception {
         groupFields(block.content);
         load();
     }
 
-    public String shiftIndentation(String str, int lvl){
+    public String shiftIndentation(String str, int lvl) {
         for (int i = 0; i < lvl; i++) {
-            if(str.charAt(0)=='\t'){
+            if (str.charAt(0) == '\t') {
                 str = str.substring(1);
             }
         }
@@ -81,61 +86,64 @@ public abstract class ScriptBlock extends IScript {
      * @throws ScriptException.ScriptIndentationErrorException When a line is indented while it shouldn't
      * @throws ScriptException.ScriptMissingTokenException When a sub-block is empty
      */
-    protected void groupFields(List<ScriptLine> block) throws ScriptException.ScriptIndentationErrorException,ScriptException.ScriptMissingTokenException {
+    protected void groupFields(List<ScriptLine> block) throws ScriptException.ScriptIndentationErrorException, ScriptException.ScriptMissingTokenException {
         Pattern getLabel = Pattern.compile("\\s*([\\w]*)(?: )?:(.*)");
         String currentLabel = "";
         ScriptLine next;
-        setMainField(new ScriptLineBlock(currentLabel,new ArrayList<>()));
-        //System.out.println("Loading with block : "+block);
+        setMainField(new ScriptLineBlock(currentLabel, new ArrayList<>()));
+        //System.out.println("Loading with block : " + block);
         while (!block.isEmpty()) {
             next = block.remove(0);
-
+            //System.out.println("Next is : "+next);
             //Indentation error
-            if(ScriptDecoder.getTabLevel(next.text)>1) {
+            if (ScriptDecoder.getTabLevel(next.text) > 1) {
                 throw new ScriptException.ScriptIndentationErrorException(next);
             }
 
             Matcher m = getLabel.matcher(next.text);
-            if(m.find()){
+            if (m.find() && Arrays.asList(this.getClass().getAnnotation(Block.class).fields()).contains(currentLabel = m.group(1))) {
                 //Found the description of a sub-block
-                currentLabel = m.group(1);
+
                 List<ScriptLine> content = new ArrayList<>();
 
-                if(m.groupCount()<2 || !m.group(2).isEmpty())
+                if (m.groupCount() < 2 || !m.group(2).isEmpty())
                     content.add(next.with(m.group(2)));
 
-                while(!block.isEmpty() && ScriptDecoder.getTabLevel(block.get(0).text)>1){
+                while (!block.isEmpty() && ScriptDecoder.getTabLevel(block.get(0).text) > 1) {
                     next = block.remove(0);
-                    next = next.with(shiftIndentation(next.text,2));
+                    next = next.with(shiftIndentation(next.text, 2));
                     content.add(next);
                 }
 
-                if(content.size()==0){
+                if (content.size() == 0) {
                     throw new ScriptException.ScriptMissingTokenException(next);
                 } else {
                     ScriptLineBlock field = new ScriptLineBlock(currentLabel, content);
                     currentLabel = "";
                     getMainField().addSubBlock(field);
                 }
-            }else{
+            }else {
                 //Found a block which is not in a field, it's the mainField
                 List<ScriptLine> content = new ArrayList<>();
-                content.add(next);
-                while(!block.isEmpty()){
+                content.add(next.with(shiftIndentation(next.text, 1)));
+                //System.out.println("Added : "+next);
+                while (!block.isEmpty()) {
                     next = block.remove(0);
-                    next = next.with(shiftIndentation(next.text,1));
+                    next = next.with(shiftIndentation(next.text, 1));
                     content.add(next);
+                    //System.out.println("Added : "+next);
                 }
                 getMainField().setContent(content);
                 //System.out.println("r:"+content);
                 return;
             }
+
         }
     }
 
 
-
-    protected void load() throws Exception {}
+    protected void load() throws Exception {
+    }
 
     public IScript getRoot() {
         return root;
@@ -203,7 +211,7 @@ public abstract class ScriptBlock extends IScript {
             return ScriptDecoder.getExpression(content.get(0), group).get(context);
         }
 
-        public String getRawHead(){
+        public String getRawHead() {
             return content.get(0).text.trim();
         }
 

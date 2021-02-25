@@ -18,7 +18,7 @@ public class ScriptOperator {
     public static final ScriptOperator MT = new ScriptOperator(">",9, Associativity.LEFT_TO_RIGHT);//More than
     public static final ScriptOperator EQUAL = new ScriptOperator("=",8, Associativity.LEFT_TO_RIGHT);//Equality
     public static final ScriptOperator NOT_EQUAL = new ScriptOperator("!=",8, Associativity.LEFT_TO_RIGHT);//Inequality
-    public static final ScriptOperator NOT = new ScriptOperator("not",5, Associativity.LEFT_TO_RIGHT,true, true);//Unary logical NOT (!true=>false)
+    public static final ScriptOperator NOT = new ScriptOperator("not",5, Associativity.LEFT_TO_RIGHT,true, true);//Unary logical NOT (not true == false)
     public static final ScriptOperator AND = new ScriptOperator("and",4, Associativity.LEFT_TO_RIGHT,false,true);//Logical AND
     public static final ScriptOperator OR = new ScriptOperator("or",3, Associativity.LEFT_TO_RIGHT,false,true);//Logical OR
 

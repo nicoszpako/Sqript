@@ -20,7 +20,7 @@ public class ScriptBlockImport extends ScriptBlock {
     }
 
     @Override
-    public void init(ScriptInstance scriptInstance,ScriptLineBlock scriptLineBlock) throws Exception {
+    public void init(ScriptLineBlock scriptLineBlock) throws Exception {
         Pattern p = Pattern.compile("\\s+(.*) from (.*)");
         for(ScriptLine s : scriptLineBlock.getContent()){
             Matcher m = p.matcher(s.text);
@@ -31,9 +31,9 @@ public class ScriptBlockImport extends ScriptBlock {
                 if(from!=null){
                     ScriptFunctionalBlock imported;
                     if(function.equals("*")){
-                        scriptInstance.getBlocksOfClass(ScriptBlockFunction.class).addAll(from.getBlocksOfClass(ScriptBlockFunction.class));
+                        getScriptInstance().getBlocksOfClass(ScriptBlockFunction.class).addAll(from.getBlocksOfClass(ScriptBlockFunction.class));
                     }else if((imported=from.getFunction(function))!=null){
-                        scriptInstance.getBlocksOfClass(ScriptBlockFunction.class).add(imported);
+                        getScriptInstance().getBlocksOfClass(ScriptBlockFunction.class).add(imported);
                     }else{
                         throw new ScriptException.ScriptUnknownFunctionException(s.with(function));
 

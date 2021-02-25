@@ -8,8 +8,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -29,6 +31,17 @@ public class ScriptEventHandler {
     public void onRenderLiving(RenderLivingEvent.Specials.Pre event) {
         if (event.getEntity() instanceof EntityPlayer) {
             if(ScriptManager.callEvent(new EvtOnDrawNameplate((EntityPlayer)event.getEntity()))) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
+        if (event.getEntity() instanceof EntityPlayer) {
+
+            if(ScriptManager.callEvent(new PlayerEvents.EvtOnItemRightClick((EntityPlayer)event.getEntity(),event.getItemStack(),event.getHand()))) {
                 event.setCanceled(true);
             }
         }

@@ -7,7 +7,10 @@ import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.meta.EventDefinition;
 import fr.nico.sqript.structures.IScript;
+import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptInstance;
+import fr.nico.sqript.structures.Side;
+import fr.nico.sqript.types.ScriptType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,35 +18,73 @@ import java.util.List;
 @Block(name = "event",
         description = "Event blocks",
         examples = "on player death:",
-        regex = "^on .*")
+        regex = "^on .*",
+        fields = {"side"}
+)
 public class ScriptBlockEvent extends ScriptBlock {
 
     //ScriptWrapper déclenchant un IScript muni du contexte donné par un objet de type "eventType", wrappé lors de l'appel de l'event (voir ScriptManager.callEvent()).
 
     public Class<? extends ScriptEvent> eventType;
+    public ScriptType[] parameters;
+    public int marks;
+
+    //By default, events will launch on server
+    public Side side;
 
     public ScriptBlockEvent(ScriptLine head) throws ScriptException {
+        head.text = head.text.trim().replaceFirst("(^|\\s+)on\\s+", ""); //Extracting the event parameters
+        head.text = head.text.substring(0,head.text.length()-1); //Removing the last ":"
         this.eventType = getEvent(head);
-        if (eventType == null) {
+        if(eventType == null)
             throw new ScriptException.ScriptUnknownEventException(head);
-        }
+        this.side = eventType.getAnnotation(Event.class).side();
     }
 
     public Class<? extends ScriptEvent> getEvent(ScriptLine line) {
-        line.text = line.text.replaceAll("on\\s+", "").replaceAll(":", "");
         for (EventDefinition eventDefinition : ScriptManager.events.values()) {
-            if (eventDefinition.getMatchedPatternIndex(line.text) != -1)
+            //System.out.println("Checking for : "+line+" with "+eventDefinition.eventClass);
+            int matchedPatternIndex = -1;
+            if ((matchedPatternIndex = eventDefinition.getMatchedPatternIndex(line.text)) != -1) {
+                //System.out.println(matchedPatternIndex);
+                //Parsing the arguments
+                String[] arguments = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllArguments(line.text);
+                //System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length);
+                parameters = new ScriptType[arguments.length];
+                marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.text);
+                for (int i = 0; i < arguments.length; i++) {
+                    try {
+                        parameters[i] = ScriptDecoder.getExpression(line.with(arguments[i]),new ScriptCompileGroup()).get(ScriptContext.fromGlobal());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 return eventDefinition.getEventClass();
+            }
         }
         return null;
     }
 
     @Override
-    public void init(ScriptInstance scriptInstance, ScriptLineBlock scriptLineBlock) throws Exception {
+    protected void load() throws Exception {
         ScriptCompileGroup group = new ScriptCompileGroup();
         group.addArray(Arrays.asList(eventType.getAnnotation(Event.class).accessors()));
-        setRoot(scriptLineBlock.compile(group));
-        scriptInstance.registerBlock(this);
+        setRoot(getMainField().compile(group));
+        getScriptInstance().registerBlock(this);
+
+        if(fieldDefined("side"))
+            side = Side.from(getSubBlock("side").getRawHead());
     }
 
+    public ScriptType[] getParameters() {
+        return parameters;
+    }
+
+    public Class<? extends ScriptEvent> getEventType() {
+        return eventType;
+    }
+
+    public int getMarks() {
+        return marks;
+    }
 }

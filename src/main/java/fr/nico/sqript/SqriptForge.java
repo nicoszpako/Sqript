@@ -1,14 +1,11 @@
 package fr.nico.sqript;
 
 import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
 import fr.nico.sqript.blocks.ScriptBlockCommand;
 import fr.nico.sqript.network.ScriptMessage;
 import fr.nico.sqript.network.ScriptNetworkManager;
 import fr.nico.sqript.network.ScriptSyncDataMessage;
 import fr.nico.sqript.meta.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.command.CommandHandler;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -28,7 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Mod(name = "Sqript",modid = "sqript")
 public class SqriptForge {
@@ -101,7 +97,7 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : primitives) {
             try {
-                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isValid()) {
+                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
                     Class toRegister = Class.forName(c.getClassName());
                     Primitive e = (Primitive) toRegister.getAnnotation(Primitive.class);
                     ScriptManager.registerPrimitive(toRegister, e.name(), e.pattern());
@@ -114,7 +110,7 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : types) {
             try {
-                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isValid()) {
+                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
                     Class toRegister = Class.forName(c.getClassName());
                     Type e = (Type) toRegister.getAnnotation(Type.class);
                     ScriptManager.registerType(toRegister, e.name());
@@ -128,7 +124,7 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : expressions) {
             try {
-                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isValid()) {
+                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
                     Class toRegister = Class.forName(c.getClassName());
                     Expression e = (Expression) toRegister.getAnnotation(Expression.class);
                     ScriptManager.registerExpression(toRegister, e.name(), e.description(), e.examples(), e.priority(), e.patterns());
@@ -143,7 +139,7 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : functions) {
             try {
-                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isValid()) {
+                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
                     Class toRegister = Class.forName(c.getClassName());
                     Native e = (Native) toRegister.getAnnotation(Native.class);
                     ScriptManager.registerNativeFunction(toRegister, e.name(), e.definitions(), e.description(), e.examples());
@@ -157,7 +153,7 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : events) {
             try {
-                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isValid()) {
+                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
                     Class toRegister = Class.forName(c.getClassName());
                     Event e = (Event) toRegister.getAnnotation(Event.class);
                     ScriptManager.registerEvent(toRegister, e.name(), e.description(), e.examples(), e.patterns(), e.side(), e.accessors());
@@ -171,7 +167,7 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : actions) {
             try {
-                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isValid()){
+                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()){
                     Class toRegister = Class.forName(c.getClassName());
                     Action e = (Action) toRegister.getAnnotation(Action.class);
                     ScriptManager.registerAction(toRegister, e.name(), e.description(), e.examples(),e.priority(), e.patterns());
@@ -204,7 +200,6 @@ public class SqriptForge {
         ClientCommandHandler.instance.registerCommand(command);
     }
 
-    @SideOnly(Side.SERVER)
     public static void registerServerCommand(ScriptBlockCommand command){
         ScriptManager.serverCommands.add(command);
         ScriptManager.log.info("Registering server command : "+command.getName());

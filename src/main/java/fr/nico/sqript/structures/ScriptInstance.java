@@ -2,7 +2,6 @@ package fr.nico.sqript.structures;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.blocks.ScriptBlock;
-import fr.nico.sqript.blocks.ScriptBlockFunction;
 import fr.nico.sqript.blocks.ScriptFunctionalBlock;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.blocks.ScriptBlockEvent;
@@ -66,7 +65,7 @@ public class ScriptInstance {
         for (ScriptBlock b : getBlocksOfClass(ScriptBlockEvent.class)) {
             ScriptBlockEvent t = (ScriptBlockEvent) b;
             //System.out.println("Checking for class : "+t.eventType);
-            if (t.eventType == event.getClass()) {
+            if (t.eventType == event.getClass() && event.check(t.getParameters(),t.getMarks()) && t.side.isEffectivelyValid()) {
                 //System.out.println("Calling event : "+event.getClass().getSimpleName());
                 try {
                     ScriptClock clock = new ScriptClock(context);

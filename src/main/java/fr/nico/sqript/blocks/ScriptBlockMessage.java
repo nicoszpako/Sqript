@@ -16,7 +16,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
         description = "Network messages blocks",
         examples = "message frame1_messages(parameter):",
         regex = "^message .*",
-        side = Side.BOTH
+        side = Side.BOTH,
+        fields = {"client","server"}
 )
 public class ScriptBlockMessage extends ScriptFunctionalBlock {
 

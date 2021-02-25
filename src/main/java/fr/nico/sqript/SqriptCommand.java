@@ -7,6 +7,8 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 
+import java.io.IOException;
+
 public class SqriptCommand extends CommandBase {
 
     @Override
@@ -27,6 +29,13 @@ public class SqriptCommand extends CommandBase {
                 sendMessage("Reloading all scripts",sender);
                 ScriptManager.reload();
                 sendMessage("Done in "+((System.currentTimeMillis()-t)/1000d)+" seconds",sender);
+            }
+            if(args[0].equalsIgnoreCase("generateDoc")){
+                try {
+                    SqriptUtils.generateDoc();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }else{
             sendHelp(sender);

@@ -46,7 +46,7 @@ public class ScriptBlockTimeLoop extends ScriptBlock {
     }
 
     @Override
-    public void init(ScriptInstance scriptInstance, ScriptLineBlock scriptLineBlock) throws Exception {
+    public void init(ScriptLineBlock scriptLineBlock) throws Exception {
         ScriptCompileGroup group = new ScriptCompileGroup();
         setRoot(scriptLineBlock.compile(group));
         ScriptTimer.loopIScript(this,delay);

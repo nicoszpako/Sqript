@@ -18,7 +18,7 @@ public class ScriptBlockOptions extends ScriptBlock {
     }
 
     @Override
-    public void init(ScriptInstance scriptInstance, ScriptLineBlock scriptLineBlock) throws Exception {
+    public void init(ScriptLineBlock scriptLineBlock) throws Exception {
         Pattern p = Pattern.compile("^\\s+(.*?)\\s*:\\s*(.*)$");
         for(ScriptLine s : scriptLineBlock.getContent()){
             Matcher m = p.matcher(s.text);
@@ -31,7 +31,7 @@ public class ScriptBlockOptions extends ScriptBlock {
                 ScriptExpression value = null;
                 ScriptCompileGroup compileGroup = new ScriptCompileGroup();
                 if((value= ScriptDecoder.getExpression(s.with(optionValue),compileGroup))!=null){
-                    scriptInstance.getOptions().put(optionName,value);
+                    getScriptInstance().getOptions().put(optionName,value);
                 }else{
                     throw new ScriptException.ScriptUnknownExpressionException(s.with(optionValue));
                 }

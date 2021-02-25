@@ -26,9 +26,9 @@ public class ExpressionDefinition {
             Matcher m = transformedPatterns[i].getPattern().matcher(line);
             if(m.matches()){
                 if(m.groupCount()>0){
-                    return new int[]{i,m.end(1), transformedPatterns[i].getAllMarks(m)};
+                    return new int[]{i,m.end(1), transformedPatterns[i].getAllMarks(line)};
                 }else{
-                    return new int[]{i,line.length()+1, transformedPatterns[i].getAllMarks(m)};
+                    return new int[]{i,line.length()+1, transformedPatterns[i].getAllMarks(line)};
                 }
             }
 
