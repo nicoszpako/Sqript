@@ -42,7 +42,7 @@ public class ScriptBlockEvent extends ScriptBlock {
     }
 
     public Class<? extends ScriptEvent> getEvent(ScriptLine line) {
-        for (EventDefinition eventDefinition : ScriptManager.events.values()) {
+        for (EventDefinition eventDefinition : ScriptManager.events) {
             //System.out.println("Checking for : "+line+" with "+eventDefinition.eventClass);
             int matchedPatternIndex = -1;
             if ((matchedPatternIndex = eventDefinition.getMatchedPatternIndex(line.text)) != -1) {

@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 )
 public class ScriptBlockMessage extends ScriptFunctionalBlock {
 
-
+    //Les IScript à exécuter en fonction du side de réception
     IScript client = null;
     IScript server = null;
 
@@ -46,12 +46,16 @@ public class ScriptBlockMessage extends ScriptFunctionalBlock {
     @Override
     protected void load() throws Exception {
         ScriptCompileGroup group = createCompileGroup();
+
+        //Compilation des fields "client" et "server"
         if(fieldDefined("client")){
             client = getSubBlock("client").compile(group);
         }
         if(fieldDefined("server")){
             server = getSubBlock("server").compile(group);
         }
+
+        //On enregistre le message fraîchement créé, pour qu'il soit reconnu par le reste du script.
         ScriptNetworkManager.registerMessage(this);
     }
 

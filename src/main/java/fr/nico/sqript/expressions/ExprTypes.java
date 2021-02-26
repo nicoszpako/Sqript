@@ -12,8 +12,8 @@ import fr.nico.sqript.types.primitive.TypeString;
         patterns = {
             "type of {element}:string",
             "{element} parsed as {string}:element",
-            "{element} is set:boolean",
-            "{element} is not set:boolean",
+            "{element} is (set|defined):boolean",
+            "{element} is not (set|defined):boolean",
         },
         priority = -2
 )

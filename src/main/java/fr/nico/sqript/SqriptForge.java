@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -41,6 +42,11 @@ public class SqriptForge {
             event.getServer().getCommandManager().getCommands().remove(command.getName());
             event.registerServerCommand(command);
         }
+    }
+
+    @Mod.EventHandler
+    public static void serverStopEvent(FMLServerStoppingEvent event){
+        ScriptManager.stop();
     }
 
     @Mod.EventHandler
@@ -193,17 +199,21 @@ public class SqriptForge {
 
     }
 
-    @SideOnly(Side.CLIENT)
     public static void registerClientCommand(ScriptBlockCommand command){
-        ScriptManager.clientCommands.add(command);
         ScriptManager.log.info("Registering client command : "+command.getName());
         ClientCommandHandler.instance.registerCommand(command);
     }
 
-    public static void registerServerCommand(ScriptBlockCommand command){
+    @SideOnly(Side.CLIENT)
+    public static void addClientCommand(ScriptBlockCommand command){
+        ScriptManager.clientCommands.add(command);
+        registerClientCommand(command);
+
+    }
+
+    public static void addServerCommand(ScriptBlockCommand command){
         ScriptManager.serverCommands.add(command);
-        ScriptManager.log.info("Registering server command : "+command.getName());
-        Objects.requireNonNull(FMLCommonHandler.instance().getMinecraftServerInstance().getServer()).getCommandManager().getCommands().put(command.getName(),command);
+
     }
 
     public static void registerCommands(){
@@ -215,7 +225,7 @@ public class SqriptForge {
         }else{
             for(ScriptBlockCommand command : ScriptManager.serverCommands){
                 ScriptManager.log.info("Registering server command : "+command.getName());
-                Objects.requireNonNull(FMLCommonHandler.instance().getMinecraftServerInstance().getServer()).getCommandManager().getCommands().remove(command.getName());
+                Objects.requireNonNull(FMLCommonHandler.instance().getMinecraftServerInstance().getServer()).getCommandManager().getCommands().put(command.getName(),command);
                 Objects.requireNonNull(FMLCommonHandler.instance().getMinecraftServerInstance().getServer()).getCommandManager().getCommands().put(command.getName(),command);
             }
         }

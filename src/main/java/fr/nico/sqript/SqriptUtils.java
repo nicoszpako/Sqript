@@ -1,19 +1,27 @@
 package fr.nico.sqript;
 
-import fr.nico.sqript.meta.ActionDefinition;
-import fr.nico.sqript.meta.BlockDefinition;
-import fr.nico.sqript.meta.ExpressionDefinition;
+import fr.nico.sqript.meta.*;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SqriptUtils {
 
+    public static BlockPos arrayToLocation(ArrayList list){
+        return new BlockPos((double)list.get(0),(double)list.get(1),(double)list.get(2));
+    }
+
     public static ArrayList locactionToArray(double x, double y, double z){
-        return (ArrayList) Arrays.asList(new TypeNumber(x),new TypeNumber(y),new TypeNumber(z));
+        return new ArrayList(Arrays.asList(new TypeNumber(x),new TypeNumber(y),new TypeNumber(z)));
+    }
+
+    public static ArrayList locactionToArray(BlockPos pos){
+        return locactionToArray(pos.getX(),pos.getY(),pos.getZ());
     }
 
     public static ArrayList locactionToArray(EntityPlayer player){
@@ -27,6 +35,15 @@ public class SqriptUtils {
         new PrintWriter(doc).close();
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(doc, true));
+
+        bw.write("**Events**\n\n");
+        for(EventDefinition eventDefinition : ScriptManager.events){
+            for (String pattern : eventDefinition.getPatterns()){
+                bw.write("`"+pattern+"`"+" *ex: "+ Arrays.toString(eventDefinition.getExample()) +"* \n\n");
+            }
+        }
+        
+        bw.write("\n\n");
         bw.write("**Actions**\n\n");
         for(ActionDefinition actionDefinition : ScriptManager.actions){
             for (String pattern : actionDefinition.getPatterns()){

@@ -39,7 +39,7 @@ public class ScriptManager {
     public static List<ScriptInstance> scripts = new ArrayList<>();
 
     //Definitions
-    public static Map<Class<? extends ScriptEvent>, EventDefinition> events = new HashMap<>();
+    public static List<EventDefinition> events = new ArrayList<>();
     public static List<ActionDefinition> actions = new ArrayList<>();
     public static List<BlockDefinition> blocks = new ArrayList<>();
     public static List<ExpressionDefinition> expressions = new ArrayList<>();
@@ -142,7 +142,7 @@ public class ScriptManager {
 
     public static void registerEvent(Class<? extends ScriptEvent> cls, String name, String[] description, String[] example, String[] patterns, Side side,String... accessors) {
         log.debug("Registering event : " + name + " (" + cls.getSimpleName() + ")");
-        events.put(cls, new EventDefinition(name, description, example, cls, side, patterns).setAccessors(accessors));
+        events.add(new EventDefinition(name, description, example, cls, side, patterns).setAccessors(accessors));
     }
 
     public static void registerAction(Class<? extends ScriptAction> cls, String name, String[] description, String[] example, int priority, String... patterns) {
@@ -184,8 +184,9 @@ public class ScriptManager {
             e.printStackTrace();
         }
         loadScriptElements();
-
         loadScripts(scriptDir);
+        SqriptForge.registerCommands();
+
     }
 
 

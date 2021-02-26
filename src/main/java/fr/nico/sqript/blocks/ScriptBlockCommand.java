@@ -63,8 +63,6 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         if (fieldDefined("side"))
             this.setSide(fr.nico.sqript.structures.Side.from(getSubBlock("side").getRawHead()));
 
-        if (!side.isEffectivelyValid())
-            return;
 
         ScriptCompileGroup compileGroup = new ScriptCompileGroup();
         //Adding the "arg" expression to the compile group to prevent false-positive errors
@@ -84,12 +82,12 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         if (fieldDefined("aliases"))
             this.setAliases(getSubBlock("aliases").getContent().stream().map(s -> s.text).toArray(String[]::new));
 
-        if (side == fr.nico.sqript.structures.Side.BOTH || (side == fr.nico.sqript.structures.Side.CLIENT && side.isEffectivelyValid())) {
-            SqriptForge.registerClientCommand(this);
+        if (side == fr.nico.sqript.structures.Side.BOTH || (side == fr.nico.sqript.structures.Side.CLIENT)) {
+            SqriptForge.addClientCommand(this);
         }
 
-        if (side == fr.nico.sqript.structures.Side.BOTH || (side == fr.nico.sqript.structures.Side.SERVER && side.isEffectivelyValid())){
-            SqriptForge.registerServerCommand(this);
+        if (side == fr.nico.sqript.structures.Side.BOTH || (side == fr.nico.sqript.structures.Side.SERVER)){
+            SqriptForge.addServerCommand(this);
         }
     }
 
@@ -164,7 +162,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
         //Adding arguments to the context
         //Arguments can only be numbers, strings or player.
-        for (int i = 0; i < argumentsDefinitions.length; i++) {
+        for (int i = 0; i < argumentsDefinitions.length && i < strings.length; i++) {
             Class p = argumentsDefinitions[i].getTypeClass();
             if(i== argumentsDefinitions.length-1 && p== TypeString.class){
                 String r = "";

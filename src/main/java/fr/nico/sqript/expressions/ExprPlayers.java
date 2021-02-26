@@ -34,7 +34,7 @@ public class ExprPlayers extends ScriptExpression {
         switch(getMatchedIndex()){
             case 0:
                 EntityPlayer player = (EntityPlayer) parameters[0].getObject();
-                return new TypeArray(SqriptUtils.locactionToArray(player));
+                return new TypeArray((ArrayList) SqriptUtils.locactionToArray(player));
             case 1:
                 synchronized (FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld()){
                     TypeArray a = new TypeArray();
