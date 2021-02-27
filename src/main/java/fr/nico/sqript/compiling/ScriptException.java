@@ -140,6 +140,19 @@ public class ScriptException extends Exception {
         }
     }
 
+    public static class ScriptBadVariableNameException extends ScriptException {
+
+
+        public ScriptBadVariableNameException(ScriptLine line) {
+            super(line);
+        }
+
+        @Override
+        public String getMessage() {
+            return "No whitespaces are allowed in variables names ! : \n"+line;
+        }
+    }
+
     public static class ScriptNotOperableException extends ScriptException {
 
 

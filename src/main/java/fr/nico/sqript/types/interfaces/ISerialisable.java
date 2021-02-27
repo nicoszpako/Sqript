@@ -1,4 +1,4 @@
-package fr.nico.sqript.types;
+package fr.nico.sqript.types.interfaces;
 
 import net.minecraft.nbt.NBTTagCompound;
 

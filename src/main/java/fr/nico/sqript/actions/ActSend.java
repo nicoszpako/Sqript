@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
         },
         patterns = {
                 "send {element} to (console|server)",
-                "send {element} to {sender}"
+                "send {element} to {element}"
         }
 )
 public class ActSend extends ScriptAction {
@@ -46,23 +46,7 @@ public class ActSend extends ScriptAction {
             case 1:
                 value = getParameter(1).get(context);
                 ScriptType dest = getParameter(2).get(context);
-                if (value instanceof TypeString) {
-                    String msg = value.toString();
-                    msg = msg.replaceAll("&","\247");
-                    //Parameters has to be a TypeSender
-                    if (dest instanceof TypeArray) {
-                        for (ScriptType p : ((TypeArray) (dest)).getObject()) {
-                            ICommandSender sender = (ICommandSender) p.getObject();
-                            synchronized (FMLCommonHandler.instance().getMinecraftServerInstance()) {
-                                sender.sendMessage(new TextComponentString(msg));
-                            }
-                        }
-                    } else {
-                        ICommandSender sender = (ICommandSender) dest.getObject();
-                        sender.sendMessage(new TextComponentString(msg));
-                    }
-
-                } else if (value instanceof TypeMessagePrototype) {
+                 if (value instanceof TypeMessagePrototype) {
                     ScriptMessage msg = (ScriptMessage) value.getObject();
                     //Parameters has to be a TypeSender
                     if (dest instanceof TypeArray) {
@@ -81,6 +65,22 @@ public class ActSend extends ScriptAction {
                         } else if (sender instanceof MinecraftServer) {
                             SqriptForge.channel.sendToServer(msg);
                         }
+                    }
+
+                }else  {
+                    String msg = value.toString();
+                    msg = msg.replaceAll("&","\247");
+                    //Parameters has to be a TypeSender
+                    if (dest instanceof TypeArray) {
+                        for (ScriptType p : ((TypeArray) (dest)).getObject()) {
+                            ICommandSender sender = (ICommandSender) p.getObject();
+                            synchronized (FMLCommonHandler.instance().getMinecraftServerInstance()) {
+                                sender.sendMessage(new TextComponentString(msg));
+                            }
+                        }
+                    } else {
+                        ICommandSender sender = (ICommandSender) dest.getObject();
+                        sender.sendMessage(new TextComponentString(msg));
                     }
 
                 }

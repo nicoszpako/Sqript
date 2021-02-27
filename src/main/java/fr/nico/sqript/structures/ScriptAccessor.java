@@ -33,6 +33,7 @@ public class ScriptAccessor {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //System.out.println("Setting with match : "+match+" giving : "+match.hashCode());
         this.hash=match.hashCode();
     }
 
@@ -51,7 +52,7 @@ public class ScriptAccessor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.hash= varHash;
+        this.hash = varHash;
     }
 
     @Override

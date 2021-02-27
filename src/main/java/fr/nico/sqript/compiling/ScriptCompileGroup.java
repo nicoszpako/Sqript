@@ -28,7 +28,7 @@ public class ScriptCompileGroup {
         for(ScriptAccessor s : declaredVariables){
             //System.out.println("Comparing "+parameter +" with "+s.pattern.pattern());
             if(s.pattern.matcher(parameter).matches()){
-                //System.out.println("Matched ! ");
+                //System.out.println("Matched ! Returning "+s.hash+ " while using + "+s.pattern.pattern()+" : "+s.pattern.pattern().hashCode());
                 return s.hash;//TODO Dynamic type matching
             }
         }

@@ -5,7 +5,7 @@ import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.meta.Primitive;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
-import fr.nico.sqript.types.ISerialisable;
+import fr.nico.sqript.types.interfaces.ISerialisable;
 import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;

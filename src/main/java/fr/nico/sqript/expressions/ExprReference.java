@@ -34,7 +34,6 @@ public class ExprReference extends ScriptExpression{
 
     @Override
     public ScriptType get(ScriptContext context, ScriptType[] parameters) {
-
         //System.out.println("Getting for : "+line.text+", its null ? : "+(context.get(varHash)==null));
         ScriptType r;
         if((r=context.get(varHash))!=null)
@@ -42,6 +41,7 @@ public class ExprReference extends ScriptExpression{
         else if (line.text.charAt(0)=='$'){
             return new TypeNull();
         }
+        //System.out.println("Returning null in ExprRegerence");
         return null;
     }
 

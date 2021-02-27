@@ -2,12 +2,14 @@ package fr.nico.sqript.types;
 
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
+import fr.nico.sqript.types.interfaces.ILocatable;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 @Type(name = "block",
         parsableAs = {})
-public class TypeBlock extends ScriptType<IBlockState> {
+public class TypeBlock extends ScriptType<IBlockState> implements ILocatable {
 
     BlockPos pos;
 
@@ -29,6 +31,5 @@ public class TypeBlock extends ScriptType<IBlockState> {
         super(block);
         this.pos = pos;
     }
-
 
 }

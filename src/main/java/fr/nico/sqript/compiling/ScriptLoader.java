@@ -30,7 +30,7 @@ public class ScriptLoader
     public ScriptInstance load() {
         try {
             return loadScript();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ScriptManager.log.error("Error while loading " + name + " : ");
             if (e instanceof ScriptException) {
                 for (String s : e.getMessage().split("\n"))
@@ -74,7 +74,7 @@ public class ScriptLoader
     }
 
 
-    public ScriptInstance loadScript() throws ScriptException, IOException {
+    public ScriptInstance loadScript() throws Throwable {
         ScriptManager.log.info("Loading : " + file.getName());
         ScriptInstance instance = new ScriptInstance(name,file);
         long c = System.currentTimeMillis();
@@ -107,9 +107,7 @@ public class ScriptLoader
                         scriptBlock.setScriptInstance(instance);
                         scriptBlock.init(new ScriptBlock.ScriptLineBlock("main",block));
                     } catch (InvocationTargetException exception){
-                        throw (ScriptException) exception.getTargetException();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        throw exception.getTargetException();
                     }
 
                 }

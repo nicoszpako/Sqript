@@ -1,5 +1,7 @@
 package fr.nico.sqript.actions;
 
+import fr.nico.sqript.compiling.ScriptCompileGroup;
+import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptLine;
 import fr.nico.sqript.expressions.ScriptExpression;
@@ -7,6 +9,7 @@ import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ScriptAction extends IScript {
@@ -64,4 +67,25 @@ public abstract class ScriptAction extends IScript {
 
     @Override
     public abstract void execute(ScriptContext context) throws ScriptException;
+
+    public void build(ScriptLine line, ScriptCompileGroup compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
+        List<ScriptExpression> expressions = new ArrayList<>(parameters.size());
+        String[] strings = ScriptDecoder.extractStrings(line.text);
+        for (String parameter : parameters) {
+            if(parameter==null) {
+                expressions.add(null);
+                continue;
+            }
+            ScriptExpression e = ScriptDecoder.getExpression(line.with(parameter), compileGroup,strings);
+            if (e != null)
+                expressions.add(e);
+            else {
+                throw new ScriptException.ScriptUnknownExpressionException(line.with(parameter).withString(strings));
+            }
+        }
+        setParameters(expressions);
+        setMatchedIndex(matchedIndex);
+        setLine(line);
+        setMarks(marks);
+    }
 }

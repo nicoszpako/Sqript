@@ -3,7 +3,7 @@ package fr.nico.sqript.expressions;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.types.IIndexedCollection;
+import fr.nico.sqript.types.interfaces.IIndexedCollection;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeDictionary;
@@ -124,7 +124,7 @@ public class ExprArrays extends ScriptExpression{
     @Override
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) throws ScriptException.ScriptUndefinedReferenceException {
         switch(getMatchedIndex()){
-            case 4:
+            case 5:
                 TypeArray a = (TypeArray) parameters[0];
                 TypeNumber b = (TypeNumber) parameters[1];
                 a.getObject().set(b.getObject().intValue(),to);

@@ -1,6 +1,6 @@
 package fr.nico.sqript.expressions;
 
-import fr.nico.sqript.types.TypeSender;
+import fr.nico.sqript.types.TypeConsole;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
@@ -20,7 +20,7 @@ public class ExprConsole extends ScriptExpression {
 
         switch(getMatchedIndex()){
             case 0:
-                return new TypeSender(FMLCommonHandler.instance().getMinecraftServerInstance().getCommandSenderEntity());
+                return new TypeConsole(FMLCommonHandler.instance().getMinecraftServerInstance());
 
         }
         return null;

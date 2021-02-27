@@ -1,8 +1,8 @@
 package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.SqriptForge;
+import fr.nico.sqript.types.TypeConsole;
 import fr.nico.sqript.types.TypePlayer;
-import fr.nico.sqript.types.TypeSender;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.structures.*;
@@ -69,7 +69,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         for (int j = 0; j < argumentsDefinitions.length; j++) {
             compileGroup.add("arg[ument] " + (j + 1));
         }
-        compileGroup.add("(sender|player|console|server)", "sender".hashCode());
+        compileGroup.add("(sender|player|console|server)");
 
         this.setRoot(getMainField().compile(compileGroup));
 
@@ -186,7 +186,12 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
             }
         }
         //System.out.println("ICOMMANDSENDER NULL : "+(iCommandSender==null));
-        c.put(new ScriptAccessor(new TypeSender(iCommandSender),"(sender|"+(iCommandSender instanceof EntityPlayer?"player":"console|server")+")","sender".hashCode()));
+        if(iCommandSender instanceof EntityPlayer){
+            c.put(new ScriptAccessor(new TypePlayer((EntityPlayer) iCommandSender), "(sender|player)","(sender|player|console|server)".hashCode()));
+
+        }else if(iCommandSender instanceof MinecraftServer){
+            c.put(new ScriptAccessor(new TypeConsole((MinecraftServer) iCommandSender), "(sender|console|server)","(sender|player|console|server)".hashCode()));
+        }
 
         //Running the associated script
         ScriptClock k = new ScriptClock(c);

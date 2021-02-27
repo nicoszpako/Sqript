@@ -2,13 +2,12 @@ package fr.nico.sqript.types;
 
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
-import net.minecraft.item.ItemStack;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 
-import java.io.File;
-
-@Type(name = "itemstack",
+@Type(name = "console",
         parsableAs = {})
-public class TypeItemStack extends ScriptType<ItemStack> {
+public class TypeConsole extends ScriptType<MinecraftServer> {
 
     @Override
     public ScriptElement<?> parse(String typeName) {
@@ -17,11 +16,11 @@ public class TypeItemStack extends ScriptType<ItemStack> {
 
     @Override
     public String toString() {
-        return this.getObject().getDisplayName();
+        return this.getObject().getName();
     }
 
-    public TypeItemStack(ItemStack itemStack) {
-        super(itemStack);
+    public TypeConsole(MinecraftServer sender) {
+        super(sender);
     }
 
 

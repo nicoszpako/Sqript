@@ -6,7 +6,7 @@ import fr.nico.sqript.blocks.ScriptBlockMessage;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.types.ISerialisable;
+import fr.nico.sqript.types.interfaces.ISerialisable;
 import fr.nico.sqript.types.ScriptType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;

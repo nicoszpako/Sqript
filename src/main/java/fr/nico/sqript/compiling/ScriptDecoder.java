@@ -232,7 +232,7 @@ public class ScriptDecoder {
     }
 
 
-        public static ScriptExpression getExpression(ScriptLine parameter, ScriptCompileGroup compileGroup, String[] replacedStrings) throws Exception {
+    public static ScriptExpression getExpression(ScriptLine parameter, ScriptCompileGroup compileGroup, String[] replacedStrings) throws Exception {
         //System.out.println("\nGetting expression for : "+parameter);
 
         //Creating a new reference to the line because we are going to modify it a little
@@ -718,39 +718,8 @@ public class ScriptDecoder {
                 List<String> parameters = new ArrayList<>(Arrays.asList(actionDefinition.transformedPatterns[index].getAllArguments(line_without_strings)));
                 //System.out.println("Parameters size : "+parameters.size());
 
-                //If accessing a global variable,
-                //we parse the argument as a string to make the action
-                //able to register the new variable in the context
-                if (actionDefinition.getActionClass().equals(ActDefinition.class) && index == 2 && (compileGroup.getHashFor(parameters.get(0)) == null)) {
-                    String varName = parameters.get(0);
-                    if (!varName.matches("[^\\s]*")) {
-                        ScriptManager.log.error("Variables cannot have whitespaces in their names.");
-                        return null;
-                    }
-                    compileGroup.add(varName); //We tell the compile group that a variable named parameters.get(0) can now be used in the script
-                    //System.out.println("Set parameter : "+parameters.get(0));
-                }
-
-                List<ScriptExpression> expressions = new ArrayList<>(parameters.size());
-
-                for (String parameter : parameters) {
-                    if(parameter==null) {
-                        expressions.add(null);
-                        continue;
-                    }
-                    ScriptExpression e = getExpression(line.with(parameter), compileGroup,strings);
-                    if (e != null)
-                        expressions.add(e);
-                    else {
-                        throw new ScriptException.ScriptUnknownExpressionException(line.with(parameter).withString(strings));
-                    }
-                }
-
                 ScriptAction action = actionDefinition.getActionClass().getConstructor().newInstance();
-                action.setParameters(expressions);
-                action.setMatchedIndex(index);
-                action.setLine(line);
-                action.setMarks(marks);
+                action.build(line, compileGroup, parameters, index, marks);
                 return action;
             }
         }

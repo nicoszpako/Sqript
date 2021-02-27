@@ -217,7 +217,7 @@ public class SqriptForge {
     }
 
     public static void registerCommands(){
-        if(FMLCommonHandler.instance().getSide() == Side.CLIENT){
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT){
             for(ScriptBlockCommand command : ScriptManager.clientCommands){
                 ScriptManager.log.info("Registering client command : "+command.getName());
                 ClientCommandHandler.instance.registerCommand(command);

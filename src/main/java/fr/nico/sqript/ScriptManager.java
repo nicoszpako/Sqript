@@ -11,7 +11,7 @@ import fr.nico.sqript.blocks.ScriptBlockEvent;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.function.ScriptNativeFunction;
 import fr.nico.sqript.structures.*;
-import fr.nico.sqript.types.IOperation;
+import fr.nico.sqript.structures.IOperation;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.PrimitiveType;
 import fr.nico.sqript.types.primitive.TypeBoolean;

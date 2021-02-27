@@ -3,7 +3,7 @@ package fr.nico.sqript;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.structures.ScriptAccessor;
-import fr.nico.sqript.types.ISerialisable;
+import fr.nico.sqript.types.interfaces.ISerialisable;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.nbt.CompressedStreamTools;

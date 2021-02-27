@@ -1,14 +1,19 @@
 package fr.nico.sqript.types;
 
 import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
+import fr.nico.sqript.types.interfaces.IIndexedCollection;
+import fr.nico.sqript.types.interfaces.ILocatable;
+import fr.nico.sqript.types.interfaces.ISerialisable;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
@@ -20,7 +25,7 @@ import java.util.Objects;
 @Type(name = "array",
         parsableAs = {}
 )
-public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISerialisable,IIndexedCollection{
+public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISerialisable, IIndexedCollection, ILocatable {
 
     @Nullable
     @Override
@@ -130,5 +135,10 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISer
     @Override
     public int size() {
         return getObject().size();
+    }
+
+    @Override
+    public BlockPos getPos() {
+        return SqriptUtils.arrayToLocation(getObject());
     }
 }

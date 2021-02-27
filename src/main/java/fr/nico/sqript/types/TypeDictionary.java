@@ -6,6 +6,8 @@ import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
+import fr.nico.sqript.types.interfaces.IIndexedCollection;
+import fr.nico.sqript.types.interfaces.ISerialisable;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -18,7 +20,7 @@ import java.util.Objects;
 @Type(name = "dictionary",
         parsableAs = {}
 )
-public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> implements ISerialisable,IIndexedCollection{
+public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> implements ISerialisable, IIndexedCollection {
 
     @Nullable
     @Override

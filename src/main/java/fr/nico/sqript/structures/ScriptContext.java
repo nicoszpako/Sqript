@@ -58,10 +58,10 @@ public class ScriptContext {
     }
 
     public String printVariables(){
-        String s = "("+this.hashCode()+")";
+        String s = "("+this.hashCode()+") ";
 
-        for(ScriptAccessor a : variables.values()){
-            s+=a.pattern +":"+a.element+" ";
+        for(int a : variables.keySet()){
+            s+=a +": "+ variables.get(a).pattern +":"+variables.get(a).element+" ";
         }
         if(parent!=null)
             s+=" => ["+parent.printVariables()+"]";
@@ -130,9 +130,9 @@ public class ScriptContext {
         variables.put(accessor.hash,accessor);
     }
 
-    public ScriptContext wrap(ScriptAccessor... elements){
-        for(ScriptAccessor a : elements){
-            variables.put(a.hash,a);
+    public ScriptContext wrap(ScriptAccessor... accessors){
+        for(ScriptAccessor accessor : accessors){
+            variables.put(accessor.hash,accessor);
         }
         return this;
     }

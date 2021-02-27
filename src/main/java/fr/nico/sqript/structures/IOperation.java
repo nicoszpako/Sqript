@@ -1,4 +1,6 @@
-package fr.nico.sqript.types;
+package fr.nico.sqript.structures;
+
+import fr.nico.sqript.types.ScriptType;
 
 @FunctionalInterface
 public interface IOperation {

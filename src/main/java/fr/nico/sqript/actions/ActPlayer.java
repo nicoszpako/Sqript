@@ -2,7 +2,7 @@ package fr.nico.sqript.actions;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.types.ScriptType;
-import fr.nico.sqript.types.TypeItemStack;
+import fr.nico.sqript.types.TypeItem;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.structures.ScriptContext;
@@ -15,6 +15,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Action(name = "Player Actions",
         description ="Player related actions",
@@ -22,11 +23,11 @@ import java.util.ArrayList;
         },
         patterns = {
                 "teleport {player} to {array}",
-                "give {resource} to {player}",
+                "give {item} to {player}",
                 "kick {player} [with message {string}]",
         }
 )
-public class PlayerActions extends ScriptAction {
+public class ActPlayer extends ScriptAction {
 
     @Override
     public void execute(ScriptContext context) throws ScriptException {
@@ -42,13 +43,16 @@ public class PlayerActions extends ScriptAction {
                 if (param instanceof TypeResource) {
                     Item i = ForgeRegistries.ITEMS.getValue(((TypeResource) (param)).getObject());
                     if (i == null) {
-                        ScriptManager.log.error("No item found for identifier : " + param.getObject().toString());
-                        return;
+                        i = Item.getItemFromBlock(Objects.requireNonNull(ForgeRegistries.BLOCKS.getValue(((TypeResource) (param)).getObject())));
+                        if (i == null){
+                            ScriptManager.log.error("No item found for identifier : " + param.getObject().toString());
+                            return;
+                        }
                     }
                     item = new ItemStack(i);
                 }
-                if (param instanceof TypeItemStack) {
-                    item = ((TypeItemStack) (param)).getObject();
+                if (param instanceof TypeItem) {
+                    item = ((TypeItem) (param)).getObject();
                 }
                 if(item==null)
                     return;

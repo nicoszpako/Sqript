@@ -214,12 +214,13 @@ public class ExprCompiledEvaluation extends ScriptExpression {
         }else for(Token s : out){
             if(s.token_type==TOKEN_TYPE.EXPRESSION){
                 final ScriptExpression se = operands[s.id];
+                //System.out.println(se);
                 final List<ScriptType<?>> arguments = new ArrayList<>();
                 if(!(s==out.getLast())) {
                     for (int i = 0; i < s.arity; i++) {
                         arguments.add(0,types.isEmpty()?null:types.pop());
                     }
-                    types.push(se.get(context, arguments.toArray(new ScriptType[0])));
+                    types.push(se==null ? null : se.get(context, arguments.toArray(new ScriptType[0])));
                 }
                 expressions.push(se);
             }else if(s.token_type==TOKEN_TYPE.OPERATOR){
@@ -242,6 +243,7 @@ public class ExprCompiledEvaluation extends ScriptExpression {
 
             }
         }
+        //System.out.println("Pop is: "+expressions.peek().getClass().getSimpleName());
         return expressions.pop().set(context,to, types.toArray(new ScriptType[0]));
     }
 

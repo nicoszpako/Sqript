@@ -13,7 +13,7 @@ import java.util.List;
 public class SqriptUtils {
 
     public static BlockPos arrayToLocation(ArrayList list){
-        return new BlockPos((double)list.get(0),(double)list.get(1),(double)list.get(2));
+        return new BlockPos(((TypeNumber)list.get(0)).getObject(),((TypeNumber)list.get(1)).getObject(),((TypeNumber)list.get(2)).getObject());
     }
 
     public static ArrayList locactionToArray(double x, double y, double z){

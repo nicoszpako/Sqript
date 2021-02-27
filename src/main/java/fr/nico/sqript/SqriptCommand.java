@@ -33,6 +33,7 @@ public class SqriptCommand extends CommandBase {
             if(args[0].equalsIgnoreCase("generateDoc")){
                 try {
                     SqriptUtils.generateDoc();
+                    sendMessage("Generated documentation at scripts/doc.md",sender);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
