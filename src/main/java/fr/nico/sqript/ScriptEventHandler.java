@@ -38,7 +38,7 @@ public class ScriptEventHandler {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void onRenderGameOverlay(RenderGameOverlayEvent.Post event) {
+    public void onRenderGameOverlay(RenderGameOverlayEvent.Pre event) {
         if(event.getType()== RenderGameOverlayEvent.ElementType.ALL)
             if(ScriptManager.callEvent(new EvtRender.EvtOnRenderOverlay(Minecraft.getMinecraft().player))) {
                 event.setCanceled(true);

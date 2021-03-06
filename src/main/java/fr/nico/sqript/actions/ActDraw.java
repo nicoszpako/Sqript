@@ -52,12 +52,14 @@ public class ActDraw extends ScriptAction {
                 int color = getParametersSize()>=4? ((Double) getParameter(4,context)).intValue() :0xFFFFFF;
                 GL11.glPushMatrix();
                 GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+                GL11.glEnable(GL11.GL_BLEND);
                 GL11.glTranslatef((float)SqriptUtils.getX(array),(float)SqriptUtils.getY(array),(float)SqriptUtils.getZ(array));
                 GL11.glScalef(scale,scale,1);
                 for (int i = 0; i < list.size(); i++) {
                     Minecraft.getMinecraft().fontRenderer.drawString(list.get(i).replaceAll("&","\247"),0,Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT*i,color);
                 }
                 GlStateManager.resetColor();
+                GL11.glColor3f(1,1,1);
                 GL11.glPopAttrib();
                 GL11.glPopMatrix();
                 break;
@@ -68,6 +70,7 @@ public class ActDraw extends ScriptAction {
                 GL11.glPushMatrix();
                 GL11.glTranslatef((float)SqriptUtils.getX(array),(float)SqriptUtils.getY(array),(float)SqriptUtils.getZ(array));
                 drawRect(0,0,(float)SqriptUtils.getX(size),(float)SqriptUtils.getY(size),color);
+                GL11.glColor3f(1,1,1);
                 GL11.glPopMatrix();
                 break;
             case 2:
@@ -80,9 +83,13 @@ public class ActDraw extends ScriptAction {
                 double u2 = uv != null && uv.getObject().size()>2 ? ((Double)uv.getObject().get(2).getObject()): 1.0D;
                 double v2 = uv != null && uv.getObject().size()>3 ? ((Double)uv.getObject().get(3).getObject()): 1.0D;
                 GL11.glPushMatrix();
+                GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+                GL11.glEnable(GL11.GL_BLEND);
                 GL11.glTranslatef((float)SqriptUtils.getX(array),(float)SqriptUtils.getY(array),(float)SqriptUtils.getZ(array));
                 Minecraft.getMinecraft().getTextureManager().bindTexture(location);
                 drawTexturedRect(0, 0, 0, (float)SqriptUtils.getX(size),(float)SqriptUtils.getY(size), u1,v1,u2,v2);
+                GL11.glColor3f(1,1,1);
+                GL11.glPopAttrib();
                 GL11.glPopMatrix();
                 break;
             case 3:
@@ -96,6 +103,8 @@ public class ActDraw extends ScriptAction {
                 float alpha = 255;
                 GL11.glPushMatrix();
                 drawLine((float)SqriptUtils.getX(p1),(float)SqriptUtils.getY(p1),(float)SqriptUtils.getZ(p1),SqriptUtils.getX(p2),SqriptUtils.getY(p2),scale,red,green,blue,alpha);
+                GL11.glColor3f(1,1,1);
+
                 GL11.glPopMatrix();
                 break;
         }

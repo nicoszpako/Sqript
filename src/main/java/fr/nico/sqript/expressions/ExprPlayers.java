@@ -23,7 +23,7 @@ import java.util.Arrays;
             "player (named|with username) {string}:player",
             "{+player}['s] name:player",
             "{+player}['s] health:number",
-            "{+player}['s] hunger:number",
+            "{+player}['s] (hunger|food):number",
         }
 )
 public class ExprPlayers extends ScriptExpression {
@@ -50,6 +50,7 @@ public class ExprPlayers extends ScriptExpression {
                 return new TypeNumber(player.getHealth());
             case 4:
                 player = (EntityPlayer) parameters[0].getObject();
+                //System.out.println(player.getFoodStats().getFoodLevel());
                 return new TypeNumber(player.getFoodStats().getFoodLevel());
 
         }
