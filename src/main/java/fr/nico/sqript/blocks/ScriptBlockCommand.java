@@ -169,6 +169,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
                 for(int j = i;j<strings.length;j++){
                     r+=strings[j]+" ";
                 }
+                r=r.substring(0,r.length()-1);
                 c.put(new ScriptAccessor(new TypeString(r),"arg[ument] "+(i+1)));
             }else{
                 if(p == TypeString.class)
