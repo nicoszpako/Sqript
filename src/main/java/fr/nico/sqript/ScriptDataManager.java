@@ -25,7 +25,6 @@ public class ScriptDataManager {
             NBTTagCompound value = n.getCompoundTag("value");
             ScriptType t = instanciateWithData(typeName,value);
             ScriptManager.GLOBAL_CONTEXT.put(new ScriptAccessor(t,s)); //We add the variable to the context
-            throw new Exception("Found no constructor for type : "+typeName);
         }
     }
 

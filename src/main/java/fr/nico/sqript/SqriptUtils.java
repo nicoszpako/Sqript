@@ -1,6 +1,7 @@
 package fr.nico.sqript;
 
 import fr.nico.sqript.meta.*;
+import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -12,8 +13,33 @@ import java.util.List;
 
 public class SqriptUtils {
 
+    public static double getX(TypeArray array){
+        if(array.getObject().size()>0)
+            return ((TypeNumber) (((ArrayList) (array.getObject())).get(0))).getObject();
+        else return 0;
+    }
+
+    public static double getY(TypeArray array){
+        if(array.getObject().size()>1)
+            return ((TypeNumber) (((ArrayList) (array.getObject())).get(1))).getObject();
+        else return 0;
+    }
+
+    public static double getZ(TypeArray array){
+        if(array.getObject().size()>2)
+            return ((TypeNumber) (((ArrayList) (array.getObject())).get(2))).getObject();
+        else return 0;
+    }
+
     public static BlockPos arrayToLocation(ArrayList list){
-        return new BlockPos(((TypeNumber)list.get(0)).getObject(),((TypeNumber)list.get(1)).getObject(),((TypeNumber)list.get(2)).getObject());
+        if(list.size()==0)
+            return new BlockPos(0,0,0);
+        if(list.size()==1)
+            return new BlockPos(((TypeNumber)list.get(0)).getObject(),0,0);
+        if(list.size()==2)
+            return new BlockPos(((TypeNumber)list.get(0)).getObject(),((TypeNumber)list.get(1)).getObject(),0);
+        else
+            return new BlockPos(((TypeNumber)list.get(0)).getObject(),((TypeNumber)list.get(1)).getObject(),((TypeNumber)list.get(2)).getObject());
     }
 
     public static ArrayList locactionToArray(double x, double y, double z){

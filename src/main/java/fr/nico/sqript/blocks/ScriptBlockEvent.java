@@ -67,13 +67,18 @@ public class ScriptBlockEvent extends ScriptBlock {
 
     @Override
     protected void load() throws Exception {
+        if(fieldDefined("side"))
+            side = Side.from(getSubBlock("side").getRawHead());
+
+        if(side!=null && !side.isStrictlyValid())
+            return;
+
         ScriptCompileGroup group = new ScriptCompileGroup();
         group.addArray(Arrays.asList(eventType.getAnnotation(Event.class).accessors()));
         setRoot(getMainField().compile(group));
         getScriptInstance().registerBlock(this);
 
-        if(fieldDefined("side"))
-            side = Side.from(getSubBlock("side").getRawHead());
+
     }
 
     public ScriptType[] getParameters() {

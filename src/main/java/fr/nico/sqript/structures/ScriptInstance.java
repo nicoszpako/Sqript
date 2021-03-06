@@ -61,10 +61,10 @@ public class ScriptInstance {
     public ScriptContext callEventAndGetContext(ScriptContext context,ScriptEvent event) {
         //System.out.println("Trying to call event : "+event.getClass().getSimpleName());
         context.returnValue = new ScriptAccessor(TypeBoolean.FALSE(), "");
-        //long t1 = System.currentTimeMillis();
+        //long t1 = //System.currentTimeMillis();
         for (ScriptBlock b : getBlocksOfClass(ScriptBlockEvent.class)) {
             ScriptBlockEvent t = (ScriptBlockEvent) b;
-            //System.out.println("Checking for class : "+t.eventType);
+            //System.out.println("Checking for class : "+t.eventType+", are they equal : "+(t.eventType == event.getClass())+" is check : "+event.check(t.getParameters(),t.getMarks())+" is side ok: "+t.side.isEffectivelyValid());
             if (t.eventType == event.getClass() && event.check(t.getParameters(),t.getMarks()) && t.side.isEffectivelyValid()) {
                 //System.out.println("Calling event : "+event.getClass().getSimpleName());
                 try {
@@ -73,7 +73,7 @@ public class ScriptInstance {
                     clock.start(t);
                 } catch (Exception e) {
                     if (ScriptManager.FULL_DEBUG) e.printStackTrace();
-                    ScriptManager.log.error("Error while calling event");
+                    ScriptManager.log.error("Error while calling event : "+event.getClass().getSimpleName()+" at "+b.getLine());
                     if (e instanceof ScriptException) {
                         for (String s : e.getMessage().split("\n"))
                             ScriptManager.log.error(s);
@@ -81,7 +81,7 @@ public class ScriptInstance {
                         ScriptManager.log.error("Type error !");
                     }
                 }
-                //System.out.println("Finished ! It took : " + (System.currentTimeMillis() - t1) + " ms");
+                ////System.out.println("Finished ! It took : " + (System.currentTimeMillis() - t1) + " ms");
                 return context;
             }
         }

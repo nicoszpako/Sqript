@@ -37,12 +37,12 @@ public class TypeString extends PrimitiveType<String> implements ISerialisable {
 
     @Override
     public NBTTagCompound write(NBTTagCompound compound) {
-        compound.setString("value",getObject());
+        compound.setString("object",getObject());
         return compound;
     }
 
     @Override
     public void read(NBTTagCompound compound) {
-        setObject(compound.getString("value"));
+        setObject(compound.getString("object"));
     }
 }

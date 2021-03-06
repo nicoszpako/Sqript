@@ -30,6 +30,8 @@ import java.util.*;
 @Mod(name = "Sqript",modid = "sqript")
 public class SqriptForge {
 
+    public static String MODID = "sqript";
+
     public static SimpleNetworkWrapper channel = NetworkRegistry.INSTANCE.newSimpleChannel("sqript");
 
     public static File scriptDir;

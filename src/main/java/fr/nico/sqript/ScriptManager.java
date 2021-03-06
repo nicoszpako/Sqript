@@ -4,6 +4,8 @@ import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.blocks.ScriptBlock;
 import fr.nico.sqript.blocks.ScriptBlockCommand;
 import fr.nico.sqript.compiling.ScriptDecoder;
+import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.compiling.ScriptLine;
 import fr.nico.sqript.compiling.ScriptLoader;
 import fr.nico.sqript.events.EvtOnScriptLoad;
 import fr.nico.sqript.events.ScriptEvent;
@@ -16,10 +18,23 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.PrimitiveType;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.meta.*;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLModContainer;
+import net.minecraftforge.fml.common.MetadataCollection;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.discovery.ContainerType;
+import net.minecraftforge.fml.common.discovery.ModCandidate;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -184,7 +199,10 @@ public class ScriptManager {
             e.printStackTrace();
         }
         loadScriptElements();
-        loadScripts(scriptDir);
+        try {
+            loadScripts(scriptDir);
+        } catch (IOException | IllegalAccessException ignored) {
+        }
         SqriptForge.registerCommands();
 
     }
@@ -223,7 +241,6 @@ public class ScriptManager {
     }
 
     private static void loadScriptElements() {
-        loadBlocks();
         loadOperators();
         buildOperators();
 
@@ -243,19 +260,36 @@ public class ScriptManager {
         }
     }
 
-    private static void loadBlocks() {
-
+    public static void handleError(ScriptLine line, Throwable throwable){
+        ScriptManager.log.error("Error while loading " + line.scriptInstance.getName() + " : ");
+        if (throwable instanceof ScriptException) {
+            for (String s : throwable.getMessage().split("\n"))
+                ScriptManager.log.error(s);
+        }
+        if (ScriptManager.FULL_DEBUG)
+            throwable.printStackTrace();
     }
 
-    public static void loadScripts(File mainFolder) {
-        for (File f : Objects.requireNonNull(mainFolder.listFiles())) {
-            if (f.toPath().toString().endsWith(".sq")) {
+    private static void loadFolder(File folder) {
+        for(File f : folder.listFiles()) {
+            if(f.isDirectory()){
+                loadFolder(f);
+            }
+            else if (f.toPath().toString().endsWith(".sq")) {
                 ScriptLoader loader = new ScriptLoader(f);
                 ScriptInstance instance = loader.load();
                 instance.callEvent(new ScriptContext(GLOBAL_CONTEXT),new EvtOnScriptLoad(f));
                 scripts.add(instance);
             }
         }
+    }
+
+    public static void loadScripts(File mainFolder) throws IOException, IllegalAccessException {
+        if(FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
+            loadResources(mainFolder);
+
+        loadFolder(mainFolder);
+
         if(FULL_DEBUG)
             for(ScriptInstance instance : scripts){
                 for (ScriptBlock s : instance.getBlocksOfClass(ScriptBlockEvent.class)) {
@@ -264,6 +298,14 @@ public class ScriptManager {
                 log.info("");
             }
         log.info("All scripts are loaded");
+    }
+
+    @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
+    private static void loadResources(File mainFolder) throws IllegalAccessException {
+        ScriptResourceLoader resourceLoader = new ScriptResourceLoader();
+        Field defaultResourcePacksField = ObfuscationReflectionHelper.findField(Minecraft.getMinecraft().getClass(),"field_110449_ao");
+        defaultResourcePacksField.setAccessible(true);
+        ((ArrayList)defaultResourcePacksField.get(Minecraft.getMinecraft())).add(resourceLoader);
     }
 
 
@@ -297,7 +339,9 @@ public class ScriptManager {
         clientCommands.clear();
         serverCommands.clear();
         ScriptTimer.reload();
-        loadScripts(scriptDir);
+        try {
+            loadScripts(scriptDir);
+        } catch (IOException | IllegalAccessException ignored) {  }
         SqriptForge.registerCommands();
     }
 }

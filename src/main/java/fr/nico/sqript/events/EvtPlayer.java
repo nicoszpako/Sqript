@@ -9,9 +9,11 @@ import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 public class EvtPlayer {
 
+    @Cancelable
     @Event(name = "Player movement",
             description = "Called when a player move",
             examples = "on player movement:",
@@ -25,7 +27,7 @@ public class EvtPlayer {
 
     }
 
-
+    @Cancelable
     @Event(name = "Item right clicked",
             description = "Called when a player right clicks an item",
             examples = "on click on stick:",
@@ -62,6 +64,8 @@ public class EvtPlayer {
         }
     }
 
+
+    @Cancelable
     @Event(name = "Player attacked",
             description = "Called when a player is hit by another player",
             examples = "on player hit:",
@@ -78,6 +82,8 @@ public class EvtPlayer {
 
     }
 
+
+    @Cancelable
     @Event(name = "Player jump",
             description = "Called when a player jumps",
             examples = "on player jump:",
@@ -91,6 +97,8 @@ public class EvtPlayer {
         }
 
     }
+
+
 
     @Event(name = "Player login",
             description = "Called when a player logs in",

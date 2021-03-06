@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 
 @Primitive(name = "number",
         parsableAs = {TypeString.class},
-        pattern = "("+ ScriptDecoder.CAPTURE_FULL_NUMBER+"|"+ScriptDecoder.CAPTURE_FLOAT+")")
+        pattern = "("+ScriptDecoder.CAPTURE_FLOAT+"|" +ScriptDecoder.CAPTURE_FULL_NUMBER+")")
 
 public class TypeNumber extends PrimitiveType<Double> implements ISerialisable {
 
@@ -27,7 +27,7 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable {
 
     @Override
     public String toString() {
-        DecimalFormat df = new DecimalFormat("#");
+        DecimalFormat df = new DecimalFormat("#############.#######");
         df.setMaximumFractionDigits(8);
         return df.format(getObject());
     }
@@ -50,13 +50,13 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable {
 
     @Override
     public NBTTagCompound write(NBTTagCompound compound) {
-        compound.setDouble("getObject()",getObject());
+        compound.setDouble("object",getObject());
         return compound;
     }
 
     @Override
     public void read(NBTTagCompound compound) {
-        setObject(compound.getDouble("getObject()"));
+        setObject(compound.getDouble("object"));
     }
 
     static{

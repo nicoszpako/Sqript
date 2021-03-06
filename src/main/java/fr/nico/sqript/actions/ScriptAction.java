@@ -19,6 +19,7 @@ public abstract class ScriptAction extends IScript {
     }
 
     public ScriptExpression getParameter(int index){
+
         return getParameters().get(index-1);
     }
 

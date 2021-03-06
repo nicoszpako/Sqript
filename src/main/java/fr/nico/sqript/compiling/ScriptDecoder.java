@@ -38,9 +38,9 @@ public class ScriptDecoder {
 
     public static IScript getIScript(ScriptLine line, ScriptCompileGroup compileGroup) throws Exception {
 
-        IScript sc = getLoop(line, compileGroup); //On rentre dans un bloc, on créé un nouveau CompileGroup
+        IScript sc = getLoop(line, compileGroup); //On rentre dans un bloc
         if (sc == null)
-            sc = getAction(line, compileGroup);//Si c'est pas une boucle c'est une action, et on ne change pas de bloc
+            sc = getAction(line, compileGroup);//Si c'est pas une boucle c'est une action
 
         return sc;
     }

@@ -107,7 +107,7 @@ public class ScriptLoader
                         scriptBlock.setScriptInstance(instance);
                         scriptBlock.init(new ScriptBlock.ScriptLineBlock("main",block));
                     } catch (InvocationTargetException exception){
-                        throw exception.getTargetException();
+                        ScriptManager.handleError(line,exception.getTargetException());
                     }
 
                 }
@@ -116,7 +116,7 @@ public class ScriptLoader
             }
 
         }
-        ScriptManager.log.info("Compiled " + file.getName() + ", it took : " + (System.currentTimeMillis() - c) + " ms");
+        ScriptManager.log.info("Finished loading " + file.getName() + ", it took : " + (System.currentTimeMillis() - c) + " ms");
         return instance;
     }
 

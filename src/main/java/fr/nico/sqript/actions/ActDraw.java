@@ -1,0 +1,185 @@
+package fr.nico.sqript.actions;
+
+import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.SqriptUtils;
+import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.meta.Action;
+import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeArray;
+import fr.nico.sqript.types.interfaces.ILocatable;
+import fr.nico.sqript.types.primitive.TypeNumber;
+import fr.nico.sqript.types.primitive.TypeString;
+import javafx.scene.paint.Color;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
+@Action(name = "Draw Actions",
+        description ="Draw something on the screen. Must be used in an appropriated event !",
+        examples = {"draw \"Hello !\" at [0,100] with scale 2"
+        },
+        patterns = {
+            "draw text {string} at {array} [with scale {number}] [[and] with color {number}]",
+            "draw colored rect[angle] at {array} with size {array} [and] with color {number}",
+            "draw textured rect[angle] at {array} with size {array} using texture {resource} [with uv {array}]",
+            "draw line from {array} to {array} with stroke {number} [and] with color {number}"
+        }
+)
+public class ActDraw extends ScriptAction {
+
+    @Override
+    public void execute(ScriptContext context) throws ScriptException {
+        switch (getMatchedIndex()){
+            case 0:
+                ArrayList<String> list = new ArrayList<>();
+                if(getParameter(1).get(context) instanceof TypeString)
+                    list.add((String) getParameter(1,context));
+                else if(getParameter(1).get(context) instanceof TypeArray)
+                    list = (ArrayList<String>) ((ArrayList)getParameter(1).get(context).getObject()).stream().map(a->((ScriptType)(a)).getObject().toString()).collect(Collectors.toList());
+                TypeArray array = (TypeArray) getParameter(2).get(context);
+                float scale = getParametersSize()>=3? ((Double) getParameter(3,context)).floatValue() :1;
+                int color = getParametersSize()>=4? ((Double) getParameter(4,context)).intValue() :0xFFFFFF;
+                GL11.glPushMatrix();
+                GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+                GL11.glTranslatef((float)SqriptUtils.getX(array),(float)SqriptUtils.getY(array),(float)SqriptUtils.getZ(array));
+                GL11.glScalef(scale,scale,1);
+                for (int i = 0; i < list.size(); i++) {
+                    Minecraft.getMinecraft().fontRenderer.drawString(list.get(i).replaceAll("&","\247"),0,Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT*i,color);
+                }
+                GlStateManager.resetColor();
+                GL11.glPopAttrib();
+                GL11.glPopMatrix();
+                break;
+            case 1:
+                array = (TypeArray) getParameter(1).get(context);
+                TypeArray size = (TypeArray) getParameter(2).get(context);
+                color = getParametersSize()>=4? ((Double) getParameter(2,context)).intValue() :0xFFFFFF;
+                GL11.glPushMatrix();
+                GL11.glTranslatef((float)SqriptUtils.getX(array),(float)SqriptUtils.getY(array),(float)SqriptUtils.getZ(array));
+                drawRect(0,0,(float)SqriptUtils.getX(size),(float)SqriptUtils.getY(size),color);
+                GL11.glPopMatrix();
+                break;
+            case 2:
+                array = (TypeArray) getParameter(1).get(context);
+                size = (TypeArray) getParameter(2).get(context);
+                ResourceLocation location = (ResourceLocation) getParameter(3,context);
+                TypeArray uv = getParameter(4) != null ? (TypeArray) getParameter(4).get(context) : null;
+                double u1 = uv != null && uv.getObject().size()>0 ? ((Double)uv.getObject().get(0).getObject()): 0.0D;
+                double v1 = uv != null && uv.getObject().size()>1 ? ((Double)uv.getObject().get(1).getObject()): 0.0D;
+                double u2 = uv != null && uv.getObject().size()>2 ? ((Double)uv.getObject().get(2).getObject()): 1.0D;
+                double v2 = uv != null && uv.getObject().size()>3 ? ((Double)uv.getObject().get(3).getObject()): 1.0D;
+                GL11.glPushMatrix();
+                GL11.glTranslatef((float)SqriptUtils.getX(array),(float)SqriptUtils.getY(array),(float)SqriptUtils.getZ(array));
+                Minecraft.getMinecraft().getTextureManager().bindTexture(location);
+                drawTexturedRect(0, 0, 0, (float)SqriptUtils.getX(size),(float)SqriptUtils.getY(size), u1,v1,u2,v2);
+                GL11.glPopMatrix();
+                break;
+            case 3:
+                TypeArray p1 = (TypeArray) getParameter(1).get(context);
+                TypeArray p2 = (TypeArray) getParameter(2).get(context);
+                scale = getParametersSize()>=3? ((Double) getParameter(3,context)).floatValue() :1;
+                color = getParametersSize()>=4? ((Double) getParameter(4,context)).intValue() :0xFFFFFF;
+                float red = (float)(color >> 16 & 255) / 255.0F;
+                float blue = (float)(color >> 8 & 255) / 255.0F;
+                float green = (float)(color & 255) / 255.0F;
+                float alpha = 255;
+                GL11.glPushMatrix();
+                drawLine((float)SqriptUtils.getX(p1),(float)SqriptUtils.getY(p1),(float)SqriptUtils.getZ(p1),SqriptUtils.getX(p2),SqriptUtils.getY(p2),scale,red,green,blue,alpha);
+                GL11.glPopMatrix();
+                break;
+        }
+
+    }
+    public static void drawLine(double x,double y, double z,double x2, double y2, float lineWidth, float r, float g, float b, float a) {
+        GlStateManager.enableBlend();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GlStateManager.disableTexture2D();
+        GlStateManager.glLineWidth(lineWidth);
+        GlStateManager.color(r,g,b,a);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder vertexbuffer = tessellator.getBuffer();
+        vertexbuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+        vertexbuffer.pos(x, y, z).endVertex();
+        vertexbuffer.pos(x2, y2, z).endVertex();
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+
+    }
+
+    public static void drawRect(float left, float top, float right, float bottom, int color)
+    {
+        if (left < right)
+        {
+            float i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom)
+        {
+            float j = top;
+            top = bottom;
+            bottom = j;
+        }
+
+        float f3 = (float)(color >> 24 & 255) / 255.0F;
+        float f = (float)(color >> 16 & 255) / 255.0F;
+        float f1 = (float)(color >> 8 & 255) / 255.0F;
+        float f2 = (float)(color & 255) / 255.0F;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.color(f, f1, f2, f3);
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
+        bufferbuilder.pos(left, bottom, 0.0D).endVertex();
+        bufferbuilder.pos(right, bottom, 0.0D).endVertex();
+        bufferbuilder.pos(right, top, 0.0D).endVertex();
+        bufferbuilder.pos(left, top, 0.0D).endVertex();
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
+
+
+
+    public static void drawTexturedRect(double x, double y, double w, double h) {
+        drawTexturedRect(x, y, 0, w, h, 0.0D, 0.0D, 1.0D, 1.0D);
+    }
+
+    public static void drawTexturedRect(double x, double y, double z, double w, double h, double u1, double v1, double u2,
+                                        double v2) {
+        try {
+            GlStateManager.pushMatrix();
+
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder vertexbuffer = tessellator.getBuffer();
+            vertexbuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            vertexbuffer.pos(x + w, y, z).tex(u2, v1).endVertex();
+            vertexbuffer.pos(x, y, z).tex(u1, v1).endVertex();
+            vertexbuffer.pos(x, y + h, z).tex(u1, v2).endVertex();
+            vertexbuffer.pos(x + w, y + h, z).tex(u2, v2).endVertex();
+            // renderer.finishDrawing();
+            tessellator.draw();
+            GlStateManager.popMatrix();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+}

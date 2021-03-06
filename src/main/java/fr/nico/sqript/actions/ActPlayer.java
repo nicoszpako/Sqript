@@ -61,7 +61,7 @@ public class ActPlayer extends ScriptAction {
                 break;
             case 2:
                 EntityPlayerMP playermp = (EntityPlayerMP) getParameter(0,context);
-                playermp.connection.disconnect(new TextComponentString(((String) getParameter(1,context)).replaceAll("&","\247")));
+                playermp.connection.disconnect(new TextComponentString(getParametersSize()==2?((String) getParameter(1,context)).replaceAll("&","\247"):""));
                 break;
         }
     }
