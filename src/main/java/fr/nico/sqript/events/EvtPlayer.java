@@ -6,6 +6,7 @@ import fr.nico.sqript.types.TypePlayer;
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.structures.ScriptAccessor;
 import fr.nico.sqript.types.primitive.TypeResource;
+import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
@@ -79,9 +80,22 @@ public class EvtPlayer {
             super(new ScriptAccessor(new TypePlayer(victim),"victim"),
                     new ScriptAccessor(new TypePlayer(attacker),"attacker"));
         }
-
     }
 
+    @Cancelable
+    @Event(name = "Player send message",
+            description = "Called when a player send a message",
+            examples = "on player send message:",
+            patterns = "player (send message)",
+            accessors = {"player:player", "sender:player","message:string"}
+    )
+    public static class EvtOnPlayerSendMessage extends ScriptEvent {
+
+        public EvtOnPlayerSendMessage(EntityPlayer player, String message) {
+            super(new ScriptAccessor(new TypePlayer(player), "player"),
+                    new ScriptAccessor(new TypeString(message), "message"));
+        }
+    }
 
     @Cancelable
     @Event(name = "Player jump",
