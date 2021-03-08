@@ -10,8 +10,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -105,7 +107,6 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         if (event.getEntity() instanceof EntityPlayer) {
-
             if(ScriptManager.callEvent(new EvtPlayer.EvtOnItemRightClick((EntityPlayer)event.getEntity(),event.getItemStack(),event.getHand()))) {
                 event.setCanceled(true);
             }
@@ -140,7 +141,6 @@ public class ScriptEventHandler {
                 }
             }
         }
-
     }
 
     @SubscribeEvent
@@ -155,6 +155,15 @@ public class ScriptEventHandler {
                 if(ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerMove(player))){ //We post the event OnPlayerEvent and move back the player if the event was cancelled
                     player.setPositionAndUpdate(px,py,pz);
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerSendMessage(ServerChatEvent event) {
+        if (event.getPlayer() instanceof EntityPlayer) {
+            if (ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerSendMessage(event.getPlayer(), event.getMessage()))) {
+                event.setCanceled(true);
             }
         }
     }
