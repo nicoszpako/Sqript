@@ -88,8 +88,9 @@ public class ActDraw extends ScriptAction {
                 GL11.glTranslatef((float)SqriptUtils.getX(array),(float)SqriptUtils.getY(array),(float)SqriptUtils.getZ(array));
                 Minecraft.getMinecraft().getTextureManager().bindTexture(location);
                 drawTexturedRect(0, 0, 0, (float)SqriptUtils.getX(size),(float)SqriptUtils.getY(size), u1,v1,u2,v2);
-                GL11.glColor3f(1,1,1);
                 GL11.glPopAttrib();
+                GL11.glColor3f(1,1,1);
+                GL11.glDisable(GL11.GL_BLEND);
                 GL11.glPopMatrix();
                 break;
             case 3:
@@ -173,7 +174,6 @@ public class ActDraw extends ScriptAction {
 
     public static void drawTexturedRect(double x, double y, double z, double w, double h, double u1, double v1, double u2,
                                         double v2) {
-        try {
             GlStateManager.pushMatrix();
 
             Tessellator tessellator = Tessellator.getInstance();
@@ -183,12 +183,8 @@ public class ActDraw extends ScriptAction {
             vertexbuffer.pos(x, y, z).tex(u1, v1).endVertex();
             vertexbuffer.pos(x, y + h, z).tex(u1, v2).endVertex();
             vertexbuffer.pos(x + w, y + h, z).tex(u2, v2).endVertex();
-            // renderer.finishDrawing();
             tessellator.draw();
             GlStateManager.popMatrix();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
     }
 
 }

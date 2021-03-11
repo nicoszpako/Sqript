@@ -6,6 +6,7 @@ import fr.nico.sqript.types.TypeBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 public class ScriptEventHandler {
 
@@ -39,29 +41,32 @@ public class ScriptEventHandler {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onRenderGameOverlay(RenderGameOverlayEvent.Pre event) {
-        if(event.getType()== RenderGameOverlayEvent.ElementType.ALL)
-            if(ScriptManager.callEvent(new EvtRender.EvtOnRenderOverlay(Minecraft.getMinecraft().player))) {
+
+        if(event.getType()== RenderGameOverlayEvent.ElementType.HEALTH) {
+            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderHealthBar(Minecraft.getMinecraft().player))) {
                 event.setCanceled(true);
             }
-        if(event.getType()== RenderGameOverlayEvent.ElementType.CHAT)
-            if(ScriptManager.callEvent(new EvtRender.EvtOnRenderChat(Minecraft.getMinecraft().player))) {
+            Minecraft.getMinecraft().getTextureManager().bindTexture(Gui.ICONS);
+        }else  if(event.getType()== RenderGameOverlayEvent.ElementType.CHAT) {
+            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderChat(Minecraft.getMinecraft().player))) {
                 event.setCanceled(true);
             }
-        if(event.getType()== RenderGameOverlayEvent.ElementType.FOOD)
-            if(ScriptManager.callEvent(new EvtRender.EvtOnRenderFoodBar(Minecraft.getMinecraft().player))) {
+        }else if(event.getType()== RenderGameOverlayEvent.ElementType.FOOD) {
+            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderFoodBar(Minecraft.getMinecraft().player))) {
                 event.setCanceled(true);
             }
-        if(event.getType()== RenderGameOverlayEvent.ElementType.HEALTH)
-            if(ScriptManager.callEvent(new EvtRender.EvtOnRenderHealthBar(Minecraft.getMinecraft().player))) {
+        }else if(event.getType()== RenderGameOverlayEvent.ElementType.ALL) {
+            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderOverlay(Minecraft.getMinecraft().player))) {
                 event.setCanceled(true);
             }
+        }
     }
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onRenderLiving(RenderLivingEvent.Specials.Pre event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            if(ScriptManager.callEvent(new EvtRender.EvtOnRenderOverlay((EntityPlayer)event.getEntity()))) {
+            if(ScriptManager.callEvent(new EvtRender.EvtOnDrawNameplate((EntityPlayer)event.getEntity()))) {
                 event.setCanceled(true);
             }
         }
