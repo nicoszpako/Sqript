@@ -68,36 +68,41 @@ public class ScriptLoader
         List<ScriptLine> block = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
             ScriptLine line = lines.get(i);
-
-            if(line.text.isEmpty() || line.text.matches("\\s*#.*"))
+            if(line.text.matches("\\s*") || line.text.matches("\\s*#.*"))
                 continue;
 
             //Else, we add the line to the actual block
             if (ScriptDecoder.getTabLevel(line.text) > 0 || block.isEmpty()) {
+                //System.out.println("Added:"+line);
                 block.add(line);
                 continue;
             }
 
-            if ((block.size() > 1 && ScriptDecoder.getTabLevel(line.text) == 0) || line == lines.get(lines.size() - 1)) {//si nouveau trigger ou derniere ligne du fichier
+            if ((ScriptDecoder.getTabLevel(line.text) == 0) || line == lines.get(lines.size() - 1)) {//si nouveau trigger ou derniere ligne du fichier
+                //System.out.println("Processing block : "+line+" with size : "+block.size());
                 //The block is ended, we process it
                 ScriptLine head = block.remove(0);
 
-                BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
-                if(blockDefinition==null)
-                    throw new ScriptException.ScriptUnknownTokenException(head);
-                if(blockDefinition.getSide().isStrictlyValid()){
-                    Class scriptBlockClass = blockDefinition.getBlockClass();
-                    //System.out.println("Loading : "+scriptBlockClass.getSimpleName());
-                    try{
-                        ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(head);
-                        scriptBlock.setLine(line);
-                        scriptBlock.setScriptInstance(instance);
-                        scriptBlock.init(new ScriptBlock.ScriptLineBlock("main",block));
-                    } catch (InvocationTargetException exception){
-                        ScriptManager.handleError(line,exception.getTargetException());
-                    }
+                if(!block.isEmpty()){
+                    BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
+                    if(blockDefinition==null)
+                        throw new ScriptException.ScriptUnknownTokenException(head);
+                    if(blockDefinition.getSide().isStrictlyValid()){
+                        Class scriptBlockClass = blockDefinition.getBlockClass();
+                        //System.out.println("Loading : "+scriptBlockClass.getSimpleName());
+                        try{
+                            ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(head);
+                            scriptBlock.setLine(line);
+                            scriptBlock.setScriptInstance(instance);
+                            scriptBlock.init(new ScriptBlock.ScriptLineBlock("main",block));
+                        } catch (InvocationTargetException exception){
+                            ScriptManager.handleError(line,exception.getTargetException());
+                        }
 
+                    }
                 }
+
+
                 block.clear();
                 block.add(line);//Adding the current header
             }
