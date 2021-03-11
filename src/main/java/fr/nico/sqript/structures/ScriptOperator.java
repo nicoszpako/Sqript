@@ -1,5 +1,7 @@
 package fr.nico.sqript.structures;
 
+import net.minecraft.command.CommandBase;
+
 import java.util.Objects;
 
 public class ScriptOperator {

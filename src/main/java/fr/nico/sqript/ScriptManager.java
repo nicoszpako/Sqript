@@ -199,9 +199,20 @@ public class ScriptManager {
             e.printStackTrace();
         }
         loadScriptElements();
+
         try {
             loadScripts(scriptDir);
-        } catch (IOException | IllegalAccessException ignored) {
+        }catch (Throwable e) {
+            if (e instanceof ScriptException) {
+                ScriptManager.log.error("Error while loading " + (((ScriptException)e).getLine().getScriptInstance().getName()) + " : ");
+                for (String s : e.getMessage().split("\n"))
+                    ScriptManager.log.error(s);
+            }
+            else if (ScriptManager.FULL_DEBUG){
+                ScriptManager.log.error("Error whlie loading scripts. See stacktrace for more information.");
+                e.printStackTrace();
+
+            }
         }
         SqriptForge.registerCommands();
 
@@ -270,25 +281,28 @@ public class ScriptManager {
             throwable.printStackTrace();
     }
 
-    private static void loadFolder(File folder) {
+    private static void loadFolder(File folder) throws Throwable {
         for(File f : folder.listFiles()) {
             if(f.isDirectory()){
                 loadFolder(f);
             }
             else if (f.toPath().toString().endsWith(".sq")) {
                 ScriptLoader loader = new ScriptLoader(f);
-                ScriptInstance instance = loader.load();
+                ScriptInstance instance = loader.loadScript();
                 instance.callEvent(new ScriptContext(GLOBAL_CONTEXT),new EvtOnScriptLoad(f));
                 scripts.add(instance);
+
+
             }
         }
     }
 
-    public static void loadScripts(File mainFolder) throws IOException, IllegalAccessException {
+    public static void loadScripts(File mainFolder) throws Throwable {
         if(FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
             loadResources(mainFolder);
 
         loadFolder(mainFolder);
+
 
         if(FULL_DEBUG)
             for(ScriptInstance instance : scripts){
@@ -334,14 +348,12 @@ public class ScriptManager {
 
 
 
-    public static void reload() {
+    public static void reload() throws Throwable {
         scripts.clear();
         clientCommands.clear();
         serverCommands.clear();
         ScriptTimer.reload();
-        try {
-            loadScripts(scriptDir);
-        } catch (IOException | IllegalAccessException ignored) {  }
+        loadScripts(scriptDir);
         SqriptForge.registerCommands();
     }
 }

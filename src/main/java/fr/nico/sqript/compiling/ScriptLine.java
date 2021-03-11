@@ -10,6 +10,18 @@ public class ScriptLine{
     public int number;
     public ScriptInstance scriptInstance;
 
+    public String getText() {
+        return text;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public ScriptInstance getScriptInstance() {
+        return scriptInstance;
+    }
+
     public ScriptLine(String text, int number, ScriptInstance scriptInstance) {
         this.text = text;
         this.number = number;

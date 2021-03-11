@@ -27,20 +27,6 @@ public class ScriptLoader
         this.name = file.getName().replaceFirst("[.][^.]+$", "");
     }
 
-    public ScriptInstance load() {
-        try {
-            return loadScript();
-        } catch (Throwable e) {
-            ScriptManager.log.error("Error while loading " + name + " : ");
-            if (e instanceof ScriptException) {
-                for (String s : e.getMessage().split("\n"))
-                    ScriptManager.log.error(s);
-            }
-            if (ScriptManager.FULL_DEBUG)
-                e.printStackTrace();
-        }
-        return null;
-    }
 
     public static void dispScriptTree(IScript s, int i) {
         String tab = "";
@@ -82,13 +68,14 @@ public class ScriptLoader
         List<ScriptLine> block = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
             ScriptLine line = lines.get(i);
-            //If it's not the last line, and is a commentary
-            if ((line != lines.get(lines.size() - 1)) && (line.text == null || line.text.isEmpty() || line.text.matches("\\s*#.*")))
+
+            if(line.text.isEmpty() || line.text.matches("\\s*#.*"))
                 continue;
 
             //Else, we add the line to the actual block
-            if (!line.text.matches("\\s*#.*") && (ScriptDecoder.getTabLevel(line.text) > 0 || block.isEmpty())) {
+            if (ScriptDecoder.getTabLevel(line.text) > 0 || block.isEmpty()) {
                 block.add(line);
+                continue;
             }
 
             if ((block.size() > 1 && ScriptDecoder.getTabLevel(line.text) == 0) || line == lines.get(lines.size() - 1)) {//si nouveau trigger ou derniere ligne du fichier

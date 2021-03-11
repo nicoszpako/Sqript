@@ -6,6 +6,11 @@ public class ScriptException extends Exception {
 
     ScriptLine line;
     String message;
+
+    public ScriptLine getLine() {
+        return line;
+    }
+
     public ScriptException(ScriptLine line){
         this.line=line;
         this.message="";
