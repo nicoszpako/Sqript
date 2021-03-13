@@ -2,6 +2,7 @@ package fr.nico.sqript;
 
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.events.*;
+import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.TypeBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -13,6 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -57,6 +59,17 @@ public class ScriptEventHandler {
             }
         }else if(event.getType()== RenderGameOverlayEvent.ElementType.ALL) {
             if (ScriptManager.callEvent(new EvtRender.EvtOnRenderOverlay(Minecraft.getMinecraft().player))) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerSendMessage(ServerChatEvent event) {
+        if (event.getPlayer() instanceof EntityPlayer) {
+            ScriptContext context = ScriptManager.callEventAndGetContext(new EvtPlayer.EvtOnPlayerSendMessage(event.getPlayer(), event.getMessage()));
+            event.setComponent(new TextComponentString((String) context.getAccessor("message").element.getObject()));
+            if ((boolean) context.returnValue.element.getObject()) {
                 event.setCanceled(true);
             }
         }
