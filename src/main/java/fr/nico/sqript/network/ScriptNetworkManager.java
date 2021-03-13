@@ -1,7 +1,7 @@
 package fr.nico.sqript.network;
 
 import fr.nico.sqript.SqriptForge;
-import fr.nico.sqript.blocks.ScriptBlockMessage;
+import fr.nico.sqript.blocks.ScriptBlockPacket;
 import fr.nico.sqript.types.ScriptType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -15,13 +15,13 @@ import java.util.List;
 public class ScriptNetworkManager {
 
     public static final HashMap<String, ScriptType> syncValue = new HashMap<>();
-    private static final List<ScriptBlockMessage> messageList = new ArrayList<>();
+    private static final List<ScriptBlockPacket> messageList = new ArrayList<>();
 
-    public static ScriptBlockMessage getMessage(String id) {
+    public static ScriptBlockPacket getMessage(String id) {
         return messageList.stream().filter(a->a.name.equals(id)).findAny().orElse(null);
     }
 
-    public static void registerMessage(ScriptBlockMessage message) {
+    public static void registerMessage(ScriptBlockPacket message) {
         messageList.add(message);
     }
 

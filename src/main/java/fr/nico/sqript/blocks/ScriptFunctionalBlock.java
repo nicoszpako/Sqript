@@ -20,16 +20,17 @@ public class ScriptFunctionalBlock extends ScriptBlock {
     //Execute the IScript associated to the function and return the value
     public ScriptType get(ScriptContext context, ScriptType<?>[] parameters) throws ScriptException {
         //System.out.println("Launching function "+name+" with parameters : "+ Arrays.toString(parameters));
-        context.returnValue = new ScriptAccessor(null,"");
+        ScriptContext functionContext = new ScriptContext(context);
+        functionContext.returnValue = new ScriptAccessor(null,"");
 
-        wrapParametersInContext(context,parameters);
+        wrapParametersInContext(functionContext,parameters);
         //System.out.println("Passed context : "+functionContext);
         //System.out.println("Script tree of wrapped is : ");
         //ScriptLoader.dispScriptTree(wrapped,0);
-        ScriptClock clock = new ScriptClock(context);
+        ScriptClock clock = new ScriptClock(functionContext);
         clock.start(getRoot());
         //System.out.println("Returned value is : "+functionContext.returnValue);
-        return context.returnValue.element;
+        return functionContext.returnValue.element;
     }
 
     public void wrapParametersInContext(ScriptContext context, ScriptType<?>[] parameters) throws ScriptException.ScriptNotEnoughArgumentException {

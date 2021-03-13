@@ -209,7 +209,7 @@ public class ScriptManager {
                     ScriptManager.log.error(s);
             }
             else if (ScriptManager.FULL_DEBUG){
-                ScriptManager.log.error("Error whlie loading scripts. See stacktrace for more information.");
+                ScriptManager.log.error("Error while loading scripts. See stacktrace for more information.");
                 e.printStackTrace();
 
             }

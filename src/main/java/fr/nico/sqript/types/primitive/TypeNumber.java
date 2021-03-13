@@ -115,4 +115,12 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable {
 
     }
 
+    @Override
+    public int compareTo(ScriptType o) {
+        if(o instanceof TypeNumber){
+            TypeNumber n = (TypeNumber) o;
+            return getObject().compareTo(n.getObject());
+        }
+        return 0;
+    }
 }

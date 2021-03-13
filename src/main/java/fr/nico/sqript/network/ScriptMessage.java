@@ -2,7 +2,7 @@ package fr.nico.sqript.network;
 
 import fr.nico.sqript.ScriptDataManager;
 import fr.nico.sqript.ScriptManager;
-import fr.nico.sqript.blocks.ScriptBlockMessage;
+import fr.nico.sqript.blocks.ScriptBlockPacket;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.structures.ScriptContext;
@@ -86,7 +86,7 @@ public class ScriptMessage implements IMessage {
 
         @Override
         public ScriptMessage onMessage(ScriptMessage message, MessageContext ctx) {
-            ScriptBlockMessage m = ScriptNetworkManager.getMessage(message.message_id);
+            ScriptBlockPacket m = ScriptNetworkManager.getMessage(message.message_id);
             if(m==null){
                 ScriptManager.log.error("No message registered on "+ctx.side+" side with id : "+message.message_id);
                 return null;

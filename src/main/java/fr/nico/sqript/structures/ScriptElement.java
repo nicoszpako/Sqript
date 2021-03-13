@@ -26,8 +26,6 @@ public class ScriptElement<T> {
         this.object=object;
     }
 
-    // trompeur public ScriptElement(){ }
-
     public T getObject() {
         return object;
     }

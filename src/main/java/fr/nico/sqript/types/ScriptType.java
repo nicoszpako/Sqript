@@ -3,13 +3,21 @@ package fr.nico.sqript.types;
 import fr.nico.sqript.meta.Primitive;
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
+import fr.nico.sqript.types.interfaces.IComparable;
 
 import javax.annotation.Nullable;
+import java.util.Comparator;
 
-public abstract class ScriptType<T>  extends ScriptElement<T> {
+public abstract class ScriptType<T>  extends ScriptElement<T> implements Comparable<ScriptType> {
 
     public ScriptType(T object) {
         super(object);
+    }
+
+
+    @Override
+    public int compareTo(ScriptType o) {
+        return 0;
     }
 
     @Override

@@ -9,6 +9,7 @@ import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeDictionary;
 
 import java.util.Collections;
+import java.util.Comparator;
 
 @Action(name = "Arrays Actions",
         description ="Arrays relative actions",
@@ -16,7 +17,8 @@ import java.util.Collections;
         patterns = {
             "shuffle {array}",
             "add elements of {array} to {array}",
-            "remove elements of {array} from {array}"
+            "remove elements of {array} from {array}",
+            "sort elements of {array}"
 
         },
         priority=1
@@ -60,6 +62,10 @@ public class ActArrays extends ScriptAction {
                     dic2.getObject().forEach((a,b)->dic.getObject().remove(a));
                 }
                 break;
+            case 3:
+                array = (TypeArray) e1.get(context,new ScriptType[0]);
+                Collections.sort(array.getObject());
+
         }
 
     }

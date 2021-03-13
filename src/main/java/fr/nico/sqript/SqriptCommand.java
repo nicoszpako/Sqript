@@ -38,7 +38,8 @@ public class SqriptCommand extends CommandBase {
                     }
                     else{
                         sendMessage("\247cError while reloading scripts, see stacktrace for more information.",sender);
-                        sendMessage(e.getMessage(),sender);
+                        sendMessage("\247c"+e.getMessage(),sender);
+                        e.printStackTrace();
                     }
                 }
                 sendMessage("Done in "+((System.currentTimeMillis()-t)/1000d)+" seconds",sender);

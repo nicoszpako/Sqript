@@ -12,14 +12,14 @@ import fr.nico.sqript.types.TypeMessagePrototype;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 
-@Block(name = "message",
-        description = "Network messages blocks",
-        examples = "message frame1_messages(parameter):",
-        regex = "^message .*",
+@Block(name = "packet",
+        description = "Network packet blocks",
+        examples = "packet frame1_packet(parameter):",
+        regex = "^packet .*",
         side = Side.BOTH,
         fields = {"client","server"}
 )
-public class ScriptBlockMessage extends ScriptFunctionalBlock {
+public class ScriptBlockPacket extends ScriptFunctionalBlock {
 
     //Les IScript à exécuter en fonction du side de réception
     IScript client = null;
@@ -39,7 +39,7 @@ public class ScriptBlockMessage extends ScriptFunctionalBlock {
         return new TypeMessagePrototype(new ScriptMessage(this.name, parameters));
     }
 
-    public ScriptBlockMessage(ScriptLine head) throws ScriptException {
+    public ScriptBlockPacket(ScriptLine head) throws ScriptException {
         super(head);
     }
 
