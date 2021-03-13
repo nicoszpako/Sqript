@@ -5,6 +5,7 @@ import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Type;
+import fr.nico.sqript.structures.IOperation;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.interfaces.IIndexedCollection;
@@ -19,6 +20,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -130,6 +132,35 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISer
     @Override
     public ScriptType<?> get(int index) {
         return getObject().get(index);
+    }
+
+    @Override
+    public IIndexedCollection sort(int mode) {
+        boolean ascending = ((mode >> 0) & 1) == 1 || ((mode >> 1) & 1) == 0;
+        int n_mt = ascending ? 1 :-1;
+        int n_lt = ascending ? -1 :1;
+        TypeArray copy = (TypeArray) copy();
+        Collections.sort(copy.getObject(),(o1, o2) -> {
+            IOperation lt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.LT);
+            IOperation mt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.MT);
+            if(lt != null && mt != null){
+                if((Boolean)(lt.operate(o1,o2).getObject())){
+                    return n_lt;
+                }else if((Boolean)(mt.operate(o1,o2).getObject())){
+                    return n_mt;
+                }else
+                    return 0;
+            }
+            return 0;
+        });
+        return copy;
+
+
+    }
+
+    @Override
+    public IIndexedCollection copy() {
+        return new TypeArray(new ArrayList(getObject()));
     }
 
     @Override

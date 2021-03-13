@@ -1,5 +1,6 @@
 package fr.nico.sqript;
 
+import com.sun.org.apache.regexp.internal.RE;
 import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.blocks.ScriptBlock;
 import fr.nico.sqript.blocks.ScriptBlockCommand;
@@ -70,6 +71,8 @@ public class ScriptManager {
     public static HashMap<ScriptOperator, HashMap<Class, HashMap<Class, IOperation>>> binaryOperations = new HashMap<>();
     public static HashMap<ScriptOperator, HashMap<Class, IOperation>> unaryOperations = new HashMap<>();
     public static List<ScriptOperator> operators = new ArrayList<>();
+
+    public static boolean RELOADING = false;
 
     public static void registerBinaryOperation(ScriptOperator o, Class a, Class b, IOperation operation) {
         binaryOperations.computeIfAbsent(o, k -> new HashMap<>());
@@ -236,6 +239,8 @@ public class ScriptManager {
         registerOperator(ScriptOperator.FACTORIAL);
         registerOperator(ScriptOperator.MINUS_UNARY);
         registerOperator(ScriptOperator.MULTIPLY);
+        registerOperator(ScriptOperator.MOD);
+        registerOperator(ScriptOperator.QUOTIENT);
         registerOperator(ScriptOperator.DIVIDE);
         registerOperator(ScriptOperator.ADD);
         registerOperator(ScriptOperator.SUBTRACT);
@@ -336,6 +341,8 @@ public class ScriptManager {
 
     //True if the event has been cancelled
     public static boolean callEvent(ScriptEvent event) {
+        if(RELOADING)
+            return false;
         ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
         for(ScriptInstance instance : scripts){
             if(instance.callEvent(context,event))
@@ -349,11 +356,15 @@ public class ScriptManager {
 
 
     public static void reload() throws Throwable {
+        RELOADING = true;
+
         scripts.clear();
         clientCommands.clear();
         serverCommands.clear();
         ScriptTimer.reload();
         loadScripts(scriptDir);
         SqriptForge.registerCommands();
+
+        RELOADING = false;
     }
 }

@@ -1,5 +1,7 @@
 package fr.nico.sqript.structures;
 
+import fr.nico.sqript.ScriptManager;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -49,15 +51,24 @@ public class TransformedPattern {
      * @return
      */
     public int getAllMarks(String line){
+        //System.out.println("Getting all marks for : "+line);
+        //System.out.println("Pattern is : "+getPattern().pattern());
         int r = 0;
         Matcher m = getPattern().matcher(line);
+        m.find();
+        //System.out.println("Mark count is : "+marksCount);
         for (int i = 0; i < marksCount; i++) {
             try{
                 if(m.group("m"+i)!=null)
                 {
+                    //System.out.println("m"+i+" group is not null");
                     r = r | (1 << i);
+                    //System.out.println(Integer.toBinaryString(r));
                 }
-            }catch(Exception ignored){}
+            }catch(Exception ignored){
+                ScriptManager.log.error("Error while reading marks for : "+line);
+                ignored.printStackTrace();
+            }
         }
         return r;
     }

@@ -55,25 +55,31 @@ public class ActDefinition extends ScriptAction {
         //If accessing a global variable,
         //we parse the argument as a string to make the action
         //able to register the new variable in the context
-        String varName = parameters.get(0);
-        ScriptExpression to = ScriptDecoder.getExpression(line.with(parameters.get(1)),compileGroup);
-        ScriptExpression arg = null;
-        if((arg = ScriptDecoder.getExpression(line.with(varName),compileGroup)) == null){
-            if (!varName.matches("[^\\s]*")) {
-                ScriptManager.log.error("Variables cannot have whitespaces in their names.");
-                throw new ScriptException.ScriptBadVariableNameException(line);
+        if (matchedIndex == 2) {
+            String varName = parameters.get(0);
+            ScriptExpression to = ScriptDecoder.getExpression(line.with(parameters.get(1)), compileGroup);
+            ScriptExpression arg = null;
+            if ((arg = ScriptDecoder.getExpression(line.with(varName), compileGroup)) == null && to != null) {
+                if (!varName.matches("[^\\s]*")) {
+                    ScriptManager.log.error("Variables cannot have whitespaces in their names.");
+                    throw new ScriptException.ScriptBadVariableNameException(line);
+                }
+                compileGroup.add(varName); //We tell the compile group that a variable named parameters.get(0) can now be used in the script
+                //System.out.println("Set parameter : "+parameters.get(0));
+
+                ExprReference r = new ExprReference(to.getReturnType());
+                r.setVarHash(varName.hashCode());
+                r.setLine(line);
+                arg = r;
             }
-            compileGroup.add(varName); //We tell the compile group that a variable named parameters.get(0) can now be used in the script
-            //System.out.println("Set parameter : "+parameters.get(0));
-            ExprReference r = new ExprReference(to.getReturnType());
-            r.setVarHash(varName.hashCode());
-            r.setLine(line);
-            arg = r;
+            if (to == null)
+                throw new ScriptException.ScriptUnknownExpressionException(line.with(parameters.get(1)));
+            this.setParameters(Lists.newArrayList(arg, to));
+            this.setMatchedIndex(matchedIndex);
+            this.setMarks(marks);
+        } else {
+            super.build(line, compileGroup, parameters, matchedIndex, marks);
         }
-        if(to == null)
-            throw new ScriptException.ScriptUnknownExpressionException(line.with(parameters.get(1)));
-        this.setParameters(Lists.newArrayList(arg,to));
-        this.setMatchedIndex(matchedIndex);
-        this.setMarks(marks);
+
     }
 }

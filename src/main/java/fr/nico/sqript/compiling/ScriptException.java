@@ -41,6 +41,21 @@ public class ScriptException extends Exception {
         }
     }
 
+    public static class ScriptInterfaceNotImplementedException extends ScriptException {
+
+        Class interfaceClass,given;
+        public ScriptInterfaceNotImplementedException(ScriptLine line,Class interfaceClass, Class given) {
+            super(line);
+            this.interfaceClass=interfaceClass;
+            this.given = given;
+        }
+
+        @Override
+        public String getMessage() {
+            return line.text+" of type "+given.getSimpleName()+" does not implement the features of "+interfaceClass.getSimpleName()+". Thus this expression cannot be applied on it.";
+        }
+    }
+
     public static class ScriptPatternError extends Exception {
 
         String reason;

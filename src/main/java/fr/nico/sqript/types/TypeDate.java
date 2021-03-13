@@ -5,6 +5,7 @@ import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
+import fr.nico.sqript.types.interfaces.IFormatable;
 import fr.nico.sqript.types.primitive.TypeNumber;
 
 import javax.annotation.Nullable;
@@ -12,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Type(name="date",parsableAs = {})
-public class TypeDate extends ScriptType<Long> {
+public class TypeDate extends ScriptType<Long> implements IFormatable {
 
     public Date toDate(){
         return new Date(getObject());
@@ -42,4 +43,9 @@ public class TypeDate extends ScriptType<Long> {
                 (a, b) -> new TypeDate(((TypeDate) a).getObject() - ((TypeDate) b).getObject()));
     }
 
+    @Override
+    public String format(String format) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        return simpleDateFormat.format(new Date(getObject()));
     }
+}

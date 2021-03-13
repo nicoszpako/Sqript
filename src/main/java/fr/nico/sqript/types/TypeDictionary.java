@@ -4,23 +4,29 @@ import fr.nico.sqript.ScriptDataManager;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.meta.Type;
+import fr.nico.sqript.structures.IOperation;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.interfaces.IIndexedCollection;
 import fr.nico.sqript.types.interfaces.ISerialisable;
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Type(name = "dictionary",
         parsableAs = {}
 )
 public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> implements ISerialisable, IIndexedCollection {
+
+    public TypeDictionary(LinkedHashMap<ScriptType, ScriptType> map) {
+        super(map);
+    }
 
     @Nullable
     @Override
@@ -52,7 +58,7 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
     }
 
     public TypeDictionary(){
-        super(new HashMap<>());
+        super(new LinkedHashMap<>());
     }
 
     static {
@@ -127,6 +133,51 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
     @Override
     public ScriptType<?> get(int index) {
         return getObject().values().toArray(new ScriptType[0])[index];
+    }
+
+    @Override
+    public IIndexedCollection sort(int mode) {
+        boolean ascending = ((mode >> 0) & 1) == 1 || ((mode >> 1) & 1) == 0;
+        boolean byValue = ((mode >> 2) & 1) == 1 || ((mode >> 3) & 1) == 0;
+        int n_mt = ascending ? 1 :-1;
+        int n_lt = ascending ? -1 :1;
+        //System.out.println("mode  : "+Integer.toBinaryString(mode));
+        //System.out.println("ascending : "+ascending+" byValue : "+byValue+" n_mt : "+n_mt+" n_lt : "+n_lt);
+        setObject(getObject().entrySet()
+                    .stream()
+                    .sorted(byValue ? Map.Entry.comparingByValue((o1, o2) -> {
+                        IOperation lt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.LT);
+                        IOperation mt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.MT);
+                        if(lt != null && mt != null){
+                            //System.out.println("operating "+o1+"<"+o2+" it's : "+(Boolean)(lt.operate(o1,o2).getObject()));
+                            if((Boolean)(lt.operate(o1,o2).getObject())){
+                                return n_lt;
+                            }else if((Boolean)(mt.operate(o1,o2).getObject())){
+                                return n_mt;
+                            }else
+                                return 0;
+                        }
+                        return 0;
+                    }) : Map.Entry.comparingByKey((o1, o2) -> {
+                        IOperation lt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.LT);
+                        IOperation mt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.MT);
+                        if(lt != null && mt != null){
+                            if((Boolean)(lt.operate(o1,o2).getObject())){
+                                return n_lt;
+                            }else if((Boolean)(mt.operate(o1,o2).getObject())){
+                                return n_mt;
+                            }else
+                                return 0;
+                        }
+                        return 0;
+                    }))
+                    .collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue,(e1,e2)->e1,LinkedHashMap::new)));
+        return this;
+    }
+
+    @Override
+    public IIndexedCollection copy() {
+        return new TypeDictionary(new LinkedHashMap<>(getObject()));
     }
 
     @Override

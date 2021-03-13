@@ -850,12 +850,12 @@ public class ScriptDecoder {
                             j--;
                         }
                         mark = Integer.parseInt(number.toString());
-                        if(mark<0 || mark>15)
-                            throw new ScriptException.ScriptPatternError("Marks id's must be between 0 and 15 : "+basePattern+". Check the syntax.");
+                        if(mark<0 || mark>31)
+                            throw new ScriptException.ScriptPatternError("Marks id's must be between 0 and 31 : "+basePattern+". Check the syntax.");
                         markCount++;
                     }
 
-                    if (pattern.charAt(j) == '(' && !(j>1 && pattern.charAt(j-1)=='~'))
+                    if (pattern.charAt(j) == '(' && !(j>1 && pattern.charAt(j-1)=='~' || pattern.charAt(j+1)=='?'))
                         break;
                     j--;
                 }
@@ -871,29 +871,27 @@ public class ScriptDecoder {
                 //System.out.println("\n"+firstPart+"\n"+middlePart+"\n"+lastPart);
                 pattern = firstPart + "(?"+(mark!=-1?"<m"+mark+">":":") + middlePart + ")" + lastPart;
                 //System.out.println(pattern+"   "+i);
-                i += mark!=-1 ? String.valueOf(mark).length()+3 : 2;
+                i += mark!=-1 ? String.valueOf(mark).length()+3 : 3;
             }
 
             i++;
         }
+
         i=0;
-        markCount = 0;
         while(i<pattern.length()) {
             char c = pattern.charAt(i);
             boolean comment = i>1 && pattern.charAt(i-1)=='~';
             if (c == ']' && !comment) {
                 boolean nextWp = (i + 1 < pattern.length() && pattern.charAt(i + 1) == ' ');
+                boolean beforeWp = false;
                 int j = i;
                 while (j > 0) {
                     if (pattern.charAt(j) == '[' && !(j>1 && pattern.charAt(j-1)=='~')) {
+                        beforeWp = pattern.charAt(j+1)==' ';
                         break;
                     }
                     j--;
                 }
-                //j is now the index of the opening associated bracket
-                //Bracket error
-                if (j == -1)
-                    throw new ScriptException.ScriptPatternError("Unbalanced brackets in pattern : "+basePattern+". Check the syntax.");
 
                 String firstPart;
                 String middlePart = pattern.substring(j + 1, i);
@@ -904,7 +902,7 @@ public class ScriptDecoder {
                     pattern = firstPart + "(?:"+(j==0?"":" ") + middlePart + (nextWp ? " " : "") + ")?" + lastPart;
                 } else {
                     firstPart = pattern.substring(0, j);
-                    pattern = firstPart + "(?:" + middlePart + ")?" + (nextWp ? " " : "") + lastPart;
+                    pattern = firstPart + "(?:" + middlePart +  (nextWp && beforeWp ? " " : "") + ")?" + (nextWp && !beforeWp ? " ":"") + lastPart;
                 }
                 i += nextWp ? 3 : 2;
             }

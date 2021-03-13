@@ -58,7 +58,7 @@ public class EvtBlock {
     @Event(name = "Block right clicked",
             description = "Called when a player clicks on a block",
             examples = "on click on block of stone:",
-            patterns = "on (1;left|2;right) click on (block [of {block}]|{block}) [with (3;left|4;right) hand]",
+            patterns = "on ((1;left)|(2;right)) click on (block [of {block}]|{block}) [with ((3;left)|(4;right)) hand]",
             accessors = {"player:player","(clicked block|click-block):block"
             }
     )

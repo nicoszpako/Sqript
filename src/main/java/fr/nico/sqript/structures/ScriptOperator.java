@@ -11,6 +11,8 @@ public class ScriptOperator {
     public static final ScriptOperator MINUS_UNARY = new ScriptOperator("-",14, Associativity.RIGHT_TO_LEFT,true);//Unary -
     public static final ScriptOperator EXP = new ScriptOperator("^",13, Associativity.LEFT_TO_RIGHT);//Multiplication
     public static final ScriptOperator MULTIPLY = new ScriptOperator("*",12, Associativity.LEFT_TO_RIGHT);//Multiplication
+    public static final ScriptOperator MOD = new ScriptOperator("%",12, Associativity.LEFT_TO_RIGHT);//Multiplication
+    public static final ScriptOperator QUOTIENT = new ScriptOperator("//",12, Associativity.LEFT_TO_RIGHT);//Division
     public static final ScriptOperator DIVIDE = new ScriptOperator("/",12, Associativity.LEFT_TO_RIGHT);//Division
     public static final ScriptOperator ADD = new ScriptOperator("+",11, Associativity.LEFT_TO_RIGHT);//Addition
     public static final ScriptOperator SUBTRACT = new ScriptOperator("-",11, Associativity.LEFT_TO_RIGHT);//Subtraction

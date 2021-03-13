@@ -8,17 +8,13 @@ import fr.nico.sqript.types.interfaces.IComparable;
 import javax.annotation.Nullable;
 import java.util.Comparator;
 
-public abstract class ScriptType<T>  extends ScriptElement<T> implements Comparable<ScriptType> {
+public abstract class ScriptType<T>  extends ScriptElement<T>  {
 
     public ScriptType(T object) {
         super(object);
     }
 
 
-    @Override
-    public int compareTo(ScriptType o) {
-        return 0;
-    }
 
     @Override
     public boolean equals(Object o){

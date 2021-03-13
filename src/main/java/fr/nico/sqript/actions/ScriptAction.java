@@ -50,6 +50,10 @@ public abstract class ScriptAction extends IScript {
         this.marks = marks;
     }
 
+    public int getMarks() {
+        return marks;
+    }
+
     public boolean getMarkValue(int mark){
         return marks >> mark == 1;
     }
@@ -72,6 +76,7 @@ public abstract class ScriptAction extends IScript {
     public void build(ScriptLine line, ScriptCompileGroup compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
         List<ScriptExpression> expressions = new ArrayList<>(parameters.size());
         String[] strings = ScriptDecoder.extractStrings(line.text);
+        //System.out.println("for line : "+line+" marks are : "+Integer.toBinaryString(marks));
         for (String parameter : parameters) {
             if(parameter==null) {
                 expressions.add(null);

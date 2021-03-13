@@ -1,8 +1,11 @@
 package fr.nico.sqript.expressions;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Expression;
+import fr.nico.sqript.structures.IOperation;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.interfaces.IIndexedCollection;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
@@ -10,6 +13,7 @@ import fr.nico.sqript.types.TypeDictionary;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeNumber;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
@@ -30,6 +34,8 @@ import java.util.Random;
                 "{element} is in {array}:boolean",
                 "{element} is not in {array}:boolean",
                 "{array} contains {element}:boolean",
+                "sorted [(0;ascending)|(1;descending)] ((2;elements)|(3;keys)) of {array}:array",
+                "copy of {array}:array"
 
         },
         priority = -1
@@ -111,7 +117,12 @@ public class ExprArrays extends ScriptExpression{
                     if(b.equals(i))return TypeBoolean.TRUE();
                 }
                 return TypeBoolean.FALSE();
-
+            case 12://sorted elements of
+                a = (IIndexedCollection) parameters[0];
+                return (ScriptType) a.sort(marks);
+            case 13://copy of array
+                a = (IIndexedCollection) parameters[0];
+                return (ScriptType) a.copy();
         }
         return null;
     }

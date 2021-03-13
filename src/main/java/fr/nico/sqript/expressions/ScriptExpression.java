@@ -27,7 +27,7 @@ public abstract class ScriptExpression {
         return this.set(context, to,new ScriptType[0]);
     }
 
-    public abstract ScriptType get(ScriptContext context, ScriptType<?>[] parameters) throws ScriptException;
+    public abstract ScriptType get(ScriptContext context, ScriptType<?>[] parameters) throws ScriptException, ScriptException.ScriptInterfaceNotImplementedException;
 
     public abstract boolean set(ScriptContext context,ScriptType to, ScriptType<?>[] parameters) throws ScriptException; //True if it can be set to another value, or false.
 
@@ -36,6 +36,10 @@ public abstract class ScriptExpression {
     int marks;
 
     ScriptLine line;
+
+    public <T> T getParameterOrDefault(ScriptType<T> parameter, T defaultValue){
+        return parameter == null ? defaultValue : parameter.getObject();
+    }
 
     public int getMarks() {
         return marks;

@@ -1,12 +1,16 @@
 package fr.nico.sqript.actions;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Action;
+import fr.nico.sqript.structures.IOperation;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeDictionary;
+import fr.nico.sqript.types.interfaces.IIndexedCollection;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,7 +22,7 @@ import java.util.Comparator;
             "shuffle {array}",
             "add elements of {array} to {array}",
             "remove elements of {array} from {array}",
-            "sort elements of {array}"
+            "sort ((2;elements)|(3;keys)) of {array} [by] [(0;ascending)|(1;descending)] [order]"
 
         },
         priority=1
@@ -63,8 +67,9 @@ public class ActArrays extends ScriptAction {
                 }
                 break;
             case 3:
-                array = (TypeArray) e1.get(context,new ScriptType[0]);
-                Collections.sort(array.getObject());
+                IIndexedCollection collection = (IIndexedCollection) getParameter(1).get(context);
+                collection.sort(getMarks());
+                break;
 
         }
 

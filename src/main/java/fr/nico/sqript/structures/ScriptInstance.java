@@ -73,13 +73,11 @@ public class ScriptInstance {
                     context.wrap(event.accessors);
                     clock.start(t);
                 } catch (Exception e) {
+                    ScriptManager.log.error("Error while calling event : "+event.getClass().getSimpleName());
                     if (ScriptManager.FULL_DEBUG) e.printStackTrace();
-                    ScriptManager.log.error("Error while calling event : "+event.getClass().getSimpleName()+" at "+b.getLine());
                     if (e instanceof ScriptException) {
                         for (String s : e.getMessage().split("\n"))
                             ScriptManager.log.error(s);
-                    } else if (e instanceof ClassCastException) {
-                        ScriptManager.log.error("Type error !");
                     }
                 }
                 ////System.out.println("Finished ! It took : " + (System.currentTimeMillis() - t1) + " ms");

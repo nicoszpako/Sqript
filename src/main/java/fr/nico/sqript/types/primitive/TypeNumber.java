@@ -6,6 +6,7 @@ import fr.nico.sqript.meta.Primitive;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.structures.IOperation;
+import fr.nico.sqript.types.interfaces.IFormatable;
 import fr.nico.sqript.types.interfaces.ISerialisable;
 import fr.nico.sqript.types.ScriptType;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,7 +17,7 @@ import java.text.DecimalFormat;
         parsableAs = {TypeString.class},
         pattern = "("+ScriptDecoder.CAPTURE_FLOAT+"|" +ScriptDecoder.CAPTURE_FULL_NUMBER+")")
 
-public class TypeNumber extends PrimitiveType<Double> implements ISerialisable {
+public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, IFormatable {
 
 
 
@@ -69,6 +70,12 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable {
         ScriptManager.registerBinaryOperation(ScriptOperator.MULTIPLY, TypeNumber.class, TypeNumber.class,
                  (a,b) -> new TypeNumber(((TypeNumber)a).getObject()*((TypeNumber)b).getObject()));
 
+        ScriptManager.registerBinaryOperation(ScriptOperator.MOD, TypeNumber.class, TypeNumber.class,
+                (a,b) -> new TypeNumber(((TypeNumber)a).getObject()%((TypeNumber)b).getObject()));
+
+        ScriptManager.registerBinaryOperation(ScriptOperator.QUOTIENT, TypeNumber.class, TypeNumber.class,
+                (a,b) -> new TypeNumber(Math.floorDiv(((TypeNumber)a).getObject().intValue(),((TypeNumber)b).getObject().intValue())));
+
         ScriptManager.registerBinaryOperation(ScriptOperator.DIVIDE, TypeNumber.class, TypeNumber.class,
                  (a,b) -> new TypeNumber(((TypeNumber)a).getObject()/((TypeNumber)b).getObject()));
 
@@ -94,9 +101,8 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable {
         );
 
         ScriptManager.registerBinaryOperation(ScriptOperator.MT, TypeNumber.class, TypeNumber.class,
-                (a, b) ->  {
-                    System.out.println((((TypeNumber)a).getObject())>(((TypeNumber)b).getObject()));
-            return new TypeBoolean((((TypeNumber)a).getObject())>(((TypeNumber)b).getObject()));});
+                (a, b) ->
+            new TypeBoolean((((TypeNumber)a).getObject())>(((TypeNumber)b).getObject())));
 
         ScriptManager.registerBinaryOperation(ScriptOperator.MTE, TypeNumber.class, TypeNumber.class,
                  (a, b) -> new TypeBoolean(((TypeNumber)a).getObject()>=((TypeNumber)b).getObject()));
@@ -116,11 +122,8 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable {
     }
 
     @Override
-    public int compareTo(ScriptType o) {
-        if(o instanceof TypeNumber){
-            TypeNumber n = (TypeNumber) o;
-            return getObject().compareTo(n.getObject());
-        }
-        return 0;
+    public String format(String format) {
+        DecimalFormat decimalFormat = new DecimalFormat(format.replaceAll("-","#"));
+        return decimalFormat.format(getObject());
     }
 }

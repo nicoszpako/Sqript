@@ -30,11 +30,24 @@ public class TypeString extends PrimitiveType<String> implements ISerialisable {
     }
 
     static {
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD,TypeString.class, ScriptType.class,
-                (a,b)-> new TypeString(a.getObject()+b.toString()));
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeString.class, ScriptType.class,
+                (a, b) -> new TypeString(a.getObject() + b.toString()));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD,ScriptType.class,TypeString.class,
-                (a,b)-> new TypeString(a.toString()+b.getObject()));
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, ScriptType.class, TypeString.class,
+                (a, b) -> new TypeString(a.toString() + b.getObject()));
+
+        ScriptManager.registerBinaryOperation(ScriptOperator.MT, TypeString.class, TypeString.class,
+                (a, b) -> new TypeBoolean(((TypeString) a).getObject().compareTo(((TypeString) b).getObject()) > 0));
+
+        ScriptManager.registerBinaryOperation(ScriptOperator.MTE, TypeString.class, TypeString.class,
+                (a, b) -> new TypeBoolean(((TypeString) a).getObject().compareTo(((TypeString) b).getObject()) >= 0));
+
+        ScriptManager.registerBinaryOperation(ScriptOperator.LT, TypeString.class, TypeString.class,
+                (a, b) -> new TypeBoolean(((TypeString) a).getObject().compareTo(((TypeString) b).getObject()) < 0));
+
+        ScriptManager.registerBinaryOperation(ScriptOperator.LTE, TypeString.class, TypeString.class,
+                (a, b) -> new TypeBoolean(((TypeString) a).getObject().compareTo(((TypeString) b).getObject()) <= 0));
+
     }
 
     @Override
@@ -48,12 +61,4 @@ public class TypeString extends PrimitiveType<String> implements ISerialisable {
         setObject(compound.getString("object"));
     }
 
-    @Override
-    public int compareTo(ScriptType o) {
-        if(o instanceof TypeString){
-            TypeString n = (TypeString) o;
-            return getObject().compareTo(n.getObject());
-        }
-        return 0;
-    }
 }
