@@ -41,10 +41,6 @@ public class ScriptInstance {
     public boolean callEvent(ScriptContext context, ScriptEvent event) {
         //System.out.println("Calling event : "+event.getClass());
         ScriptContext returnContext = callEventAndGetContext(context,event);
-        System.out.println("return null : "+(returnContext==null));
-        System.out.println("return value : "+returnContext.returnValue);
-        System.out.println("return element : "+returnContext.returnValue.element);
-        System.out.println("return object : "+returnContext.returnValue.element.getObject());
         return (boolean) returnContext.returnValue.element.getObject();
     }
 
@@ -64,7 +60,7 @@ public class ScriptInstance {
     }
 
     public ScriptContext callEventAndGetContext(ScriptContext context,ScriptEvent event) {
-        System.out.println("Trying to call event : "+event.getClass().getSimpleName());
+        //System.out.println("Trying to call event : "+event.getClass().getSimpleName());
         context.returnValue = new ScriptAccessor(TypeBoolean.FALSE(), "");
         //long t1 = //System.currentTimeMillis();
         for (ScriptBlock b : getBlocksOfClass(ScriptBlockEvent.class)) {
