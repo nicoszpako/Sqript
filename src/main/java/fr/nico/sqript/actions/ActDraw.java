@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
         examples = {"draw \"Hello !\" at [0,100] with scale 2"
         },
         patterns = {
-            "draw text {string} at {array} [with scale {number}] [[and] with color {number}]",
+            "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number}]",
             "draw colored rect[angle] at {array} with size {array} [and] with color {number}",
             "draw textured rect[angle] at {array} with size {array} using texture {resource} [with uv {array}]",
             "draw line from {array} to {array} with stroke {number} [and] with color {number}"
@@ -52,12 +53,14 @@ public class ActDraw extends ScriptAction {
                 int color = getParametersSize()>=4? ((Double) getParameter(4,context)).intValue() :0xFFFFFF;
                 GL11.glPushMatrix();
                 GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-                GL11.glEnable(GL11.GL_BLEND);
+                GlStateManager.enableBlend();
                 GL11.glTranslatef((float)SqriptUtils.getX(array),(float)SqriptUtils.getY(array),(float)SqriptUtils.getZ(array));
                 GL11.glScalef(scale,scale,1);
                 for (int i = 0; i < list.size(); i++) {
-                    Minecraft.getMinecraft().fontRenderer.drawString(list.get(i).replaceAll("&","\247"),0,Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT*i,color);
+                    Minecraft.getMinecraft().fontRenderer.drawString(list.get(i).replaceAll("&","\247"),0,Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT*i,color,((getMarks()>>1)&1)==1);
                 }
+                GlStateManager.disableAlpha();
+                GlStateManager.disableBlend();
                 GlStateManager.resetColor();
                 GL11.glColor3f(1,1,1);
                 GL11.glPopAttrib();

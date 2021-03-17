@@ -137,6 +137,7 @@ public class ScriptDecoder {
             result.add(f);
             i++;
         }
+        //System.out.println("Returning : "+ Arrays.toString(result.toArray(new String[0])));
         return result.toArray(new String[0]);
     }
 
@@ -144,7 +145,7 @@ public class ScriptDecoder {
     {
         int i = 0;
         for(String s : strings){
-            parameter = parameter.replaceFirst("\\{S"+i+"}", s);
+            parameter = parameter.replaceFirst("\\{S"+i+"}", "\""+s+"\"");
             i++;
         }
         return parameter;
@@ -228,12 +229,13 @@ public class ScriptDecoder {
         //Removing strings from the line in order to avoid interpretation issues
         String[] strings = extractStrings(parameter.text);
         String line_without_strings = removeStrings(parameter.text, strings);
+        //System.out.println(parameter.text+" without strings is : "+line_without_strings);
         return getExpression(parameter.with(line_without_strings), compileGroup, strings);
     }
 
 
     public static ScriptExpression getExpression(ScriptLine parameter, ScriptCompileGroup compileGroup, String[] replacedStrings) throws Exception {
-        //System.out.println("\nGetting expression for : "+parameter);
+        //System.out.println("Getting expression for : "+parameter+" with strings : "+Arrays.toString(replacedStrings));
 
         //Creating a new reference to the line because we are going to modify it a little
         parameter = (ScriptLine) parameter.clone();
@@ -480,7 +482,7 @@ public class ScriptDecoder {
         if(parameter.text==null)
             return null;
 
-        //System.out.println("Getting litteral expression: "+parameter.text);
+        //System.out.println("Getting litteral expression: "+parameter.text+" with strings :"+Arrays.toString(strings));
 
         //Check if it is a native function
         ExprNativeFunction f;
@@ -595,6 +597,7 @@ public class ScriptDecoder {
                 return new Object[]{parameter.scriptInstance.getOptions().get(parameter.text.substring(1)), new String[0][0]};
             }
         }
+        //System.out.println("Returning null");
         return null;
     }
 
@@ -705,25 +708,26 @@ public class ScriptDecoder {
 
         //Removing strings from the line in order to avoid interpretation issues
         String[] strings = extractStrings(line.text);
-        String line_without_strings = removeStrings(line.text, strings);
+        String lineWithoutStrings = removeStrings(line.text, strings);
 
         for (ActionDefinition actionDefinition : ScriptManager.actions) {
             //System.out.println("Checking for action : "+actionDefinition.getActionClass().getSimpleName());
-            int[] indexAndMarks = actionDefinition.getMatchedPatternIndexAndMarks(line_without_strings);
+            int[] indexAndMarks = actionDefinition.getMatchedPatternIndexAndMarks(lineWithoutStrings);
             if (indexAndMarks.length>0) {
                 int index = indexAndMarks[0];
                 int marks = indexAndMarks[1];
                 //System.out.println(index+" "+Integer.toBinaryString(marks));
                 //System.out.println("AA:"+infos.transformedPatterns[index].regex+" -- "+line.text);
-                List<String> parameters = new ArrayList<>(Arrays.asList(actionDefinition.transformedPatterns[index].getAllArguments(line_without_strings)));
+                String lineWithStrings = ScriptDecoder.replaceStrings(lineWithoutStrings,strings);
+                List<String> parameters = new ArrayList<>(Arrays.asList(actionDefinition.transformedPatterns[index].getAllArguments(lineWithStrings)));
                 //System.out.println("Parameters size : "+parameters.size());
 
                 ScriptAction action = actionDefinition.getActionClass().getConstructor().newInstance();
-                action.build(line, compileGroup, parameters, index, marks);
+                action.build(line.with(lineWithStrings), compileGroup, parameters, index, marks);
                 return action;
             }
         }
-        ScriptExpression s = getExpression(line.with(line_without_strings), compileGroup, strings);
+        ScriptExpression s = getExpression(line.with(lineWithoutStrings), compileGroup, strings);
         if (s != null)
             return new ActSimpleExpression(s);
         return null;
@@ -822,12 +826,22 @@ public class ScriptDecoder {
         return result.toString();
     }
 
+
+    private static void pct(int c) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < c; i++) {
+            sb.append("-");
+        }
+        sb.append("^");
+        //System.out.println(sb.toString());
+    }
+
     public static TransformedPattern transformPattern(String pattern) throws Exception {
         //System.out.println("Transforming : "+pattern);
 
         //Saved reference to the base pattern
         String basePattern = pattern;
-        pattern = pattern.replaceAll(" \\[","[ ");
+        //pattern = pattern.replaceAll(" \\[","[ ");
         int i = 0;
 
         int markCount = 0;
@@ -835,12 +849,12 @@ public class ScriptDecoder {
 
         while(i<pattern.length()) {
             char c = pattern.charAt(i);
-            boolean comment = i>1 && pattern.charAt(i-1)=='~';
+            boolean comment = i>0 && pattern.charAt(i-1)=='~';
             if (c == ')' && !comment) {
                 int j = i;
                 int mark = -1;
                 while (j > 0) {
-                    if (pattern.charAt(j) == ';' && !(j>1 && pattern.charAt(j-1)=='~')) { //Marks
+                    if (pattern.charAt(j) == ';' && !(pattern.charAt(j - 1) == '~')) { //Marks
                         j--;
                         //System.out.println("found a dot-comma : "+j+" "+pattern.charAt(j));
                         StringBuilder number = new StringBuilder();
@@ -850,8 +864,6 @@ public class ScriptDecoder {
                             j--;
                         }
                         mark = Integer.parseInt(number.toString());
-                        if(mark<0 || mark>31)
-                            throw new ScriptException.ScriptPatternError("Marks id's must be between 0 and 31 : "+basePattern+". Check the syntax.");
                         markCount++;
                     }
 
@@ -859,58 +871,106 @@ public class ScriptDecoder {
                         break;
                     j--;
                 }
-                //j is now the index of the opening associated bracket
-                //Bracket error
-                if (j == -1)
-                    throw new ScriptException.ScriptPatternError("Unbalanced parenthesis in pattern : "+basePattern+". Check the syntax.");
 
                 String firstPart = pattern.substring(0, j);
                 //System.out.println("mark:"+mark);
                 String middlePart = pattern.substring(j + (mark!=-1 ? String.valueOf(mark).length() + 2 : 1), i);
-                String lastPart = pattern.substring(i + 1);
+                String lastPart = pattern.substring(i+1);
                 //System.out.println("\n"+firstPart+"\n"+middlePart+"\n"+lastPart);
                 pattern = firstPart + "(?"+(mark!=-1?"<m"+mark+">":":") + middlePart + ")" + lastPart;
                 //System.out.println(pattern+"   "+i);
-                i += mark!=-1 ? String.valueOf(mark).length()+3 : 3;
+                i += mark!=-1 ? String.valueOf(mark).length()+3 : 2;
             }
 
             i++;
         }
 
         i=0;
-        while(i<pattern.length()) {
-            char c = pattern.charAt(i);
-            boolean comment = i>1 && pattern.charAt(i-1)=='~';
-            if (c == ']' && !comment) {
-                boolean nextWp = (i + 1 < pattern.length() && pattern.charAt(i + 1) == ' ');
-                boolean beforeWp = false;
-                int j = i;
-                while (j > 0) {
-                    if (pattern.charAt(j) == '[' && !(j>1 && pattern.charAt(j-1)=='~')) {
-                        beforeWp = pattern.charAt(j+1)==' ';
+        int j = 0;
+        markCount = 0;
+        while(j<pattern.length()) {
+            boolean comment = j>0 && pattern.charAt(j-1)=='~';
+            if(pattern.charAt(j)=='[' && !comment){
+                i = j;
+                //System.out.println(pattern);
+                pct(j);
+                boolean eatLeftSpace = false;
+                boolean eatRightSpace = false;
+                boolean needsRightSpace = false;
+                boolean needsLeftSpace = false;
+                int brDepth = 0;
+                while(i<pattern.length()){
+                    if(pattern.charAt(i)=='[')
+                        brDepth++;
+                    if(pattern.charAt(i)==']')
+                        brDepth--;
+                    if(brDepth==0 && pattern.charAt(i)==']' && !(i>1 && pattern.charAt(i-1)=='~')){
+                        pct(i);
+                        int depth = 0;
+                        if(i+1<pattern.length() && pattern.charAt(i+1)==' ' && (j==0 || " ?)(:".contains("" + pattern.charAt(j-1)))) {
+                            needsRightSpace = true;
+                            for (int k = i + 1; k < pattern.length(); k++) {
+                                if(k>0 && pattern.charAt(k-1)=='~')
+                                    continue;
+
+                                if (depth < 0)
+                                    break;
+                                if (pattern.charAt(k) == '[' || (k<pattern.length()-1 && pattern.charAt(k)=='(' && pattern.charAt(k+1)=='?'))
+                                    depth++;
+                                else if (pattern.charAt(k) == ']' || (k<pattern.length()-1  && pattern.charAt(k)==')' && pattern.charAt(k+1)=='?') )
+                                    depth--;
+                                else if (depth == 0 && !" ?)(:".contains("" + pattern.charAt(k))) {
+                                    //System.out.println("Setting needSpaceRight to true : " + k + " : " + pattern.charAt(k));
+                                    eatRightSpace = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if(j-1>0 && pattern.charAt(j-1)==' ') {
+                            needsLeftSpace = true;
+                            for (int k = j - 1; k >= 0; k--) {
+                                if(k>0 && pattern.charAt(k - 1) == '~')
+                                    continue;
+
+                                if (pattern.charAt(k) == '[' || (k<pattern.length()-1 && pattern.charAt(k)=='(' && pattern.charAt(k+1)=='?')){
+                                    eatLeftSpace = true;
+                                    break;
+                                }
+                                else if (pattern.charAt(k) == ']' || (k<pattern.length()-1  && pattern.charAt(k)==')' && pattern.charAt(k+1)=='?') ){
+                                    eatLeftSpace = true;
+                                    break;
+                                }
+                                else if (!" ?)(:".contains("" + pattern.charAt(k))) {
+                                    //System.out.println("Setting needSpaceLeft to true : " + k + " : " + pattern.charAt(k));
+                                    eatLeftSpace = true;
+                                    break;
+                                }
+                            }
+                        }
                         break;
                     }
-                    j--;
+                    i++;
                 }
+                if(i==pattern.length()-1 && pattern.charAt(i)!=']')
+                    throw new ScriptException.ScriptMissingBracket(basePattern);
+
 
                 String firstPart;
                 String middlePart = pattern.substring(j + 1, i);
-                String lastPart = pattern.substring(i + (nextWp ? 2 : 1));
-
-                if (j == 0 || pattern.charAt(j - 1) == ' ') {
-                    firstPart = j==0?"":pattern.substring(0, j - 1);
-                    pattern = firstPart + "(?:"+(j==0?"":" ") + middlePart + (nextWp ? " " : "") + ")?" + lastPart;
-                } else {
-                    firstPart = pattern.substring(0, j);
-                    pattern = firstPart + "(?:" + middlePart +  (nextWp && beforeWp ? " " : "") + ")?" + (nextWp && !beforeWp ? " ":"") + lastPart;
+                String lastPart = pattern.substring(i + (needsRightSpace ? 2 : 1));
+                //System.out.println("- "+pattern+" "+needsLeftSpace+" "+eatLeftSpace+" "+needsRightSpace+" "+eatRightSpace);
+                boolean bothSidesNeedSpace = needsLeftSpace && needsRightSpace && eatLeftSpace && eatRightSpace;
+                if(bothSidesNeedSpace){
+                    eatLeftSpace = false;
                 }
-                i += nextWp ? 3 : 2;
+                firstPart = pattern.substring(0, j - (needsLeftSpace ? 1 : 0));
+                pattern = firstPart + (needsLeftSpace ? ( eatLeftSpace ? "(?: " : " (?:" ) : "(?:" ) + middlePart +  (needsRightSpace ? (eatRightSpace ? " )?" : ")? " ) : ")?" ) + lastPart;
+                //System.out.println(pattern);
             }
-            i++;
+            j++;
         }
 
         pattern=pattern.replaceAll("~","\\\\");
-
         //System.out.println("Basic translation : "+pattern);
 
         //End of basic translation to regex

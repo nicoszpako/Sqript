@@ -1,6 +1,6 @@
 package fr.nico.sqript.blocks;
 
-import fr.nico.sqript.SqriptForge;
+import fr.nico.sqript.forge.SqriptForge;
 import fr.nico.sqript.types.TypeConsole;
 import fr.nico.sqript.types.TypePlayer;
 import fr.nico.sqript.ScriptManager;
@@ -61,7 +61,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
     protected void load() throws Exception {
 
         if (fieldDefined("side"))
-            this.setSide(fr.nico.sqript.structures.Side.from(getSubBlock("side").getRawHead()));
+            this.setSide(fr.nico.sqript.structures.Side.from(getSubBlock("side").getRawContent()));
 
 
         ScriptCompileGroup compileGroup = new ScriptCompileGroup();
@@ -74,10 +74,10 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         this.setRoot(getMainField().compile(compileGroup));
 
         if (fieldDefined("description"))
-            this.setDescription(getSubBlock("description").getRawHead());
+            this.setDescription(getSubBlock("description").getRawContent());
 
         if (fieldDefined("usage"))
-            this.setUsage(getSubBlock("usage").getRawHead());
+            this.setUsage(getSubBlock("usage").getRawContent());
 
         if (fieldDefined("aliases"))
             this.setAliases(getSubBlock("aliases").getContent().stream().map(s -> s.text).toArray(String[]::new));

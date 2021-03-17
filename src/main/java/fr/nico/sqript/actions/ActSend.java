@@ -1,18 +1,14 @@
 package fr.nico.sqript.actions;
 
 
-import fr.nico.sqript.SqriptForge;
+import fr.nico.sqript.forge.SqriptForge;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
-import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.network.ScriptMessage;
-import fr.nico.sqript.network.ScriptNetworkManager;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeMessagePrototype;
-import fr.nico.sqript.types.TypePlayer;
-import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

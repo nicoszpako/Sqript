@@ -1,5 +1,7 @@
-package fr.nico.sqript;
+package fr.nico.sqript.forge.common;
 
+import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.ScriptTimer;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.events.*;
 import fr.nico.sqript.structures.ScriptContext;
@@ -16,6 +18,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -40,6 +43,19 @@ public class ScriptEventHandler {
             ScriptManager.callEvent(new EvtOnWorldTick());
     }
 
+
+    @SubscribeEvent
+    public void onItemUse(PlayerEvent.ItemPickupEvent event) throws ScriptException {
+            ScriptManager.callEvent(new EvtPlayer.EvtOnItemPickup((EntityPlayer) event.player,event.getStack()));
+    }
+
+    @SubscribeEvent
+    public void onItemUse(LivingEntityUseItemEvent event) throws ScriptException {
+        if(event.getEntity() instanceof EntityPlayer){
+            ScriptManager.callEvent(new EvtPlayer.EvtOnItemUse((EntityPlayer) event.getEntity(),event.getItem()));
+        }
+    }
+
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onRenderGameOverlay(RenderGameOverlayEvent.Pre event) {
@@ -59,6 +75,14 @@ public class ScriptEventHandler {
             }
         }else if(event.getType()== RenderGameOverlayEvent.ElementType.ALL) {
             if (ScriptManager.callEvent(new EvtRender.EvtOnRenderOverlay(Minecraft.getMinecraft().player))) {
+                event.setCanceled(true);
+            }
+        }else if(event.getType()== RenderGameOverlayEvent.ElementType.EXPERIENCE) {
+            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderXPBar(Minecraft.getMinecraft().player))) {
+                event.setCanceled(true);
+            }
+        }else if(event.getType()== RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
+            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderCrosshair(Minecraft.getMinecraft().player))) {
                 event.setCanceled(true);
             }
         }

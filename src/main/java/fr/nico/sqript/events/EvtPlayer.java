@@ -70,7 +70,7 @@ public class EvtPlayer {
     @Event(name = "Player sends message",
             description = "Called when a player sends a message",
             examples = "on player sending message:",
-            patterns = "[player] send[ing] [a] message)",
+            patterns = "[player] send[ing] [a] message",
             accessors = {"player|sender:player","message:string"}
     )
     public static class EvtOnPlayerSendMessage extends ScriptEvent {
@@ -79,6 +79,39 @@ public class EvtPlayer {
             super(new ScriptAccessor(new TypePlayer(player), "player"),
                     new ScriptAccessor(new TypeString(message), "message"));
         }
+    }
+
+    @Cancelable
+    @Event(name = "Player pickups an item",
+            description = "Called when a player pickups an item",
+            examples = "on item pickup:",
+            patterns = "(player pickup[s] item|item pickup)",
+            accessors = {"player:player","[picked [up]] item:item"
+            }
+    )
+    public static class EvtOnItemPickup extends ScriptEvent {
+
+        public EvtOnItemPickup(EntityPlayer player,ItemStack item) {
+            super(new ScriptAccessor(new TypePlayer(player),"player"),
+                    new ScriptAccessor(new TypeItem(item),"[picked [up]] item"));
+        }
+
+    }
+
+    @Event(name = "Player used an item",
+            description = "Called when a player uses an item",
+            examples = "on item use:",
+            patterns = "(player use[s] item|item use)",
+            accessors = {"player:player","[used] item:item"
+            }
+    )
+    public static class EvtOnItemUse extends ScriptEvent {
+
+        public EvtOnItemUse(EntityPlayer player,ItemStack item) {
+            super(new ScriptAccessor(new TypePlayer(player),"player"),
+                    new ScriptAccessor(new TypeItem(item),"[used] item"));
+        }
+
     }
 
 

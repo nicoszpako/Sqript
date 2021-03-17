@@ -5,6 +5,7 @@ import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeVector;
 import fr.nico.sqript.types.primitive.TypeNumber;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.util.vector.Vector3f;
 
 @Native(
@@ -27,27 +28,49 @@ public class FuncVector extends ScriptNativeFunction {
     public ScriptType get(ScriptContext context, ScriptType... parameters) {
         switch(matchedDefinition) {
             case 0: {
-                Vector3f v1 = (Vector3f) parameters[0].getObject();
+                Vec3d v1 = (Vec3d) parameters[0].getObject();
                 double s = (double) parameters[1].getObject();
-                return new TypeVector((Vector3f) v1.scale((float) s));
+                return new TypeVector((Vec3d) v1.scale((float) s));
             }
             case 1: {
-                Vector3f v1 = (Vector3f) parameters[0].getObject();
-                Vector3f v2 = (Vector3f) parameters[1].getObject();
-                return new TypeNumber((double) Vector3f.dot(v1,v2));
+                Vec3d v1 = (Vec3d) parameters[0].getObject();
+                Vec3d v2 = (Vec3d) parameters[1].getObject();
+                return new TypeNumber(dot(v1,v2));
             }
             case 2: {
-                Vector3f v1 = (Vector3f) parameters[0].getObject();
-                Vector3f v2 = (Vector3f) parameters[1].getObject();
-                return new TypeVector(Vector3f.cross(v1,v2,null));
+                Vec3d v1 = (Vec3d) parameters[0].getObject();
+                Vec3d v2 = (Vec3d) parameters[1].getObject();
+                return new TypeVector(cross(v1,v2,null));
             }
             case 3: {
                 double a = (double) parameters[0].getObject();
                 double b = (double) parameters[1].getObject();
                 double c = (double) parameters[2].getObject();
-                return new TypeVector(new Vector3f((float)a,(float)b,(float)c));
+                return new TypeVector(new Vec3d((float)a,(float)b,(float)c));
             }
         }
         return null;
+    }
+
+    public static double dot(Vec3d left, Vec3d right) {
+        return left.x * right.x + left.y * right.y + left.z * right.z;
+    }
+
+    public static Vec3d cross(
+            Vec3d left,
+            Vec3d right,
+            Vec3d dest)
+    {
+
+        if (dest == null)
+            dest = new Vec3d(0,0,0);
+
+        dest = new Vec3d(
+                left.y * right.z - left.z * right.y,
+                right.x * left.z - right.z * left.x,
+                left.x * right.y - left.y * right.x
+        );
+
+        return dest;
     }
 }

@@ -12,9 +12,14 @@ public class BlockDefinition {
     Pattern regex;
     String[] example;
     Side side;
+    boolean reloadable;
 
     public Side getSide() {
         return side;
+    }
+
+    public boolean isReloadable() {
+        return reloadable;
     }
 
     public Class<? extends ScriptBlock> getBlockClass() {
@@ -23,13 +28,14 @@ public class BlockDefinition {
 
     private Class<? extends ScriptBlock> cls;
 
-    public BlockDefinition(String name, String description, String[] example, Class<? extends ScriptBlock> cls, String regex, Side side) {
+    public BlockDefinition(String name, String description, String[] example, Class<? extends ScriptBlock> cls, String regex, Side side, boolean reloadable) {
         this.name = name;
         this.example = example;
         this.description = description;
         this.cls=cls;
         this.regex = Pattern.compile(regex);
         this.side = side;
+        this.reloadable = reloadable;
     }
 
     public String getName() {

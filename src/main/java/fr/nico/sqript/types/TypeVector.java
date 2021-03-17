@@ -1,19 +1,40 @@
 package fr.nico.sqript.types;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
+import fr.nico.sqript.structures.ScriptOperator;
+import fr.nico.sqript.types.interfaces.ILocatable;
+import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.util.vector.Vector3f;
 
 @Type(name = "vector",
         parsableAs = {TypeString.class})
-public class TypeVector extends ScriptType<Vector3f> {
+public class TypeVector extends ScriptType<Vec3d> implements ILocatable {
 
     @Override
     public ScriptElement parse(String typeName) {
         if(typeName.equals("string"))return new TypeString(this.getObject().toString());
         return null;
     }
+
+    static {
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeVector .class, TypeVector.class,
+                (a,b) -> new TypeVector(((TypeVector)a).getObject().add(((TypeVector)b).getObject())));
+
+        ScriptManager.registerBinaryOperation(ScriptOperator.SUBTRACT, TypeVector .class, TypeVector.class,
+                (a,b) -> new TypeVector(((TypeVector)a).getObject().subtract(((TypeVector)b).getObject())));
+
+        ScriptManager.registerBinaryOperation(ScriptOperator.MULTIPLY, TypeVector .class, TypeNumber.class,
+                (a,b) -> new TypeVector(((TypeVector)a).getObject().scale(((TypeNumber)b).getObject())));
+
+        ScriptManager.registerBinaryOperation(ScriptOperator.MULTIPLY, TypeNumber .class, TypeVector.class,
+                (a,b) -> new TypeVector(((TypeVector)b).getObject().scale(((TypeNumber)a).getObject())));
+    }
+
+
 
     @Override
     public String toString() {
@@ -28,8 +49,12 @@ public class TypeVector extends ScriptType<Vector3f> {
         return sb.toString();
     }
 
-    public TypeVector(Vector3f vec) {
+    public TypeVector(Vec3d vec) {
         super(vec);
     }
 
+    @Override
+    public Vec3d getVector() {
+        return getObject();
+    }
 }

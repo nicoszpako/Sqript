@@ -5,6 +5,7 @@ import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -31,15 +32,15 @@ public class SqriptUtils {
         else return 0;
     }
 
-    public static BlockPos arrayToLocation(ArrayList list){
+    public static Vec3d arrayToLocation(ArrayList list){
         if(list.size()==0)
-            return new BlockPos(0,0,0);
+            return new Vec3d(0,0,0);
         if(list.size()==1)
-            return new BlockPos(((TypeNumber)list.get(0)).getObject(),0,0);
+            return new Vec3d(((TypeNumber)list.get(0)).getObject(),0,0);
         if(list.size()==2)
-            return new BlockPos(((TypeNumber)list.get(0)).getObject(),((TypeNumber)list.get(1)).getObject(),0);
+            return new Vec3d(((TypeNumber)list.get(0)).getObject(),((TypeNumber)list.get(1)).getObject(),0);
         else
-            return new BlockPos(((TypeNumber)list.get(0)).getObject(),((TypeNumber)list.get(1)).getObject(),((TypeNumber)list.get(2)).getObject());
+            return new Vec3d(((TypeNumber)list.get(0)).getObject(),((TypeNumber)list.get(1)).getObject(),((TypeNumber)list.get(2)).getObject());
     }
 
     public static ArrayList locactionToArray(double x, double y, double z){

@@ -222,6 +222,38 @@ public class ScriptException extends Exception {
         }
     }
 
+    public static class ScriptMissingFieldException extends ScriptException {
+
+        String requiredFieldName;
+        String blockName;
+
+        public ScriptMissingFieldException(ScriptLine line,String blockName,String requiredFieldName) {
+            super(line);
+            this.requiredFieldName = requiredFieldName;
+            this.blockName = blockName;
+        }
+
+        @Override
+        public String getMessage() {
+            return "Field \""+requiredFieldName+"\" for block \""+blockName+"\" cannot be undefined: \n"+line;
+        }
+    }
+
+
+    public static class ScriptMissingBracket extends Exception {
+
+        String pattern;
+
+        public ScriptMissingBracket(String pattern) {
+            this.pattern=pattern;
+        }
+
+        @Override
+        public String getMessage() {
+            return "A bracket is missing for pattern : \n"+pattern;
+        }
+    }
+
     public static class ScriptMissingTokenException extends ScriptException {
 
         public ScriptMissingTokenException(ScriptLine line) {

@@ -17,7 +17,12 @@ public abstract class ScriptBlock extends IScript {
 
     private ScriptLineBlock mainField;
     private IScript root;
+    private ScriptLine head;
     private ScriptInstance scriptInstance;
+
+    public ScriptLine getHead() {
+        return head;
+    }
 
     public ScriptBlock() {
     }
@@ -27,8 +32,8 @@ public abstract class ScriptBlock extends IScript {
      * @throws ScriptException.ScriptSyntaxException When the head of the block doesn't match the required pattern
      */
     public ScriptBlock(ScriptLine head) throws ScriptException.ScriptSyntaxException {
+        this.head = head;
         scriptInstance = head.scriptInstance;
-
     }
 
     public ScriptLineBlock getMainField() {
@@ -87,7 +92,7 @@ public abstract class ScriptBlock extends IScript {
      * @throws ScriptException.ScriptMissingTokenException When a sub-block is empty
      */
     protected void groupFields(List<ScriptLine> block) throws ScriptException.ScriptIndentationErrorException, ScriptException.ScriptMissingTokenException {
-        Pattern getLabel = Pattern.compile("\\s*([\\w]*)(?: )?:(.*)");
+        Pattern getLabel = Pattern.compile("\\s*([\\w ]*)(?: )?:(.*)");
         String currentLabel = "";
         ScriptLine next;
         setMainField(new ScriptLineBlock(currentLabel, new ArrayList<>()));
@@ -211,7 +216,7 @@ public abstract class ScriptBlock extends IScript {
             return ScriptDecoder.getExpression(content.get(0), group).get(context);
         }
 
-        public String getRawHead() {
+        public String getRawContent() {
             return content.get(0).text.trim();
         }
 

@@ -5,6 +5,7 @@ import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 @Type(name = "player",
         parsableAs = {})
@@ -26,7 +27,8 @@ public class TypePlayer extends ScriptType<EntityPlayer> implements ILocatable {
 
 
     @Override
-    public BlockPos getPos() {
-        return getObject().getPosition();
+    public Vec3d getVector() {
+        return new Vec3d(getObject().posX,getObject().posY,getObject().posZ);
     }
+
 }

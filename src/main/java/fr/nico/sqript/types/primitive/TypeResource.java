@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 @Primitive(name = "resource",
         parsableAs = {},
-        pattern = "(\\w+:[\\w.]+)"
+        pattern = "(\\w+:[\\w./]+)"
 )
 public class TypeResource extends PrimitiveType<ResourceLocation> {
 
@@ -24,7 +24,7 @@ public class TypeResource extends PrimitiveType<ResourceLocation> {
     }
 
     public TypeResource(String parameter){
-        super(new ResourceLocation(parameter.split(":")[0],parameter.split(":")[1]));
+        super(new ResourceLocation(parameter.split(":")[0],(parameter.split(":")[1].endsWith("png") && !parameter.split(":")[1].startsWith("textures/"))?"textures/"+parameter.split(":")[1]:parameter.split(":")[1]));
     }
 
 }

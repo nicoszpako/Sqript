@@ -7,8 +7,10 @@ import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeBlock;
+import fr.nico.sqript.types.TypeVector;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.primitive.TypeNumber;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 
@@ -19,8 +21,9 @@ import java.util.ArrayList;
                 "x coord[inate] of {array}:number",
                 "y coord[inate] of {array}:number",
                 "z coord[inate] of {array}:number",
-                "location of {element}|{element}'s location: array",
-                "distance between {element} and {element}:number"
+                "location of {element}|{+element}'s location: array",
+                "distance between {element} and {element}:number",
+                "vector of {array}|{array} vector:vector"
 
         }
 )
@@ -39,11 +42,15 @@ public class ExprLocation extends ScriptExpression{
                 return new TypeNumber((double) locatable.getPos().getZ());
             case 3:
                 locatable = parameters[0] == null ? (ILocatable) parameters[1] : (ILocatable) parameters[0];
-                return new TypeArray(SqriptUtils.locactionToArray(locatable.getPos()));
+                Vec3d vector = locatable.getVector();
+                return new TypeArray(SqriptUtils.locactionToArray(vector.x,vector.y,vector.z));
             case 4:
                 ILocatable b1 = (ILocatable) parameters[0];
                 ILocatable b2 = (ILocatable) parameters[1];
                 return new TypeNumber(Math.sqrt(b1.getPos().distanceSq(b2.getPos())));
+            case 5:
+                locatable = parameters[0] == null ? (ILocatable) parameters[1] : (ILocatable) parameters[0];
+                return new TypeVector(locatable.getVector());
         }
         return null;
     }

@@ -66,8 +66,6 @@ public class TransformedPattern {
                     //System.out.println(Integer.toBinaryString(r));
                 }
             }catch(Exception ignored){
-                ScriptManager.log.error("Error while reading marks for : "+line);
-                ignored.printStackTrace();
             }
         }
         return r;

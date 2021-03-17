@@ -14,5 +14,6 @@ public @interface Block {
     String[] fields() default {};
     String regex();
     Side side() default Side.BOTH;
+    boolean reloadable() default true;
 
 }

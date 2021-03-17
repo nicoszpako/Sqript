@@ -6,9 +6,11 @@ import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
+import fr.nico.sqript.types.TypeVector;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import java.util.Arrays;
             "{+player}['s] name:player",
             "{+player}['s] health:number",
             "{+player}['s] (hunger|food):number",
+            "{+player}['s] look vector:vector"
         }
 )
 public class ExprPlayers extends ScriptExpression {
@@ -52,6 +55,9 @@ public class ExprPlayers extends ScriptExpression {
                 player = (EntityPlayer) parameters[0].getObject();
                 //System.out.println(player.getFoodStats().getFoodLevel());
                 return new TypeNumber(player.getFoodStats().getFoodLevel());
+            case 5:
+                player = (EntityPlayer) parameters[0].getObject();
+                return new TypeVector(Vec3d.fromPitchYaw(player.getPitchYaw().x,player.getRotationYawHead()));
 
         }
         return null;
@@ -64,10 +70,12 @@ public class ExprPlayers extends ScriptExpression {
                 EntityPlayer player = (EntityPlayer) parameters[0].getObject();
                 float health = ((TypeNumber)to).getObject().floatValue();
                 player.setHealth(health);
+                break;
             case 4:
                 player = (EntityPlayer) parameters[0].getObject();
                 float hunger = ((TypeNumber)to).getObject().floatValue();
                 player.getFoodStats().setFoodLevel((int) hunger);
+                break;
         }
         return false;
     }

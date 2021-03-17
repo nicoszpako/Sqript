@@ -13,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import scala.annotation.meta.param;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -23,7 +24,7 @@ import java.util.Objects;
         },
         patterns = {
                 "teleport {player} to {array}",
-                "give {item} to {player}",
+                "give [{+number}] {item} to {player}",
                 "kick {player} [with message {string}]",
         }
 )
@@ -38,7 +39,8 @@ public class ActPlayer extends ScriptAction {
                 player.setPositionAndUpdate((double)pos.get(0), (double)pos.get(1),(double) pos.get(2));
                 return;
             case 1:
-                ScriptType param = getParameter(1).get(context);
+                int amount = getParameterOrDefault(getParameter(1),1, context);
+                ScriptType param = getParameter(2).get(context);
                 ItemStack item = null;
                 if (param instanceof TypeResource) {
                     Item i = ForgeRegistries.ITEMS.getValue(((TypeResource) (param)).getObject());
@@ -49,7 +51,7 @@ public class ActPlayer extends ScriptAction {
                             return;
                         }
                     }
-                    item = new ItemStack(i);
+                    item = new ItemStack(i,amount);
                 }
                 if (param instanceof TypeItem) {
                     item = ((TypeItem) (param)).getObject();

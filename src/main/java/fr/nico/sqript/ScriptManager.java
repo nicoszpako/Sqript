@@ -1,6 +1,5 @@
 package fr.nico.sqript;
 
-import com.sun.org.apache.regexp.internal.RE;
 import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.blocks.ScriptBlock;
 import fr.nico.sqript.blocks.ScriptBlockCommand;
@@ -12,6 +11,8 @@ import fr.nico.sqript.events.EvtOnScriptLoad;
 import fr.nico.sqript.events.ScriptEvent;
 import fr.nico.sqript.blocks.ScriptBlockEvent;
 import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.forge.common.ScriptResourceLoader;
+import fr.nico.sqript.forge.SqriptForge;
 import fr.nico.sqript.function.ScriptNativeFunction;
 import fr.nico.sqript.structures.*;
 import fr.nico.sqript.structures.IOperation;
@@ -20,22 +21,14 @@ import fr.nico.sqript.types.primitive.PrimitiveType;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.meta.*;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLModContainer;
-import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.discovery.ContainerType;
-import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -168,9 +161,9 @@ public class ScriptManager {
         actions.add(new ActionDefinition(name, description, example, cls, priority, patterns));
     }
 
-    public static void registerBlock(Class<? extends ScriptBlock> cls, String name, String description, String[] examples, String regex, Side side) {
+    public static void registerBlock(Class<? extends ScriptBlock> cls, String name, String description, String[] examples, String regex, Side side, boolean reloadable) {
         log.debug("Registering block : " + name + " (" + cls.getSimpleName() + ")");
-        blocks.add(new BlockDefinition(name, description, examples, cls, regex,side));
+        blocks.add(new BlockDefinition(name, description, examples, cls, regex, side, reloadable));
     }
 
 
@@ -303,11 +296,10 @@ public class ScriptManager {
     }
 
     public static void loadScripts(File mainFolder) throws Throwable {
-        if(FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
-            loadResources(mainFolder);
-
         loadFolder(mainFolder);
 
+        if(FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
+            loadResources(mainFolder);
 
         if(FULL_DEBUG)
             for(ScriptInstance instance : scripts){
@@ -320,7 +312,8 @@ public class ScriptManager {
     }
 
     @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
-    private static void loadResources(File mainFolder) throws IllegalAccessException {
+    public static void loadResources(File mainFolder) throws IllegalAccessException {
+        System.out.println("Adding "+mainFolder+" to loaded resources.");
         ScriptResourceLoader resourceLoader = new ScriptResourceLoader();
         Field defaultResourcePacksField = ObfuscationReflectionHelper.findField(Minecraft.getMinecraft().getClass(),"field_110449_ao");
         defaultResourcePacksField.setAccessible(true);

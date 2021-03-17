@@ -24,6 +24,34 @@ public class EvtRender {
 
     }
 
+    @Event(name = "render crosshair",
+            description = "Called when crosshair is rendered",
+            examples = "on render of crosshair:",
+            patterns = "[of] crosshair[s] bar",
+            accessors = {"player:player"},
+            side = Side.CLIENT)
+    public static class EvtOnRenderCrosshair extends ScriptEvent {
+
+        public EvtOnRenderCrosshair(EntityPlayer player) {
+            super(new ScriptAccessor(new TypePlayer(player),"player"));
+        }
+
+    }
+
+    @Event(name = "render experience bar",
+            description = "Called when experience bar is rendered",
+            examples = "on render xp bar:",
+            patterns = "[of] (xp|experience) bar",
+            accessors = {"player:player"},
+            side = Side.CLIENT)
+    public static class EvtOnRenderXPBar extends ScriptEvent {
+
+        public EvtOnRenderXPBar(EntityPlayer player) {
+            super(new ScriptAccessor(new TypePlayer(player),"player"));
+        }
+
+    }
+
     @Cancelable
     @Event(name = "render chat",
             description = "Called when chat is rendered",

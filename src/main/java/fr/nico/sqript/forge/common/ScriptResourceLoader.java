@@ -1,4 +1,4 @@
-package fr.nico.sqript;
+package fr.nico.sqript.forge.common;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import fr.nico.sqript.ScriptManager;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.logging.log4j.Level;
 
@@ -66,7 +67,7 @@ public class ScriptResourceLoader implements IResourcePack
 		}
 		HashSet<String> folders = new HashSet<String>();
 
-		ScriptManager.log.log(Level.DEBUG, "[NormalResourceLoader] Resource Loader Domains: ");
+		ScriptManager.log.log(Level.DEBUG, "[SqriptResourceLoader] Resource Loader Domains: ");
 
 		File[] resourceDomains = folder.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
 
@@ -80,7 +81,7 @@ public class ScriptResourceLoader implements IResourcePack
 
 		for (File resourceFolder : resourceDomains)
 		{
-			ScriptManager.log.log(Level.DEBUG, "[NormalResourceLoader]  - " + resourceFolder.getName() + " | " + resourceFolder.getAbsolutePath());
+			ScriptManager.log.log(Level.DEBUG, "[SqriptResourceLoader]  - " + resourceFolder.getName() + " | " + resourceFolder.getAbsolutePath());
 			folders.add(resourceFolder.getName());
 		}
 
@@ -102,6 +103,6 @@ public class ScriptResourceLoader implements IResourcePack
 	@Override
 	public String getPackName()
 	{
-		return "CustomResources";
+		return "SqriptResources";
 	}
 }

@@ -87,7 +87,7 @@ public class ScriptLoader
                     BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
                     if(blockDefinition==null)
                         throw new ScriptException.ScriptUnknownTokenException(head);
-                    if(blockDefinition.getSide().isStrictlyValid()){
+                    if(blockDefinition.getSide().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())){
                         Class scriptBlockClass = blockDefinition.getBlockClass();
                         //System.out.println("Loading : "+scriptBlockClass.getSimpleName());
                         try{

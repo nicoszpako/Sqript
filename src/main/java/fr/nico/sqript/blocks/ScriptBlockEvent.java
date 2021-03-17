@@ -6,14 +6,11 @@ import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.meta.EventDefinition;
-import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.structures.ScriptInstance;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Block(name = "event",
         description = "Event blocks",
@@ -68,7 +65,7 @@ public class ScriptBlockEvent extends ScriptBlock {
     @Override
     protected void load() throws Exception {
         if(fieldDefined("side"))
-            side = Side.from(getSubBlock("side").getRawHead());
+            side = Side.from(getSubBlock("side").getRawContent());
 
         if(side!=null && !side.isStrictlyValid())
             return;

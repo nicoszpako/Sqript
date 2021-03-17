@@ -15,8 +15,10 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Vector3f;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -169,7 +171,8 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISer
     }
 
     @Override
-    public BlockPos getPos() {
+    public Vec3d getVector() {
         return SqriptUtils.arrayToLocation(getObject());
     }
+
 }

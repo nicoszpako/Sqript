@@ -1,6 +1,6 @@
 package fr.nico.sqript.network;
 
-import fr.nico.sqript.SqriptForge;
+import fr.nico.sqript.forge.SqriptForge;
 import fr.nico.sqript.blocks.ScriptBlockPacket;
 import fr.nico.sqript.types.ScriptType;
 import net.minecraft.entity.player.EntityPlayer;

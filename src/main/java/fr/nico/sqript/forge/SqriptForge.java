@@ -1,13 +1,22 @@
-package fr.nico.sqript;
+package fr.nico.sqript.forge;
 
 import com.google.common.collect.SetMultimap;
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.blocks.ScriptBlockCommand;
+import fr.nico.sqript.forge.common.ScriptEventHandler;
+import fr.nico.sqript.forge.common.SqriptCommand;
+import fr.nico.sqript.forge.common.item.ScriptItemBase;
 import fr.nico.sqript.network.ScriptMessage;
 import fr.nico.sqript.network.ScriptNetworkManager;
 import fr.nico.sqript.network.ScriptSyncDataMessage;
 import fr.nico.sqript.meta.*;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.Item;
 import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -18,6 +27,7 @@ import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -28,6 +38,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Mod(name = "Sqript",modid = "sqript")
+@Mod.EventBusSubscriber(modid="sqript")
 public class SqriptForge {
 
     public static String MODID = "sqript";
@@ -35,6 +46,9 @@ public class SqriptForge {
     public static SimpleNetworkWrapper channel = NetworkRegistry.INSTANCE.newSimpleChannel("sqript");
 
     public static File scriptDir;
+
+    public static ArrayList<ScriptItemBase> items = new ArrayList<>();
+    public static ArrayList<net.minecraft.block.Block> blocks = new ArrayList<>();
 
     @Mod.EventHandler
     public static void serverStartEvent(FMLServerStartingEvent event){
@@ -192,7 +206,7 @@ public class SqriptForge {
             try {
                 Class toRegister = Class.forName(c.getClassName());
                 Block e = (Block) toRegister.getAnnotation(Block.class);
-                ScriptManager.registerBlock(toRegister, e.name(), e.description(), e.examples(),e.regex(), e.side());
+                ScriptManager.registerBlock(toRegister, e.name(), e.description(), e.examples(),e.regex(), e.side(), e.reloadable());
             } catch (Exception e) {
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();
             }
@@ -244,6 +258,29 @@ public class SqriptForge {
         ScriptNetworkManager.init();
 
         MinecraftForge.EVENT_BUS.register(new ScriptEventHandler());
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        System.out.println("Registering Sqript items, there are : "+items.size()+" item(s) to register.");
+        for (ScriptItemBase e : items) {
+            System.out.println("Registering : "+e.getRegistryName());
+            event.getRegistry().register(e);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public static void registerModels(ModelRegistryEvent event) {
+        for (ScriptItemBase e : items) {
+            if(e.customModel.isEmpty())
+                ModelLoader.setCustomModelResourceLocation(e, 0, new ModelResourceLocation(
+                    e.modid+":"+e.registryName, "inventory"));
+            else
+                ModelLoader.setCustomModelResourceLocation(e, 0, new ModelResourceLocation(
+                        e.customModel, "inventory"));
+        }
+
     }
 
 }
