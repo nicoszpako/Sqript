@@ -1,0 +1,64 @@
+@font-face {
+    font-family: 'robotothin';
+    src: url('fonts/roboto-thin-webfont.woff2') format('woff2'),
+         url('fonts/roboto-thin-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+h2 {
+ display: inline-block;
+ font-weight: bold;
+ background: #FF6F00;
+ color: #ffffff;
+ padding: 3px 10px 1px;
+ border-radius: 8px;
+ margin-right: 3px;
+ font-size: 1.3rem;
+ border-bottom: 2px solid #FF6F00;
+}
+
+
+h3 {
+  font-size: 1.4rem;
+  color: rgb(239, 112, 96);
+}
+
+h4 {
+
+  border-bottom: 1px solid #ccc;
+}
+
+header.md-header {
+	background-color: #998CFF;
+}
+
+a.md-tabs__link {
+	font-family: Bebas Neue
+	font-size: 20px;
+}
+
+
+nav.md-tabs.mb-tabs--active{
+	max-height = 10px;
+}
+
+img.img-logo{
+	background-size: 100%;
+	background-size: cover;
+ 	background-repeat: no-repeat;
+ 	background-position: 50% 50%;
+ 	margin-top: -14px;
+	min-width: 100px;
+	min-height: 50px;
+	width: auto;
+	height: auto;
+}
+
+span.md-header-nav__topic{
+	color: black;
+
+	font-weight: 150;
+	font-size: 20px;
+	margin-left: -18px;
+}

@@ -1,0 +1,1749 @@
+
+
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation Sqript">
+      
+      
+        <link rel="canonical" href="https://sqript.fr/fonc/Type/">
+      
+      
+      <link rel="shortcut icon" href="../../img/sqriptlogo_s.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.4.0">
+    
+    
+      
+        <title>Ajouter un type - Sqript</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.fe0cca5b.min.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#7e57c2">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,400i,700%7C&display=fallback">
+        <style>body,input{font-family:"Lato",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#types" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Application header -->
+<header class="md-header" data-md-component="header">
+
+  <!-- Top-level navigation -->
+  <nav class="md-header-nav md-grid" aria-label="Header">
+
+    <!-- Link to home -->
+    <a
+      href="https://sqript.fr/"
+      title="Sqript"
+      class="md-header-nav__button md-logo"
+      aria-label="Sqript"
+    >
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Logo -->
+
+  <img class="img-logo" src="../../img/sqriptlogo_black.png" alt="logo" />
+
+    </a>
+
+    <!-- Button to open drawer -->
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+
+    <!-- Header title -->
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+          Sqript
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Ajouter un type
+            
+          </span>
+        </div>
+      
+    </div>
+
+    <!-- Button to open search dialogue -->
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+
+      <!-- Search interface -->
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    <!-- Repository containing source -->
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Main navigation -->
+<nav
+  class="md-nav md-nav--primary"
+  aria-label="Navigation"
+  data-md-level="0"
+>
+
+  <!-- Site title -->
+  <label class="md-nav__title" for="__drawer">
+    <a
+      href="https://sqript.fr/"
+      title="Sqript"
+      class="md-nav__button md-logo"
+      aria-label="Sqript"
+    >
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Logo -->
+
+  <img class="img-logo" src="../../img/sqriptlogo_black.png" alt="logo" />
+
+    </a>
+    Sqript
+  </label>
+
+  <!-- Repository containing source -->
+  
+
+  <!-- Render item list -->
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../.."
+      title="Présentation"
+      class="md-nav__link"
+    >
+      Présentation
+    </a>
+  </li>
+
+    
+      
+      
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item md-nav__item--nested">
+
+    <!-- Active checkbox expands items contained within nested section -->
+    
+      <input
+        class="md-nav__toggle md-toggle"
+        data-md-toggle="nav-2"
+        type="checkbox"
+        id="nav-2"
+      />
+    
+
+    <!-- Expand active pages -->
+    <label class="md-nav__link" for="nav-2">
+      Apprendre Sqript
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav
+      class="md-nav"
+      aria-label="Apprendre Sqript"
+      data-md-level="1"
+    >
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Apprendre Sqript
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+
+        <!-- Render nested item list -->
+        
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../base/Structure/"
+      title="La structure d'un sqript"
+      class="md-nav__link"
+    >
+      La structure d'un sqript
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../base/Evenements/"
+      title="Les évènements"
+      class="md-nav__link"
+    >
+      Les évènements
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../base/Variables/"
+      title="Les variables"
+      class="md-nav__link"
+    >
+      Les variables
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../base/Actions/"
+      title="Les actions et les expressions"
+      class="md-nav__link"
+    >
+      Les actions et les expressions
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../base/Conditions/"
+      title="Les conditions"
+      class="md-nav__link"
+    >
+      Les conditions
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../base/Collections/"
+      title="Les collections"
+      class="md-nav__link"
+    >
+      Les collections
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../base/Boucles/"
+      title="Les boucles"
+      class="md-nav__link"
+    >
+      Les boucles
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../base/Fonctions/"
+      title="Les fonctions"
+      class="md-nav__link"
+    >
+      Les fonctions
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../base/Options/"
+      title="Les options"
+      class="md-nav__link"
+    >
+      Les options
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../base/Liste/"
+      title="Listes des évènements, actions, expressions et blocs implémentés"
+      class="md-nav__link"
+    >
+      Listes des évènements, actions, expressions et blocs implémentés
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+<!-- Currently active page -->
+
+    
+      
+      
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+  
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+
+    <!-- Active checkbox expands items contained within nested section -->
+    
+      <input
+        class="md-nav__toggle md-toggle"
+        data-md-toggle="nav-3"
+        type="checkbox"
+        id="nav-3"
+        checked
+      />
+    
+
+    <!-- Expand active pages -->
+    <label class="md-nav__link" for="nav-3">
+      Ajouter des fonctionnalités à Sqript
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav
+      class="md-nav"
+      aria-label="Ajouter des fonctionnalités à Sqript"
+      data-md-level="1"
+    >
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Ajouter des fonctionnalités à Sqript
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+
+        <!-- Render nested item list -->
+        
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Conventions/"
+      title="Les conventions"
+      class="md-nav__link"
+    >
+      Les conventions
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../ScriptContext/"
+      title="Le ScriptContext"
+      class="md-nav__link"
+    >
+      Le ScriptContext
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Patterns/"
+      title="Les patterns"
+      class="md-nav__link"
+    >
+      Les patterns
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+  
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item md-nav__item--active">
+    
+
+    <!-- Active checkbox expands items contained within nested section -->
+    <input
+      class="md-nav__toggle md-toggle"
+      data-md-toggle="toc"
+      type="checkbox"
+      id="__toc"
+    />
+
+    <!-- Hack: see partials/toc.html for more information -->
+    
+
+    <!-- Render table of contents, if not empty -->
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Ajouter un type
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a
+      href="./"
+      title="Ajouter un type"
+      class="md-nav__link md-nav__link--active"
+    >
+      Ajouter un type
+    </a>
+
+    <!-- Show table of contents -->
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#types" class="md-nav__link">
+    Types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#types-primitifs" class="md-nav__link">
+    Types primitifs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations-operateurs" class="md-nav__link">
+    Opérations &amp; opérateurs
+  </a>
+  
+    <nav class="md-nav" aria-label="Opérations &amp; opérateurs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enregistrer-un-nouvel-operateur" class="md-nav__link">
+    Enregistrer un nouvel opérateur
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operateurs-pre-existants" class="md-nav__link">
+    Opérateurs pré-existants
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#definir-une-operation-pour-un-type" class="md-nav__link">
+    Définir une opération pour un type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+<!-- Main navigation item -->
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Evenements/"
+      title="Ajouter un évènement"
+      class="md-nav__link"
+    >
+      Ajouter un évènement
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Expressions/"
+      title="Ajouter une expression"
+      class="md-nav__link"
+    >
+      Ajouter une expression
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Action/"
+      title="Ajouter une action"
+      class="md-nav__link"
+    >
+      Ajouter une action
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Bloc/"
+      title="Ajouter un bloc"
+      class="md-nav__link"
+    >
+      Ajouter un bloc
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+<!-- Currently active page -->
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#types" class="md-nav__link">
+    Types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#types-primitifs" class="md-nav__link">
+    Types primitifs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations-operateurs" class="md-nav__link">
+    Opérations &amp; opérateurs
+  </a>
+  
+    <nav class="md-nav" aria-label="Opérations &amp; opérateurs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enregistrer-un-nouvel-operateur" class="md-nav__link">
+    Enregistrer un nouvel opérateur
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operateurs-pre-existants" class="md-nav__link">
+    Opérateurs pré-existants
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#definir-une-operation-pour-un-type" class="md-nav__link">
+    Définir une opération pour un type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                  <h1>Ajouter un type</h1>
+                
+                <p>Les types sont la base du fonctionnement des scripts. Ce sont simplement des classes "encapsulées" dans une classe particulière : le <code>ScriptType</code>. C'est le fait d'hériter cette classe et d'implémenter certaines interfaces qui permet de définir un comportement à l'objet que l'ont veut intégrer à Sqript.</p>
+<h4 id="types">Types</h4>
+<p>Pour créer un nouveau type, commencer par créer une nouvelle classe héritant de la classe <code>ScriptType&lt;T&gt;</code> avec <code>T</code> la classe de l'objet à implémenter. Par exemple, il est possible de définir un <code>ScriptType&lt;EntityPlayer&gt;</code>, qui définira comment se comporte les instances de la classe <code>EntityPlayer</code> dans un script. Ensuite, implémenter les méthodes abstraites de la classe mère.</p>
+<p>La méthode la plus importante de la classe est le constructeur, qui va permettre d'encapsuler l'instance de la classe que vous souhaitez intégrer dans un <code>ScriptType</code>. Un appel au constructeur <code>super</code> suffit pour encapsuler la variable. Par exemple pour la classe <code>EntityPlayer</code> :</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TypePlayer</span> <span class="kd">extends</span> <span class="n">ScriptType</span><span class="o">&lt;</span><span class="n">EntityPlayer</span><span class="o">&gt;</span> <span class="p">{</span>
+
+    <span class="kd">public</span> <span class="nf">TypePlayer</span><span class="p">(</span><span class="n">EntityPlayer</span> <span class="n">player</span><span class="p">){</span>
+        <span class="kd">super</span><span class="p">(</span><span class="n">player</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">ScriptElement</span><span class="o">&lt;?&gt;</span> <span class="n">parse</span><span class="p">(</span><span class="n">String</span> <span class="n">typeName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Compléter la méthode <code>parse()</code> n'est pas obligatoire, mais peut être très utile dans certaines situations. Retourner <code>null</code> désactivera la capacité du type à être <em>parsé</em>.</p>
+<p>Jusqu'alors, le type n'est pas encore utilisable : il faut l'enregistrer. Pour ce faire, il suffit d'annoter la classe avec l'annotation <code>@Type</code> :</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Type</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;player&quot;</span><span class="p">,</span>
+        <span class="n">parsableAs</span> <span class="o">=</span>  <span class="p">{})</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TypePlayer</span> <span class="kd">extends</span> <span class="n">ScriptType</span><span class="o">&lt;</span><span class="n">EntityPlayer</span><span class="o">&gt;</span> <span class="p">{</span>
+
+    <span class="kd">public</span> <span class="nf">TypePlayer</span><span class="p">(</span><span class="n">EntityPlayer</span> <span class="n">player</span><span class="p">){</span>
+        <span class="kd">super</span><span class="p">(</span><span class="n">player</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">ScriptElement</span><span class="o">&lt;?&gt;</span> <span class="n">parse</span><span class="p">(</span><span class="n">String</span> <span class="n">typeName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Il est possible de surcharger la méthode <code>toString()</code> pour définir le comportement de l'objet lorsqu'il sera converti en <em>TypeString</em>. Pour tous les autres types, il faudra passer par la méthode <code>parse()</code>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Il peut être intéressant de faire votre propre implémentation de la fonction hashCode() pour assurer un bonne gestion de votre type dans les tableaux ou les dictionnaires.</p>
+</div>
+<p>Vous aurez accès à l'objet encapsulé en grâce au paramètre <code>object</code> de l'instance de votre classe.</p>
+<p>Il est possible de complexifier le comportement du type en implémentant certaines interfaces :</p>
+<ul>
+<li><code>ISerialisable</code> permet de définir le type comme étant enregistrable. Toute variable globale ayant un type n'implémentant pas cette interface ne pourra être enregistrée. Cette interface comprend deux méthodes, <code>read()</code> et <code>write()</code>, qui agissent sur des tags <em>NBT</em>. Elles sont respectivement appelées d'abord au lancement de Sqript pour charger la valeur de la variable, puis à la fermeture pour l'enregistrer.</li>
+</ul>
+<h4 id="types-primitifs">Types primitifs</h4>
+<p>Les primitifs sont des types pouvant être instanciés sans passer par une expression. Le principe de création est le même que celui des types normaux, la classe à hériter devient <code>PrimitiveType&lt;T&gt;</code>, et l'annotation devient <code>@Primitive</code>. Un nouveau paramètre accompagne cette annotation, il s'agit du <em>pattern</em> de la primitive. <strong>Attention, ce pattern doit être une expression régulière</strong>.</p>
+<p>De la même manière que pour les types normaux, il est nécessaire d'implémenter les méthodes abstraites de la classe mère. La méthode <code>fromString()</code> est la méthode la plus importante des types primitifs, ainsi que leur constructeur, acceptant un argument du type encapsulé. De plus, une type primitif <mark><strong>doit avoir un constructeur acceptant une unique chaîne de caractère</strong></mark> qui sera à <em>parser</em>.</p>
+<p>Voici par exemple le contenu du type primitif <em>TypeString</em> :</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Primitive</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;string&quot;</span><span class="p">,</span>
+        <span class="n">parsableAs</span> <span class="o">=</span> <span class="p">{},</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="s">&quot;(?:\&quot;((?:[^\&quot;\\\\\\\\]|\\\\.)*)\&quot;)&quot;</span><span class="p">;</span>
+<span class="p">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TypeString</span> <span class="kd">extends</span> <span class="n">PrimitiveType</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">IOperable</span> <span class="p">{</span>
+
+    <span class="nd">@Nullable</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">ScriptElement</span> <span class="nf">parse</span><span class="p">(</span><span class="n">String</span> <span class="n">typeName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="nf">TypeString</span><span class="p">(</span><span class="n">String</span> <span class="n">parameter</span><span class="p">){</span>
+        <span class="kd">super</span><span class="p">(</span><span class="n">parameter</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Le pattern est une <strong><em>RegEx</em></strong>, qui sont bien plus complexes que les *patterns, mais aussi plus flexibles et plus puissantes. Il est indispensable de les maîtriser afin de créer des types primitifs. Le paramètre <code>match</code> passé au constructeur est le premier groupe capturé par l'expression régulière du pattern. Ici, le groupe capture automatiquement tout ce qui se trouve entre les guillemets, aucune manipulation n'est donc nécessaire. Cependant, dans le cas des nombres par exemple, il faut utiliser les méthodes adéquates.</p>
+<p>Les mêmes interfaces que pour les types normaux peuvent s'appliquer aux primitives.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Par convention, on appellera également les classes de types primitives "<em>Type\<NomDuType></em>", pour permettre une meilleure écriture et lisibilité du code. </p>
+</div>
+<h4 id="operations-operateurs">Opérations &amp; opérateurs</h4>
+<p>Établir une opération entre deux éléments n'est pas une tâche difficile, mais nécessite quelques bases en ce qui concerne les termes que l'on retrouve dans une expression mathématique. On appellera <strong>opérateur</strong> tous les symboles permettant de mettre en relation les <strong>opérandes</strong>. Les opérandes seront d'autres éléments provenant d'autres expressions. La notion d'opérateur dans Sqript est très abstraite, et il faut prendre en charge chaque cas d'opérateur pour définir correctement un type que l'ont désire pouvoir comparer, composer, etc. L'égalité <code>=</code> notamment est un opérateur au même titre que l'addition <code>+</code>, mais doit retourner un <em>TypeBoolean</em> vrai ou faux.</p>
+<h5 id="enregistrer-un-nouvel-operateur">Enregistrer un nouvel opérateur</h5>
+<p>Il est possible d'enregistrer des opérateurs personnalisés lors du chargement de votre addon. Il suffira d'appeler la méthode <code>registerOperator(ScriptOperator)</code> de la classe <code>ScriptManager</code> pour enregistrer un nouvel opérateur. Un opérateur s'instancie via le constructeur de la classe <code>ScriptOperator</code>, et nécessite au plus 7 arguments que sont :</p>
+<ol>
+<li>Le <strong>symbole</strong> de l'opérateur. Par exemple, "+".</li>
+<li>La priorité de l'opérateur. (cf. <a href="#####Opérateurs-pré-existants">Opérateurs pré-existants</a>)</li>
+<li>L'associativité de l'opération. Elle peut être de gauche à droite (<code>Associativity.LEFT_TO_RIGHT</code>), de droite à gauche (<code>Associativity.RIGHT_TO_LEFT</code>) ou nulle (<code>Associativity.NONE</code>) (<a href="https://fr.wikipedia.org/wiki/Associativité">?</a>).</li>
+<li>La binarité de l'opérateur. Un opérateur binaire compose <strong>2</strong> éléments pour en donner un nouveau, tandis qu'un opérateur unaire transforme <strong>1</strong> seul élément en un nouveau. Configurer à <code>false</code> si l'opérateur est binaire, <code>true</code> s'il est unaire.</li>
+<li>La manière dont l'opérateur doit être lu. Si la valeur est <code>true</code>, l'opérateur ne sera reconnu que s'il est séparé par au moins un espace de l'opérande de gauche et de l'opérande de droite.</li>
+<li><code>true</code> si l'opérateur est post-fixé. Ce qui est le cas du symbole factorielle <code>!</code> par exemple, cela signifie qu'il s'écrit en notation infixée (la notation naturelle) <strong>après</strong> le ou les opérande(s) sur lesquels il s'applique.</li>
+</ol>
+<h5 id="operateurs-pre-existants">Opérateurs pré-existants</h5>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>Symbole</strong></th>
+<th align="center">Description</th>
+<th align="center"><strong>Priorité</strong></th>
+<th align="center"><strong>Associativité</strong></th>
+<th align="center"><strong>Binarité</strong></th>
+<th align="center"><strong>Mot</strong></th>
+<th align="center"><strong>Position</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">+</td>
+<td align="center">"+" Unaire</td>
+<td align="center">14</td>
+<td align="center">Droite à gauche</td>
+<td align="center">Unaire</td>
+<td align="center">Non</td>
+<td align="center">Pré-fixée</td>
+</tr>
+<tr>
+<td align="center">-</td>
+<td align="center">"-" Unaire</td>
+<td align="center">14</td>
+<td align="center">Droite à gauche</td>
+<td align="center">Unaire</td>
+<td align="center">Non</td>
+<td align="center">Pré-fixée</td>
+</tr>
+<tr>
+<td align="center">!</td>
+<td align="center">Factorielle</td>
+<td align="center">14</td>
+<td align="center">Droite à gauche</td>
+<td align="center">Unaire</td>
+<td align="center">Non</td>
+<td align="center">Post-fixée</td>
+</tr>
+<tr>
+<td align="center">*</td>
+<td align="center">Multiplication</td>
+<td align="center">12</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Binaire</td>
+<td align="center">Non</td>
+<td align="center">Infixée</td>
+</tr>
+<tr>
+<td align="center">/</td>
+<td align="center">Division</td>
+<td align="center">12</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Binaire</td>
+<td align="center">Non</td>
+<td align="center">Infixée</td>
+</tr>
+<tr>
+<td align="center">+</td>
+<td align="center">Addition</td>
+<td align="center">11</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Binaire</td>
+<td align="center">Non</td>
+<td align="center">Infixée</td>
+</tr>
+<tr>
+<td align="center">-</td>
+<td align="center">Soustraction</td>
+<td align="center">11</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Binaire</td>
+<td align="center">Non</td>
+<td align="center">Infixée</td>
+</tr>
+<tr>
+<td align="center">>=</td>
+<td align="center">Supérieur ou égal à</td>
+<td align="center">9</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Binaire</td>
+<td align="center">Non</td>
+<td align="center">Infixée</td>
+</tr>
+<tr>
+<td align="center">&lt;=</td>
+<td align="center">Inférieur ou égal à</td>
+<td align="center">9</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Binaire</td>
+<td align="center">Non</td>
+<td align="center">Infixée</td>
+</tr>
+<tr>
+<td align="center">&gt;</td>
+<td align="center">Supérieur à</td>
+<td align="center">9</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Binaire</td>
+<td align="center">Non</td>
+<td align="center">Infixée</td>
+</tr>
+<tr>
+<td align="center">&lt;</td>
+<td align="center">Inférieur à</td>
+<td align="center">9</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Binaire</td>
+<td align="center">Non</td>
+<td align="center">Infixée</td>
+</tr>
+<tr>
+<td align="center">=</td>
+<td align="center">Égalité</td>
+<td align="center">8</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Binaire</td>
+<td align="center">Non</td>
+<td align="center">Infixée</td>
+</tr>
+<tr>
+<td align="center">not</td>
+<td align="center">Négation logique</td>
+<td align="center">5</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Unaire</td>
+<td align="center">Oui</td>
+<td align="center">Pré-fixée</td>
+</tr>
+<tr>
+<td align="center">and</td>
+<td align="center">"Et" logique</td>
+<td align="center">4</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Binaire</td>
+<td align="center">Oui</td>
+<td align="center">Infixée</td>
+</tr>
+<tr>
+<td align="center">or</td>
+<td align="center">"Ou" logique</td>
+<td align="center">3</td>
+<td align="center">Gauche à droite</td>
+<td align="center">Binaire</td>
+<td align="center">Oui</td>
+<td align="center">Post-fixée</td>
+</tr>
+</tbody>
+</table>
+<h5 id="definir-une-operation-pour-un-type">Définir une opération pour un type</h5>
+<p>Les opérations entre les types sont toutes enregistrées dans la même <em>Map</em>, ce qui permet de les modifier si besoin. Pour enregistrer une opération, il suffit d'appeler la méthode <code>ScriptManager.registerBinaryOperation()</code> (dans un bloc <strong>static</strong> de la classe du type par exemple) pour les opérations <strong>binaires</strong> et <code>ScriptManager.registerUnaryOperation()</code> pour les opérations <strong>unaires</strong>. Il faut ensuite renseigner l'opérateur, le type de la classe <em>à gauche</em>, et le type de la classe <em>à droite</em> si l'opération est binaire. Par exemple, pour définir une addition entre deux nombres : </p>
+<div class="highlight"><pre><span></span><code> <span class="kd">static</span><span class="p">{</span>
+    <span class="n">ScriptManager</span><span class="p">.</span><span class="na">registerBinaryOperation</span><span class="p">(</span><span class="n">ScriptOperator</span><span class="p">.</span><span class="na">ADD</span><span class="p">,</span> <span class="n">TypeNumber</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">TypeNumber</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
+                 <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">TypeNumber</span><span class="p">(</span> <span class="p">((</span><span class="n">TypeNumber</span><span class="p">)</span> <span class="n">a</span><span class="p">).</span><span class="na">object</span> <span class="o">+</span> <span class="p">((</span><span class="n">TypeNumber</span><span class="p">)</span> <span class="n">b</span><span class="p">).</span><span class="na">object</span><span class="p">)</span> <span class="p">);</span>
+ <span class="p">}</span>
+</code></pre></div>
+
+<p>Vous pouvez utiliser le type <code>ScriptType.class</code> pour indiquer que vous pouvez utiliser l'opération avec n'importe quel type. Cependant, cette définition sera considérée en dernière si d'autres définitions avec le même opérateur sont déjà enregistrées. C'est notamment le cas avec la concaténation de chaînes de caractères : </p>
+<div class="highlight"><pre><span></span><code><span class="kd">static</span> <span class="p">{</span>
+    <span class="n">ScriptManager</span><span class="p">.</span><span class="na">registerBinaryOperation</span><span class="p">(</span><span class="n">ScriptOperator</span><span class="p">.</span><span class="na">ADD</span><span class="p">,</span><span class="n">TypeString</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="n">ScriptType</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span><span class="o">-&gt;</span> <span class="k">new</span> <span class="n">TypeString</span><span class="p">(</span> <span class="p">((</span><span class="n">TypeString</span><span class="p">)</span><span class="n">a</span><span class="p">).</span><span class="na">object</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="na">toString</span><span class="p">())</span> <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Et voilà, l'opération est enregistrée. Le compilateur d'expressions mathématiques de <em>Sqript</em> se chargera d'appliquer les opérations sur votre type en utilisant l'opération que vous avez défini.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../Patterns/" title="Les patterns" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Précédent
+                </span>
+                Les patterns
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../Evenements/" title="Ajouter un évènement" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Suivant
+                </span>
+                Ajouter un évènement
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://discord.gg/DtPPWUx" target="_blank" rel="noopener" title="discord.gg" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M297.216 243.2c0 15.616-11.52 28.416-26.112 28.416-14.336 0-26.112-12.8-26.112-28.416s11.52-28.416 26.112-28.416c14.592 0 26.112 12.8 26.112 28.416zm-119.552-28.416c-14.592 0-26.112 12.8-26.112 28.416s11.776 28.416 26.112 28.416c14.592 0 26.112-12.8 26.112-28.416.256-15.616-11.52-28.416-26.112-28.416zM448 52.736V512c-64.494-56.994-43.868-38.128-118.784-107.776l13.568 47.36H52.48C23.552 451.584 0 428.032 0 398.848V52.736C0 23.552 23.552 0 52.48 0h343.04C424.448 0 448 23.552 448 52.736zm-72.96 242.688c0-82.432-36.864-149.248-36.864-149.248-36.864-27.648-71.936-26.88-71.936-26.88l-3.584 4.096c43.52 13.312 63.744 32.512 63.744 32.512-60.811-33.329-132.244-33.335-191.232-7.424-9.472 4.352-15.104 7.424-15.104 7.424s21.248-20.224 67.328-33.536l-2.56-3.072s-35.072-.768-71.936 26.88c0 0-36.864 66.816-36.864 149.248 0 0 21.504 37.12 78.08 38.912 0 0 9.472-11.52 17.152-21.248-32.512-9.728-44.8-30.208-44.8-30.208 3.766 2.636 9.976 6.053 10.496 6.4 43.21 24.198 104.588 32.126 159.744 8.96 8.96-3.328 18.944-8.192 29.44-15.104 0 0-12.8 20.992-46.336 30.464 7.68 9.728 16.896 20.736 16.896 20.736 56.576-1.792 78.336-38.912 78.336-38.912z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copier dans le presse-papier", "clipboard.copied": "Copi\u00e9 dans le presse-papier", "search.config.lang": "fr", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.a68abb33.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>
