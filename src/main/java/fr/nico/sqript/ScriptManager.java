@@ -8,6 +8,7 @@ import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptLine;
 import fr.nico.sqript.compiling.ScriptLoader;
 import fr.nico.sqript.events.EvtOnScriptLoad;
+import fr.nico.sqript.events.EvtOnWindowSetup;
 import fr.nico.sqript.events.ScriptEvent;
 import fr.nico.sqript.blocks.ScriptBlockEvent;
 import fr.nico.sqript.expressions.ScriptExpression;
@@ -210,6 +211,8 @@ public class ScriptManager {
 
             }
         }
+
+
         SqriptForge.registerCommands();
 
     }

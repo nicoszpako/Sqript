@@ -57,8 +57,10 @@ public class TransformedPattern {
         Matcher m = getPattern().matcher(line);
         m.find();
         //System.out.println("Mark count is : "+marksCount);
-        for (int i = 0; i < marksCount; i++) {
+
+        for (int i = 1; i <= marksCount; i++) {
             try{
+                //System.out.println("Checking for mark : "+i);
                 if(m.group("m"+i)!=null)
                 {
                     //System.out.println("m"+i+" group is not null");
@@ -66,6 +68,7 @@ public class TransformedPattern {
                     //System.out.println(Integer.toBinaryString(r));
                 }
             }catch(Exception ignored){
+                //ignored.printStackTrace();
             }
         }
         return r;

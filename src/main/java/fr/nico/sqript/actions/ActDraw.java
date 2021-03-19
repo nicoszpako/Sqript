@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -34,7 +35,12 @@ import java.util.stream.Collectors;
             "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number}]",
             "draw colored rect[angle] at {array} with size {array} [and] with color {number}",
             "draw textured rect[angle] at {array} with size {array} using texture {resource} [with uv {array}]",
-            "draw line from {array} to {array} with stroke {number} [and] with color {number}"
+            "draw line from {array} to {array} with stroke {number} [and] with color {number}",
+            "rotate canvas by {number} [((1;degrees)|(2;radians))]", //Default is degrees
+            "translate canvas by {array}",
+            "scale canvas by {array}",
+            "push canvas matrix",
+            "pop canvas matrix"
         }
 )
 public class ActDraw extends ScriptAction {
@@ -109,6 +115,43 @@ public class ActDraw extends ScriptAction {
                 drawLine((float)SqriptUtils.getX(p1),(float)SqriptUtils.getY(p1),(float)SqriptUtils.getZ(p1),SqriptUtils.getX(p2),SqriptUtils.getY(p2),scale,red,green,blue,alpha);
                 GL11.glColor3f(1,1,1);
 
+                GL11.glPopMatrix();
+                break;
+            case 4:
+                double angle = getParameterOrDefault(getParameter(1),0d,context);
+                //System.out.println(Integer.toBinaryString(getMarks()));
+                if(getMarkValue(2))
+                    angle = Math.toDegrees(angle);
+                GL11.glRotated(angle,0,0,1);
+                break;
+            case 5:
+                ILocatable locatable = (ILocatable) getParameter(1).get(context);
+                Vec3d v = locatable.getVector();
+                GL11.glTranslated(v.x,v.y,v.z);
+                break;
+            case 6:
+                ScriptType type =  getParameter(1).get(context);
+                double x = 1d;
+                double y = 1d;
+                double z = 1d;
+                if(type instanceof TypeNumber){
+                    double value = ((TypeNumber)type).getObject();
+                    x = value;
+                    y = value;
+                    z = 1;
+                }else if (type instanceof  ILocatable){
+                    locatable = (ILocatable) type;
+                    v = locatable.getVector();
+                    x = v.x;
+                    y = v.y;
+                    z = v.z;
+                }
+                GL11.glScaled(x,y,z);
+                break;
+            case 7:
+                GL11.glPushMatrix();
+                break;
+            case 8:
                 GL11.glPopMatrix();
                 break;
         }

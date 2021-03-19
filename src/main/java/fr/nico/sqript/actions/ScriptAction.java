@@ -80,9 +80,10 @@ public abstract class ScriptAction extends IScript {
     public void build(ScriptLine line, ScriptCompileGroup compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
         List<ScriptExpression> expressions = new ArrayList<>(parameters.size());
         String[] strings = ScriptDecoder.extractStrings(line.text);
-        System.out.println("Building action for line : "+line+", parameters are :"+ Arrays.toString(parameters.toArray(new String[0])));
+        //System.out.println("Building action for line : "+line+", parameters are :"+ Arrays.toString(parameters.toArray(new String[0])));
         //System.out.println("for line : "+line+" marks are : "+Integer.toBinaryString(marks));
         for (String parameter : parameters) {
+            //System.out.println("Processing parameter : "+parameter);
             if(parameter==null) {
                 expressions.add(null);
                 continue;

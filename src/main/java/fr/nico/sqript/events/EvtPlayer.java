@@ -32,7 +32,7 @@ public class EvtPlayer {
     @Event(name = "Item right clicked",
             description = "Called when a player right clicks an item",
             examples = "on click on stick:",
-            patterns = "[item] click [with {item}] [with (1;left|2;right) hand]",
+            patterns = "[item] click [with {item}] [with ((1;left)|(2;right)) hand]",
             accessors = {"player:player","[click[ed]] item:item"
             }
     )

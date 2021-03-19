@@ -3,6 +3,7 @@ package fr.nico.sqript.forge;
 import com.google.common.collect.SetMultimap;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.blocks.ScriptBlockCommand;
+import fr.nico.sqript.events.EvtOnWindowSetup;
 import fr.nico.sqript.forge.common.ScriptEventHandler;
 import fr.nico.sqript.forge.common.SqriptCommand;
 import fr.nico.sqript.forge.common.item.ScriptItemBase;
@@ -101,6 +102,8 @@ public class SqriptForge {
             e.printStackTrace();
         }
         ScriptManager.init();
+        
+        ScriptManager.callEvent(new EvtOnWindowSetup());
 
     }
 

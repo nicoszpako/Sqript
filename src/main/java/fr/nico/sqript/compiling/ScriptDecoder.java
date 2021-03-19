@@ -885,9 +885,7 @@ public class ScriptDecoder {
             i++;
         }
 
-        i=0;
         int j = 0;
-        markCount = 0;
         while(j<pattern.length()) {
             boolean comment = j>0 && pattern.charAt(j-1)=='~';
             if(pattern.charAt(j)=='[' && !comment){
@@ -991,9 +989,8 @@ public class ScriptDecoder {
                 exp_capture = CAPTURE_EXPRESSION_LAZY;
                 if(g.charAt(0) == '+')
                     t = g.substring(1);
-            }else{
-                //t = g.substring(1);
-            }
+            }//t = g.substring(1);
+
 
             boolean n_args = false;
             if (t.endsWith("*")) {
@@ -1020,7 +1017,7 @@ public class ScriptDecoder {
             throw new Exception(t + " type is either not registered or not recognized");
         }
         pattern ="^\\s*"+pattern+ "$";//End of parsing;
-        //System.out.println("Transformed : "+pattern+" \n");
+        //System.out.println("Transformed : "+pattern+" with :"+markCount+" marks\n");
         return new TransformedPattern(pattern,markCount,argCount,paramTypes.toArray(new ScriptParameterDefinition[0]));
     }
 
