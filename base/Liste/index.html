@@ -1246,70 +1246,91 @@
                   <h1>Listes des évènements, actions, expressions et blocs implémentés</h1>
                 
                 <p><strong>Events</strong></p>
-<p><code>render chat</code> <em>ex: [on render chat:]</em> </p>
-<p><code>[block] place [of {block}]</code> <em>ex: [on place of stone:]</em> </p>
-<p><code>render food bar</code> <em>ex: [on render food bar:]</em> </p>
-<p><code>on (1;left|2;right) click on (block [of {block}]|{block}) [with (3;left|4;right) hand]</code> <em>ex: [on click on block of stone:]</em> </p>
-<p><code>render health bar</code> <em>ex: [on render health bar:]</em> </p>
-<p><code>player (login|connection)</code> <em>ex: [on player login:]</em> </p>
+<p><code>[item] click [with {item}] [with ((1;left)|(2;right)) hand]</code> <em>ex: [on click on stick:]</em> </p>
+<p><code>window setup</code> <em>ex: [on window setup:]</em> </p>
 <p><code>player (jump|jumped)</code> <em>ex: [on player jump:]</em> </p>
-<p><code>render [of] player['s] nameplates</code> <em>ex: [on render of player's nameplates:]</em> </p>
-<p><code>world tick</code> <em>ex: [on world tick:]</em> </p>
-<p><code>player move[ment]</code> <em>ex: [on player movement:]</em> </p>
-<p><code>render overlay</code> <em>ex: [on render overlay:]</em> </p>
 <p><code>[block] break [of {block}]</code> <em>ex: [on break of stone:]</em> </p>
-<p><code>[script] load[ed]</code> <em>ex: [on script load:]</em> </p>
-<p><code>[item] click [with {item}] [with (1;left|2;right) hand]</code> <em>ex: [on click on stick:]</em> </p>
+<p><code>player move[ment]</code> <em>ex: [on player movement:]</em> </p>
+<p><code>[of] crosshair[s] bar</code> <em>ex: [on render of crosshair:]</em> </p>
+<p><code>[player] send[ing] [a] message</code> <em>ex: [on player sending message:]</em> </p>
 <p><code>player (hit|attacked)</code> <em>ex: [on player hit:]</em> </p>
+<p><code>render health bar</code> <em>ex: [on render health bar:]</em> </p>
+<p><code>render food bar</code> <em>ex: [on render food bar:]</em> </p>
+<p><code>(player pickup[s] item|item pickup)</code> <em>ex: [on item pickup:]</em> </p>
+<p><code>render overlay</code> <em>ex: [on render overlay:]</em> </p>
+<p><code>[block] place [of {block}]</code> <em>ex: [on place of stone:]</em> </p>
+<p><code>player (login|connection)</code> <em>ex: [on player login:]</em> </p>
+<p><code>[of] (xp|experience) bar</code> <em>ex: [on render xp bar:]</em> </p>
+<p><code>(player use[s] item|item use)</code> <em>ex: [on item use:]</em> </p>
+<p><code>render [of] player['s] nameplates</code> <em>ex: [on render of player's nameplates:]</em> </p>
+<p><code>render chat</code> <em>ex: [on render chat:]</em> </p>
+<p><code>on ((1;left)|(2;right)) click on (block [of {block}]|{block}) [with ((3;left)|(4;right)) hand]</code> <em>ex: [on click on block of stone:]</em> </p>
+<p><code>[script] load[ed]</code> <em>ex: [on script load:]</em> </p>
+<p><code>world tick</code> <em>ex: [on world tick:]</em> </p>
 <p><strong>Actions</strong></p>
 <p><code>shuffle {array}</code> <em>ex: [shuffle array]</em> </p>
 <p><code>add elements of {array} to {array}</code> <em>ex: [shuffle array]</em> </p>
 <p><code>remove elements of {array} from {array}</code> <em>ex: [shuffle array]</em> </p>
+<p><code>sort ((2;elements)|(3;keys)) of {array} [by] [(0;ascending)|(1;descending)] [order]</code> <em>ex: [shuffle array]</em> </p>
 <p><code>add {element} to {element}</code> <em>ex: [add 1 to A]</em> </p>
 <p><code>remove {element} to {element}</code> <em>ex: [add 1 to A]</em> </p>
 <p><code>set {element} to {element}</code> <em>ex: [add 1 to A]</em> </p>
-<p><code>teleport {player} to {array}</code> <em>ex: [teleport player at location at 5 8 9]</em> </p>
-<p><code>give {item} to {player}</code> <em>ex: [teleport player at location at 5 8 9]</em> </p>
-<p><code>kick {player} [with message {string}]</code> <em>ex: [teleport player at location at 5 8 9]</em> </p>
 <p><code>send {element} to (console|server)</code> <em>ex: [send arg 1 to sender]</em> </p>
 <p><code>send {element} to {element}</code> <em>ex: [send arg 1 to sender]</em> </p>
 <p><code>sync {element} as {string} to all players</code> <em>ex: [sync dictionary with [a,b] to player with username "Player665" as "a"]</em> </p>
 <p><code>sync {element} as {string} to {player}</code> <em>ex: [sync dictionary with [a,b] to player with username "Player665" as "a"]</em> </p>
+<p><code>wait {date}</code> <em>ex: [wait 5 seconds]</em> </p>
+<p><code>delay {date}</code> <em>ex: [wait 5 seconds]</em> </p>
 <p><code>return {element}</code> <em>ex: [return cos(x)]</em> </p>
 <p><code>cancel event</code> <em>ex: [return cos(x)]</em> </p>
 <p><code>break loop</code> <em>ex: [return cos(x)]</em> </p>
 <p><code>break {number} loops</code> <em>ex: [return cos(x)]</em> </p>
-<p><code>draw text {string} at {array} [with scale {number}] [[and] with color {number}]</code> <em>ex: [draw "Hello !" at [0,100] with scale 2]</em> </p>
+<p><code>drop [{+number}] {item} at {array}</code> <em>ex: [drop 1 minecraft:diamond at [11,65,-24]]</em> </p>
+<p><code>print {element}</code> <em>ex: [print "Hello world !"]</em> </p>
+<p><code>draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number}]</code> <em>ex: [draw "Hello !" at [0,100] with scale 2]</em> </p>
 <p><code>draw colored rect[angle] at {array} with size {array} [and] with color {number}</code> <em>ex: [draw "Hello !" at [0,100] with scale 2]</em> </p>
 <p><code>draw textured rect[angle] at {array} with size {array} using texture {resource} [with uv {array}]</code> <em>ex: [draw "Hello !" at [0,100] with scale 2]</em> </p>
 <p><code>draw line from {array} to {array} with stroke {number} [and] with color {number}</code> <em>ex: [draw "Hello !" at [0,100] with scale 2]</em> </p>
-<p><code>wait {date}</code> <em>ex: [wait 5 seconds]</em> </p>
-<p><code>delay {date}</code> <em>ex: [wait 5 seconds]</em> </p>
-<p><code>print {element}</code> <em>ex: [print "Hello world !"]</em> </p>
+<p><code>rotate canvas by {number} [((1;degrees)|(2;radians))]</code> <em>ex: [draw "Hello !" at [0,100] with scale 2]</em> </p>
+<p><code>translate canvas by {array}</code> <em>ex: [draw "Hello !" at [0,100] with scale 2]</em> </p>
+<p><code>scale canvas by {array}</code> <em>ex: [draw "Hello !" at [0,100] with scale 2]</em> </p>
+<p><code>push canvas matrix</code> <em>ex: [draw "Hello !" at [0,100] with scale 2]</em> </p>
+<p><code>pop canvas matrix</code> <em>ex: [draw "Hello !" at [0,100] with scale 2]</em> </p>
+<p><code>teleport {player} to {array}</code> <em>ex: [teleport player at location at 5 8 9]</em> </p>
+<p><code>give [{+number}] {item} to {player}</code> <em>ex: [teleport player at location at 5 8 9]</em> </p>
+<p><code>kick {player} [with message {string}]</code> <em>ex: [teleport player at location at 5 8 9]</em> </p>
 <p><strong>Expressions</strong></p>
-<p><code>x coord[inate] of {array}:number</code> <em>ex: [x coordinate of [1,50,6]]</em> </p>
-<p><code>y coord[inate] of {array}:number</code> <em>ex: [x coordinate of [1,50,6]]</em> </p>
-<p><code>z coord[inate] of {array}:number</code> <em>ex: [x coordinate of [1,50,6]]</em> </p>
-<p><code>location of {element}|{element}'s location: array</code> <em>ex: [x coordinate of [1,50,6]]</em> </p>
-<p><code>distance between {element} and {element}:number</code> <em>ex: [x coordinate of [1,50,6]]</em> </p>
-<p><code>[a] [new] dictionary:dictionary</code> <em>ex: [dictionary["key"]]</em> </p>
-<p><code>dictionary with {array*}:dictionary</code> <em>ex: [dictionary["key"]]</em> </p>
+<p><code>{element} formatted as {string}:string</code> <em>ex: [5.643 formatted as "--,--"]</em> </p>
+<p><code>random (number|([float] number)|float) [between {number} and {number}]:number</code> <em>ex: [random integer between 0 and 10]</em> </p>
+<p><code>random (integer|(integer number)|int) between {number} and {number}:number</code> <em>ex: [random integer between 0 and 10]</em> </p>
 <p><code>all players:array</code> <em>ex: [location of player]</em> </p>
 <p><code>player (named|with username) {string}:player</code> <em>ex: [location of player]</em> </p>
 <p><code>{+player}['s] name:player</code> <em>ex: [location of player]</em> </p>
 <p><code>{+player}['s] health:number</code> <em>ex: [location of player]</em> </p>
-<p><code>{+player}['s] hunger:number</code> <em>ex: [location of player]</em> </p>
-<p><code>[{number} year[s]] [[and] {number} month[s]] [[and] {number} week[s]] [[and] {number} day[s]] [[and] {number} hour[s]] [[and] {number} minute[s]] [[and] {number} second[s]] [[and] {number} tick[s]] [[and] {number} (millisecond[s]|ms)]</code> <em>ex: [15 minutes and 4 seconds]</em> </p>
-<p><code>now</code> <em>ex: [15 minutes and 4 seconds]</em> </p>
+<p><code>{+player}['s] (hunger|food):number</code> <em>ex: [location of player]</em> </p>
+<p><code>{+player}['s] look vector:vector</code> <em>ex: [location of player]</em> </p>
+<p><code>x coord[inate] of {array}:number</code> <em>ex: [x coordinate of [1,50,6]]</em> </p>
+<p><code>y coord[inate] of {array}:number</code> <em>ex: [x coordinate of [1,50,6]]</em> </p>
+<p><code>z coord[inate] of {array}:number</code> <em>ex: [x coordinate of [1,50,6]]</em> </p>
+<p><code>location of {element}|{+element}'s location: array</code> <em>ex: [x coordinate of [1,50,6]]</em> </p>
+<p><code>distance between {element} and {element}:number</code> <em>ex: [x coordinate of [1,50,6]]</em> </p>
+<p><code>vector of {array}|{array} vector:vector</code> <em>ex: [x coordinate of [1,50,6]]</em> </p>
+<p><code>block at {array} [in world {number}]:block</code> <em>ex: [block at [15,65,-25]]</em> </p>
+<p><code>blocks in radius {number} around {element} [in world {number}]:array</code> <em>ex: [block at [15,65,-25]]</em> </p>
+<p><code>value {string} is synced:boolean</code> <em>ex: [synced value test]</em> </p>
+<p><code>synced value {string}:element</code> <em>ex: [synced value test]</em> </p>
 <p><code>screen width:number</code> <em>ex: [screen width]</em> </p>
 <p><code>screen height:number</code> <em>ex: [screen width]</em> </p>
 <p><code>screen width of {string}:number</code> <em>ex: [screen width]</em> </p>
 <p><code>screen height of font:number</code> <em>ex: [screen width]</em> </p>
 <p><code>console|server:sender</code> <em>ex: [console]</em> </p>
-<p><code>block at {array} [in world {number}]:block</code> <em>ex: [block at [15,65,-25]]</em> </p>
-<p><code>blocks in radius {number} around {element} [in world {number}]:array</code> <em>ex: [block at [15,65,-25]]</em> </p>
-<p><code>value {string} is synced:boolean</code> <em>ex: [synced value test]</em> </p>
-<p><code>synced value {string}:element</code> <em>ex: [synced value test]</em> </p>
+<p><code>[a] [new] dictionary:dictionary</code> <em>ex: [dictionary["key"]]</em> </p>
+<p><code>dictionary with {array*}:dictionary</code> <em>ex: [dictionary["key"]]</em> </p>
+<p><code>[{number} year[s]] [[and] {number} month[s]] [[and] {number} week[s]] [[and] {number} day[s]] [[and] {number} hour[s]] [[and] {number} minute[s]] [[and] {number} second[s]] [[and] {number} tick[s]] [[and] {number} (millisecond[s]|ms)]</code> <em>ex: [15 minutes and 4 seconds]</em> </p>
+<p><code>now</code> <em>ex: [15 minutes and 4 seconds]</em> </p>
+<p><code>[execution] side:string</code> <em>ex: [execution side]</em> </p>
+<p><code>window (name|title):string</code> <em>ex: [execution side]</em> </p>
+<p><code>window icons:array</code> <em>ex: [execution side]</em> </p>
 <p><code>~[{element*}~]:array</code> <em>ex: [size of array]</em> </p>
 <p><code>size of {array}:number</code> <em>ex: [size of array]</em> </p>
 <p><code>[a] random element of {array}:element</code> <em>ex: [size of array]</em> </p>
@@ -1322,17 +1343,20 @@
 <p><code>{element} is in {array}:boolean</code> <em>ex: [size of array]</em> </p>
 <p><code>{element} is not in {array}:boolean</code> <em>ex: [size of array]</em> </p>
 <p><code>{array} contains {element}:boolean</code> <em>ex: [size of array]</em> </p>
+<p><code>sorted [(0;ascending)|(1;descending)] ((2;elements)|(3;keys)) of {array}:array</code> <em>ex: [size of array]</em> </p>
+<p><code>copy of {array}:array</code> <em>ex: [size of array]</em> </p>
 <p><code>type of {element}:string</code> <em>ex: [type of "test"]</em> </p>
 <p><code>{element} parsed as {string}:element</code> <em>ex: [type of "test"]</em> </p>
 <p><code>{element} is (set|defined):boolean</code> <em>ex: [type of "test"]</em> </p>
 <p><code>{element} is not (set|defined):boolean</code> <em>ex: [type of "test"]</em> </p>
 <p><strong>Blocks</strong></p>
-<p>command <em>ex: Command blocks</em><code>command /heal:</code> </p>
-<p>function <em>ex: Function blocks</em><code>function isEven(x):</code> </p>
-<p>time loop <em>ex: Time looping blocks</em><code>every 1 day:</code> </p>
 <p>event <em>ex: Event blocks</em><code>on player death:</code> </p>
-<p>message <em>ex: Network messages blocks</em><code>message frame1_messages(parameter):</code> </p>
 <p>import <em>ex: Import blocks</em><code>import:</code> </p>
+<p>time loop <em>ex: Time looping blocks</em><code>every 1 day:</code> </p>
+<p>item <em>ex: item blocks</em><code>item my_item:</code> </p>
+<p>packet <em>ex: Network packet blocks</em><code>packet frame1_packet(parameter):</code> </p>
+<p>function <em>ex: Function blocks</em><code>function isEven(x):</code> </p>
+<p>command <em>ex: Command blocks</em><code>command /heal:</code> </p>
 <p>options <em>ex: Options block</em><code>options:</code> </p>
                 
               
