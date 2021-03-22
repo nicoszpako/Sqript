@@ -2,6 +2,7 @@ package fr.nico.sqript.meta;
 
 import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.compiling.ScriptDecoder;
+import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.structures.TransformedPattern;
 
 import javax.annotation.Nullable;
@@ -13,7 +14,7 @@ public class ActionDefinition {
     String[] description;
     String[] patterns;
     String[] example;
-
+    Side side;
     public int getPriority() {
         return priority;
     }
@@ -38,18 +39,23 @@ public class ActionDefinition {
         return new int[0];
     }
 
+    public Side getSide() {
+        return side;
+    }
+
     public Class<? extends ScriptAction> getActionClass() {
         return cls;
     }
 
     public Class<? extends ScriptAction> cls;
 
-    public ActionDefinition(String name, String[] description, String[] example, Class<? extends ScriptAction> cls, int priority, @Nullable String... patterns) {
+    public ActionDefinition(String name, String[] description, String[] example, Class<? extends ScriptAction> cls, int priority, Side side, @Nullable String... patterns) {
         this.name = name;
         this.example = example;
         this.description = description;
         this.cls=cls;
         this.priority=priority;
+        this.side=side;
         if(patterns!=null){
             this.patterns = patterns;
             this.transformedPatterns = new TransformedPattern[patterns.length];

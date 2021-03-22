@@ -152,7 +152,7 @@ public class SqriptForge {
                 if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
                     Class toRegister = Class.forName(c.getClassName());
                     Expression e = (Expression) toRegister.getAnnotation(Expression.class);
-                    ScriptManager.registerExpression(toRegister, e.name(), e.description(), e.examples(), e.priority(), e.patterns());
+                    ScriptManager.registerExpression(toRegister, e.name(), e.description(), e.examples(), e.priority(), e.side(), e.patterns());
                 }
             } catch (Exception e) {
                 ScriptManager.log.error("Error trying to load ScriptExpression : "+c.getClassName());
@@ -195,7 +195,7 @@ public class SqriptForge {
                 if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()){
                     Class toRegister = Class.forName(c.getClassName());
                     Action e = (Action) toRegister.getAnnotation(Action.class);
-                    ScriptManager.registerAction(toRegister, e.name(), e.description(), e.examples(),e.priority(), e.patterns());
+                    ScriptManager.registerAction(toRegister, e.name(), e.description(), e.examples(),e.priority(), e.side(), e.patterns());
                 }
             } catch (Exception e) {
                 ScriptManager.log.error("Error trying to load ScriptAction : "+c.getClassName());

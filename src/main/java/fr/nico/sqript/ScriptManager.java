@@ -22,6 +22,8 @@ import fr.nico.sqript.types.primitive.PrimitiveType;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.meta.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResourcePack;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -30,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -119,8 +122,8 @@ public class ScriptManager {
 
     public static final boolean FULL_DEBUG = true;
 
-    public static void registerExpression(Class<? extends ScriptExpression> exp, String name, String[] description, String example[], int priority, String... patterns) {
-        expressions.add(new ExpressionDefinition(name, description, example, exp, priority, patterns));
+    public static void registerExpression(Class<? extends ScriptExpression> exp, String name, String[] description, String example[], int priority, Side side,String... patterns) {
+        expressions.add(new ExpressionDefinition(name, description, example, exp, priority, side, patterns));
         expressions.sort((a,b)->b.getPriority()-a.getPriority());
         log.debug("Registering expression : " + name + " (" + exp.getSimpleName() + ")");
     }
@@ -157,9 +160,9 @@ public class ScriptManager {
         events.add(new EventDefinition(name, description, example, cls, side, patterns).setAccessors(accessors));
     }
 
-    public static void registerAction(Class<? extends ScriptAction> cls, String name, String[] description, String[] example, int priority, String... patterns) {
+    public static void registerAction(Class<? extends ScriptAction> cls, String name, String[] description, String[] example, int priority, Side side, String... patterns) {
         log.debug("Registering action : " + name + " (" + cls.getSimpleName() + ")");
-        actions.add(new ActionDefinition(name, description, example, cls, priority, patterns));
+        actions.add(new ActionDefinition(name, description, example, cls, priority, side, patterns));
     }
 
     public static void registerBlock(Class<? extends ScriptBlock> cls, String name, String description, String[] examples, String regex, Side side, boolean reloadable) {
@@ -200,16 +203,7 @@ public class ScriptManager {
         try {
             loadScripts(scriptDir);
         }catch (Throwable e) {
-            if (e instanceof ScriptException) {
-                ScriptManager.log.error("Error while loading " + (((ScriptException)e).getLine().getScriptInstance().getName()) + " : ");
-                for (String s : e.getMessage().split("\n"))
-                    ScriptManager.log.error(s);
-            }
-            else if (ScriptManager.FULL_DEBUG){
-                ScriptManager.log.error("Error while loading scripts. See stacktrace for more information.");
-                e.printStackTrace();
-
-            }
+                ScriptManager.log.error(e.getMessage());
         }
 
 
@@ -283,22 +277,33 @@ public class ScriptManager {
     }
 
     private static void loadFolder(File folder) throws Throwable {
+        ScriptException.ScriptExceptionList list = new ScriptException.ScriptExceptionList();
         for(File f : folder.listFiles()) {
             if(f.isDirectory()){
                 loadFolder(f);
             }
             else if (f.toPath().toString().endsWith(".sq")) {
                 ScriptLoader loader = new ScriptLoader(f);
-                ScriptInstance instance = loader.loadScript();
-                instance.callEvent(new ScriptContext(GLOBAL_CONTEXT),new EvtOnScriptLoad(f));
-                scripts.add(instance);
-
+                try{
+                    ScriptInstance instance = loader.loadScript();
+                    instance.callEvent(new ScriptContext(GLOBAL_CONTEXT),new EvtOnScriptLoad(f));
+                    scripts.add(instance);
+                }catch(Exception e){
+                    if(e instanceof ScriptException.ScriptExceptionList) {
+                        list.exceptionList.addAll(((ScriptException.ScriptExceptionList) (e)).exceptionList);
+                    }else
+                        throw e;
+                }
 
             }
+        }
+        if(!list.exceptionList.isEmpty()){
+            throw list;
         }
     }
 
     public static void loadScripts(File mainFolder) throws Throwable {
+
         loadFolder(mainFolder);
 
         if(FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
@@ -337,10 +342,10 @@ public class ScriptManager {
 
     //True if the event has been cancelled
     public static boolean callEvent(ScriptEvent event) {
-        if(RELOADING)
-            return false;
         ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
         for(ScriptInstance instance : scripts){
+            if(RELOADING)
+                return false;
             if(instance.callEvent(context,event))
             {
                 return true;
@@ -349,14 +354,31 @@ public class ScriptManager {
         return false;
     }
 
+    @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
+    public static void clearClientCommands(){
+        for(ScriptBlockCommand command : clientCommands){
+            ClientCommandHandler.instance.getCommands().remove(command.getName());
+        }
+        clientCommands.clear();
+    }
 
+    public static void clearServerCommands(){
+        for(ScriptBlockCommand command : serverCommands){
+            FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().getCommands().remove(command.getName());
+        }
+        serverCommands.clear();
+    }
 
     public static void reload() throws Throwable {
         RELOADING = true;
 
         scripts.clear();
-        clientCommands.clear();
-        serverCommands.clear();
+
+        if(FMLCommonHandler.instance().getEffectiveSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
+            clearClientCommands();
+        if(FMLCommonHandler.instance().getEffectiveSide() == net.minecraftforge.fml.relauncher.Side.SERVER)
+            clearServerCommands();
+
         ScriptTimer.reload();
         loadScripts(scriptDir);
         SqriptForge.registerCommands();

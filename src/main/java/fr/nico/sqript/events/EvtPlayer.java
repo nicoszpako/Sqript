@@ -152,7 +152,7 @@ public class EvtPlayer {
     }
 
 
-
+    @Cancelable
     @Event(name = "Player login",
             description = "Called when a player logs in",
             examples = "on player login:",

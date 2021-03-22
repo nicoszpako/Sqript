@@ -11,6 +11,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SqriptUtils {
 
@@ -63,37 +64,34 @@ public class SqriptUtils {
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(doc, true));
 
-        bw.write("**Events**\n\n");
+        bw.write("**Events**\n");
         for(EventDefinition eventDefinition : ScriptManager.events){
             for (String pattern : eventDefinition.getPatterns()){
-                bw.write("`"+pattern+"`"+" *ex: "+ Arrays.toString(eventDefinition.getExample()) +"* \n\n");
+                bw.write("{"+eventDefinition.getName()+"} "+ Arrays.toString(eventDefinition.getAccessors()) +" " +eventDefinition.getSide()+" "+"("+Arrays.stream(eventDefinition.getEventClass().getAnnotations()).map(a->a.annotationType().getSimpleName()).collect(Collectors.joining(","))+") `"+pattern+"`\n");
             }
         }
         
-        bw.write("\n\n");
-        bw.write("**Actions**\n\n");
+        bw.write("\n");
+        bw.write("**Actions**\n");
         for(ActionDefinition actionDefinition : ScriptManager.actions){
             for (String pattern : actionDefinition.getPatterns()){
-                bw.write("`"+pattern+"`"+" *ex: "+ Arrays.toString(actionDefinition.getExample()) +"* \n\n");
+                bw.write("{"+actionDefinition.getName()+"} " +actionDefinition.getSide()+" "+"("+Arrays.stream(actionDefinition.getActionClass().getAnnotations()).map(a->a.annotationType().getSimpleName()).collect(Collectors.joining(","))+") `"+pattern+"`\n");
             }
         }
 
-        bw.write("\n\n");
-        bw.write("**Expressions**\n\n");
+        bw.write("\n");
+        bw.write("**Expressions**\n");
         for(ExpressionDefinition expressionDefinition : ScriptManager.expressions){
             for (String pattern : expressionDefinition.getPatterns()){
-                bw.write("`"+pattern+"` *ex: "+ Arrays.toString(expressionDefinition.getExample()) +"* \n\n");
+                bw.write("{"+expressionDefinition.getName()+"} "+expressionDefinition.getSide()+" "+"("+Arrays.stream(expressionDefinition.getExpressionClass().getAnnotations()).map(a->a.annotationType().getSimpleName()).collect(Collectors.joining(","))+") `"+pattern+"`\n");
             }
         }
 
-        bw.write("\n\n");
-        bw.write("**Blocks**\n\n");
+        bw.write("\n");
+        bw.write("**Blocks**\n");
         for(BlockDefinition blockDefinition : ScriptManager.blocks){
-            bw.write(blockDefinition.getName()+" *ex: "+blockDefinition.getDescription()+"*");
-            for (String pattern : blockDefinition.getExample()){
-                bw.write("`"+pattern+"` ");
-            }
-            bw.write("\n\n");
+            bw.write("{"+blockDefinition.getName()+"} " +blockDefinition.getSide()+" "+blockDefinition.isReloadable()+" "+"("+Arrays.stream(blockDefinition.getBlockClass().getAnnotations()).map(a->a.annotationType().getSimpleName()).collect(Collectors.joining(","))+")");
+            bw.write("\n");
         }
         bw.flush();
         bw.close();

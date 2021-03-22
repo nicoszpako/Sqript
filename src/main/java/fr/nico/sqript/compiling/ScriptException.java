@@ -1,6 +1,10 @@
 package fr.nico.sqript.compiling;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.expressions.ScriptExpression;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScriptException extends Exception {
 
@@ -24,6 +28,28 @@ public class ScriptException extends Exception {
     @Override
     public String getMessage() {
         return message;
+    }
+
+    public static class ScriptExceptionList extends ScriptException {
+
+        public List<Throwable> exceptionList = new ArrayList<>();
+
+        public ScriptExceptionList() {
+            super(null);
+        }
+
+        @Override
+        public String getMessage() {
+            StringBuilder r= new StringBuilder();
+            for(Throwable exception : exceptionList){
+                if(exception instanceof ScriptException){
+                    r.append(exception.getMessage()).append("\n");
+                }
+                else
+                    r.append("Fatal exception : "+exception.getLocalizedMessage());
+            }
+            return r.toString();
+        }
     }
 
     public static class TypeNotSavableException extends ScriptException {

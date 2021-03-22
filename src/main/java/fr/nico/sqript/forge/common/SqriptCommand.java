@@ -37,9 +37,10 @@ public class SqriptCommand extends CommandBase {
                     ScriptManager.reload();
                 }catch(Throwable e){
                     if (e instanceof ScriptException) {
-                        sendMessage("\247cError while loading " + (((ScriptException)e).getLine().getScriptInstance().getName()) + " : ",sender);
-                        for (String s : e.getLocalizedMessage().split("\n"))
+                        sendMessage("\247cError while reloading the scripts : ",sender);
+                        for(String s : e.getMessage().split("\n")){
                             sendMessage("\247c"+s,sender);
+                        }
                     }
                     else{
                         sendMessage("\247cError while reloading scripts, see stacktrace for more information.",sender);

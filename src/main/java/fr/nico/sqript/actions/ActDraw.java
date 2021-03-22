@@ -6,6 +6,7 @@ import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.interfaces.ILocatable;
@@ -41,7 +42,8 @@ import java.util.stream.Collectors;
             "scale canvas by {array}",
             "push canvas matrix",
             "pop canvas matrix"
-        }
+        },
+        side = Side.CLIENT
 )
 public class ActDraw extends ScriptAction {
 

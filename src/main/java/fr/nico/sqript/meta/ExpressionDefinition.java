@@ -3,6 +3,7 @@ package fr.nico.sqript.meta;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.structures.TransformedPattern;
 
 import javax.annotation.Nullable;
@@ -14,6 +15,7 @@ public class ExpressionDefinition {
     String[] description;
     String[] patterns;
     String[] example;
+    Side side;
     final int priority;
     public TransformedPattern[] transformedPatterns;
 
@@ -36,6 +38,9 @@ public class ExpressionDefinition {
         return null;
     }
 
+    public Side getSide() {
+        return side;
+    }
 
     private final Class<? extends ScriptExpression> cls;
 
@@ -47,12 +52,13 @@ public class ExpressionDefinition {
         return cls;
     }
 
-    public ExpressionDefinition(String name, String[] description, String[] example, Class<? extends ScriptExpression> cls, int priority, @Nullable String... patterns) {
+    public ExpressionDefinition(String name, String[] description, String[] example, Class<? extends ScriptExpression> cls, int priority, Side side, @Nullable String... patterns) {
         this.name = name;
         this.example = example;
         this.description = description;
         this.cls=cls;
         this.priority=priority;
+        this.side=side;
         if(patterns!=null){
             this.patterns = patterns;
             this.transformedPatterns = new TransformedPattern[patterns.length];

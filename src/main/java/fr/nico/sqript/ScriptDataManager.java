@@ -3,14 +3,19 @@ package fr.nico.sqript;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.types.interfaces.ISerialisable;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.TypeString;
+import javafx.scene.Parent;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import sun.reflect.ReflectionFactory;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 public class ScriptDataManager {
 
@@ -50,26 +55,32 @@ public class ScriptDataManager {
     }
 
     public static ScriptType instanciateWithData(String typeName, NBTTagCompound tag) throws Exception {
-        Class typeClass = ScriptDecoder.getType(typeName);
+        Class<? extends ScriptElement> typeClass = ScriptDecoder.getType(typeName);
         assert typeClass != null;
-        for(Constructor c : typeClass.getConstructors()){
-            if(typeClass != TypeString.class){
-                if(c.getParameterTypes()[0]!=String.class) {
-                    ScriptType t = (ScriptType) c.newInstance(new Object[]{null});
+        if(typeClass != TypeString.class){
+                try{
+                    ScriptElement t = rawInstantiation(ScriptElement.class,typeClass);
                     if (!(t instanceof ISerialisable))
                         throw new ScriptException.TypeNotSavableException(t.getClass());
                     ISerialisable savable = (ISerialisable) t;
                     savable.read(tag);
-                    return t;
+                    return (ScriptType) t;
+                }catch (Exception e){
+                    e.printStackTrace();
+                    throw new Exception("Could not instantiate type : "+typeName);
                 }
-            }else{
-                    TypeString s = new TypeString("");
-                    s.read(tag);
-                    return s;
-            }
-
+        }else{
+                TypeString s = new TypeString("");
+                s.read(tag);
+                return s;
         }
-        throw new Exception("Found no constructor for type : "+typeClass);
+    }
+
+    public static <T> T rawInstantiation(Class<?> parent, Class<T> child) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
+        Constructor objDef = parent.getDeclaredConstructor();
+        Constructor intConstr = rf.newConstructorForSerialization(child, objDef);
+        return child.cast(intConstr.newInstance());
     }
 
 }

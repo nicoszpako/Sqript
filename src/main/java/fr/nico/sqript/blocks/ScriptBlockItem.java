@@ -93,10 +93,12 @@ public class ScriptBlockItem extends ScriptBlock {
     }
 
     private CreativeTabs loadTabFromName(String creative_tab) {
+        System.out.println("Getting creative tab from : "+creative_tab);
         for(CreativeTabs tab : CreativeTabs.CREATIVE_TAB_ARRAY){
-            if(tab.getTabLabel().equalsIgnoreCase(creative_tab))
+            if(tab.getTabLabel().equalsIgnoreCase(creative_tab) || creative_tab.startsWith(tab.getTabLabel()))
                 return tab;
         }
+        System.out.println("Returning null for tab");
         return null;
     }
 

@@ -60,11 +60,17 @@ public class ScriptLoader
     }
 
 
-    public ScriptInstance loadScript() throws Throwable {
+    public ScriptInstance loadScript() throws ScriptException.ScriptExceptionList {
+        ScriptException.ScriptExceptionList exceptionList = new ScriptException.ScriptExceptionList();
         ScriptManager.log.info("Loading : " + file.getName());
         ScriptInstance instance = new ScriptInstance(name,file);
         long c = System.currentTimeMillis();
-        List<ScriptLine> lines = stringToLines(file,instance);
+        List<ScriptLine> lines = null;
+        try {
+            lines = stringToLines(file,instance);
+        } catch (IOException e) {
+            exceptionList.exceptionList.add(e);
+        }
         List<ScriptLine> block = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
             ScriptLine line = lines.get(i);
@@ -81,40 +87,48 @@ public class ScriptLoader
             if ((ScriptDecoder.getTabLevel(line.text) == 0) || line == lines.get(lines.size() - 1)) {//si nouveau trigger ou derniere ligne du fichier
                 //System.out.println("Processing block : "+line+" with size : "+block.size());
                 //The block is ended, we process it
-                ScriptLine head = block.remove(0);
-
-                if(!block.isEmpty()){
-                    BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
-                    if(blockDefinition==null)
-                        throw new ScriptException.ScriptUnknownTokenException(head);
-                    if(blockDefinition.getSide().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())){
-                        Class scriptBlockClass = blockDefinition.getBlockClass();
-                        //System.out.println("Loading : "+scriptBlockClass.getSimpleName());
-                        try{
-                            ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(head);
-                            scriptBlock.setLine(line);
-                            scriptBlock.setScriptInstance(instance);
-                            scriptBlock.init(new ScriptBlock.ScriptLineBlock("main",block));
-                        } catch (InvocationTargetException exception){
-                            ScriptManager.handleError(line,exception.getTargetException());
-                        }
-
-                    }
+                try {
+                    loadBlock(block,instance);
+                } catch (Exception e) {
+                    exceptionList.exceptionList.add(e);
                 }
-
-
                 block.clear();
                 block.add(line);//Adding the current header
             }
 
         }
+        try {
+            loadBlock(block,instance);
+        } catch (Exception e) {
+            exceptionList.exceptionList.add(e);
+        }
+        if(!exceptionList.exceptionList.isEmpty())
+            throw exceptionList;
         ScriptManager.log.info("Finished loading " + file.getName() + ", it took : " + (System.currentTimeMillis() - c) + " ms");
         return instance;
     }
 
 
 
+    public void loadBlock(List<ScriptLine> block, ScriptInstance instance ) throws Exception {
+        ScriptLine head = block.remove(0);
+        if(!block.isEmpty()){
+            BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
+            if(blockDefinition==null)
+                throw new ScriptException.ScriptUnknownTokenException(head);
+            if(blockDefinition.getSide().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())){
+                Class scriptBlockClass = blockDefinition.getBlockClass();
+                //System.out.println("Loading : "+scriptBlockClass.getSimpleName()+" at "+head);
+                    ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(head);
+                    scriptBlock.setLine(head);
+                    scriptBlock.setScriptInstance(instance);
+                    scriptBlock.init(new ScriptBlock.ScriptLineBlock("main",block));
 
+
+            }
+        }
+
+    }
     
 
 
