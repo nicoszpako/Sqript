@@ -92,7 +92,8 @@ public class ScriptEventHandler {
     public void onPlayerSendMessage(ServerChatEvent event) {
         if (event.getPlayer() instanceof EntityPlayer) {
             ScriptContext context = ScriptManager.callEventAndGetContext(new EvtPlayer.EvtOnPlayerSendMessage(event.getPlayer(), event.getMessage()));
-            event.setComponent(new TextComponentString((String) context.getAccessor("message").element.getObject()));
+            if(context.getAccessor("message") != null)
+                event.setComponent(new TextComponentString((String) context.getAccessor("message").element.getObject()));
             if ((boolean) context.returnValue.element.getObject()) {
                 event.setCanceled(true);
             }

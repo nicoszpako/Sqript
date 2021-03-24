@@ -21,9 +21,9 @@ import java.util.ArrayList;
                 "x coord[inate] of {array}:number",
                 "y coord[inate] of {array}:number",
                 "z coord[inate] of {array}:number",
-                "location of {element}|{+element}'s location: array",
+                "(location of {element}|{+element}'s location): array",
                 "distance between {element} and {element}:number",
-                "vector of {array}|{array} vector:vector"
+                "(vector of {array}|{array} vector):vector"
 
         }
 )
