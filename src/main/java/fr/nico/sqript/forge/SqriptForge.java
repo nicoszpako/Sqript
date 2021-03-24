@@ -67,7 +67,8 @@ public class SqriptForge {
     }
 
     @Mod.EventHandler
-    public void construction(FMLConstructionEvent event) throws IOException {
+    public void
+    construction(FMLConstructionEvent event) throws IOException {
 
         scriptDir = new File("scripts");
         if (!scriptDir.exists()) {
@@ -88,9 +89,7 @@ public class SqriptForge {
         containerList.add(Loader.instance().activeModContainer());
         ScriptManager.log.info("Loading content of Sqript.");
         //Add dependants to be loaded
-        event.getReverseDependencies().forEach((a,b)->{
-            containerList.add(Loader.instance().getIndexedModList().get(b));
-        });
+        containerList.addAll(Loader.instance().getIndexedModList().values());
         try {
             for(ModContainer container : containerList){
                 if(container==null)
