@@ -1,7 +1,9 @@
 package fr.nico.sqript.expressions;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeString;
@@ -14,6 +16,8 @@ import fr.nico.sqript.types.primitive.TypeString;
             "{element} parsed as {string}:element",
             "{element} is (set|defined):boolean",
             "{element} is not (set|defined):boolean",
+            "{element} is not {element}:boolean",
+            "{element} is {element}:boolean",
         },
         priority = -2
 )
@@ -34,9 +38,9 @@ public class ExprTypes extends ScriptExpression{
             case 3:
                 return new TypeBoolean(parameters[0].getObject()==null);
             case 4:
-                return new TypeBoolean(parameters[0].equals(parameters[1]));
-            case 5:
                 return new TypeBoolean(!parameters[0].equals(parameters[1]));
+            case 5:
+                return new TypeBoolean(parameters[0].equals(parameters[1]));
         }
         return null;
     }

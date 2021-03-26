@@ -837,7 +837,6 @@ public class ScriptDecoder {
     }
 
     public static TransformedPattern transformPattern(String pattern) throws Exception {
-        //System.out.println("Transforming : "+pattern);
 
         //Saved reference to the base pattern
         String basePattern = pattern;

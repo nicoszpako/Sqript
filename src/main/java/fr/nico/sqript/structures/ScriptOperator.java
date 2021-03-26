@@ -1,5 +1,8 @@
 package fr.nico.sqript.structures;
 
+import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.primitive.TypeBoolean;
 import net.minecraft.command.CommandBase;
 
 import java.util.Objects;
@@ -25,6 +28,11 @@ public class ScriptOperator {
     public static final ScriptOperator NOT = new ScriptOperator("not",5, Associativity.LEFT_TO_RIGHT,true, true);//Unary logical NOT (not true == false)
     public static final ScriptOperator AND = new ScriptOperator("and",4, Associativity.LEFT_TO_RIGHT,false,true);//Logical AND
     public static final ScriptOperator OR = new ScriptOperator("or",3, Associativity.LEFT_TO_RIGHT,false,true);//Logical OR
+
+    static {
+        ScriptManager.registerBinaryOperation(NOT_EQUAL, ScriptType.class,ScriptType.class,(a, b)->
+                new TypeBoolean(!((TypeBoolean) ScriptManager.getBinaryOperation(a.getClass(),b.getClass(),EQUAL).operate(a,b)).getObject()));
+    }
 
     public ScriptOperator(String symbol, int priority, Associativity associativity, boolean unary, boolean word, boolean postfixed) {
         this.symbol = symbol;

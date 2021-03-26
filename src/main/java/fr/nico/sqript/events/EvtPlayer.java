@@ -70,8 +70,8 @@ public class EvtPlayer {
     @Event(name = "Player sends message",
             description = "Called when a player sends a message",
             examples = "on player sending message:",
-            patterns = "([player] sen(d[ing]|t) [a] message|message sent)",
-            accessors = {"player|sender:player","message:string"}
+            patterns = "(([player] sen(d[ing]|t) [a] message|message sent))",
+            accessors = {"(player|sender):player","message:string"}
     )
     public static class EvtOnPlayerSendMessage extends ScriptEvent {
 
@@ -98,6 +98,7 @@ public class EvtPlayer {
 
     }
 
+    @Cancelable
     @Event(name = "Player used an item",
             description = "Called when a player uses an item",
             examples = "on item use:",

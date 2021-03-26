@@ -19,8 +19,6 @@ import java.text.DecimalFormat;
 
 public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, IFormatable {
 
-
-
     @Override
     public ScriptElement parse(String typeName) {
         return null;

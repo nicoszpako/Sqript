@@ -50,9 +50,10 @@ public class ScriptEventHandler {
     }
 
     @SubscribeEvent
-    public void onItemUse(LivingEntityUseItemEvent event) throws ScriptException {
+    public void onItemUse(LivingEntityUseItemEvent.Start event) throws ScriptException {
         if(event.getEntity() instanceof EntityPlayer){
-            ScriptManager.callEvent(new EvtPlayer.EvtOnItemUse((EntityPlayer) event.getEntity(),event.getItem()));
+            if(ScriptManager.callEvent(new EvtPlayer.EvtOnItemUse((EntityPlayer) event.getEntity(),event.getItem())));
+                event.setCanceled(true);
         }
     }
 
