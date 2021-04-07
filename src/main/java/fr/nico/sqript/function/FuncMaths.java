@@ -12,7 +12,10 @@ import fr.nico.sqript.types.primitive.TypeNumber;
         "sin(number):number",
         "tan(number):number",
         "max(number...):number",
-        "sqrt(number):number"
+        "sqrt(number):number",
+        "floor(number):number",
+        "round(number):number",
+        "ceil(number):number"
         },
         description = "Maths things. All angles need to be in radians.",
         examples = {"cos(4)"})
@@ -42,6 +45,12 @@ public class FuncMaths extends ScriptNativeFunction {
                 return best;
             case 4:
                 return new TypeNumber(Math.sqrt((Double) parameters[0].getObject()));
+            case 5:
+                return new TypeNumber(Math.floor((Double) parameters[0].getObject()));
+            case 6:
+                return new TypeNumber(Math.round((Double) parameters[0].getObject()));
+            case 7:
+                return new TypeNumber(Math.ceil((Double) parameters[0].getObject()));
         }
         return null;
     }
