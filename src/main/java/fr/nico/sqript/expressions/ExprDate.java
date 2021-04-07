@@ -13,7 +13,7 @@ import java.util.Arrays;
         description = "Manipulate dates",
         examples = "15 minutes and 4 seconds",
         patterns = {
-                "[{number} year[s]] [[and] {number} month[s]] [[and] {number} week[s]] [[and] {number} day[s]] [[and] {number} hour[s]] [[and] {number} minute[s]] [[and] {number} second[s]] [[and] {number} tick[s]] [[and] {number} (millisecond[s]|ms)]",
+                "[{number} year[s]] [[and] {number} month[s]] [[and] {number} week[s]] [[and] {number} day[s]] [[and] {number} hour[s]] [[and] {number} minute[s]] [[and] {number} second[s]] [[and] {number} tick[s]]",
                 "now"
         })
 public class ExprDate extends ScriptExpression{
@@ -32,31 +32,28 @@ public class ExprDate extends ScriptExpression{
                             System.out.println(i);
                             switch(i){
                                 case 0:
-                                    mult=86400L*365L*1000L;
+                                    mult= 20L *60*60*24*7*365; //year
                                     break;
                                 case 1:
-                                    mult=86400L*30L*1000L;
+                                    mult=20*60*60*24*7*30; //month
                                     break;
                                 case 2:
-                                    mult=86400L*7L*1000L;
+                                    mult=20*60*60*24*7; //week
                                     break;
                                 case 3:
-                                    mult=86400*1000;
+                                    mult=20*60*60*24; //day
                                     break;
                                 case 4:
-                                    mult=3600*1000;
+                                    mult=20*60*60; //hour
                                     break;
                                 case 5:
-                                    mult=60*1000;
+                                    mult=20*60; //minute
                                     break;
                                 case 6:
-                                    mult=1000;
+                                    mult=20; //second
                                     break;
                                 case 7:
-                                    mult=20;
-                                    break;
-                                case 8:
-                                    mult=1;
+                                    mult=1; //tick
                                     break;
                             }
                             System.out.println(mult);

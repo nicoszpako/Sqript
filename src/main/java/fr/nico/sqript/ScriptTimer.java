@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ScriptTimer {
 
-    private static long tick = 0;
+    private static long tick = 1;
 
     private static final ConcurrentLinkedQueue<ScriptClock> delayedClocks = new ConcurrentLinkedQueue<>();
 
@@ -39,7 +39,7 @@ public class ScriptTimer {
         delayedClocks.removeIf(c -> c.delay == tick);
 
         for (IScript script : loopingClocks.keySet()) {
-            if (tick % (loopingClocks.get(script)/50) == 0) {
+            if (tick % (loopingClocks.get(script)) == 0) {
                 ScriptClock clock = new ScriptClock(new ScriptContext(ScriptManager.GLOBAL_CONTEXT));
                 clock.start(script);
             }

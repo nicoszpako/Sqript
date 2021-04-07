@@ -24,9 +24,10 @@ public class ExpressionDefinition {
     //[2] : marks
     public int[] getMatchedPatternIndexAndPosition(String line){
         for (int i = 0; i < transformedPatterns.length ; i++) {
-            //System.out.println("Checking if "+line+" matches "+transformedPatterns[i].getPattern());
+            System.out.println("Checking if "+line+" matches "+transformedPatterns[i].getPattern());
             Matcher m = transformedPatterns[i].getPattern().matcher(line);
             if(m.matches()){
+                System.out.println(line+" matches! ");
                 if(m.groupCount()>0){
                     return new int[]{i,m.end(1), transformedPatterns[i].getAllMarks(line)};
                 }else{

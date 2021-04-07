@@ -81,7 +81,7 @@ public class ScriptLoop extends ScriptWrapper {
 
         @Override
         public IScript run(ScriptContext context) throws ScriptException {
-            System.out.println("At line "+getLine().number+", condition is : "+(condition==null?"null":condition.getClass()+" "+condition.getMatchedIndex()));
+            //System.out.println("At line "+getLine().number+", condition is : "+(condition==null?"null":condition.getClass()+" "+condition.getMatchedIndex()));
             if((boolean)(condition.get(context).getObject())) {
                 return getWrapped();
             }
@@ -165,9 +165,9 @@ public class ScriptLoop extends ScriptWrapper {
         @Override
         public void build(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {
             line = line.with(line.text.replaceFirst("\\s*", ""));
-            Pattern p = Pattern.compile("\\s*for\\s+(\\w*)\\s+in\\s+(.*):\\s*$");
+            Pattern p = Pattern.compile("\\s*for (\\{.*}) in\\s+(.*):\\s*$");
             Matcher m = p.matcher(line.text);
-            if(m.find()){
+            if(m.matches()){
                 String varName = m.group(1);
                 String array = m.group(2);
                 //System.out.println(array+" " +line.toString());
@@ -186,6 +186,7 @@ public class ScriptLoop extends ScriptWrapper {
                 this.varHash = varName.hashCode();
                 this.array = scriptExpression;
                 this.setLine(line);
+                return;
             }
             throw new ScriptException.ScriptSyntaxException(line,"Incorrect for-loop definition");
         }

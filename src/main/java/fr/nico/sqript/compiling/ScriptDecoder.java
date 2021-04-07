@@ -934,15 +934,17 @@ public class ScriptDecoder {
             i++;
         }
 
+        i=0;
         int j = 0;
+        markCount = 0;
         while(j<pattern.length()) {
             boolean comment = j>0 && pattern.charAt(j-1)=='~';
             if(pattern.charAt(j)=='[' && !comment){
                 i = j;
                 //System.out.println(pattern);
                 pct(j);
-                boolean eatLeftSpace = false;
-                boolean eatRightSpace = false;
+                boolean eatLeftSpace = true;
+                boolean eatRightSpace = true;
                 boolean needsRightSpace = false;
                 boolean needsLeftSpace = false;
                 int brDepth = 0;
@@ -953,65 +955,68 @@ public class ScriptDecoder {
                         brDepth--;
                     if(brDepth==0 && pattern.charAt(i)==']' && !(i>1 && pattern.charAt(i-1)=='~')){
                         pct(i);
-                        int depth = 0;
-                        if(i+1<pattern.length() && pattern.charAt(i+1)==' ' && (j==0 || " ?)(:".contains("" + pattern.charAt(j-1)))) {
-                            needsRightSpace = true;
-                            for (int k = i + 1; k < pattern.length(); k++) {
-                                if(k>0 && pattern.charAt(k-1)=='~')
-                                    continue;
-
-                                if (depth < 0)
-                                    break;
-                                if (pattern.charAt(k) == '[' || (k<pattern.length()-1 && pattern.charAt(k)=='(' && pattern.charAt(k+1)=='?'))
-                                    depth++;
-                                else if (pattern.charAt(k) == ']' || (k<pattern.length()-1  && pattern.charAt(k)==')' && pattern.charAt(k+1)=='?') )
-                                    depth--;
-                                else if (depth == 0 && !" ?)(:".contains("" + pattern.charAt(k))) {
-                                    //System.out.println("Setting needSpaceRight to true : " + k + " : " + pattern.charAt(k));
-                                    eatRightSpace = true;
-                                    break;
-                                }
-                            }
-                        }
                         if(j-1>0 && pattern.charAt(j-1)==' ') {
                             needsLeftSpace = true;
                             for (int k = j - 1; k >= 0; k--) {
+                                //System.out.println(pattern.charAt(k));
                                 if(k>0 && pattern.charAt(k - 1) == '~')
                                     continue;
-
-                                if (pattern.charAt(k) == '[' || (k<pattern.length()-1 && pattern.charAt(k)=='(' && pattern.charAt(k+1)=='?')){
-                                    eatLeftSpace = true;
-                                    break;
-                                }
-                                else if (pattern.charAt(k) == ']' || (k<pattern.length()-1  && pattern.charAt(k)==')' && pattern.charAt(k+1)=='?') ){
-                                    eatLeftSpace = true;
-                                    break;
-                                }
-                                else if (!" ?)(:".contains("" + pattern.charAt(k))) {
-                                    //System.out.println("Setting needSpaceLeft to true : " + k + " : " + pattern.charAt(k));
-                                    eatLeftSpace = true;
+                                if ("?)(:".contains("" + pattern.charAt(k))) {
+                                    //System.out.println("3 Setting eatLeftSpace to false : " + k + " : " + pattern.charAt(k));
+                                    eatLeftSpace = false;
                                     break;
                                 }
                             }
+
                         }
+                        int depth = 0;
+                        if(i+1<pattern.length() && pattern.charAt(i+1)==' ' && (j==0 || " ?)(:".contains("" + pattern.charAt(j-1)))) {
+                            needsRightSpace = true;
+                            if(j == 0)
+                                eatRightSpace = false;
+                            for (int k =0; k < j ; k++) {
+                                if(k>0 && pattern.charAt(k - 1) == '~')
+                                    continue;
+                                if (pattern.charAt(k) == '[' || pattern.charAt(k)=='(')
+                                    depth++;
+                                else if (pattern.charAt(k) == ']' || pattern.charAt(k)==')' )
+                                    depth--;
+                                else if (depth == 0 && !" ?)(:".contains("" + pattern.charAt(k)) || k == j-1) {
+                                    eatRightSpace = false;
+                                    break;
+                                }
+                            }
+                            if(!eatRightSpace){
+                                depth = 0;
+                                for (int k =i +1; k < pattern.length(); k++) {
+                                    if(pattern.charAt(k - 1) == '~')
+                                        continue;
+                                    if (pattern.charAt(k) == '[' || (k<pattern.length()-1 && pattern.charAt(k)=='(' && pattern.charAt(k+1)=='?'))
+                                        depth++;
+                                    else if (pattern.charAt(k) == ']' || (k<pattern.length()-1  && pattern.charAt(k)==')' && pattern.charAt(k+1)=='?') )
+                                        depth--;
+                                    else if (depth == 0 && !" ?)(:".contains("" + pattern.charAt(k))) {
+                                        eatRightSpace = !eatLeftSpace;
+                                        break;
+                                    }
+                                }
+                            }
+
+                        }
+
                         break;
                     }
                     i++;
                 }
-                if(i==pattern.length()-1 && pattern.charAt(i)!=']')
-                    throw new ScriptException.ScriptMissingBracket(basePattern);
 
 
                 String firstPart;
                 String middlePart = pattern.substring(j + 1, i);
                 String lastPart = pattern.substring(i + (needsRightSpace ? 2 : 1));
                 //System.out.println("- "+pattern+" "+needsLeftSpace+" "+eatLeftSpace+" "+needsRightSpace+" "+eatRightSpace);
-                boolean bothSidesNeedSpace = needsLeftSpace && needsRightSpace && eatLeftSpace && eatRightSpace;
-                if(bothSidesNeedSpace){
-                    eatLeftSpace = false;
-                }
+
                 firstPart = pattern.substring(0, j - (needsLeftSpace ? 1 : 0));
-                pattern = firstPart + (needsLeftSpace ? ( eatLeftSpace ? "(?: " : " (?:" ) : "(?:" ) + middlePart +  (needsRightSpace ? (eatRightSpace ? " )?" : ")? " ) : ")?" ) + lastPart;
+                pattern = firstPart + (needsLeftSpace ?  "(?: " : "(?:" ) + middlePart +  (needsRightSpace ? (eatRightSpace ? " )?" : ")? " ) : ")?" ) + lastPart;
                 //System.out.println(pattern);
             }
             j++;
@@ -1118,15 +1123,17 @@ public class ScriptDecoder {
             i++;
         }
 
+        i=0;
         int j = 0;
+        markCount = 0;
         while(j<pattern.length()) {
             boolean comment = j>0 && pattern.charAt(j-1)=='~';
             if(pattern.charAt(j)=='[' && !comment){
                 i = j;
                 //System.out.println(pattern);
                 pct(j);
-                boolean eatLeftSpace = false;
-                boolean eatRightSpace = false;
+                boolean eatLeftSpace = true;
+                boolean eatRightSpace = true;
                 boolean needsRightSpace = false;
                 boolean needsLeftSpace = false;
                 int brDepth = 0;
@@ -1137,65 +1144,69 @@ public class ScriptDecoder {
                         brDepth--;
                     if(brDepth==0 && pattern.charAt(i)==']' && !(i>1 && pattern.charAt(i-1)=='~')){
                         pct(i);
-                        int depth = 0;
-                        if(i+1<pattern.length() && pattern.charAt(i+1)==' ' && (j==0 || " ?)(:".contains("" + pattern.charAt(j-1)))) {
-                            needsRightSpace = true;
-                            for (int k = i + 1; k < pattern.length(); k++) {
-                                if(k>0 && pattern.charAt(k-1)=='~')
-                                    continue;
-
-                                if (depth < 0)
-                                    break;
-                                if (pattern.charAt(k) == '[' || (k<pattern.length()-1 && pattern.charAt(k)=='(' && pattern.charAt(k+1)=='?'))
-                                    depth++;
-                                else if (pattern.charAt(k) == ']' || (k<pattern.length()-1  && pattern.charAt(k)==')' && pattern.charAt(k+1)=='?') )
-                                    depth--;
-                                else if (depth == 0 && !" ?)(:".contains("" + pattern.charAt(k))) {
-                                    //System.out.println("Setting needSpaceRight to true : " + k + " : " + pattern.charAt(k));
-                                    eatRightSpace = true;
-                                    break;
-                                }
-                            }
-                        }
                         if(j-1>0 && pattern.charAt(j-1)==' ') {
                             needsLeftSpace = true;
                             for (int k = j - 1; k >= 0; k--) {
+                                //System.out.println(pattern.charAt(k));
                                 if(k>0 && pattern.charAt(k - 1) == '~')
                                     continue;
-
-                                if (pattern.charAt(k) == '[' || (k<pattern.length()-1 && pattern.charAt(k)=='(' && pattern.charAt(k+1)=='?')){
-                                    eatLeftSpace = true;
-                                    break;
-                                }
-                                else if (pattern.charAt(k) == ']' || (k<pattern.length()-1  && pattern.charAt(k)==')' && pattern.charAt(k+1)=='?') ){
-                                    eatLeftSpace = true;
-                                    break;
-                                }
-                                else if (!" ?)(:".contains("" + pattern.charAt(k))) {
-                                    //System.out.println("Setting needSpaceLeft to true : " + k + " : " + pattern.charAt(k));
-                                    eatLeftSpace = true;
+                                if ("?)(:".contains("" + pattern.charAt(k))) {
+                                    //System.out.println("3 Setting eatLeftSpace to false : " + k + " : " + pattern.charAt(k));
+                                    eatLeftSpace = false;
                                     break;
                                 }
                             }
+
                         }
+                        int depth = 0;
+                        if(i+1<pattern.length() && pattern.charAt(i+1)==' ' && (j==0 || " ?)(:".contains("" + pattern.charAt(j-1)))) {
+                            needsRightSpace = true;
+                            if(j == 0)
+                                eatRightSpace = false;
+                            for (int k =0; k < j ; k++) {
+                                if(k>0 && pattern.charAt(k - 1) == '~')
+                                    continue;
+                                if (pattern.charAt(k) == '[' || pattern.charAt(k)=='(')
+                                    depth++;
+                                else if (pattern.charAt(k) == ']' || pattern.charAt(k)==')' )
+                                    depth--;
+                                else if (depth == 0 && !" ?)(:".contains("" + pattern.charAt(k)) || k == j-1) {
+                                    eatRightSpace = false;
+                                    break;
+                                }
+                            }
+                            if(!eatRightSpace){
+                                depth = 0;
+                                for (int k =i +1; k < pattern.length(); k++) {
+                                    if(pattern.charAt(k - 1) == '~')
+                                        continue;
+                                    if (pattern.charAt(k) == '[' || (k<pattern.length()-1 && pattern.charAt(k)=='(' && pattern.charAt(k+1)=='?'))
+                                        depth++;
+                                    else if (pattern.charAt(k) == ']' || (k<pattern.length()-1  && pattern.charAt(k)==')' && pattern.charAt(k+1)=='?') )
+                                        depth--;
+                                    else if (depth == 0 && !" ?)(:".contains("" + pattern.charAt(k))) {
+                                        eatRightSpace = !eatLeftSpace;
+                                        break;
+                                    }
+                                }
+                            }
+
+                        }
+
                         break;
                     }
                     i++;
                 }
-                if(i==pattern.length()-1 && pattern.charAt(i)!=']')
-                    throw new ScriptException.ScriptMissingBracket(basePattern);
+
 
 
                 String firstPart;
                 String middlePart = pattern.substring(j + 1, i);
                 String lastPart = pattern.substring(i + (needsRightSpace ? 2 : 1));
                 //System.out.println("- "+pattern+" "+needsLeftSpace+" "+eatLeftSpace+" "+needsRightSpace+" "+eatRightSpace);
-                boolean bothSidesNeedSpace = needsLeftSpace && needsRightSpace && eatLeftSpace && eatRightSpace;
-                if(bothSidesNeedSpace){
-                    eatLeftSpace = false;
-                }
+
                 firstPart = pattern.substring(0, j - (needsLeftSpace ? 1 : 0));
-                pattern = firstPart + (needsLeftSpace ? ( eatLeftSpace ? "(?: " : " (?:" ) : "(?:" ) + middlePart +  (needsRightSpace ? (eatRightSpace ? " )?" : ")? " ) : ")?" ) + lastPart;
+                pattern = firstPart + (needsLeftSpace ?  "(?: " : "(?:" ) + middlePart +  (needsRightSpace ? (eatRightSpace ? " )?" : ")? " ) : ")?" ) + lastPart;
                 //System.out.println(pattern);
             }
             j++;
