@@ -12,7 +12,7 @@ import fr.nico.sqript.types.TypeDictionary;
         examples = "dictionary[\"key\"]",
         patterns = {
                 "[a] [new] dictionary:dictionary",
-                "dictionary with {array*}:dictionary"
+                "[a] [new] dictionary with {array*}:dictionary"
         }
 )
 public class ExprDictionaries extends ScriptExpression{

@@ -1,35 +1,25 @@
 package fr.nico.sqript.structures;
 
+import fr.nico.sqript.compiling.ScriptCompileGroup;
+import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptLine;
 import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.meta.Expression;
+import fr.nico.sqript.meta.Loop;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeNumber;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ScriptLoop extends ScriptWrapper {
 
     //Concerne tous les blocs pouvant exécuter du code selon une certaine condition.
 
-    public ScriptExpression condition;
 
     public ScriptLoop(){}
-
-    public boolean broken = false;
-
-    public void doBreak(){
-        broken = true;
-    }
-
-    public ScriptLoop(IScript wrapped, ScriptExpression condition){
-        super(wrapped);
-        this.setLine(wrapped.getLine());
-        this.condition=condition;
-    }
-
-    public ScriptLoop(ScriptExpression condition, ScriptLine line){
-        this.condition=condition;
-    }
 
     @Override
     public void setNext(IScript next) {
@@ -38,15 +28,27 @@ public class ScriptLoop extends ScriptWrapper {
     }
 
 
+    public void build(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {}
+
+
+    public static class ScriptLoopRepeated extends ScriptLoop
+    {
+        public boolean broken = false;
+        public void doBreak(){
+            broken = true;
+        }
+
+    }
+
+    @Loop(name = "if", pattern = "if .*")
     public static class ScriptLoopIF extends ScriptLoop
     {
         public ScriptLoopIF elseContainer;
+        public ScriptExpression condition;
 
-        public ScriptLoopIF(IScript wrapped, ScriptExpression condition) {
-            super(wrapped,condition);
+        public void setCondition(ScriptExpression condition) {
+            this.condition = condition;
         }
-
-        public ScriptLoopIF(ScriptExpression condition, ScriptLine line){super(condition, line);}
 
         public ScriptLoopIF() {}
 
@@ -65,8 +67,21 @@ public class ScriptLoop extends ScriptWrapper {
 
 
         @Override
+        public void build(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {
+            line = line.with(line.text.replaceFirst("\\s*", ""));
+            ScriptLine transformed = new ScriptLine(line.text.replaceFirst("\\s*if\\s*", "").replaceAll(":", ""), line.number, line.scriptInstance);
+            ScriptExpression scriptExpression = ScriptDecoder.getExpression(transformed,compileGroup);
+            setLine(line);
+            if (scriptExpression != null)
+                setCondition(scriptExpression);
+            else {
+                throw new ScriptException.ScriptUnknownExpressionException(line);
+            }
+        }
+
+        @Override
         public IScript run(ScriptContext context) throws ScriptException {
-            //System.out.println("At line "+line.number+", condition is : "+(condition==null?"null":condition.getClass()+" "+condition.getMatchedIndex()));
+            System.out.println("At line "+getLine().number+", condition is : "+(condition==null?"null":condition.getClass()+" "+condition.getMatchedIndex()));
             if((boolean)(condition.get(context).getObject())) {
                 return getWrapped();
             }
@@ -77,15 +92,10 @@ public class ScriptLoop extends ScriptWrapper {
         }
     }
 
+    @Loop(name = "else", pattern = "else\\s*:")
     public static class ScriptLoopELSE extends ScriptLoopIF {
 
-        public ScriptLoopELSE(IScript wrapped, ScriptExpression condition) {
-            super(wrapped, condition);
-        }
 
-        public ScriptLoopELSE(ScriptExpression condition, ScriptLine line) {
-            super(condition,line);
-        }
 
         public ScriptLoopELSE() {
         }
@@ -102,18 +112,18 @@ public class ScriptLoop extends ScriptWrapper {
             super.setParent(parent);
         }
 
+        @Override
+        public void build(ScriptLine line, ScriptCompileGroup compileGroup)  {
+
+        }
     }
 
+    @Loop(name = "else if", pattern = "else if .*", priority = 1)
     public static class ScriptLoopELSEIF extends ScriptLoopIF
     {
 
         public IScript elseContainer;
 
-        public ScriptLoopELSEIF(IScript wrapped, ScriptExpression condition) {
-            super(wrapped,condition);
-        }
-
-        public ScriptLoopELSEIF(ScriptExpression condition, ScriptLine line){super(condition, line);}
 
         @Override
         public void setParent(IScript parent) {
@@ -127,20 +137,57 @@ public class ScriptLoop extends ScriptWrapper {
             super.setNext(next);
             if(elseContainer!=null)elseContainer.setNext(next);
         }
+
+        @Override
+        public void build(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {
+            line = line.with(line.text.replaceFirst("\\s*", ""));
+
+            ScriptLine transformed = new ScriptLine(line.text.replaceFirst("\\s*else if\\s*", "").replaceAll(":", ""), line.number, line.scriptInstance);
+            ScriptExpression scriptExpression = ScriptDecoder.getExpression(transformed, new ScriptCompileGroup());
+            if (scriptExpression != null)
+                setCondition(scriptExpression);
+            else {
+                throw new ScriptException.ScriptUnknownExpressionException(line);
+            }
+        }
     }
 
-    public static class ScriptLoopFOR extends ScriptLoop
+    @Loop(name = "for", pattern = "for .*")
+    public static class ScriptLoopFOR extends ScriptLoopRepeated
     {
 
         int varHash;
         ScriptExpression array;
         TypeArray typeArray = null;
 
-        public ScriptLoopFOR(String varName, ScriptExpression array, ScriptLine line){
-            this.varHash=varName.hashCode();
-            this.array=array;
-            //Used to identify the for-loop in the ScriptContexts
-            this.hash = line.hashCode();
+
+
+        @Override
+        public void build(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {
+            line = line.with(line.text.replaceFirst("\\s*", ""));
+            Pattern p = Pattern.compile("\\s*for\\s+(\\w*)\\s+in\\s+(.*):\\s*$");
+            Matcher m = p.matcher(line.text);
+            if(m.find()){
+                String varName = m.group(1);
+                String array = m.group(2);
+                //System.out.println(array+" " +line.toString());
+                ScriptExpression scriptExpression = ScriptDecoder.getExpression(line.with(array),compileGroup);
+                Class<? extends ScriptElement> type;
+                if(scriptExpression == null)
+                    throw new ScriptException.ScriptUnknownExpressionException(line);
+                if (scriptExpression.getClass().getAnnotation(Expression.class) != null)
+                    type = ScriptDecoder.getType(scriptExpression.getClass().getAnnotation(Expression.class).patterns()[scriptExpression.getMatchedIndex()].split(":")[1]);
+                else
+                    type = scriptExpression.getReturnType();
+                assert type != null;
+                if (!type.isAssignableFrom(TypeArray.class)) {
+                    throw new ScriptException.ScriptTypeException(line, TypeArray.class, type);
+                }
+                this.varHash = varName.hashCode();
+                this.array = scriptExpression;
+                this.setLine(line);
+            }
+            throw new ScriptException.ScriptSyntaxException(line,"Incorrect for-loop definition");
         }
 
         @Override
@@ -178,14 +225,24 @@ public class ScriptLoop extends ScriptWrapper {
         }
     }
 
-    public static class ScriptLoopWHILE extends ScriptLoop
+    @Loop(name = "while", pattern = "while .*")
+    public static class ScriptLoopWHILE extends ScriptLoopRepeated
     {
+        public ScriptExpression condition;
 
-        public ScriptLoopWHILE(IScript wrapped, ScriptExpression condition) {
-            super(wrapped,condition);
+
+        @Override
+        public void build(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {
+            line = line.with(line.text.replaceFirst("\\s*", ""));
+            ScriptLine transformed = line.with(line.text.replaceFirst("\\s*while\\s*", "").replaceAll(":", ""));
+            ScriptExpression scriptExpression = ScriptDecoder.getExpression(transformed,compileGroup);
+            this.setLine(line);
+            if (scriptExpression != null)
+                this.condition = scriptExpression;
+            else {
+                throw new ScriptException.ScriptUnknownExpressionException(transformed);
+            }
         }
-
-        public ScriptLoopWHILE(ScriptExpression condition, ScriptLine line){super(condition,line);}
 
         @Override
         public IScript getNext(ScriptContext context) {
@@ -206,6 +263,9 @@ public class ScriptLoop extends ScriptWrapper {
             }else
                 return super.getNext(context);
         }
+
+
+
     }
 
 }

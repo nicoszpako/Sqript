@@ -10,10 +10,10 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 public class EvtRender {
 
-    @Event(name = "render overlay",
+    @Event(name = "render of overlay",
             description = "Called when overlay is rendered",
             examples = "on render overlay:",
-            patterns = "render overlay",
+            patterns = "render [of] overlay",
             accessors = {"player:player"},
             side = Side.CLIENT)
     public static class EvtOnRenderOverlay extends ScriptEvent {
@@ -24,10 +24,10 @@ public class EvtRender {
 
     }
 
-    @Event(name = "render crosshair",
+    @Event(name = "render of crosshair",
             description = "Called when crosshair is rendered",
             examples = "on render of crosshair:",
-            patterns = "[of] crosshair[s] bar",
+            patterns = "render [of] crosshair",
             accessors = {"player:player"},
             side = Side.CLIENT)
     public static class EvtOnRenderCrosshair extends ScriptEvent {
@@ -38,10 +38,10 @@ public class EvtRender {
 
     }
 
-    @Event(name = "render experience bar",
+    @Event(name = "render of experience bar",
             description = "Called when experience bar is rendered",
             examples = "on render xp bar:",
-            patterns = "[of] (xp|experience) bar",
+            patterns = "render [of] (xp|experience) bar",
             accessors = {"player:player"},
             side = Side.CLIENT)
     public static class EvtOnRenderXPBar extends ScriptEvent {
@@ -53,10 +53,10 @@ public class EvtRender {
     }
 
     @Cancelable
-    @Event(name = "render chat",
+    @Event(name = "render of chat",
             description = "Called when chat is rendered",
             examples = "on render chat:",
-            patterns = "render chat",
+            patterns = "render [of] chat",
             accessors = {"player:player"},
             side = Side.CLIENT)
     public static class EvtOnRenderChat extends ScriptEvent {
@@ -70,10 +70,10 @@ public class EvtRender {
     }
 
     @Cancelable
-    @Event(name = "render food bar",
+    @Event(name = "render of food bar",
             description = "Called when food bar is rendered",
             examples = "on render food bar:",
-            patterns = "render food bar",
+            patterns = "render [of] food [bar]",
             accessors = {"player:player"},
             side = Side.CLIENT)
     public static class EvtOnRenderFoodBar extends ScriptEvent {
@@ -87,10 +87,10 @@ public class EvtRender {
     }
 
     @Cancelable
-    @Event(name = "render health bar",
+    @Event(name = "render of health bar",
             description = "Called when health bar is rendered",
             examples = "on render health bar:",
-            patterns = "render health bar",
+            patterns = "render [of] health [bar]",
             accessors = {"player:player"},
             side = Side.CLIENT)
     public static class EvtOnRenderHealthBar extends ScriptEvent {
@@ -108,7 +108,7 @@ public class EvtRender {
             description = "Called when nameplates are rendered",
             examples = "on render of player's nameplates:",
             patterns = "render [of] player['s] nameplates",
-            accessors = "player:player")
+            accessors = {"player:player"})
     public static class EvtOnDrawNameplate extends ScriptEvent {
 
         public EvtOnDrawNameplate(EntityPlayer player) {

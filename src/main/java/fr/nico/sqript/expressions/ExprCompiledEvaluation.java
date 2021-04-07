@@ -156,11 +156,12 @@ public class ExprCompiledEvaluation extends ScriptExpression {
     @Override
     public ScriptType get(ScriptContext context, ScriptType<?>[] parameters) throws ScriptException {
         final Stack<ScriptType> terms = new Stack<>();
-        //System.out.println("Evaluating get : " + out+" ("+getFullRPN()+")");
+        //System.out.println("Evaluating get : " + out+" WITH ("+getFullRPN()+")");
         //Optimisation
         if(out.size()==1){
             return operands[0].get(context,null);
         }else for(Token s : out){
+
             if(s.token_type==TOKEN_TYPE.EXPRESSION){
                 final ScriptExpression se = operands[s.id];
                 if(se==null) {
@@ -174,11 +175,12 @@ public class ExprCompiledEvaluation extends ScriptExpression {
                         arguments.add(0,terms.isEmpty()?null:terms.pop());
                     }
                     ScriptType<?> t = se.get(context,arguments.toArray(new ScriptType[0]));
-                    //System.out.println("Pushing "+t);
+                    //System.out.println("Pushing "+t+" which is an "+t.getClass().getSimpleName());
                     terms.push(t);
                 }
             }else if(s.token_type==TOKEN_TYPE.OPERATOR){
-                final ScriptOperator o = ScriptManager.operators.get(s.id);
+                final ScriptOperator o = operators[s.id];
+
                 if(o==ScriptOperator.EQUAL) {
                     final ScriptType<?> o1 = terms.pop();
                     final ScriptType<?> o2 = terms.pop();

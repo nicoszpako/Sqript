@@ -1,6 +1,5 @@
 package fr.nico.sqript.blocks;
 
-import fr.nico.sqript.compiling.ScriptCompileGroup;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptLine;
 import fr.nico.sqript.meta.Block;
@@ -45,14 +44,13 @@ public class ScriptBlockPacket extends ScriptFunctionalBlock {
 
     @Override
     protected void load() throws Exception {
-        ScriptCompileGroup group = createCompileGroup();
 
         //Compilation des fields "client" et "server"
         if(fieldDefined("client")){
-            client = getSubBlock("client").compile(group);
+            client = getSubBlock("client").compile();
         }
         if(fieldDefined("server")){
-            server = getSubBlock("server").compile(group);
+            server = getSubBlock("server").compile();
         }
 
         //On enregistre le message fraîchement créé, pour qu'il soit reconnu par le reste du script.

@@ -10,6 +10,7 @@ import fr.nico.sqript.types.TypeBlock;
 
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.primitive.TypeNumber;
+import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.dispenser.IBlockSource;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
         patterns = {
             "block at {array} [in world {number}]:block",
             "blocks in radius {number} around {element} [in world {number}]:array",
+            "{resource} with metadata {number}:block"
         }
 )
 public class ExprBlock extends ScriptExpression {
@@ -59,7 +61,12 @@ public class ExprBlock extends ScriptExpression {
                     }
                 }
                 return new TypeArray(list);
-
+            case 2:
+                TypeResource resource = (TypeResource) parameters[0];
+                int metadata = ((Double) parameters[1].getObject()).intValue();
+                Block block = ForgeRegistries.BLOCKS.getValue(resource.getObject());
+                IBlockState state = block.getStateFromMeta(metadata);
+                return new TypeBlock(state);
         }
         return null;
     }
@@ -68,7 +75,7 @@ public class ExprBlock extends ScriptExpression {
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) throws ScriptException.ScriptTypeException {
         switch(getMatchedIndex()) {
             case 0:
-                int worldId = parameters[1] == null ? 0 : (int) parameters[1].getObject();
+                int worldId = getParameterOrDefault(parameters[1],0);
                 BlockPos pos = null;
                 if(parameters[0] instanceof ILocatable) {
                     pos = ((ILocatable) parameters[0]).getPos();
@@ -82,7 +89,7 @@ public class ExprBlock extends ScriptExpression {
                 else if(to.getObject() instanceof ResourceLocation)
                     state = ForgeRegistries.BLOCKS.getValue((ResourceLocation) to.getObject()).getDefaultState();
                 assert state != null;
-
+                //System.out.println("Setting block : "+state+" at "+pos);
                 FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId].setBlockState(pos, state);
                 return true;
         }

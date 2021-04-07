@@ -12,8 +12,8 @@ import fr.nico.sqript.types.primitive.TypeString;
         description = "Manipulate the network",
         examples = "synced value test",
         patterns = {
-                "value {string} is synced:boolean",
-                "synced value {string}:element"
+                "value [of] {string} is synced:boolean",
+                "synced value [of] {string}:element"
         }
 )
 public class ExprNetwork extends ScriptExpression {

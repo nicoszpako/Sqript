@@ -9,10 +9,8 @@ import fr.nico.sqript.types.TypeBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -27,7 +25,6 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 public class ScriptEventHandler {
 
@@ -114,7 +111,7 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onBlockRightClick(PlayerInteractEvent.RightClickBlock event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer)event.getEntity(),new TypeBlock(Block.getBlockFromItem(event.getItemStack().getItem()).getDefaultState(),event.getPos()),event.getHand(),1))) {
+            if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer)event.getEntity(),new TypeBlock(Block.getBlockFromItem(event.getItemStack().getItem()).getDefaultState()),event.getHand(),1,event.getPos()))) {
                 event.setCanceled(true);
             }
         }
@@ -123,7 +120,7 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onBlockPlace(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer)event.getEntity(),new TypeBlock(Block.getBlockFromItem(event.getItemStack().getItem()).getDefaultState(),event.getPos()),event.getHand(),0))) {
+            if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer)event.getEntity(),new TypeBlock(Block.getBlockFromItem(event.getItemStack().getItem()).getDefaultState(),event.getPos()),event.getHand(),0, event.getPos()))) {
                 event.setCanceled(true);
             }
         }

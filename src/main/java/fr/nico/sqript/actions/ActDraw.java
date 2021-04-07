@@ -3,6 +3,7 @@ package fr.nico.sqript.actions;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.compiling.ScriptLine;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.structures.ScriptContext;
@@ -11,6 +12,7 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.primitive.TypeNumber;
+import fr.nico.sqript.types.primitive.TypeResource;
 import fr.nico.sqript.types.primitive.TypeString;
 import javafx.scene.paint.Color;
 import net.minecraft.client.Minecraft;
@@ -26,6 +28,7 @@ import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Action(name = "Draw Actions",
@@ -35,7 +38,7 @@ import java.util.stream.Collectors;
         patterns = {
             "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number}]",
             "draw colored rect[angle] at {array} with size {array} [and] with color {number}",
-            "draw textured rect[angle] at {array} with size {array} using texture {resource} [with uv {array}]",
+            "draw textured rect[angle] at {array} with size {array} (with|using) texture {resource} [with uv {array}]",
             "draw line from {array} to {array} with stroke {number} [and] with color {number}",
             "rotate canvas by {number} [((1;degrees)|(2;radians))]", //Default is degrees
             "translate canvas by {array}",
@@ -48,6 +51,13 @@ import java.util.stream.Collectors;
 public class ActDraw extends ScriptAction {
 
     @Override
+    public void setLine(ScriptLine line) {
+        super.setLine(line);
+        //System.out.println("Set draw line to : "+line);
+        //System.out.println("getLine gives : "+getLine());
+    }
+
+    @Override
     public void execute(ScriptContext context) throws ScriptException {
         switch (getMatchedIndex()){
             case 0:
@@ -57,8 +67,8 @@ public class ActDraw extends ScriptAction {
                 else if(getParameter(1).get(context) instanceof TypeArray)
                     list = (ArrayList<String>) ((ArrayList)getParameter(1).get(context).getObject()).stream().map(a->((ScriptType)(a)).getObject().toString()).collect(Collectors.toList());
                 TypeArray array = (TypeArray) getParameter(2).get(context);
-                float scale = getParametersSize()>=3? ((Double) getParameter(3,context)).floatValue() :1;
-                int color = getParametersSize()>=4? ((Double) getParameter(4,context)).intValue() :0xFFFFFF;
+                float scale = getParameterOrDefault(getParameter(3),1d,context).floatValue();
+                int color = getParameterOrDefault(getParameter(4),(float)0xFFFFFFFF,context).intValue();
                 GL11.glPushMatrix();
                 GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
                 GlStateManager.enableBlend();
@@ -87,7 +97,13 @@ public class ActDraw extends ScriptAction {
             case 2:
                 array = (TypeArray) getParameter(1).get(context);
                 size = (TypeArray) getParameter(2).get(context);
-                ResourceLocation location = (ResourceLocation) getParameter(3,context);
+                ScriptType resourceType = getParameter(3).get(context);
+                ResourceLocation location = null;
+                //System.out.println("1:"+(getLine()==null));
+                //System.out.println("2:"+(getLine().scriptInstance==null));
+                //System.out.println("3:"+(getLine().scriptInstance.getName()==null));
+                location = (ResourceLocation) resourceType.getObject();
+                location = new ResourceLocation(location.getResourceDomain(),"textures/"+location.getResourcePath()+".png");
                 TypeArray uv = getParameter(4) != null ? (TypeArray) getParameter(4).get(context) : null;
                 double u1 = uv != null && uv.getObject().size()>0 ? ((Double)uv.getObject().get(0).getObject()): 0.0D;
                 double v1 = uv != null && uv.getObject().size()>1 ? ((Double)uv.getObject().get(1).getObject()): 0.0D;

@@ -34,17 +34,17 @@ public class ActDefinition extends ScriptAction {
         switch (getMatchedIndex()){
             case 0:
                 if(!second.set(context,ScriptManager.getBinaryOperation(b.getClass(),a.getClass(), ScriptOperator.ADD).operate(b,a))){
-                    throw new ScriptException.ScriptNonSettableException(line, first);
+                    throw new ScriptException.ScriptNonSettableException(getLine(), first);
                 }
                 break;
             case 1:
                 if(!second.set(context,ScriptManager.getBinaryOperation(b.getClass(),a.getClass(), ScriptOperator.SUBTRACT).operate(b,a))){
-                    throw new ScriptException.ScriptNonSettableException(line, first);
+                    throw new ScriptException.ScriptNonSettableException(getLine(), first);
                 }
                 break;
             case 2:
                 if(!first.set(context,b)){
-                    throw new ScriptException.ScriptNonSettableException(line,first);
+                    throw new ScriptException.ScriptNonSettableException(getLine(),first);
                 }
                 break;
         }
@@ -56,30 +56,15 @@ public class ActDefinition extends ScriptAction {
         //we parse the argument as a string to make the action
         //able to register the new variable in the context
         if (matchedIndex == 2) {
-            //System.out.println("Building action definition for : "+line);
-            String varName = parameters.get(0);
-            ScriptExpression to = ScriptDecoder.getExpression(line.with(parameters.get(1)), compileGroup);
-            ScriptExpression arg = null;
-            if ((arg = ScriptDecoder.getExpression(line.with(varName), compileGroup)) == null && to != null) {
-                if (!varName.matches("[^\\s]*")) {
-                    ScriptManager.log.error("Variables cannot have whitespaces in their names.");
-                    throw new ScriptException.ScriptBadVariableNameException(line);
-                }
-                compileGroup.add(varName); //We tell the compile group that a variable named parameters.get(0) can now be used in the script
-                //System.out.println("Set parameter : "+parameters.get(0));
-
-                ExprReference r = new ExprReference(to.getReturnType());
-                r.setVarHash(varName.hashCode());
-                r.setLine(line);
-                arg = r;
-            }
+            ScriptExpression arg = ScriptDecoder.getExpression(line.with(parameters.get(0)),compileGroup);
+            ScriptExpression to = ScriptDecoder.getExpression(line.with(parameters.get(1)),compileGroup);
             if (to == null)
                 throw new ScriptException.ScriptUnknownExpressionException(line.with(parameters.get(1)));
             this.setParameters(Lists.newArrayList(arg, to));
             this.setMatchedIndex(matchedIndex);
             this.setMarks(marks);
         } else {
-            super.build(line, compileGroup, parameters, matchedIndex, marks);
+            super.build(getLine(),compileGroup, parameters, matchedIndex, marks);
         }
 
     }

@@ -67,7 +67,7 @@ public class EvtPlayer {
 
 
     @Cancelable
-    @Event(name = "Player sends message",
+    @Event(name = "message sent",
             description = "Called when a player sends a message",
             examples = "on player sending message:",
             patterns = "(([player] sen(d[ing]|t) [a] message|message sent))",
@@ -82,7 +82,7 @@ public class EvtPlayer {
     }
 
     @Cancelable
-    @Event(name = "Player pickups an item",
+    @Event(name = "Item pickup",
             description = "Called when a player pickups an item",
             examples = "on item pickup:",
             patterns = "(player pickup[s] item|item pickup)",
@@ -99,7 +99,7 @@ public class EvtPlayer {
     }
 
     @Cancelable
-    @Event(name = "Player used an item",
+    @Event(name = "Item use",
             description = "Called when a player uses an item",
             examples = "on item use:",
             patterns = "(player use[s] item|item use)",
@@ -118,7 +118,7 @@ public class EvtPlayer {
 
 
     @Cancelable
-    @Event(name = "Player attacked",
+    @Event(name = "Player attack",
             description = "Called when a player is hit by another player",
             examples = "on player hit:",
             patterns = "player (hit|attacked)",

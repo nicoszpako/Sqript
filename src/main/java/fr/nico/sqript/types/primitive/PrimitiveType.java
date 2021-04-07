@@ -1,5 +1,6 @@
 package fr.nico.sqript.types.primitive;
 
+import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 
 public abstract class PrimitiveType<T> extends ScriptType<T> {
@@ -15,6 +16,10 @@ public abstract class PrimitiveType<T> extends ScriptType<T> {
         super(object);
     }
 
+
+    public void build(ScriptContext context){
+
+    }
 
     @Override
     public String toString() {

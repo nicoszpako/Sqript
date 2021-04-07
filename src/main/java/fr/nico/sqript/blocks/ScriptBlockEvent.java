@@ -75,7 +75,6 @@ public class ScriptBlockEvent extends ScriptBlock {
         setRoot(getMainField().compile(group));
         getScriptInstance().registerBlock(this);
 
-
     }
 
     public ScriptType[] getParameters() {

@@ -85,21 +85,20 @@ public class ScriptContext {
         //System.out.println("It contains : "+printVariables());
         int i = 0;
         for (ScriptAccessor a : variables.values()) {//Simple search first
-            if(a.pattern.equals(match))return i;
+            if(a.pattern.pattern().equals(match))return i;
             i++;
         }
-        i=0;
-        for (ScriptAccessor a : variables.values()) {//Pattern search second
-            //System.out.println("check if "+a.pattern.pattern()+" matches "+match);
-            Matcher m = a.pattern.matcher(match);
-            if(m.matches())return i;
-            i++;
+        for (Integer hash : variables.keySet()) {//Pattern search second
+            Matcher m = variables.get(hash).pattern.matcher(match);
+            //System.out.println("check if "+variables.get(hash).pattern.pattern()+" matches "+match+" it's : "+m.matches());
+            if(m.matches())
+                return hash;
         }
         if(parent!=null)
         {
             return parent.get(match);
         }
-        return -1;
+        return 0;
     }
 
     public Collection<ScriptAccessor> getAccessors(){

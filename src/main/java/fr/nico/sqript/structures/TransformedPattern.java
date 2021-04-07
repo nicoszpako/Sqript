@@ -24,6 +24,14 @@ public class TransformedPattern {
         this.pattern = pattern;
     }
 
+    public int getMarksCount() {
+        return marksCount;
+    }
+
+    public int getArgsCount() {
+        return argsCount;
+    }
+
     public TransformedPattern(Pattern pattern, int marksCount, int argsCount) {
         this.pattern = pattern;
         this.marksCount = marksCount;

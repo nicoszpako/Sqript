@@ -7,15 +7,11 @@ import java.util.List;
 
 public class ScriptCompileGroup {
 
-    //Only used for better error catching while compiling script
-    //Holds information about current block being compiled, like what variables that can be used, classes, functions etc.
+    //Used to determine which accessors can be used in a context.
 
     public List<ScriptAccessor> declaredVariables = new ArrayList<>();
-    public List<String> declaredFunctions = new ArrayList<>();
 
     public ScriptCompileGroup parent;
-
-
 
     public ScriptCompileGroup(){}
     public ScriptCompileGroup(ScriptCompileGroup parent){

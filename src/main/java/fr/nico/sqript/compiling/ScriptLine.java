@@ -35,7 +35,7 @@ public class ScriptLine{
 
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
+    public Object clone()  {
         return new ScriptLine(text,number, scriptInstance);
     }
 

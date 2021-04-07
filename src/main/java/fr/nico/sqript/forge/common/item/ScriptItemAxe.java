@@ -1,16 +1,16 @@
 package fr.nico.sqript.forge.common.item;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
 
-public class ScriptItemBase extends Item {
+public class ScriptItemAxe extends ItemAxe {
 
     public final String displayName;
 
-    public ScriptItemBase(String displayName){
-        super();
+    public ScriptItemAxe(String displayName, String toolMaterial){
+        super(ToolMaterial.valueOf(toolMaterial.toUpperCase()));
         this.displayName = displayName;
+
     }
 
     @Override

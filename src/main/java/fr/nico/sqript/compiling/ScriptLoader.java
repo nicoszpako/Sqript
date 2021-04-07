@@ -104,11 +104,10 @@ public class ScriptLoader
         }
         if(!exceptionList.exceptionList.isEmpty())
             throw exceptionList;
+
         ScriptManager.log.info("Finished loading " + file.getName() + ", it took : " + (System.currentTimeMillis() - c) + " ms");
         return instance;
     }
-
-
 
     public void loadBlock(List<ScriptLine> block, ScriptInstance instance ) throws Exception {
         ScriptLine head = block.remove(0);
@@ -118,12 +117,11 @@ public class ScriptLoader
                 throw new ScriptException.ScriptUnknownTokenException(head);
             if(blockDefinition.getSide().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())){
                 Class scriptBlockClass = blockDefinition.getBlockClass();
-                //System.out.println("Loading : "+scriptBlockClass.getSimpleName()+" at "+head);
-                    ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(head);
-                    scriptBlock.setLine(head);
-                    scriptBlock.setScriptInstance(instance);
-                    scriptBlock.init(new ScriptBlock.ScriptLineBlock("main",block));
-
+                //^2
+                ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(head);
+                scriptBlock.setLine(head);
+                scriptBlock.setScriptInstance(instance);
+                scriptBlock.init(new ScriptBlock.ScriptLineBlock("main",block));
 
             }
         }

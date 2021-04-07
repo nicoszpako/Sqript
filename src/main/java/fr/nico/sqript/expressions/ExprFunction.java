@@ -5,6 +5,9 @@ import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.blocks.ScriptBlockFunction;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeArray;
+
+import java.util.Arrays;
 
 public class ExprFunction extends ScriptExpression{
 
@@ -16,7 +19,6 @@ public class ExprFunction extends ScriptExpression{
 
     @Override
     public ScriptType<?> get(ScriptContext context, ScriptType[] parameters) throws ScriptException {
-        //System.out.println("Executing function : "+function.name);
         return function.get(context,parameters);
     }
 

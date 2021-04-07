@@ -1,16 +1,17 @@
 package fr.nico.sqript.forge.common.item;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 
-public class ScriptItemBase extends Item {
+public class ScriptItemPickaxe extends ItemPickaxe {
 
     public final String displayName;
 
-    public ScriptItemBase(String displayName){
-        super();
+    public ScriptItemPickaxe(String displayName, String toolMaterial){
+        super(ToolMaterial.valueOf(toolMaterial.toUpperCase()));
         this.displayName = displayName;
+
     }
 
     @Override

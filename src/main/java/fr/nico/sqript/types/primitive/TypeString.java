@@ -2,6 +2,8 @@ package fr.nico.sqript.types.primitive;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptDecoder;
+import fr.nico.sqript.compiling.ScriptLine;
+import fr.nico.sqript.expressions.ExprReference;
 import fr.nico.sqript.meta.Primitive;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
@@ -12,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 @Primitive(name = "string",
         parsableAs = {},
@@ -22,6 +25,10 @@ public class TypeString extends PrimitiveType<String> implements ISerialisable {
     @Nullable
     @Override
     public ScriptElement parse(String typeName) {
+        switch(typeName){
+            case "number":
+                return new TypeNumber(typeName);
+        }
         return null;
     }
 

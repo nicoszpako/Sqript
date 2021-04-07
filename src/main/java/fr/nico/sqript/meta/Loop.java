@@ -6,14 +6,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Expression {
+public @interface Loop {
 
     String name();
-    String[] description();
-    String[] examples();
-    String[] patterns();
+    String pattern();
     Side side() default Side.BOTH;
+
 
     //Highest priorities are checked first
     int priority() default 0;
+
 }

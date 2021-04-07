@@ -62,11 +62,7 @@ public abstract class ScriptAction extends IScript {
         return marks >> mark == 1;
     }
 
-    protected ScriptLine line;
 
-    public void setLine(ScriptLine line) {
-        this.line = line;
-    }
 
     public void setMatchedIndex(int matchedIndex) {
         this.matchedIndex = matchedIndex;
@@ -88,7 +84,7 @@ public abstract class ScriptAction extends IScript {
                 expressions.add(null);
                 continue;
             }
-            ScriptExpression e = ScriptDecoder.getExpression(line.with(parameter), compileGroup,strings);
+            ScriptExpression e = ScriptDecoder.getExpression(line.with(parameter),compileGroup, strings);
             if (e != null)
                 expressions.add(e);
             else {
@@ -97,6 +93,7 @@ public abstract class ScriptAction extends IScript {
         }
         setParameters(expressions);
         setMatchedIndex(matchedIndex);
+        System.out.println("Settign line to "+line);
         setLine(line);
         setMarks(marks);
     }

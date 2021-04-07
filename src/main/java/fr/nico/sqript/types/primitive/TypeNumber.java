@@ -15,7 +15,7 @@ import java.text.DecimalFormat;
 
 @Primitive(name = "number",
         parsableAs = {TypeString.class},
-        pattern = "("+ScriptDecoder.CAPTURE_FLOAT+"|" +ScriptDecoder.CAPTURE_FULL_NUMBER+")")
+        pattern = "((?:0b|0x)?"+ScriptDecoder.CAPTURE_NUMBER+")")
 
 public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, IFormatable {
 
@@ -31,8 +31,18 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
         return df.format(getObject());
     }
 
+    public static Double fromString(String string){
+        if(string.startsWith("0x")){
+            return (double) Integer.parseInt(string.substring(2), 16);
+        }
+        if(string.startsWith("0b")){
+            return (double) Integer.parseInt(string.substring(2), 2);
+        }
+        return Double.parseDouble(string);
+    }
+
     public TypeNumber(String d){
-        super(Double.valueOf(d));
+        super(fromString(d));
     }
 
     public TypeNumber(Double d){

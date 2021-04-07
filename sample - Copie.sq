@@ -1,0 +1,161 @@
+options:
+	my_value: 5
+
+on render overlay:
+    #print "test"
+
+item test_item:
+	name: My Test Item
+	texture: sample:yellow_diamond.png
+	creative tab: miscellaneous
+	max stack size: 8
+
+command /placetest:
+	set coord to player's location vector
+	add vector of [0,1.5,0] to coord #On ajoute la hauteur de la tête du joueur
+	add 3*(player's look vector) to coord #On ajoute le vecteur de l'orientation du joueur, et on le multiplie par 3 pour que la coordonnées soit à 3 blocs plus loin
+	set block at coord to minecraft:stone
+
+command /vec:
+	send player's look vector to player
+
+function broadcast(message):
+	for p in all players:
+		send message to p
+
+on window setup:
+	set window title to "Sqript"
+	set window icons to [sample:favicon_wb_16.png,sample:favicon_wb_32.png]
+
+on load:	
+	set dic to dictionary
+	for k in numbers in range of 10:
+		add [k,2*k*k-5*k-3] to dic
+	set a to "Test"
+	sort elements of dic
+
+
+on render overlay:
+	if $rotation is not defined:
+		set $rotation to 0
+	add 0.1 to $rotation
+	translate canvas by [30,30]
+	rotate canvas by $rotation
+	#draw textured rectangle at [1,1] with size [30,15] using texture sample:logo.png
+	#draw text ["test"+$test] at [0,5] with scale 1 and with color 16711680
+	draw textured rectangle at [-15,-7.5] with size [30,15] using texture sample:logo.png
+	#draw text [player's hunger] at [40,25] with scale 1 and with color 16711680
+
+
+command /def {string}:
+	set $test to arg 1
+
+on click with minecraft:stick :
+	send "Clicked" to player
+
+packet test_packet(m):
+	client:
+		print m
+	server:
+		print m
+
+command /givem:
+	send "Hi" to player
+	send "Hi 2 " to sender
+	give minecraft:diamond_sword to sender
+
+on block place of minecraft:diamond_block:
+	send "Placed ! " to player
+
+on block break of minecraft:grass:
+	send "Broken ! " to player
+
+
+
+command /broadcast {string}:
+	usage: none
+	description: returns a random player
+	broadcast(arg 1)
+
+command /setBlock:
+	set l to sender's location
+	send l to sender
+	set l[1] to l[1]-3 #Décalage de -3 en y
+	send l to sender
+	set block at l to minecraft:stone
+	set block at sender's location to minecraft:diamond_block
+
+command /date:
+	if ( not (5 = 8) ) and (1 = 1):
+		send "a" to sender
+	if (1 = 4 - 6) or (1 = 1):
+		send "b" to sender
+	send 5*9 to sender
+
+command /randomPlayer:
+	usage: none
+	description: returns a random player
+	send random element of all players to sender
+
+#Client side ! We have to use the synchronized variables
+on render of player's nameplates:
+	if value "hide_names" is synced:
+		if synced value "hide_names" = true:
+			cancel event
+
+on player hit:
+	print "hit"
+	if attacker = $starter:
+		broadcast((attacker's name)+" a trouvé "+(victim's name)+" !")
+		teleport victim to $defeat_point
+		add victim to $losers_array
+		print $losers_array
+		cancel event
+
+#every 1 second:
+	#print "tick"
+
+function switchHideNames():
+	if $hide is not set:
+		set $hide to true
+	else:
+		set $hide to not ($hide)
+	sync $hide as "hide_names" to all players
+
+
+#Execute on /sqache {string} {string}
+command /sqache {string} {string}:
+	usage: none
+	description: test description
+	if arg 1 = "start":
+		set $losers_array to []
+		broadcast("§bLa partie commence !")
+		switchHideNames()
+	else if arg 1 = "setSpawn":
+		set $spawn_point to location of sender
+		send "Spawn mis à jour !" to sender
+	else if arg 1 = "setDefeat":
+		set $defeat_point to location of sender
+		send "Point de défaite mis à jour !" to sender
+	else if arg 1 = "tpAll":
+		for p in all players:
+			teleport p to $spawn_point
+		send "Teleported all players to the spawn" to sender
+	else if arg 1 = "hideAll":
+		switchHideNames()
+	else if arg 1 = "setStarter":
+		set $starter to player with username arg 2
+		broadcast("§cLe chasseur sera... "+arg 2+" ! ")
+	else if arg 1 = "stop":
+		broadcast("La partie est terminée !")
+		set winners to []
+		switchHideNames()
+		for p in all players:
+			if p is not in $losers_array:
+				add p to winners
+			teleport p to $spawn_point
+		broadcast("size : "+size of winners)
+		for w in winners:
+			print "winner:"+w's name
+			broadcast("§b"+w's name+" fait partie des vainqueurs !")
+

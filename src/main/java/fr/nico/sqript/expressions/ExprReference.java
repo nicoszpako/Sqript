@@ -1,7 +1,10 @@
 package fr.nico.sqript.expressions;
 
 import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.compiling.ScriptCompileGroup;
+import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.compiling.ScriptLine;
 import fr.nico.sqript.structures.ScriptAccessor;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptElement;
@@ -12,20 +15,24 @@ public class ExprReference extends ScriptExpression{
 
     //Special one (not registered commonly)
 
-    public int getVarHash() {
-        return varHash;
-    }
-
-    public void setVarHash(int varHash) {
-        this.varHash = varHash;
-    }
-
-    public int varHash;
 
     public Class<? extends ScriptElement> type;
 
-    public ExprReference(Class<? extends ScriptElement> type) {
+    public ScriptExpression stringExpression;
+
+    public ExprReference(Class<? extends ScriptElement> type, ScriptExpression stringExpression) {
         this.type=type;
+        this.stringExpression = stringExpression;
+    }
+
+    Integer varHash = null;
+
+    public void setVarHash(Integer varHash) {
+        this.varHash = varHash;
+    }
+
+    public ExprReference(ScriptExpression stringExpression) {
+        this.stringExpression = stringExpression;
     }
 
     public Class<? extends ScriptElement> getReturnType() {
@@ -33,34 +40,42 @@ public class ExprReference extends ScriptExpression{
     }
 
     @Override
-    public ScriptType get(ScriptContext context, ScriptType[] parameters) {
-        //System.out.println("Getting for : "+line.text+", its null ? : "+(context.get(varHash)==null));
-        ScriptType r;
-        if((r=context.get(varHash))!=null)
-            return r;
-        else if (line.text.charAt(0)=='$'){
-            return new TypeNull();
+    public ScriptType get(ScriptContext context, ScriptType[] parameters) throws ScriptException {
+        int varHash = 0;
+        if(this.varHash == null){
+            String var = stringExpression.get(context).getObject().toString();
+            varHash = var.hashCode();
+            if(varHash == 0)
+                varHash = context.get(line.text);
+            return context.get(varHash);
+        }else {
+            //System.out.println("Getting reference for : "+line.text+", its null ? : "+(context.get(varHash)==null));
+            //System.out.println("varHash : "+this.varHash);
+            //System.out.println("Context vars are : "+context.printVariables());
+            //System.out.println("Result is null : "+(context.get(this.varHash)==null));
+            return context.get(this.varHash);
         }
-        //System.out.println("Returning null in ExprRegerence");
-        return null;
     }
+
 
     @Override
     public boolean set(ScriptContext context,ScriptType to, ScriptType[] parameters) throws ScriptException {
-        if(line.text.charAt(0)=='$'){
-            ScriptAccessor a = ScriptManager.GLOBAL_CONTEXT.getAccessor(varHash);
+        String var = stringExpression.get(context).getObject().toString();
+
+        if(var.charAt(0)=='$'){
+            ScriptAccessor a = ScriptManager.GLOBAL_CONTEXT.getAccessor(this.varHash == null ? var.hashCode() : this.varHash);
             if(a!=null){
                 a.element=to;
             }else{
-                ScriptManager.GLOBAL_CONTEXT.put(new ScriptAccessor(to,line.text,varHash));
+                ScriptManager.GLOBAL_CONTEXT.put(new ScriptAccessor(to,var,this.varHash == null ? var.hashCode() : this.varHash));
             }
         }else{
-            //System.out.println("Setting reference for : "+line.text+" with type : "+to);
-            ScriptAccessor a = context.getAccessor(varHash);
+            //System.out.println("Setting reference for : "+var+" with type : "+to);
+            ScriptAccessor a = context.getAccessor(this.varHash == null ? var.hashCode() : this.varHash);
             if(a!=null){
                 a.element=to;
             }else{
-                context.put(new ScriptAccessor(to,line.text,varHash));
+                context.put(new ScriptAccessor(to,var,this.varHash == null ? var.hashCode() : this.varHash));
             }
         }
         return true;

@@ -1,15 +1,15 @@
 package fr.nico.sqript.forge.common.item;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemPickaxe;
+import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 
-public class ScriptItemBase extends Item {
+public class ScriptItemShovel extends ItemSpade {
 
     public final String displayName;
 
-    public ScriptItemBase(String displayName){
-        super();
+    public ScriptItemShovel(String displayName, String toolMaterial){
+        super(ToolMaterial.valueOf(toolMaterial.toUpperCase()));
         this.displayName = displayName;
     }
 

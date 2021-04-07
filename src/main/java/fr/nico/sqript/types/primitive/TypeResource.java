@@ -3,6 +3,7 @@ package fr.nico.sqript.types.primitive;
 import fr.nico.sqript.meta.Primitive;
 import fr.nico.sqript.structures.ScriptElement;
 import net.minecraft.util.ResourceLocation;
+import sun.net.www.content.image.png;
 
 import javax.annotation.Nullable;
 
@@ -24,7 +25,11 @@ public class TypeResource extends PrimitiveType<ResourceLocation> {
     }
 
     public TypeResource(String parameter){
-        super(new ResourceLocation(parameter.split(":")[0],(parameter.split(":")[1].endsWith("png") && !parameter.split(":")[1].startsWith("textures/"))?"textures/"+parameter.split(":")[1]:parameter.split(":")[1]));
+        super(new ResourceLocation(arrange(parameter)));
+    }
+
+    public static String arrange(String parameter){
+        return parameter.split(":")[0]+":"+((parameter.split(":")[1].endsWith(" png ") && !parameter.split(":")[1].startsWith("textures/"))?"textures/"+parameter.split(":")[1]:parameter.split(":")[1]);
     }
 
 }

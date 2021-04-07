@@ -3,10 +3,7 @@ package fr.nico.sqript;
 import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.blocks.ScriptBlock;
 import fr.nico.sqript.blocks.ScriptBlockCommand;
-import fr.nico.sqript.compiling.ScriptDecoder;
-import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
-import fr.nico.sqript.compiling.ScriptLoader;
+import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.events.EvtOnScriptLoad;
 import fr.nico.sqript.events.EvtOnWindowSetup;
 import fr.nico.sqript.events.ScriptEvent;
@@ -56,10 +53,14 @@ public class ScriptManager {
     public static List<ActionDefinition> actions = new ArrayList<>();
     public static List<BlockDefinition> blocks = new ArrayList<>();
     public static List<ExpressionDefinition> expressions = new ArrayList<>();
+    public static List<LoopDefinition> loops = new ArrayList<>();
+
     public static Map<Class<? extends ScriptElement<?>>, TypeDefinition> types = new HashMap<>();
     public static Map<Class<? extends PrimitiveType<?>>, TypeDefinition> primitives = new HashMap<>();
     public static Map<Class<? extends ScriptNativeFunction>, NativeDefinition> nativeFunctions = new HashMap<>();
 
+    public static List<IScriptParser> parsers = new ArrayList<>();
+    
     //Commands
     public static List<ScriptBlockCommand> clientCommands = new ArrayList<>();
     public static List<ScriptBlockCommand> serverCommands = new ArrayList<>();
@@ -70,7 +71,7 @@ public class ScriptManager {
     public static List<ScriptOperator> operators = new ArrayList<>();
 
     public static boolean RELOADING = false;
-
+    
     public static void registerBinaryOperation(ScriptOperator o, Class a, Class b, IOperation operation) {
         binaryOperations.computeIfAbsent(o, k -> new HashMap<>());
         binaryOperations.get(o).computeIfAbsent(a, k -> new HashMap<>());
@@ -153,6 +154,14 @@ public class ScriptManager {
         TypeDefinition primitiveDefinition = new TypeDefinition(name, new String[0], new String[]{""}, type);
         primitiveDefinition.transformedPattern = new TransformedPattern(patterns[0],0,0, new ScriptParameterDefinition[]{new ScriptParameterDefinition(type,false)});
         primitives.put(type, primitiveDefinition);
+    }
+
+
+    public static void registerLoop(Class<? extends ScriptEvent> cls, String name, String pattern, Side side, int priority) {
+        log.debug("Registering loop : " + name + " (" + cls.getSimpleName() + ")");
+        loops.add(new LoopDefinition(pattern,cls,side,name,priority));
+        loops.sort((a,b)->b.getPriority()-a.getPriority());
+
     }
 
     public static void registerEvent(Class<? extends ScriptEvent> cls, String name, String[] description, String[] example, String[] patterns, Side side,String... accessors) {
@@ -281,6 +290,7 @@ public class ScriptManager {
         for(File f : folder.listFiles()) {
             if(f.isDirectory()){
                 loadFolder(f);
+                ScriptManager.loadResources(f);
             }
             else if (f.toPath().toString().endsWith(".sq")) {
                 ScriptLoader loader = new ScriptLoader(f);
@@ -321,7 +331,7 @@ public class ScriptManager {
 
     @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
     public static void loadResources(File mainFolder) throws IllegalAccessException {
-        System.out.println("Adding "+mainFolder+" to loaded resources.");
+        //System.out.println("Adding "+mainFolder+" to loaded resources.");
         ScriptResourceLoader resourceLoader = new ScriptResourceLoader();
         Field defaultResourcePacksField = ObfuscationReflectionHelper.findField(Minecraft.getMinecraft().getClass(),"field_110449_ao");
         defaultResourcePacksField.setAccessible(true);

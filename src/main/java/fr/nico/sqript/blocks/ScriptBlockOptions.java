@@ -29,8 +29,7 @@ public class ScriptBlockOptions extends ScriptBlock {
                 }
                 String optionValue = m.group(2);
                 ScriptExpression value = null;
-                ScriptCompileGroup compileGroup = new ScriptCompileGroup();
-                if((value= ScriptDecoder.getExpression(s.with(optionValue),compileGroup))!=null){
+                if((value= ScriptDecoder.getExpression(s.with(optionValue),new ScriptCompileGroup()))!=null){
                     getScriptInstance().getOptions().put(optionName,value);
                 }else{
                     throw new ScriptException.ScriptUnknownExpressionException(s.with(optionValue));

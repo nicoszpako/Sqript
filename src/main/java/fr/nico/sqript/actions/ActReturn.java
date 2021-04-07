@@ -31,24 +31,24 @@ public class ActReturn extends ScriptAction {
                 return;
             case 2:
                 IScript p = super.parent;
-                while(!(p instanceof ScriptLoop.ScriptLoopWHILE) && !(p instanceof ScriptLoop.ScriptLoopFOR)){
+                while(!(p instanceof ScriptLoop.ScriptLoopRepeated)){
                     if(p.parent == null)
-                        throw new ScriptException(this.line,"No loop to break.");
+                        throw new ScriptException(getLine(),"No loop to break.");
                     p = p.parent;
                 }
-                ((ScriptLoop) p).doBreak();
+                ((ScriptLoop.ScriptLoopRepeated) p).doBreak();
                 return;
             case 3:
                 TypeNumber n = (TypeNumber) getParameters().get(0).get(context);
                 p = this;
                 for (int i = 0; i < n.getObject(); i++) {
                     p = p.parent;
-                    while(!(p instanceof ScriptLoop.ScriptLoopWHILE) && !(p instanceof ScriptLoop.ScriptLoopFOR)){
+                    while(!(p instanceof ScriptLoop.ScriptLoopRepeated)){
                         if(p.parent == null)
-                            throw new ScriptException(this.line,"No more loop to break.");
+                            throw new ScriptException(getLine(),"No more loop to break.");
                         p = p.parent;
                     }
-                    ((ScriptLoop) p).doBreak();
+                    ((ScriptLoop.ScriptLoopRepeated) p).doBreak();
                 }
                 return;
         }

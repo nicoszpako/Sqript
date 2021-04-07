@@ -54,9 +54,11 @@ public abstract class ScriptBlock extends IScript {
 
     public ScriptLineBlock getSubBlock(String label) {
         for (ScriptLineBlock f : mainField.getSubBlocks()) {
+            //System.out.println("Looping on block : "+f.getLabel());
             if (f.getLabel().equalsIgnoreCase(label))
                 return f;
         }
+
         return null;
     }
 
@@ -96,15 +98,14 @@ public abstract class ScriptBlock extends IScript {
         String currentLabel = "";
         ScriptLine next;
         setMainField(new ScriptLineBlock(currentLabel, new ArrayList<>()));
-        //System.out.println("Loading with block : " + block);
         while (!block.isEmpty()) {
             next = block.remove(0);
-            //System.out.println("Next is : "+next);
+            //System.out.println(next);
             //Indentation error
             if (ScriptDecoder.getTabLevel(next.text) > 1) {
                 throw new ScriptException.ScriptIndentationErrorException(next);
             }
-
+            //System.out.println("this fields : "+Arrays.asList(this.getClass().getAnnotation(Block.class).fields()));
             Matcher m = getLabel.matcher(next.text);
             if (m.find() && Arrays.asList(this.getClass().getAnnotation(Block.class).fields()).contains(currentLabel = m.group(1))) {
                 //Found the description of a sub-block
@@ -124,10 +125,10 @@ public abstract class ScriptBlock extends IScript {
                     throw new ScriptException.ScriptMissingTokenException(next);
                 } else {
                     ScriptLineBlock field = new ScriptLineBlock(currentLabel, content);
-                    currentLabel = "";
                     getMainField().addSubBlock(field);
                 }
             }else {
+                //System.out.println("Can't find : "+next.text);
                 //Found a block which is not in a field, it's the mainField
                 List<ScriptLine> content = new ArrayList<>();
                 content.add(next.with(shiftIndentation(next.text, 1)));
@@ -139,7 +140,6 @@ public abstract class ScriptBlock extends IScript {
                     //System.out.println("Added : "+next);
                 }
                 getMainField().setContent(content);
-                //System.out.println("r:"+content);
                 return;
             }
 
@@ -212,17 +212,19 @@ public abstract class ScriptBlock extends IScript {
             this.label = label;
         }
 
+
         public ScriptType evaluate(ScriptCompileGroup group, ScriptContext context) throws Exception {
             return ScriptDecoder.getExpression(content.get(0), group).get(context);
         }
 
         public String getRawContent() {
-            return content.get(0).text.trim();
+            return content.get(0).text.split("#")[0].trim();
         }
 
         public ScriptType evaluate() throws Exception {
             return evaluate(new ScriptCompileGroup(), new ScriptContext());
         }
+
 
         public IScript compile() throws Exception {
             return compile(new ScriptCompileGroup());

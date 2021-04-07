@@ -36,10 +36,11 @@ public class SqriptCommand extends CommandBase {
                 try{
                     ScriptManager.reload();
                 }catch(Throwable e){
-                    if (e instanceof ScriptException) {
+                    if (e instanceof ScriptException.ScriptExceptionList) {
                         sendMessage("\247cError while reloading the scripts : ",sender);
-                        for(String s : e.getMessage().split("\n")){
-                            sendMessage("\247c"+s,sender);
+                        for(Throwable ex : ((ScriptException.ScriptExceptionList) e).exceptionList){
+                            sendMessage("\247c"+ex.getLocalizedMessage(),sender);
+                            ex.printStackTrace();
                         }
                     }
                     else{
@@ -47,6 +48,7 @@ public class SqriptCommand extends CommandBase {
                         sendMessage("\247c"+e.getLocalizedMessage(),sender);
                         e.printStackTrace();
                     }
+
                 }
                 sendMessage("Done in "+((System.currentTimeMillis()-t)/1000d)+" seconds",sender);
             }

@@ -1,15 +1,15 @@
 package fr.nico.sqript.forge.common.item;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 
-public class ScriptItemBase extends Item {
+public class ScriptItemSword extends ItemSword {
 
     public final String displayName;
 
-    public ScriptItemBase(String displayName){
-        super();
+    public ScriptItemSword(String displayName, String toolMaterial){
+        super(ToolMaterial.valueOf(toolMaterial.toUpperCase()));
         this.displayName = displayName;
     }
 

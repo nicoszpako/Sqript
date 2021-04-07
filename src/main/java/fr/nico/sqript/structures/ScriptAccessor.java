@@ -26,7 +26,7 @@ public class ScriptAccessor {
     public ScriptAccessor(ScriptType element, String match) {
         this.element = element;
         try {
-            this.pattern = ScriptDecoder.transformPattern(match).pattern;
+            this.pattern = ScriptDecoder.patternToRegex(match).pattern;
         } catch (ScriptException.ScriptPatternError scriptPatternError) {
             ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+eventType.getSimpleName());
             scriptPatternError.printStackTrace();
@@ -45,7 +45,7 @@ public class ScriptAccessor {
     public ScriptAccessor(ScriptType element, String match, int varHash) {
         this.element = element;
         try {
-            this.pattern = ScriptDecoder.transformPattern(match).pattern;
+            this.pattern = ScriptDecoder.patternToRegex(match).pattern;
         } catch (ScriptException.ScriptPatternError scriptPatternError) {
             ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+eventType.getSimpleName());
             scriptPatternError.printStackTrace();

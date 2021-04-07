@@ -52,6 +52,7 @@ public class ScriptFunctionalBlock extends ScriptBlock {
         return compileGroup;
     }
 
+
     public String name;
 
 
@@ -79,7 +80,7 @@ public class ScriptFunctionalBlock extends ScriptBlock {
     public void init(ScriptLineBlock block) throws Exception {
         super.init(block);
         System.out.println("Loaded function : "+name);
-        setRoot(getMainField().compile(createCompileGroup()));
+        setRoot(getMainField().compile());
         //System.out.println(getRoot()==null);
         getScriptInstance().registerBlock(this);
     }
