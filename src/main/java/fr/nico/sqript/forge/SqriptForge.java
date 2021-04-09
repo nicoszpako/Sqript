@@ -21,6 +21,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -92,19 +93,18 @@ public class SqriptForge {
         }
         ScriptManager.preInit(scriptDir);
         List<ModContainer> containerList = new ArrayList<>();
-
-        containerList.add(Loader.instance().activeModContainer());
         ScriptManager.log.info("Loading content of Sqript.");
         //Add dependants to be loaded
         containerList.addAll(Loader.instance().getIndexedModList().values());
-        try {
             for(ModContainer container : containerList){
-                if(container==null || container.getName().equalsIgnoreCase("Minecraft"))
-                    continue;
-                modBuilding(event,container);
+                try {
+                    if(container==null || container.getName().equalsIgnoreCase("Minecraft") || container.getName().equalsIgnoreCase("Minecraft"))
+                        continue;
+                    modBuilding(event,container);
+                } catch (Exception e) {
+                }
             }
-        } catch (Exception e) {
-        }
+
         ScriptManager.init();
         
         ScriptManager.callEvent(new EvtOnWindowSetup());

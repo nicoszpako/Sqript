@@ -334,6 +334,18 @@ public class ScriptException extends Exception {
         }
     }
 
+    public static class ScriptNullReferenceException extends ScriptException {
+
+        public ScriptNullReferenceException(ScriptLine line) {
+            super(line);
+        }
+
+        @Override
+        public String getMessage() {
+            return line.text+" contains a value which has not been declared or which is null in this special context : \n"+line;
+        }
+    }
+
     public static class ScriptUndefinedReferenceException extends ScriptException {
 
         public ScriptUndefinedReferenceException(ScriptLine line) {

@@ -17,7 +17,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -202,7 +204,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
             k.start(this);
         } catch (Exception e) {
             iCommandSender.sendMessage(new TextComponentString("\247cAn error occured while executing Sqript command : "));
-            iCommandSender.sendMessage(new TextComponentString("\247c"+e.getMessage()));
+            iCommandSender.sendMessage(new TextComponentString("\247c"+e.getMessage()).setStyle(new Style().setColor(TextFormatting.RED)));
             e.printStackTrace();
         }
     }

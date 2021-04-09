@@ -9,10 +9,8 @@ import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class ExprCompiledEvaluation extends ScriptExpression {
@@ -33,7 +31,14 @@ public class ExprCompiledEvaluation extends ScriptExpression {
 
     private Stack<Token> pile = new Stack<>();
     public void compile(){
-        //System.out.println("Compiling : "+in.text);
+        System.out.println("Compiling : "+in.text +" with "+ Arrays.stream(operands).map(a-> {
+            try {
+                return (a instanceof ExprPrimitive ? a.get(null).toString():"")+" ";
+            } catch (ScriptException e) {
+                e.printStackTrace();
+            }
+            return "";
+        }).collect(Collectors.joining()));
         //Shunting-yard algorithm implementation by Nico- to get a RPN ("Notation polonaise inversée") with an unfixed notation
         int c = 0;
         while(c<in.text.length()) {//While there are tokens to be read
@@ -81,7 +86,7 @@ public class ExprCompiledEvaluation extends ScriptExpression {
                 }
                 c++;//Last "}"
                 int id_int = Integer.parseInt(id);
-                ScriptOperator o1 = ScriptManager.operators.get(id_int);
+                ScriptOperator o1 = operators[id_int];
                 if(o1.postfixed){//Already postfixed, we add it normally
                     out.add(new Token(TOKEN_TYPE.OPERATOR,0,id_int));
                 }else{
@@ -118,7 +123,7 @@ public class ExprCompiledEvaluation extends ScriptExpression {
             c++;
         }
         while(!pile.empty())out.add(pile.pop());
-        //System.out.println(getFullRPN());;
+        System.out.println(getFullRPN());;
     }
 
     public String getRPN(){
@@ -133,7 +138,7 @@ public class ExprCompiledEvaluation extends ScriptExpression {
         StringBuilder r = new StringBuilder();
         int i = 0;
         for(Token s : out){
-            r.append(s.token_type == TOKEN_TYPE.EXPRESSION ? "[" + (operands[i] == null ? "null" : operands[i].getClass().getSimpleName()) + ":" + (operands[i] == null?0:operands[i].getMatchedIndex()) + "]" : "").append(" ");
+            r.append(s.token_type == TOKEN_TYPE.EXPRESSION ? "[" + (operands[i] == null ? "null" : operands[i].getClass().getSimpleName()) + " "+i+":" + (operands[i] == null?0:operands[i].getMatchedIndex()) + "]" : operators[s.id].symbol).append(" ");
             if(s.token_type==TOKEN_TYPE.EXPRESSION)i++;
         }
         return r.toString();
@@ -168,19 +173,23 @@ public class ExprCompiledEvaluation extends ScriptExpression {
                     terms.push(null);
                 }else{
                     final List<ScriptType<?>> arguments = new ArrayList<>();
-                    //System.out.println("Token is : "+s +" with arity : "+s.arity);
+                    System.out.println("Token is : "+s +" with arity : "+s.arity);
                     for(int i = 0;i<s.arity;i++){
                         //Handle when some parameters of an expression are empty
-                        //System.out.println("Peeking is : "+terms.peek());
+                        System.out.println("Peeking is : "+terms.peek());
                         arguments.add(0,terms.isEmpty()?null:terms.pop());
                     }
-                    ScriptType<?> t = se.get(context,arguments.toArray(new ScriptType[0]));
+                    try {
+                        ScriptType<?> t = se.get(context, arguments.toArray(new ScriptType[0]));
+                        terms.push(t);
+                    }catch(NullPointerException exception){
+                        throw new ScriptException.ScriptNullReferenceException(se.line);
+                    }
                     //System.out.println("Pushing "+t+" which is an "+t.getClass().getSimpleName());
-                    terms.push(t);
                 }
             }else if(s.token_type==TOKEN_TYPE.OPERATOR){
                 final ScriptOperator o = operators[s.id];
-
+                System.out.println("Operator is : "+o);
                 if(o==ScriptOperator.EQUAL) {
                     final ScriptType<?> o1 = terms.pop();
                     final ScriptType<?> o2 = terms.pop();

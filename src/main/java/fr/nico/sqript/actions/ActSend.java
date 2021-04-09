@@ -40,6 +40,7 @@ public class ActSend extends ScriptAction {
                 }
                 break;
             case 1:
+                System.out.println("Value expression : "+getParameter(1).getClass()+ " "+getParameter(1).getMatchedIndex());
                 value = getParameter(1).get(context);
                 ScriptType dest = getParameter(2).get(context);
                  if (value instanceof TypeMessagePrototype) {

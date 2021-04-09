@@ -61,7 +61,7 @@ public class ScriptContext {
         String s = "("+this.hashCode()+") ";
 
         for(int a : variables.keySet()){
-            s+=a +": "+ variables.get(a).pattern +":"+variables.get(a).element+" ";
+            s+="["+ variables.get(a).pattern+"/"+a +":"+variables.get(a).element+"] ";
         }
         if(parent!=null)
             s+=" => ["+parent.printVariables()+"]";

@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 
 public class ScriptDecoder {
 
-
     public static final String CAPTURE_BETWEEN_QUOTES = "(?:\"((?:[^\"\\\\\\\\]|\\\\.)*)\")";
     public static final String CAPTURE_INTEGER = "(?:\\s*[0-9]+)";
     public static final String CAPTURE_BOOLEAN = "(?:([Tt]rue|[Ff]alse))";
@@ -123,6 +122,7 @@ public class ScriptDecoder {
     static Pattern pattern_removed_string = Pattern.compile("\\{S(\\d*)}");
     static Pattern pattern_capture_quotes = Pattern.compile("("+ CAPTURE_BETWEEN_QUOTES + ")");
     static Pattern pattern_variable = Pattern.compile("^(?:\\$)?\\{(.*)}$");
+
     static Pattern pattern_compiled_string = Pattern.compile("@\\{S(\\d*)}");
     public static String[] extractStrings(String parameter){
         List<String> result = new ArrayList<>();
@@ -157,19 +157,49 @@ public class ScriptDecoder {
         return parameter;
     }
 
-    static Pattern pattern_L = Pattern.compile("(?<!\\\\)(L\\d+)");
+    static Pattern pattern_L = Pattern.compile("(?<!\\\\)(L£\\d+)");
 
     public static String buildOperators(String t,List<ScriptOperator> operators){
         List<String> saved = new ArrayList<>();
         //System.out.println("Building operators for : "+t);
 
+        //Removing variables
+        int l = 0;
+        int depth = 0;
+        int start = 0;
+        while(l<t.length()){
+            if(t.charAt(l)=='{') {
+                //System.out.println("Found an opening bracket : "+l+" with depth : "+depth);
+                if (depth == 0)
+                    start = l;
+                depth++;
+            }
+            if(t.charAt(l)=='}') {
+                //System.out.println("Found a closing bracket : "+l+" with depth : "+depth);
+                depth--;
+                if(depth == 0){
+                    String a = t.substring(0,start);
+                    String b = t.substring(l+1);
+                    String m = t.substring(start,l+1);
+                    String n = "L£"+saved.size();
+                    //System.out.println("SPLIT ! For start : "+start+" and end : "+l+" with a :'"+a+"' and b : '"+b+"' and m:'"+m+"'");
+                    t = a + n + b;
+                    l+=n.length()-m.length();
+                    //System.out.println("t is now : "+t);
+                    //System.out.println("l is now : "+l);
+
+                    saved.add(m);
+                }
+            }
+            l++;
+        }
+        //System.out.println("no vars : "+t);
+        //Removing strings
         Matcher m = pattern_capture_quotes.matcher(t);
-        int i = 0;
         while (m.find()) {
             String f = m.group(1);
+            t = t.replaceFirst(Pattern.quote(f), "L£" + saved.size());
             saved.add(f);
-            t = t.replaceFirst(Pattern.quote(f), "L" + i);
-            i++;
         }
 
         //Placing operators
@@ -212,11 +242,13 @@ public class ScriptDecoder {
             }
         }
         //Replacing text between []'s
-
+        //System.out.println("Not replaced : "+t);
+        //System.out.println("Pattern : "+pattern_L.pattern());
         m = pattern_L.matcher(t);
-        i = 0;
+        int i = 0;
         while (m.find()) {
-            t = t.replaceFirst("L" + i, saved.get(i));
+            //System.out.println("Found a group : "+m.group());
+            t = t.replaceFirst(Pattern.quote(m.group()), saved.get(i));
             i++;
         }
         //System.out.println("Built : "+t);
@@ -279,6 +311,7 @@ public class ScriptDecoder {
                     //Preventing text between [] or "" to be matched by expressions and saving it
                     //System.out.println("-------");
                     if(result != null) {
+                        //System.out.println("Result not null");
                         for (String[] groups : (String[][]) result[1]) {
                             //System.out.println("g:"+Arrays.toString(groups)+" @ "+finalParameter);
                             for (String splits : groups) {
@@ -307,7 +340,6 @@ public class ScriptDecoder {
                         return null;
                     }
                 }
-                //System.out.println("m");
                 //System.out.println("Going to go through groups");
                 for (String part : groups) {
                     //We remove the outside parenthesis, if there is an error due to this manipulation it means there is a bad
@@ -489,8 +521,7 @@ public class ScriptDecoder {
         }
 
         //Check if it is a variable
-        Matcher variableMatcher = pattern_variable.matcher(parameter.text);
-        if(variableMatcher.matches()){
+        if(checkIfVariable(parameter.text)){
             ExprReference r = new ExprReference((ScriptExpression) compileString(parameter,compileGroup)[0]);
             r.setLine(parameter);
             return new Object[]{r, new String[0][0]};
@@ -549,6 +580,7 @@ public class ScriptDecoder {
         }
         if (def != null && index.length > 0)
             try {
+                //System.out.println("Returning : "+def+":"+index);
                 TransformedPattern tp = def.transformedPatterns[index[0]];
                 Class<? extends ScriptExpression> expression = def.getExpressionClass();
                 ScriptExpression exp = expression.getConstructor().newInstance();
@@ -591,8 +623,10 @@ public class ScriptDecoder {
         for (ScriptBlock fc : parameter.scriptInstance.getBlocksOfClass(ScriptBlockFunction.class)) {
             //System.out.println("Checking for : "+fc.getClass().getSimpleName());
             ScriptBlockFunction function = (ScriptBlockFunction) fc;
-            if (function.name.equals(parameter.text))
+            if (function.name.equals(parameter.text)){
+                //System.out.println("Returning function : "+function);
                 return new Object[]{new ExprResult(new TypeFunction(function)), new String[0][0]};
+            }
         }
 
         if(parameter.text.startsWith("@")){
@@ -607,13 +641,30 @@ public class ScriptDecoder {
             Class<? extends ScriptElement<?>> returnType = getType("element");
             if (returnType == null) throw new ScriptException.ScriptUndefinedReferenceException(parameter);
             else {
-                ExprReference s = new ExprReference(returnType, new ExprPrimitive(new TypeString(parameter.text)));
+                //System.out.println("Returning reference for : "+parameter);
+                ExprReference s = new ExprReference(new ExprPrimitive(new TypeString(parameter.text)));
                 s.setLine((ScriptLine) parameter.clone());
                 s.setVarHash(h);
                 return new Object[]{s, new String[0][0]};
             }
         }
+        //System.out.println("Returning null litteral for : "+parameter);
         return null;
+    }
+
+    private static boolean checkIfVariable(String text) {
+        int c = 0;
+        int d = 0;
+        while(c<text.length()){
+            if(text.charAt(c)=='{')
+                d++;
+            else if(text.charAt(c)=='}')
+                d--;
+            else if(d<=0)
+                return false;
+            c++;
+        }
+        return true;
     }
 
     private static Object[] compileString(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {
@@ -651,6 +702,7 @@ public class ScriptDecoder {
         operands.add(new ExprPrimitive(new TypeString(string)));
         return new Object[]{ new ExprCompiledEvaluation(line.with(finalString.toString()),operands.toArray(new ScriptExpression[0]),operators.toArray(new ScriptOperator[0])), new String[0][0]};
     }
+
 
     private static String[] splitAtComa(String text) {
         List<String> splits = new ArrayList<>();

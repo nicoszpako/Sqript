@@ -31,6 +31,7 @@ public class ActDefinition extends ScriptAction {
         final ScriptExpression first = getParameters().get(0);
         final ScriptType<?> a = first.get(context);
         final ScriptType<?> b = second.get(context);
+        //System.out.println("Executing line : "+getLine()+" with index:  "+getMatchedIndex());
         switch (getMatchedIndex()){
             case 0:
                 if(!second.set(context,ScriptManager.getBinaryOperation(b.getClass(),a.getClass(), ScriptOperator.ADD).operate(b,a))){
@@ -56,6 +57,7 @@ public class ActDefinition extends ScriptAction {
         //we parse the argument as a string to make the action
         //able to register the new variable in the context
         if (matchedIndex == 2) {
+            System.out.println("Set ! : "+line);
             ScriptExpression arg = ScriptDecoder.getExpression(line.with(parameters.get(0)),compileGroup);
             ScriptExpression to = ScriptDecoder.getExpression(line.with(parameters.get(1)),compileGroup);
             if (to == null)
