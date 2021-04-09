@@ -66,7 +66,7 @@ public class ActDefinition extends ScriptAction {
             this.setMatchedIndex(matchedIndex);
             this.setMarks(marks);
         } else {
-            super.build(getLine(),compileGroup, parameters, matchedIndex, marks);
+            super.build(line,compileGroup, parameters, matchedIndex, marks);
         }
 
     }

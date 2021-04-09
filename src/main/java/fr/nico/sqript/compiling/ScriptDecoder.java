@@ -126,7 +126,7 @@ public class ScriptDecoder {
     static Pattern pattern_compiled_string = Pattern.compile("@\\{S(\\d*)}");
     public static String[] extractStrings(String parameter){
         List<String> result = new ArrayList<>();
-        //System.out.println("Extracting strings for : "+parameter);
+        System.out.println("Extracting strings for : "+parameter);
 
         Matcher m = pattern_capture_quotes.matcher(parameter);
         int i = 0;
@@ -135,7 +135,7 @@ public class ScriptDecoder {
             result.add(f);
             i++;
         }
-        //System.out.println("Returning : "+ Arrays.toString(result.toArray(new String[0])));
+        System.out.println("Returning : "+ Arrays.toString(result.toArray(new String[0])));
         return result.toArray(new String[0]);
     }
 
