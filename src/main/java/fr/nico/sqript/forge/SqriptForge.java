@@ -92,18 +92,26 @@ public class SqriptForge {
                 scriptDir.mkdirs();
         }
         ScriptManager.preInit(scriptDir);
-        List<ModContainer> containerList = new ArrayList<>();
         ScriptManager.log.info("Loading content of Sqript.");
         //Add dependants to be loaded
-        containerList.addAll(Loader.instance().getIndexedModList().values());
-            for(ModContainer container : containerList){
-                try {
-                    if(container==null || container.getName().equalsIgnoreCase("Minecraft") || container.getName().equalsIgnoreCase("Minecraft"))
-                        continue;
-                    modBuilding(event,container);
-                } catch (Exception e) {
-                }
+        ModContainer sqriptContainer = Loader.instance().activeModContainer();
+        try {
+            modBuilding(event,sqriptContainer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<ModContainer> containerList = new ArrayList<>(Loader.instance().getIndexedModList().values());
+        containerList.remove(sqriptContainer);
+        for(ModContainer container : containerList){
+            try {
+                if(container==null || container.getName().equalsIgnoreCase("Minecraft") || container.getName().equalsIgnoreCase("Minecraft"))
+                    continue;
+                modBuilding(event,container);
+            } catch (Exception e) {
+                ScriptManager.log.error("Error while loading Sqript addon : ");
+                e.printStackTrace();
             }
+        }
 
         ScriptManager.init();
         
