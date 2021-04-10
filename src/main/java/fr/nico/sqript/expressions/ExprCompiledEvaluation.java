@@ -31,14 +31,7 @@ public class ExprCompiledEvaluation extends ScriptExpression {
 
     private Stack<Token> pile = new Stack<>();
     public void compile(){
-        System.out.println("Compiling : "+in.text +" with "+ Arrays.stream(operands).map(a-> {
-            try {
-                return (a instanceof ExprPrimitive ? a.get(null).toString():"")+" ";
-            } catch (ScriptException e) {
-                e.printStackTrace();
-            }
-            return "";
-        }).collect(Collectors.joining()));
+        //System.out.println("Compiling : "+in.text +" with "+ Arrays.stream(operands).map(a-> {            try {                return (a instanceof ExprPrimitive ? a.get(null).toString():"")+" ";            } catch (ScriptException e) {                e.printStackTrace();            }            return "";        }).collect(Collectors.joining()));
         //Shunting-yard algorithm implementation by Nico- to get a RPN ("Notation polonaise inversée") with an unfixed notation
         int c = 0;
         while(c<in.text.length()) {//While there are tokens to be read
@@ -48,7 +41,7 @@ public class ExprCompiledEvaluation extends ScriptExpression {
                     out.add(pile.pop());
                 }
                 if(pile.empty()){
-                    //System.out.println("Parenthesage error");
+                    ////System.out.println("Parenthesage error");
                 }
             }
             if(r=='@' && (c==0 || in.text.charAt(c-1)!='\\')) {//Operand
@@ -111,7 +104,7 @@ public class ExprCompiledEvaluation extends ScriptExpression {
                     out.add(pile.pop());
                 }
                 if(pile.empty()){
-                    //System.out.println("Parenthesis error");
+                    ////System.out.println("Parenthesis error");
                 }
                 pile.pop();
 
@@ -123,7 +116,7 @@ public class ExprCompiledEvaluation extends ScriptExpression {
             c++;
         }
         while(!pile.empty())out.add(pile.pop());
-        System.out.println(getFullRPN());;
+        //System.out.println(getFullRPN());;
     }
 
     public String getRPN(){
@@ -161,7 +154,7 @@ public class ExprCompiledEvaluation extends ScriptExpression {
     @Override
     public ScriptType get(ScriptContext context, ScriptType<?>[] parameters) throws ScriptException {
         final Stack<ScriptType> terms = new Stack<>();
-        //System.out.println("Evaluating get : " + out+" WITH ("+getFullRPN()+")");
+        ////System.out.println("Evaluating get : " + out+" WITH ("+getFullRPN()+")");
         //Optimisation
         if(out.size()==1){
             return operands[0].get(context,null);
@@ -173,10 +166,10 @@ public class ExprCompiledEvaluation extends ScriptExpression {
                     terms.push(null);
                 }else{
                     final List<ScriptType<?>> arguments = new ArrayList<>();
-                    System.out.println("Token is : "+s +" with arity : "+s.arity);
+                    //System.out.println("Token is : "+s +" with arity : "+s.arity);
                     for(int i = 0;i<s.arity;i++){
                         //Handle when some parameters of an expression are empty
-                        System.out.println("Peeking is : "+terms.peek());
+                        //System.out.println("Peeking is : "+terms.peek());
                         arguments.add(0,terms.isEmpty()?null:terms.pop());
                     }
                     try {
@@ -185,11 +178,11 @@ public class ExprCompiledEvaluation extends ScriptExpression {
                     }catch(NullPointerException exception){
                         throw new ScriptException.ScriptNullReferenceException(se.line);
                     }
-                    //System.out.println("Pushing "+t+" which is an "+t.getClass().getSimpleName());
+                    ////System.out.println("Pushing "+t+" which is an "+t.getClass().getSimpleName());
                 }
             }else if(s.token_type==TOKEN_TYPE.OPERATOR){
                 final ScriptOperator o = operators[s.id];
-                System.out.println("Operator is : "+o);
+                //System.out.println("Operator is : "+o);
                 if(o==ScriptOperator.EQUAL) {
                     final ScriptType<?> o1 = terms.pop();
                     final ScriptType<?> o2 = terms.pop();
@@ -219,13 +212,13 @@ public class ExprCompiledEvaluation extends ScriptExpression {
     public boolean set(ScriptContext context, ScriptType to, ScriptType<?>[] parameters) throws ScriptException {
         final Stack<ScriptExpression> expressions = new Stack<>();
         final Stack<ScriptType> types = new Stack<>();
-        //System.out.println("Evaluating set : " + getFullRPN());
+        ////System.out.println("Evaluating set : " + getFullRPN());
         if(out.size()==1){
             return operands[0].set(context,to,new ScriptType[0]);
         }else for(Token s : out){
             if(s.token_type==TOKEN_TYPE.EXPRESSION){
                 final ScriptExpression se = operands[s.id];
-                //System.out.println(se);
+                ////System.out.println(se);
                 final List<ScriptType<?>> arguments = new ArrayList<>();
                 if(!(s==out.getLast())) {
                     for (int i = 0; i < s.arity; i++) {
@@ -254,7 +247,7 @@ public class ExprCompiledEvaluation extends ScriptExpression {
 
             }
         }
-        //System.out.println("Pop is: "+expressions.peek().getClass().getSimpleName());
+        ////System.out.println("Pop is: "+expressions.peek().getClass().getSimpleName());
         return expressions.pop().set(context,to, types.toArray(new ScriptType[0]));
     }
 
