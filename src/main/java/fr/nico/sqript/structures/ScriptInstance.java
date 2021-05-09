@@ -25,7 +25,7 @@ public class ScriptInstance {
     private final String name;
 
     public ScriptInstance(String name, File scriptFile) {
-        this.name=name;
+        this.name = name;
         this.scriptFile = scriptFile;
     }
 
@@ -40,17 +40,31 @@ public class ScriptInstance {
 
     public boolean callEvent(ScriptContext context, ScriptEvent event) {
         //System.out.println("Calling event : "+event.getClass());
-        ScriptContext returnContext = callEventAndGetContext(context,event);
-        return (boolean) returnContext.returnValue.element.getObject();
+        try {
+            ScriptContext returnContext = callEventAndGetContext(context, event);
+            return (boolean) returnContext.returnValue.element.getObject();
+        } catch (Exception e) {
+            ScriptManager.log.error("Error while calling event : " + event.getClass().getSimpleName());
+            if (e instanceof ScriptException.ScriptWrappedException) {
+                Throwable ex = ((ScriptException.ScriptWrappedException) (e)).getWrapped();
+                ScriptManager.log.error(((ScriptException.ScriptWrappedException) (e)).getLine() + " : " + ex.getMessage());
+                e.printStackTrace();
+            } else if (e instanceof ScriptException) {
+                if (ScriptManager.FULL_DEBUG) e.printStackTrace();
+                for (String s : e.getMessage().split("\n"))
+                    ScriptManager.log.error(s);
+            }
+        }
+        return false;
     }
 
-    public List<ScriptBlock> getBlocksOfClass(Class<? extends ScriptBlock> type){
-        return blocks.stream().filter(a->a.getClass().isAssignableFrom(type)).collect(Collectors.toList());
+    public List<ScriptBlock> getBlocksOfClass(Class<? extends ScriptBlock> type) {
+        return blocks.stream().filter(a -> a.getClass().isAssignableFrom(type)).collect(Collectors.toList());
     }
 
-    public ScriptFunctionalBlock getFunction(String name){
+    public ScriptFunctionalBlock getFunction(String name) {
         for (ScriptBlock f : blocks) {
-            if(f instanceof ScriptFunctionalBlock){
+            if (f instanceof ScriptFunctionalBlock) {
                 ScriptFunctionalBlock function = (ScriptFunctionalBlock) f;
                 if (function.name.equals(name))
                     return function;
@@ -59,27 +73,19 @@ public class ScriptInstance {
         return null;
     }
 
-    public ScriptContext callEventAndGetContext(ScriptContext context,ScriptEvent event) {
+    public ScriptContext callEventAndGetContext(ScriptContext context, ScriptEvent event) throws ScriptException {
         //System.out.println("Trying to call event : "+event.getClass().getSimpleName());
         context.returnValue = new ScriptAccessor(TypeBoolean.FALSE(), "");
         //long t1 = //System.currentTimeMillis();
         for (ScriptBlock b : getBlocksOfClass(ScriptBlockEvent.class)) {
             ScriptBlockEvent t = (ScriptBlockEvent) b;
             //System.out.println("Checking for class : "+t.eventType+", are they equal : "+(t.eventType == event.getClass())+" is check : "+event.check(t.getParameters(),t.getMarks())+" is side ok: "+t.side.isEffectivelyValid());
-            if (t.eventType == event.getClass() && event.check(t.getParameters(),t.getMarks()) && t.side.isEffectivelyValid()) {
+            if (t.eventType == event.getClass() && event.check(t.getParameters(), t.getMarks()) && t.side.isEffectivelyValid()) {
                 //System.out.println("Calling event : "+event.getClass().getSimpleName());
-                try {
-                    ScriptClock clock = new ScriptClock(context);
-                    context.wrap(event.accessors);
-                    clock.start(t);
-                } catch (Exception e) {
-                    ScriptManager.log.error("Error while calling event : "+event.getClass().getSimpleName());
-                    if (ScriptManager.FULL_DEBUG) e.printStackTrace();
-                    if (e instanceof ScriptException) {
-                        for (String s : e.getMessage().split("\n"))
-                            ScriptManager.log.error(s);
-                    }
-                }
+                ScriptClock clock = new ScriptClock(context);
+                context.wrap(event.accessors);
+                clock.start(t);
+
                 ////System.out.println("Finished ! It took : " + (System.currentTimeMillis() - t1) + " ms");
                 return context;
             }
@@ -96,4 +102,9 @@ public class ScriptInstance {
         //System.out.println("Adding block : "+block.getClass());
         blocks.add(block);
     }
+
+    public List<ScriptBlock> getBlocks() {
+        return blocks;
+    }
+
 }

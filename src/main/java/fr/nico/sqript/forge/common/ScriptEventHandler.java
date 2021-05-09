@@ -2,6 +2,7 @@ package fr.nico.sqript.forge.common;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.ScriptTimer;
+import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.events.*;
 import fr.nico.sqript.structures.ScriptContext;
@@ -9,6 +10,8 @@ import fr.nico.sqript.types.TypeBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
@@ -25,6 +28,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 public class ScriptEventHandler {
 
@@ -54,42 +58,58 @@ public class ScriptEventHandler {
         }
     }
 
-    @SubscribeEvent
     @SideOnly(Side.CLIENT)
+    @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent.Pre event) {
-
-        if(event.getType()== RenderGameOverlayEvent.ElementType.HEALTH) {
-            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderHealthBar(Minecraft.getMinecraft().player))) {
-                event.setCanceled(true);
+        try{
+            if(event.getType()== RenderGameOverlayEvent.ElementType.HEALTH) {
+                if (ScriptManager.callEvent(new EvtRender.EvtOnRenderHealthBar(Minecraft.getMinecraft().player))) {
+                    event.setCanceled(true);
+                }
+                Minecraft.getMinecraft().getTextureManager().bindTexture(Gui.ICONS);
+            }else  if(event.getType()== RenderGameOverlayEvent.ElementType.CHAT) {
+                if (ScriptManager.callEvent(new EvtRender.EvtOnRenderChat(Minecraft.getMinecraft().player))) {
+                    event.setCanceled(true);
+                }
+            }else if(event.getType()== RenderGameOverlayEvent.ElementType.FOOD) {
+                if (ScriptManager.callEvent(new EvtRender.EvtOnRenderFoodBar(Minecraft.getMinecraft().player))) {
+                    event.setCanceled(true);
+                }
+            }else if(event.getType()== RenderGameOverlayEvent.ElementType.ALL) {
+                //long start = System.currentTimeMillis();
+                if (ScriptManager.callEvent(new EvtRender.EvtOnRenderOverlay(Minecraft.getMinecraft().player))) {
+                    event.setCanceled(true);
+                }
+            /*
+            long end = System.currentTimeMillis();
+            ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
+            Minecraft.getMinecraft().fontRenderer.drawString((end-start)+"ms",resolution.getScaledWidth()-Minecraft.getMinecraft().fontRenderer.getStringWidth((end-start)+"ms"),resolution.getScaledHeight()-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT,0xFFFFFFFF);
+            */
+            }else if(event.getType()== RenderGameOverlayEvent.ElementType.EXPERIENCE) {
+                if (ScriptManager.callEvent(new EvtRender.EvtOnRenderXPBar(Minecraft.getMinecraft().player))) {
+                    event.setCanceled(true);
+                }
+            }else if(event.getType()== RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
+                if (ScriptManager.callEvent(new EvtRender.EvtOnRenderCrosshair(Minecraft.getMinecraft().player))) {
+                    event.setCanceled(true);
+                }
             }
-            Minecraft.getMinecraft().getTextureManager().bindTexture(Gui.ICONS);
-        }else  if(event.getType()== RenderGameOverlayEvent.ElementType.CHAT) {
-            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderChat(Minecraft.getMinecraft().player))) {
-                event.setCanceled(true);
-            }
-        }else if(event.getType()== RenderGameOverlayEvent.ElementType.FOOD) {
-            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderFoodBar(Minecraft.getMinecraft().player))) {
-                event.setCanceled(true);
-            }
-        }else if(event.getType()== RenderGameOverlayEvent.ElementType.ALL) {
-            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderOverlay(Minecraft.getMinecraft().player))) {
-                event.setCanceled(true);
-            }
-        }else if(event.getType()== RenderGameOverlayEvent.ElementType.EXPERIENCE) {
-            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderXPBar(Minecraft.getMinecraft().player))) {
-                event.setCanceled(true);
-            }
-        }else if(event.getType()== RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
-            if (ScriptManager.callEvent(new EvtRender.EvtOnRenderCrosshair(Minecraft.getMinecraft().player))) {
-                event.setCanceled(true);
-            }
+        }catch(Exception e){
+            Minecraft.getMinecraft().fontRenderer.drawString(e.toString(),0,0,0xFFFF0000);
         }
+
+
     }
 
     @SubscribeEvent
     public void onPlayerSendMessage(ServerChatEvent event) {
         if (event.getPlayer() instanceof EntityPlayer) {
-            ScriptContext context = ScriptManager.callEventAndGetContext(new EvtPlayer.EvtOnPlayerSendMessage(event.getPlayer(), event.getMessage()));
+            ScriptContext context = null;
+            try {
+                context = ScriptManager.callEventAndGetContext(new EvtPlayer.EvtOnPlayerSendMessage(event.getPlayer(), event.getMessage()));
+            } catch (ScriptException e) {
+                e.printStackTrace();
+            }
             if(context.getAccessor("message") != null)
                 event.setComponent(new TextComponentString((String) context.getAccessor("message").element.getObject()));
             if ((boolean) context.returnValue.element.getObject()) {
@@ -120,7 +140,7 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onBlockPlace(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer)event.getEntity(),new TypeBlock(Block.getBlockFromItem(event.getItemStack().getItem()).getDefaultState(),event.getPos()),event.getHand(),0, event.getPos()))) {
+            if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer)event.getEntity(),new TypeBlock(Block.getBlockFromItem(event.getItemStack().getItem()).getDefaultState(),event.getPos(),event.getWorld()),event.getHand(),0, event.getPos()))) {
                 event.setCanceled(true);
             }
         }
@@ -129,7 +149,7 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockPlace((EntityPlayer)event.getEntity(),new TypeBlock(event.getPlacedBlock(),event.getPos())))) {
+            if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockPlace((EntityPlayer)event.getEntity(),new TypeBlock(event.getPlacedBlock(),event.getPos(),event.getWorld())))) {
                 event.setCanceled(true);
             }
         }
@@ -137,7 +157,7 @@ public class ScriptEventHandler {
 
     @SubscribeEvent
     public void onBlockPlace(BlockEvent.BreakEvent event) {
-        if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockBreak(event.getPlayer(),new TypeBlock(event.getState(),event.getPos())))) {
+        if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockBreak(event.getPlayer(),new TypeBlock(event.getState(),event.getPos(),event.getWorld())))) {
             event.setCanceled(true);
         }
     }

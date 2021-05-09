@@ -57,7 +57,7 @@ public class ActReturn extends ScriptAction {
 
     //We definitely stop the current execution to return the context
     @Override
-    public IScript getNext(ScriptContext context) {
+    public IScript getNext(ScriptContext context) throws ScriptException {
         //If "return" or "cancel event"
         switch(getMatchedIndex()){
             case 0: case 1:

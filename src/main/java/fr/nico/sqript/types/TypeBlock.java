@@ -8,6 +8,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import java.util.Objects;
 
@@ -16,6 +18,7 @@ import java.util.Objects;
 public class TypeBlock extends ScriptType<IBlockState> implements ILocatable {
 
     BlockPos pos;
+    World world;
 
     @Override
     public Vec3d getVector() {
@@ -49,12 +52,13 @@ public class TypeBlock extends ScriptType<IBlockState> implements ILocatable {
     }
 
     public TypeBlock(IBlockState block) {
-        this(block,null);
+        this(block,null,null);
     }
 
-    public TypeBlock(IBlockState block, BlockPos pos) {
+    public TypeBlock(IBlockState block, BlockPos pos, World world) {
         super(block);
         this.pos = pos;
+        this.world = world;
     }
 
 }

@@ -21,7 +21,7 @@ public abstract class IScript {
         this.next = next;
     }
 
-    public IScript getNext(ScriptContext context) {
+    public IScript getNext(ScriptContext context) throws ScriptException {
         if(next!=null)
             return next;
         else if(getParent()!=null && getParent() instanceof ScriptLoop) {
@@ -42,8 +42,6 @@ public abstract class IScript {
     public void setLine(ScriptLine line) {
         this.line = line;
     }
-
-    public int hash;
 
     /**
      * The next <strong>direct</strong> parent of this script item

@@ -48,4 +48,7 @@ public class ScriptLine{
         return this;
     }
 
+    public void trim() {
+        text = text.trim();
+    }
 }

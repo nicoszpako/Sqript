@@ -17,6 +17,7 @@ import fr.nico.sqript.structures.ScriptInstance;
 import fr.nico.sqript.types.TypeDate;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 @Block(name = "time loop",
         description = "Time looping blocks",
@@ -36,6 +37,10 @@ public class ScriptBlockTimeLoop extends ScriptBlock {
 
     public long getDelay(ScriptLine line) throws Exception {
         line.text = line.text.replaceAll("every\\s+", "").replaceAll(":", "");
+        if(line.text.endsWith("server")){
+            line.text = line.text.replaceAll("server","");
+
+        }
         ScriptExpression expr = ScriptDecoder.getExpression(line,new ScriptCompileGroup());
         //System.out.println("Loading time looping block :");
         //System.out.println(expr.getClass());

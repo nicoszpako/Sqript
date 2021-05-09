@@ -6,8 +6,11 @@ import fr.nico.sqript.types.primitive.TypeNumber;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import sun.reflect.ReflectionFactory;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -95,5 +98,13 @@ public class SqriptUtils {
         }
         bw.flush();
         bw.close();
+    }
+
+
+    public static <T> T rawInstantiation(Class<?> parent, Class<T> child) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
+        Constructor objDef = parent.getDeclaredConstructor();
+        Constructor intConstr = rf.newConstructorForSerialization(child, objDef);
+        return child.cast(intConstr.newInstance());
     }
 }

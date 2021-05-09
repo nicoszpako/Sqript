@@ -1,17 +1,19 @@
 package fr.nico.sqript.expressions;
 
 import fr.nico.sqript.SqriptUtils;
-import fr.nico.sqript.types.TypePlayer;
+import fr.nico.sqript.types.*;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.types.ScriptType;
-import fr.nico.sqript.types.TypeArray;
-import fr.nico.sqript.types.TypeVector;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,10 +28,17 @@ import java.util.Arrays;
             "{+player}['s] name:player",
             "{+player}['s] health:number",
             "{+player}['s] (hunger|food):number",
-            "{+player}['s] look vector:vector"
+            "{+player}['s] look vector:vector",
+            "block {player} is looking at:block",
+            "player:player"
         }
 )
 public class ExprPlayers extends ScriptExpression {
+
+    @SideOnly(Side.CLIENT)
+    public EntityPlayer getClientPlayer(){
+        return Minecraft.getMinecraft().player;
+    }
 
     @Override
     public ScriptType get(ScriptContext context, ScriptType[] parameters) {
@@ -58,7 +67,20 @@ public class ExprPlayers extends ScriptExpression {
             case 5:
                 player = (EntityPlayer) parameters[0].getObject();
                 return new TypeVector(Vec3d.fromPitchYaw(player.getPitchYaw().x,player.getRotationYawHead()));
-
+            case 6:
+                player = (EntityPlayer) parameters[0].getObject();
+                World world = player.world;
+                Vec3d vec3d = player.getPositionEyes(0);
+                Vec3d vec3d1 = player.getLook(0);
+                int blockReachDistance = 5;
+                Vec3d vec3d2 = vec3d.addVector(vec3d1.x * blockReachDistance, vec3d1.y * blockReachDistance, vec3d1.z * blockReachDistance);
+                RayTraceResult result = world.rayTraceBlocks(vec3d, vec3d2, false, false, true);
+                if(result.typeOfHit == RayTraceResult.Type.BLOCK){
+                    return new TypeBlock(world.getBlockState(result.getBlockPos()),result.getBlockPos(),world);
+                }else
+                    return new TypeNull();
+            case 7:
+                return new TypePlayer(getClientPlayer());
         }
         return null;
     }

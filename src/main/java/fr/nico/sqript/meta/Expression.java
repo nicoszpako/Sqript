@@ -14,6 +14,12 @@ public @interface Expression {
     String[] patterns();
     Side side() default Side.BOTH;
 
-    //Highest priorities are checked first
+    /**
+     * Set the priority at which the expression will be checked.
+     * Highest priorities are checked first.
+     * @return The priority of this expression.
+     */
     int priority() default 0;
+
+
 }

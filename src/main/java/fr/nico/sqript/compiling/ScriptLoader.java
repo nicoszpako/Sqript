@@ -110,6 +110,8 @@ public class ScriptLoader
     }
 
     public void loadBlock(List<ScriptLine> block, ScriptInstance instance ) throws Exception {
+        if(block.isEmpty())
+            return;
         ScriptLine head = block.remove(0);
         if(!block.isEmpty()){
             BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);

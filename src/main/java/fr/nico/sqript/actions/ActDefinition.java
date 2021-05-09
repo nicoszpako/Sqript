@@ -57,7 +57,7 @@ public class ActDefinition extends ScriptAction {
         //we parse the argument as a string to make the action
         //able to register the new variable in the context
         if (matchedIndex == 2) {
-            System.out.println("Set ! : "+line);
+            //System.out.println("Set ! : "+line);
             ScriptExpression arg = ScriptDecoder.getExpression(line.with(parameters.get(0)),compileGroup);
             ScriptExpression to = ScriptDecoder.getExpression(line.with(parameters.get(1)),compileGroup);
             if (to == null)

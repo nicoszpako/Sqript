@@ -141,7 +141,7 @@ public class EvtPlayer {
     @Event(name = "Player jump",
             description = "Called when a player jumps",
             examples = "on player jump:",
-            patterns = "player (jump|jumped)",
+            patterns = "[player] (jump|jumped)",
             accessors = {"player:player"}
     )
     public static class EvtOnPlayerJump extends ScriptEvent {

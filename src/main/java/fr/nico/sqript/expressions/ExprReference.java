@@ -20,6 +20,14 @@ public class ExprReference extends ScriptExpression{
 
     public ScriptExpression stringExpression;
 
+    public boolean global = false;
+
+    @Override
+    public void setLine(ScriptLine line) {
+        super.setLine(line);
+        global = line.text.startsWith("$");
+    }
+
     public ExprReference(Class<? extends ScriptElement> type, ScriptExpression stringExpression) {
         this.type=type;
         this.stringExpression = stringExpression;
@@ -42,19 +50,21 @@ public class ExprReference extends ScriptExpression{
     @Override
     public ScriptType get(ScriptContext context, ScriptType[] parameters) throws ScriptException {
         int varHash = 0;
+        if(global)
+            context = ScriptManager.GLOBAL_CONTEXT;
         if(this.varHash == null){
             String var = stringExpression.get(context).getObject().toString();
-            System.out.println("Getting var hash for : "+var);
-            System.out.println("Context vars are : "+context.printVariables());
+            //System.out.println("Getting var hash for : "+var);
+            //System.out.println("Context vars are : "+context.printVariables());
             varHash = var.hashCode();
             if(varHash == 0)
                 varHash = context.get(line.text);
             return context.get(varHash);
         }else {
-            System.out.println("Getting reference for : "+line.text+", its null ? : "+(context.get(varHash)==null));
-            System.out.println("varHash : "+this.varHash);
-            System.out.println("Context vars are : "+context.printVariables());
-            System.out.println("Result is null : "+(context.get(this.varHash)==null));
+            //System.out.println("Getting reference for : "+line.text+", its null ? : "+(context.get(varHash)==null));
+            //System.out.println("varHash : "+this.varHash);
+            //System.out.println("Context vars are : "+context.printVariables());
+            //System.out.println("Result is null : "+(context.get(this.varHash)==null));
             return context.get(this.varHash);
         }
     }
@@ -63,19 +73,23 @@ public class ExprReference extends ScriptExpression{
     @Override
     public boolean set(ScriptContext context,ScriptType to, ScriptType[] parameters) throws ScriptException {
         int varHash = 0;
+        if(global)
+            context = ScriptManager.GLOBAL_CONTEXT;
         if(this.varHash == null){
             String var = stringExpression.get(context).getObject().toString();
-            System.out.println("Setting  var hash for : "+var+" : "+var.hashCode());
-            System.out.println("Context vars are : "+context.printVariables());
+            //System.out.println("Setting  var hash for : "+var+" : "+var.hashCode());
+            //System.out.println("Context vars are : "+context.printVariables());
             varHash = var.hashCode();
             if(varHash == 0)
                 varHash = context.get(line.text);
-            context.put(new ScriptAccessor(to,varHash));
+            ScriptAccessor accessor = new ScriptAccessor(to,varHash);
+            accessor.key = var;
+            context.put(accessor);
         }else {
-            System.out.println("Setting reference for : "+line.text+", its null ? : "+(context.get(varHash)==null));
-            System.out.println("varHash : "+this.varHash);
-            System.out.println("Context vars are : "+context.printVariables());
-            System.out.println("Result is null : "+(context.get(this.varHash)==null));
+            //System.out.println("Setting reference for : "+line.text+", its null ? : "+(context.get(varHash)==null));
+            //System.out.println("varHash : "+this.varHash);
+            //System.out.println("Context vars are : "+context.printVariables());
+            //System.out.println("Result is null : "+(context.get(this.varHash)==null));
             context.put(new ScriptAccessor(to,this.varHash));
         }
 

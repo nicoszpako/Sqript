@@ -38,10 +38,10 @@ public class TypeString extends PrimitiveType<String> implements ISerialisable {
 
     static {
         ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeString.class, ScriptType.class,
-                (a, b) -> new TypeString(a.getObject() + b.toString()));
+                (a, b) -> new TypeString((a==null ? "null" : a.getObject()) + (b==null ? "null" : b.toString())));
 
         ScriptManager.registerBinaryOperation(ScriptOperator.ADD, ScriptType.class, TypeString.class,
-                (a, b) -> new TypeString(a.toString() + b.getObject()));
+                (a, b) -> new TypeString((a==null ? "null" : a.toString()) + (b==null ? "null" : b.getObject())));
 
         ScriptManager.registerBinaryOperation(ScriptOperator.MT, TypeString.class, TypeString.class,
                 (a, b) -> new TypeBoolean(((TypeString) a).getObject().compareTo(((TypeString) b).getObject()) > 0));

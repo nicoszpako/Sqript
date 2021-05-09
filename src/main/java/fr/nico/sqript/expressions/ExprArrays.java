@@ -27,7 +27,7 @@ import java.util.Random;
                 "[a] random element of {array}:element",
                 "first element of {array}:element",
                 "last element of {array}:element",
-                "{+array}~[{+number}~]:element",
+                "{!array}~[{+number}~]:element",
                 "numbers from {number} to {number}:array",
                 "[numbers] in range of {number}:array",
                 "random numbers in range of {number}:array",
@@ -84,7 +84,7 @@ public class ExprArrays extends ScriptExpression{
             case 7: //numbers in range of a
                 array = new TypeArray();
                 b1 = (TypeNumber) parameters[0];
-                for(double i = 0;i<=b1.getObject();i++){
+                for(double i = 0;i < b1.getObject();i++){
                     array.getObject().add(new TypeNumber(i));
                 }
                 return array;
@@ -133,13 +133,17 @@ public class ExprArrays extends ScriptExpression{
     }
 
     @Override
-    public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) throws ScriptException.ScriptUndefinedReferenceException {
+    public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) throws ScriptException {
         switch(getMatchedIndex()){
             case 5:
                 TypeArray a = (TypeArray) parameters[0];
                 TypeNumber b = (TypeNumber) parameters[1];
-                a.getObject().set(b.getObject().intValue(),to);
-                return true;
+                if (b.getObject() < a.getObject().size()) {
+                    a.getObject().set(b.getObject().intValue(),to);
+                    return true;
+                }else{
+                    throw new ScriptException.ScriptIndexOutOfBoundsException(this.line);
+                }
         }
         return false;
     }

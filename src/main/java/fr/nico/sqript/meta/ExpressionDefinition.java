@@ -11,47 +11,14 @@ import java.util.regex.Matcher;
 
 public class ExpressionDefinition {
 
+    final int priority;
+    private final Class<? extends ScriptExpression> cls;
+    public TransformedPattern[] transformedPatterns;
     String name;
     String[] description;
     String[] patterns;
     String[] example;
     Side side;
-    final int priority;
-    public TransformedPattern[] transformedPatterns;
-
-    //[0] : pattern index
-    //[1] : pattern index relative position in match
-    //[2] : marks
-    public int[] getMatchedPatternIndexAndPosition(String line){
-        for (int i = 0; i < transformedPatterns.length ; i++) {
-            //System.out.println("Checking if "+line+" matches "+transformedPatterns[i].getPattern());
-            Matcher m = transformedPatterns[i].getPattern().matcher(line);
-            if(m.matches()){
-                //System.out.println(line+" matches! ");
-                if(m.groupCount()>0){
-                    return new int[]{i,m.end(1), transformedPatterns[i].getAllMarks(line)};
-                }else{
-                    return new int[]{i,line.length()+1, transformedPatterns[i].getAllMarks(line)};
-                }
-            }
-
-        }
-        return null;
-    }
-
-    public Side getSide() {
-        return side;
-    }
-
-    private final Class<? extends ScriptExpression> cls;
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public Class<? extends ScriptExpression> getExpressionClass() {
-        return cls;
-    }
 
     public ExpressionDefinition(String name, String[] description, String[] example, Class<? extends ScriptExpression> cls, int priority, Side side, @Nullable String... patterns) {
         this.name = name;
@@ -75,6 +42,62 @@ public class ExpressionDefinition {
             }
         }
 
+    }
+
+    //[0] : pattern index
+    //[1] : pattern index relative position in match
+    //[2] : marks
+    public int[] getMatchedPatternIndexAndPosition(String line){
+        int shortestIndex = -1;
+        int shortestPosition = -1;
+        t:for (int i = 0; i < transformedPatterns.length ; i++) {
+            //System.out.println("Checking if "+line+" matches "+transformedPatterns[i].getPattern());
+            Matcher m = transformedPatterns[i].getPattern().matcher(line);
+            if(m.matches()){
+                for(String argument : transformedPatterns[i].getAllArguments(line)){
+                    if(!ScriptDecoder.isParenthesageGood(argument))
+                        continue t;
+                }
+                if(m.groupCount()>0){
+                    int leastGroupStartPosition = -1;
+                    for (int j = 1; j < m.groupCount()+1; j++) {
+                        if (m.start(j) != -1) {
+                            leastGroupStartPosition = m.start(j);
+                            break;
+                        }
+                    }
+                    //System.out.println("OK : "+this.name+":"+i+" ("+transformedPatterns[i].getPattern()+") with position "+leastGroupStartPosition+" (actual shortest position : "+shortestPosition+")");
+                    if (leastGroupStartPosition > shortestPosition) {
+                        shortestPosition = leastGroupStartPosition;
+                        shortestIndex = i;
+                    }
+                }else{
+                    if (line.length()+1 > shortestPosition) {
+                        shortestPosition = line.length()+1;
+                        shortestIndex = i;
+                    }
+                }
+            }
+
+        }
+        if(shortestIndex != -1){
+            //System.out.println("Returning : "+this.name+":"+shortestIndex+" ("+transformedPatterns[shortestIndex].getPattern()+") for "+line);
+            return new int[]{shortestIndex,shortestPosition, transformedPatterns[shortestIndex].getAllMarks(line)};
+        }else
+            return null;
+
+    }
+
+    public Side getSide() {
+        return side;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public Class<? extends ScriptExpression> getExpressionClass() {
+        return cls;
     }
 
     public String getName() {

@@ -33,7 +33,7 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
 
     public static Double fromString(String string){
         if(string.startsWith("0x")){
-            return (double) Integer.parseInt(string.substring(2), 16);
+            return (double) Long.parseLong(string.substring(2), 16);
         }
         if(string.startsWith("0b")){
             return (double) Integer.parseInt(string.substring(2), 2);
@@ -92,6 +92,7 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
 
         ScriptManager.registerUnaryOperation(ScriptOperator.PLUS_UNARY, TypeNumber.class,
                  (a,b) -> a);
+
 
         ScriptManager.registerUnaryOperation(ScriptOperator.FACTORIAL, TypeNumber.class,
                 new IOperation() {

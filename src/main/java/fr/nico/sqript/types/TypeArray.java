@@ -14,11 +14,10 @@ import fr.nico.sqript.types.interfaces.ISerialisable;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Vector3f;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -96,44 +95,38 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISer
     }
 
     @Override
-    public void read(NBTTagCompound compound) {
-        NBTTagList list = compound.getTagList("list",9);
+    public void read(NBTTagCompound compound) throws ScriptException {
+        //System.out.println("Reading : "+compound);
+        setObject(new ArrayList<>());
+        NBTTagList list = compound.getTagList("list", Constants.NBT.TAG_COMPOUND);
         l:for (Iterator<NBTBase> it = list.iterator(); it.hasNext(); ) {
             NBTTagCompound nbt = (NBTTagCompound) it.next();
             String typeName = nbt.getString("type");
             NBTTagCompound value = nbt.getCompoundTag("value");
             Class typeClass = ScriptDecoder.getType(typeName);
+            //System.out.println("Typeclass is : "+typeClass);
             assert typeClass != null;
-            for(Constructor c : typeClass.getConstructors()){
-                if(c.getParameterTypes()[0]!=String.class){
-                    ScriptType t = null;
-                    try {
-                        t = (ScriptType) c.newInstance(new Object[]{null});
-                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                    if(!(t instanceof ISerialisable)) try {
-                        throw new ScriptException.TypeNotSavableException(t.getClass());
-                    } catch (ScriptException.TypeNotSavableException e) {
-                        e.printStackTrace();
-                    }
-                    ISerialisable savable = (ISerialisable)t;
-                    savable.read(value);
-                    getObject().add((ScriptType) savable);
-                    continue l;
-                }
-            }
+            //System.out.println("Iterating on : "+typeName+" "+value);
+            ScriptElement t = null;
             try {
-                throw new Exception("Found no constructor for type : "+typeClass);
-            } catch (Exception e) {
+                t = (ScriptElement) SqriptUtils.rawInstantiation(ScriptElement.class,typeClass);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 e.printStackTrace();
             }
+            if (!(t instanceof ISerialisable))
+                throw new ScriptException.ScriptTypeNotSaveableException(t.getClass());
+            ISerialisable savable = (ISerialisable) t;
+            savable.read(value);
+            getObject().add((ScriptType) savable);
         }
+        //System.out.println("Read finished : "+ this);
     }
 
     @Override
     public ScriptType<?> get(int index) {
-        return getObject().get(index);
+        if(index < getObject().size())
+            return getObject().get(index);
+        else return new TypeNull();
     }
 
     @Override

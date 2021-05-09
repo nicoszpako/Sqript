@@ -64,4 +64,8 @@ public abstract class ScriptExpression {
     public void setLine(ScriptLine line) {
         this.line = line;
     }
+
+    public boolean validate(ScriptLine line){
+        return true;
+    }
 }

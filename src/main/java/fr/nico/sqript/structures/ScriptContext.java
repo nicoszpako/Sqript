@@ -61,7 +61,7 @@ public class ScriptContext {
         String s = "("+this.hashCode()+") ";
 
         for(int a : variables.keySet()){
-            s+="["+ variables.get(a).pattern+"/"+a +":"+variables.get(a).element+"] ";
+            s+="["+ variables.get(a).key+"/"+a +":"+variables.get(a).element+"] ";
         }
         if(parent!=null)
             s+=" => ["+parent.printVariables()+"]";
@@ -85,11 +85,11 @@ public class ScriptContext {
         //System.out.println("It contains : "+printVariables());
         int i = 0;
         for (ScriptAccessor a : variables.values()) {//Simple search first
-            if(a.pattern.pattern().equals(match))return i;
+            if(a.key.equals(match))return i;
             i++;
         }
         for (Integer hash : variables.keySet()) {//Pattern search second
-            Matcher m = variables.get(hash).pattern.matcher(match);
+            Matcher m = variables.get(hash).getPattern().matcher(match);
             //System.out.println("check if "+variables.get(hash).pattern.pattern()+" matches "+match+" it's : "+m.matches());
             if(m.matches())
                 return hash;
@@ -107,9 +107,9 @@ public class ScriptContext {
 
     public ScriptAccessor getAccessor(String match){
         for (ScriptAccessor a : variables.values()) {
-            //System.out.println("check if "+a.pattern.pattern()+" matches "+match);
-
-            if(match.equals(a.pattern.pattern()) || a.pattern.matcher(match).matches())return a;
+            if(a.getPattern() == null)
+                continue;
+            if(match.equals(a.key) || a.getPattern().matcher(match).matches())return a;
         }
         if(parent!=null)
             return parent.getAccessor(match);

@@ -21,7 +21,7 @@ public class ExprDate extends ScriptExpression{
 
         @Override
         public ScriptType get(ScriptContext context, ScriptType[] parameters) {
-            System.out.println("Date parameters :" + Arrays.toString(parameters));
+            //System.out.println("Date parameters :" + Arrays.toString(parameters));
             switch (getMatchedIndex()){
                 case 0:
                     long total = 0;
@@ -29,7 +29,7 @@ public class ExprDate extends ScriptExpression{
                     for(ScriptType t: parameters){
                         if(t!=null && t instanceof TypeNumber){
                             long mult = 1;
-                            System.out.println(i);
+                            //System.out.println(i);
                             switch(i){
                                 case 0:
                                     mult= 20L *60*60*24*7*365; //year
@@ -56,7 +56,7 @@ public class ExprDate extends ScriptExpression{
                                     mult=1; //tick
                                     break;
                             }
-                            System.out.println(mult);
+                            //System.out.println(mult);
                             TypeNumber number = (TypeNumber)t;
                             total+=number.getObject()*mult;
                         }

@@ -14,7 +14,8 @@ public class ScriptAccessor {
     //Permet d'accéder à une variable d'un event
 
     public ScriptType element;
-    public Pattern pattern;
+    private Pattern pattern;
+    public String key;
     Class<? extends ScriptEvent> eventType;
     int lineCounter;
 
@@ -27,6 +28,9 @@ public class ScriptAccessor {
         this.element = element;
         try {
             this.pattern = ScriptDecoder.patternToRegex(match).pattern;
+            this.key = match;
+            if(pattern == null)
+                throw new ScriptException.ScriptPatternError("");
         } catch (ScriptException.ScriptPatternError scriptPatternError) {
             ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+eventType.getSimpleName());
             scriptPatternError.printStackTrace();
@@ -46,6 +50,7 @@ public class ScriptAccessor {
         this.element = element;
         try {
             this.pattern = ScriptDecoder.patternToRegex(match).pattern;
+            this.key = match;
         } catch (ScriptException.ScriptPatternError scriptPatternError) {
             ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+eventType.getSimpleName());
             scriptPatternError.printStackTrace();
@@ -67,6 +72,10 @@ public class ScriptAccessor {
 
     @Override
     public int hashCode() {
-        return Objects.hash(pattern, eventType, lineCounter);
+        return Objects.hash(key, eventType, lineCounter);
+    }
+
+    public Pattern getPattern() {
+        return pattern;
     }
 }

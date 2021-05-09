@@ -2,6 +2,8 @@ package fr.nico.sqript.compiling;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.structures.ScriptOperator;
+import fr.nico.sqript.types.ScriptType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,11 +54,30 @@ public class ScriptException extends Exception {
         }
     }
 
-    public static class TypeNotSavableException extends ScriptException {
+    public static class ScriptWrappedException extends ScriptException {
+
+        public Exception getWrapped() {
+            return wrapped;
+        }
+
+        Exception wrapped;
+
+        public ScriptWrappedException(ScriptLine line, Exception e) {
+            super(line);
+            wrapped = e;
+        }
+
+        @Override
+        public String getMessage() {
+            return line + " " + wrapped;
+        }
+    }
+
+    public static class ScriptTypeNotSaveableException extends ScriptException {
 
         Class type;
 
-        public TypeNotSavableException(Class type) {
+        public ScriptTypeNotSaveableException(Class type) {
             super(null);
             this.type=type;
         }
@@ -79,6 +100,30 @@ public class ScriptException extends Exception {
         @Override
         public String getMessage() {
             return line.text+" of type "+given.getSimpleName()+" does not implement the features of "+interfaceClass.getSimpleName()+". Thus this expression cannot be applied on it.";
+        }
+    }
+
+    public static class ScriptEmptyExpressionException extends ScriptException {
+
+        public ScriptEmptyExpressionException(ScriptLine line) {
+            super(line);
+        }
+
+        @Override
+        public String getMessage() {
+            return "Empty expression at line : "+line;
+        }
+    }
+
+    public static class ScriptEmptyLoopException extends ScriptException {
+
+        public ScriptEmptyLoopException(ScriptLine line) {
+            super(line);
+        }
+
+        @Override
+        public String getMessage() {
+            return "Empty loop at line : "+line;
         }
     }
 
@@ -266,17 +311,16 @@ public class ScriptException extends Exception {
     }
 
 
-    public static class ScriptMissingBracket extends Exception {
+    public static class ScriptMissingClosingTokenException extends ScriptException {
 
-        String pattern;
 
-        public ScriptMissingBracket(String pattern) {
-            this.pattern=pattern;
+        public ScriptMissingClosingTokenException(ScriptLine line) {
+            super(line);
         }
 
         @Override
         public String getMessage() {
-            return "A bracket is missing for pattern : \n"+pattern;
+            return "A closing token is missing (it could be : '}' ')' ']' or '%') : \n"+getLine();
         }
     }
 
@@ -304,6 +348,18 @@ public class ScriptException extends Exception {
         @Override
         public String getMessage() {
             return e.getClass().getSimpleName()+" is not settable for pattern n°"+e.getMatchedIndex()+":"+line;
+        }
+    }
+
+    public static class ScriptIndexOutOfBoundsException extends ScriptException {
+
+        public ScriptIndexOutOfBoundsException(ScriptLine line) {
+            super(line);
+        }
+
+        @Override
+        public String getMessage() {
+            return "Array index out of bounds : "+line;
         }
     }
 
@@ -358,4 +414,21 @@ public class ScriptException extends Exception {
         }
     }
 
+    public static class ScriptOperationNotSupportedException extends ScriptException {
+
+        ScriptOperator o;
+        Class a,b;
+
+        public ScriptOperationNotSupportedException(ScriptLine line, ScriptOperator o, Class<? extends ScriptType> b, Class<? extends ScriptType> a) {
+            super(line);
+            this.o = o;
+            this.a = a;
+            this.b = b;
+        }
+
+        @Override
+        public String getMessage() {
+            return line+" Operation : '" + o + "' with " + (b!=null ? b.getSimpleName() : "null") + " is not supported by " + (a!=null ? a.getSimpleName() : "null");
+        }
+    }
 }

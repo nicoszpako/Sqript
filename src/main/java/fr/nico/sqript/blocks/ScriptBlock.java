@@ -5,6 +5,7 @@ import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptInstance;
+import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public abstract class ScriptBlock extends IScript {
     private IScript root;
     private ScriptLine head;
     private ScriptInstance scriptInstance;
-
+    private Side side = Side.BOTH;
     public ScriptLine getHead() {
         return head;
     }
@@ -28,6 +29,7 @@ public abstract class ScriptBlock extends IScript {
     }
 
     /***
+     * Be careful, no error must be thrown during the call of constructor.
      * @param head The very first line of the block (e.g : "on jump:")
      * @throws ScriptException.ScriptSyntaxException When the head of the block doesn't match the required pattern
      */
@@ -175,6 +177,14 @@ public abstract class ScriptBlock extends IScript {
     @Override
     public IScript getParent() {
         return null;
+    }
+
+    public Side getSide() {
+        return side;
+    }
+
+    public void setSide(Side side) {
+        this.side = side;
     }
 
     public static class ScriptLineBlock {

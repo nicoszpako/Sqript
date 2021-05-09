@@ -92,6 +92,8 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         if (side == fr.nico.sqript.structures.Side.BOTH || (side == fr.nico.sqript.structures.Side.SERVER)){
             SqriptForge.addServerCommand(this);
         }
+
+        getScriptInstance().registerBlock(this);
     }
 
 
@@ -204,8 +206,14 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
             k.start(this);
         } catch (Exception e) {
             iCommandSender.sendMessage(new TextComponentString("\247cAn error occured while executing Sqript command : "));
-            iCommandSender.sendMessage(new TextComponentString("\247c"+e.getMessage()).setStyle(new Style().setColor(TextFormatting.RED)));
-            e.printStackTrace();
+            if(e instanceof ScriptException.ScriptWrappedException){
+                Exception wrapped = ((ScriptException.ScriptWrappedException)(e)).getWrapped();
+                iCommandSender.sendMessage(new TextComponentString(((ScriptException.ScriptWrappedException)(e)).getLine()+" : "+wrapped).setStyle(new Style().setColor(TextFormatting.RED)));
+                wrapped.printStackTrace();
+            }else{
+                iCommandSender.sendMessage(new TextComponentString("\247c"+e.getMessage()).setStyle(new Style().setColor(TextFormatting.RED)));
+                e.printStackTrace();
+            }
         }
     }
 

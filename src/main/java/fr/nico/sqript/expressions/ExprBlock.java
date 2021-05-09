@@ -8,18 +8,25 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeBlock;
 
+import fr.nico.sqript.types.TypeNull;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Expression(name = "Block Expressions",
         description = "Manipulate blocks",
@@ -27,7 +34,9 @@ import java.util.ArrayList;
         patterns = {
             "block at {array} [in world {number}]:block",
             "blocks in radius {number} around {element} [in world {number}]:array",
-            "{resource} with metadata {number}:block"
+            "{resource} with metadata {number}:block",
+            "{block} color [in world {number}]:number",
+            "terrain height at {array} [in world {number}]:number"
         }
 )
 public class ExprBlock extends ScriptExpression {
@@ -38,17 +47,26 @@ public class ExprBlock extends ScriptExpression {
         switch(getMatchedIndex()){
             case 0:
                 int worldId = parameters[1] == null ? 0 : (int) parameters[1].getObject();
+                World world;
+                if(FMLCommonHandler.instance().getSide() == Side.SERVER)
+                    world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId];
+                else
+                    world = getClientWorld();                //System.out.println(Arrays.toString(parameters));
                 if(parameters[0] instanceof TypeBlock) {
                     return parameters[0];
                 }
                 else if(parameters[0] instanceof ILocatable){
                     BlockPos pos = ((ILocatable) parameters[0]).getPos();
-                    IBlockState b = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId].getBlockState(new BlockPos(pos));
-                    return new TypeBlock(b,pos);
+                    IBlockState b = world.getBlockState(pos);
+                    return new TypeBlock(b,pos,world);
                 }
                 return null;
             case 1:
                 worldId = parameters[1] == null ? 0 : (int) parameters[2].getObject();
+                if(FMLCommonHandler.instance().getSide() == Side.SERVER)
+                    world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId];
+                else
+                    world = getClientWorld();
                 BlockPos pos = ((ILocatable) parameters[1]).getPos();
                 double radius = (double) parameters[0].getObject();
                 ArrayList list = new ArrayList();
@@ -56,7 +74,7 @@ public class ExprBlock extends ScriptExpression {
                     for (int y = (int) (pos.getY()-radius); y < pos.getY()+radius; y++) {
                         for (int z = (int) (pos.getZ()-radius); z < pos.getZ()+radius; z++) {
                             if(Math.sqrt(Math.pow(x-pos.getX(),2)+Math.pow(y-pos.getY(),2)+Math.pow(z-pos.getZ(),2))<radius)
-                                list.add(new TypeBlock(FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId].getBlockState(new BlockPos(x,y,z)),pos));
+                                list.add(new TypeBlock(world.getBlockState(new BlockPos(x,y,z)),pos,world));
                         }
                     }
                 }
@@ -67,8 +85,31 @@ public class ExprBlock extends ScriptExpression {
                 Block block = ForgeRegistries.BLOCKS.getValue(resource.getObject());
                 IBlockState state = block.getStateFromMeta(metadata);
                 return new TypeBlock(state);
+            case 3:
+                //System.out.println("Parameters : "+ Arrays.toString(parameters));
+                worldId = parameters[1] == null ? 0 : (int) parameters[2].getObject();
+                if(FMLCommonHandler.instance().getSide() == Side.SERVER)
+                    world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId];
+                else
+                    world = getClientWorld();
+                TypeBlock blockstate = (TypeBlock) parameters[0];
+                return new TypeNumber(blockstate.getObject().getMapColor(world,blockstate.getPos()).colorValue);
+            case 4:
+                worldId = parameters[1] == null ? 0 : (int) parameters[2].getObject();
+                if(FMLCommonHandler.instance().getSide() == Side.SERVER)
+                    world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId];
+                else
+                    world = getClientWorld();
+                ILocatable location = (ILocatable) parameters[0];
+                Chunk chunk = world.getChunkFromBlockCoords(location.getPos());
+                return new TypeNumber(chunk.getHeight(location.getPos()));
         }
         return null;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public World getClientWorld(){
+        return Minecraft.getMinecraft().world;
     }
 
     @Override

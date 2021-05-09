@@ -30,12 +30,18 @@ public class ScriptBlockEvent extends ScriptBlock {
     public Side side;
 
     public ScriptBlockEvent(ScriptLine head) throws ScriptException {
-        head.text = head.text.trim().replaceFirst("(^|\\s+)on\\s+", ""); //Extracting the event parameters
-        head.text = head.text.substring(0,head.text.length()-1); //Removing the last ":"
-        this.eventType = getEvent(head);
+        super(head);
+        getHead().text = head.text.trim().replaceFirst("(^|\\s+)on\\s+", ""); //Extracting the event parameters
+        getHead().text = head.text.substring(0,head.text.length()-1); //Removing the last ":"
+    }
+
+    @Override
+    public void init(ScriptLineBlock block) throws Exception {
+        this.eventType = getEvent(getHead());
         if(eventType == null)
-            throw new ScriptException.ScriptUnknownEventException(head);
+            throw new ScriptException.ScriptUnknownEventException(getHead());
         this.side = eventType.getAnnotation(Event.class).side();
+        super.init(block);
     }
 
     public Class<? extends ScriptEvent> getEvent(ScriptLine line) {

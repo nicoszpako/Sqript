@@ -28,10 +28,20 @@ public class ScriptClock {
     //Starts a new ScriptClock with the given root IScript.
     public void start(IScript next) throws ScriptException {
         do{
-            //System.out.println(">> Executing : "+next.getClass().getSimpleName()+" with "+l(context.hashCode())+(next.line!=null?" at n°"+next.line.number:""));
-            next = next.run(context);
-            //System.out.println("> Next to run is : "+(next==null?"null":next.getClass().getSimpleName()));
-            current = next;
+            try{
+                //System.out.println(">> Executing : "+next.getClass().getSimpleName()+" with "+l(context.hashCode())+(next.line!=null?" at n°"+next.line.number:""));
+                next = next.run(context);
+                //System.out.println("> Next to run is : "+(next==null?"null":next.getClass().getSimpleName()));
+                current = next;
+            }catch(Exception e){
+                if(e instanceof ScriptException)
+                    throw e;
+                else{
+                    e.printStackTrace();
+                    throw new ScriptException.ScriptWrappedException(next.getLine(),e);
+                }
+            }
+
 
         }while(next != null && !stopped);
     }

@@ -108,8 +108,10 @@ public class SqriptForge {
                     continue;
                 modBuilding(event,container);
             } catch (Exception e) {
-                ScriptManager.log.error("Error while loading Sqript addon : ");
-                e.printStackTrace();
+                if(!(e instanceof NullPointerException)) {
+                    ScriptManager.log.error("Error while loading Sqript addon : " + container.getName());
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -292,13 +294,13 @@ public class SqriptForge {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        System.out.println("Registering Sqript items, there are : "+ scriptItems.size()+" item(s) to register.");
+        //System.out.println("Registering Sqript items, there are : "+ scriptItems.size()+" item(s) to register.");
         for (ScriptItem e : scriptItems) {
-            System.out.println("Registering : "+e.getItem().getRegistryName());
+            //System.out.println("Registering : "+e.getItem().getRegistryName());
             event.getRegistry().register(e.getItem());
         }
         for (Item e : items) {
-            System.out.println("Registering : "+e.getRegistryName());
+            //System.out.println("Registering : "+e.getRegistryName());
             event.getRegistry().register(e);
         }
 
@@ -307,7 +309,7 @@ public class SqriptForge {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<net.minecraft.block.Block> event){
         for(net.minecraft.block.Block e : blocks){
-            System.out.println("Registering : "+e.getRegistryName());
+            //System.out.println("Registering : "+e.getRegistryName());
             event.getRegistry().register(e);
         }
     }

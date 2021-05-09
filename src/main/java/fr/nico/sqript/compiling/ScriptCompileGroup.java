@@ -22,9 +22,9 @@ public class ScriptCompileGroup {
     public Integer getHashFor(String parameter){
         //System.out.println("Getting hash for : "+parameter);
         for(ScriptAccessor s : declaredVariables){
-            //System.out.println("Comparing "+parameter +" with "+s.pattern.pattern());
-            if(s.pattern.matcher(parameter).matches()){
-                //System.out.println("Matched ! Returning "+s.hash+ " while using + "+s.pattern.pattern()+" : "+s.pattern.pattern().hashCode());
+            //System.out.println("Comparing "+parameter +" with "+s.key);
+            if(s.getPattern().matcher(parameter).matches()){
+                //System.out.println("Matched ! Returning "+s.hash+ " while using + "+s.key+" : "+s.getPattern().pattern().hashCode());
                 return s.hash;//TODO Dynamic type matching
             }
         }

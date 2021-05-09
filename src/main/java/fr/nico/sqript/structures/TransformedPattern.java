@@ -90,16 +90,20 @@ public class TransformedPattern {
     public String[] getAllArguments(String match){
         List<String> r = new ArrayList<>();
         Matcher m = pattern.matcher(match);
-        if(m.find())
+        //System.out.println("Getting all arguments for : "+match);
+        if (m.find()) {
+            //System.out.println("Found");
             for (int i = 0; i < argsCount; i++) {
                 String s = null;
                 try {
-                    s = m.group("a"+i);
-                }catch(Exception ignored){
+                    s = m.group("a" + i);
+                    //System.out.println("Adding : "+s);
+                } catch (Exception ignored) {
                     ignored.printStackTrace();
                 }
                 r.add(s);
             }
+        }
         return r.toArray(new String[0]);
     }
 }

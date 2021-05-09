@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
         },
         patterns = {
             "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number}]",
-            "draw colored rect[angle] at {array} with size {array} [and] with color {number}",
+            "draw [colored] rect[angle] at {array} with size {array} [and] with color {number} [(1;without alpha)]",
             "draw textured rect[angle] at {array} with size {array} (with|using) texture {resource} [with uv {array}]",
             "draw line from {array} to {array} with stroke {number} [and] with color {number}",
             "rotate canvas by {number} [((1;degrees)|(2;radians))]", //Default is degrees
@@ -60,15 +60,18 @@ public class ActDraw extends ScriptAction {
     @Override
     public void execute(ScriptContext context) throws ScriptException {
         switch (getMatchedIndex()){
+
             case 0:
                 ArrayList<String> list = new ArrayList<>();
+                //System.out.println("A:"+getParameter(1).getClass());
+                //System.out.println("B:"+getParameter(1).get(context).getClass());
                 if(getParameter(1).get(context) instanceof TypeString)
                     list.add((String) getParameter(1,context));
                 else if(getParameter(1).get(context) instanceof TypeArray)
                     list = (ArrayList<String>) ((ArrayList)getParameter(1).get(context).getObject()).stream().map(a->((ScriptType)(a)).getObject().toString()).collect(Collectors.toList());
                 TypeArray array = (TypeArray) getParameter(2).get(context);
                 float scale = getParameterOrDefault(getParameter(3),1d,context).floatValue();
-                int color = getParameterOrDefault(getParameter(4),(float)0xFFFFFFFF,context).intValue();
+                int color = getParameterOrDefault(getParameter(4),(double)0xFFFFFFFF,context).intValue();
                 GL11.glPushMatrix();
                 GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
                 GlStateManager.enableBlend();
@@ -85,25 +88,38 @@ public class ActDraw extends ScriptAction {
                 GL11.glPopMatrix();
                 break;
             case 1:
-                array = (TypeArray) getParameter(1).get(context);
-                TypeArray size = (TypeArray) getParameter(2).get(context);
-                color = getParametersSize()>=4? ((Double) getParameter(2,context)).intValue() :0xFFFFFF;
+                ILocatable location = (ILocatable) getParameter(1).get(context);
+                ILocatable size = (ILocatable) getParameter(2).get(context);
+                color = getParametersSize() >=3 ? ((Double) getParameter(3,context)).intValue() :0xFFFFFFFF;
+                if(getMarkValue(1))
+                    color = 0xFF000000 | color;
+                //System.out.println(Integer.toHexString(color));
                 GL11.glPushMatrix();
-                GL11.glTranslatef((float)SqriptUtils.getX(array),(float)SqriptUtils.getY(array),(float)SqriptUtils.getZ(array));
-                drawRect(0,0,(float)SqriptUtils.getX(size),(float)SqriptUtils.getY(size),color);
+                GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+                GlStateManager.enableBlend();
+                float px = (float) location.getVector().x;
+                float py = (float) location.getVector().y;
+                float w = (float) size.getVector().x;
+                float h = (float) size.getVector().y;
+                GL11.glTranslatef(px,py, 0);
+                drawRect(0,0,w,h,color);
+                GlStateManager.disableAlpha();
+                GlStateManager.disableBlend();
+                GlStateManager.resetColor();
                 GL11.glColor3f(1,1,1);
+                GL11.glPopAttrib();
                 GL11.glPopMatrix();
                 break;
             case 2:
                 array = (TypeArray) getParameter(1).get(context);
-                size = (TypeArray) getParameter(2).get(context);
+                size = (ILocatable) getParameter(2).get(context);
                 ScriptType resourceType = getParameter(3).get(context);
-                ResourceLocation location = null;
+                ResourceLocation resourceLocation = null;
                 //System.out.println("1:"+(getLine()==null));
                 //System.out.println("2:"+(getLine().scriptInstance==null));
                 //System.out.println("3:"+(getLine().scriptInstance.getName()==null));
-                location = (ResourceLocation) resourceType.getObject();
-                location = new ResourceLocation(location.getResourceDomain(),"textures/"+location.getResourcePath()+".png");
+                resourceLocation = (ResourceLocation) resourceType.getObject();
+                resourceLocation = new ResourceLocation(resourceLocation.getResourceDomain(),"textures/"+resourceLocation.getResourcePath()+".png");
                 TypeArray uv = getParameter(4) != null ? (TypeArray) getParameter(4).get(context) : null;
                 double u1 = uv != null && uv.getObject().size()>0 ? ((Double)uv.getObject().get(0).getObject()): 0.0D;
                 double v1 = uv != null && uv.getObject().size()>1 ? ((Double)uv.getObject().get(1).getObject()): 0.0D;
@@ -113,8 +129,8 @@ public class ActDraw extends ScriptAction {
                 GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glTranslatef((float)SqriptUtils.getX(array),(float)SqriptUtils.getY(array),(float)SqriptUtils.getZ(array));
-                Minecraft.getMinecraft().getTextureManager().bindTexture(location);
-                drawTexturedRect(0, 0, 0, (float)SqriptUtils.getX(size),(float)SqriptUtils.getY(size), u1,v1,u2,v2);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+                drawTexturedRect(0, 0, 0, size.getVector().x,size.getVector().y, u1,v1,u2,v2);
                 GL11.glPopAttrib();
                 GL11.glColor3f(1,1,1);
                 GL11.glDisable(GL11.GL_BLEND);
@@ -194,8 +210,9 @@ public class ActDraw extends ScriptAction {
 
     }
 
-    public static void drawRect(float left, float top, float right, float bottom, int color)
+    public void drawRect(float left, float top, float right, float bottom, int color)
     {
+        //System.out.println(getLine()+" Drawing at "+left+" "+top+" "+" with color : "+color);
         if (left < right)
         {
             float i = left;
@@ -214,18 +231,16 @@ public class ActDraw extends ScriptAction {
         float f = (float)(color >> 16 & 255) / 255.0F;
         float f1 = (float)(color >> 8 & 255) / 255.0F;
         float f2 = (float)(color & 255) / 255.0F;
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.color(f, f1, f2, f3);
-        bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
-        bufferbuilder.pos(left, bottom, 0.0D).endVertex();
-        bufferbuilder.pos(right, bottom, 0.0D).endVertex();
-        bufferbuilder.pos(right, top, 0.0D).endVertex();
-        bufferbuilder.pos(left, top, 0.0D).endVertex();
-        tessellator.draw();
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2d(left,bottom);
+        GL11.glVertex2d(right,bottom);
+        GL11.glVertex2d(right,top);
+        GL11.glVertex2d(left,top);
+        GL11.glEnd();
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
     }
