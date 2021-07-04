@@ -60,10 +60,8 @@ public abstract class ScriptBlock extends IScript {
             if (f.getLabel().equalsIgnoreCase(label))
                 return f;
         }
-
         return null;
     }
-
 
     public boolean fieldDefined(String label) {
         return getSubBlock(label) != null;
@@ -222,6 +220,21 @@ public abstract class ScriptBlock extends IScript {
             this.label = label;
         }
 
+        public String getString() throws Exception {
+            return (String) evaluate().getObject();
+        }
+
+        public Float getFloat() throws Exception {
+            return (Float) evaluate().getObject();
+        }
+
+        public Double getDouble() throws Exception {
+            return (Double) evaluate().getObject();
+        }
+
+        public Integer getInteger() throws Exception {
+            return (Integer) evaluate().getObject();
+        }
 
         public ScriptType evaluate(ScriptCompileGroup group, ScriptContext context) throws Exception {
             return ScriptDecoder.getExpression(content.get(0), group).get(context);
