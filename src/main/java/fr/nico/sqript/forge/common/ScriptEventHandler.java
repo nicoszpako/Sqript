@@ -19,6 +19,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -34,27 +35,27 @@ public class ScriptEventHandler {
 
     @SubscribeEvent
     public void onTick(TickEvent.ServerTickEvent event) throws ScriptException {
-        if(event.phase== TickEvent.Phase.START)
+        if(event.phase == TickEvent.Phase.START)
             ScriptTimer.tick();
     }
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) throws ScriptException {
-        if(event.phase== TickEvent.Phase.START)
+        if(event.phase == TickEvent.Phase.START)
             ScriptManager.callEvent(new EvtOnWorldTick());
     }
 
-
     @SubscribeEvent
     public void onItemUse(PlayerEvent.ItemPickupEvent event) throws ScriptException {
-            ScriptManager.callEvent(new EvtPlayer.EvtOnItemPickup((EntityPlayer) event.player,event.getStack()));
+        ScriptManager.callEvent(new EvtPlayer.EvtOnItemPickup((EntityPlayer) event.player,event.getStack()));
     }
 
     @SubscribeEvent
     public void onItemUse(LivingEntityUseItemEvent.Start event) throws ScriptException {
         if(event.getEntity() instanceof EntityPlayer){
-            if(ScriptManager.callEvent(new EvtPlayer.EvtOnItemUse((EntityPlayer) event.getEntity(),event.getItem())));
+            if(ScriptManager.callEvent(new EvtPlayer.EvtOnItemUse((EntityPlayer) event.getEntity(),event.getItem()))) {
                 event.setCanceled(true);
+            }
         }
     }
 
@@ -97,8 +98,6 @@ public class ScriptEventHandler {
         }catch(Exception e){
             Minecraft.getMinecraft().fontRenderer.drawString(e.toString(),0,0,0xFFFF0000);
         }
-
-
     }
 
     @SubscribeEvent
@@ -166,7 +165,6 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         if (event.getEntity() instanceof EntityPlayer) {
-
             if(ScriptManager.callEvent(new EvtPlayer.EvtOnItemRightClick((EntityPlayer)event.getEntity(),event.getItemStack(),event.getHand()))) {
                 event.setCanceled(true);
             }
@@ -201,7 +199,6 @@ public class ScriptEventHandler {
                 }
             }
         }
-
     }
 
     @SubscribeEvent
@@ -217,6 +214,14 @@ public class ScriptEventHandler {
                     player.setPositionAndUpdate(px,py,pz);
                 }
             }
+        }
+    }
+
+
+    @SubscribeEvent
+    public void onPlayerDamage(LivingDamageEvent event){
+        if(ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerDamage(event.getEntity(), event.getSource(), event.getAmount()))){
+            event.setCanceled(true);
         }
     }
 }

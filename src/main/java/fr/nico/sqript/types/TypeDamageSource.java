@@ -2,6 +2,7 @@ package fr.nico.sqript.types;
 
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
+import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.util.DamageSource;
 
 import javax.annotation.Nullable;
@@ -10,14 +11,22 @@ import javax.annotation.Nullable;
         parsableAs = {})
 public class TypeDamageSource extends ScriptType<DamageSource>
 {
-    public TypeDamageSource(DamageSource object) {
-        super(object);
+    public TypeDamageSource(DamageSource damageSource) {
+        super(damageSource);
     }
 
-
-    @Nullable
     @Override
-    public ScriptElement parse(String typeName) {
-        return null; //TODO USEFUL
+    public String toString() {
+        return this.getObject().getDamageType();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o.toString().equalsIgnoreCase(getObject().getDamageType());
+    }
+
+    @Override
+    public ScriptElement<?> parse(String typeName) {
+        return null;
     }
 }

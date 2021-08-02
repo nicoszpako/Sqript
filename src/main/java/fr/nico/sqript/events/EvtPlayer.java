@@ -1,14 +1,15 @@
 package fr.nico.sqript.events;
 
-import fr.nico.sqript.types.ScriptType;
-import fr.nico.sqript.types.TypeItem;
-import fr.nico.sqript.types.TypePlayer;
+import fr.nico.sqript.types.*;
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
 import fr.nico.sqript.types.primitive.TypeString;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
@@ -115,8 +116,6 @@ public class EvtPlayer {
 
     }
 
-
-
     @Cancelable
     @Event(name = "Player attack",
             description = "Called when a player is hit by another player",
@@ -134,9 +133,6 @@ public class EvtPlayer {
 
     }
 
-
-
-
     @Cancelable
     @Event(name = "Player jump",
             description = "Called when a player jumps",
@@ -151,7 +147,6 @@ public class EvtPlayer {
         }
 
     }
-
 
     @Cancelable
     @Event(name = "Player login",
@@ -168,5 +163,17 @@ public class EvtPlayer {
 
     }
 
+    @Cancelable
+    @Event(name = "Living Damage",
+            description = "This event is triggered just before damage is applied to an entity.",
+            examples = "on living damage:",
+            patterns = "living (damage)",
+            accessors = {"victim:entity", "damageType:damage_source", "amount:number", "attacker:entity"}
+    )
+    public static class EvtOnPlayerDamage extends ScriptEvent {
+        public EvtOnPlayerDamage(Entity victim, DamageSource damageSource, float amount) {
+            super(victim != null ? new ScriptAccessor(new TypeEntity(victim),"victim") : new ScriptAccessor(new TypeNull(),"victim"), damageSource.getImmediateSource() != null ? new ScriptAccessor(new TypeEntity(damageSource.getImmediateSource()),"attacker") : new ScriptAccessor(new TypeNull(),"attacker"), new ScriptAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptAccessor(new TypeNumber(amount),"amount"));
+        }
+    }
 
 }
