@@ -55,7 +55,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -426,10 +426,10 @@
   <li class="md-nav__item">
     <a
       href="../Structure/"
-      title="La structure d'un sqript"
+      title="Les blocs"
       class="md-nav__link"
     >
-      La structure d'un sqript
+      Les blocs
     </a>
   </li>
 
@@ -831,47 +831,6 @@
       class="md-nav__link"
     >
       Les options
-    </a>
-  </li>
-
-        
-          
-          
-          <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Determine class according to level -->
-
-
-
-<!-- Main navigation item with nested items -->
-
-  <li class="md-nav__item">
-    <a
-      href="../Liste/"
-      title="Listes des évènements, actions, expressions et blocs implémentés"
-      class="md-nav__link"
-    >
-      Listes des évènements, actions, expressions et blocs implémentés
     </a>
   </li>
 
@@ -1366,7 +1325,7 @@
 <p>Attention aux boucles infinies. Le code <code>while True:</code> ou <code>while 5=5:</code> exécutera le code une infinité de fois, ce qui stoppera l'exécution du jeu tant que la boucle ne sera pas terminée.</p>
 </div>
 <h5 id="for">For</h5>
-<p>Cette boucle est un peu différente des deux précédentes. En effet, elle ne s'appuie par sur une condition pour fonctionner mais sur un tableau. Si l'expression passée dans la boucle n'est pas un tableau, une erreur sera levée. Sa syntaxe d'utilisation est <code>for {variable} in {array}</code>. Le bloc associé à la boucle va être exécuté pour chaque élément du tableau, qui peut être récupéré grâce à la variable <code>{variable}</code> passée en premier paramètre. Par exemple :</p>
+<p>Cette boucle est un peu différente de la précédente. En effet, elle ne s'appuie pas sur une condition pour fonctionner mais sur un tableau. Si l'expression passée dans la boucle n'est pas un tableau, une erreur sera levée. Sa syntaxe d'utilisation est <code>for {variable} in {array}</code>. Le bloc associé à la boucle va être exécuté pour chaque élément du tableau, qui peut être récupéré grâce à la variable <code>{variable}</code> passée en premier paramètre. Par exemple :</p>
 <div class="highlight"><pre><span></span><code><span class="n">on</span> <span class="n">script</span> <span class="n">load</span><span class="p">:</span>
     <span class="nb">set</span> <span class="n">a</span> <span class="n">to</span> <span class="n">numbers</span> <span class="ow">in</span> <span class="nb">range</span> <span class="n">of</span> <span class="mi">5</span> <span class="c1">#Créé un tableau équivalent à [0,1,2,3,4,5]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span> <span class="c1">#Pour chaque élément noté i dans le tableau a</span>
@@ -1375,10 +1334,6 @@
 
 <h6 id="casser-une-boucle">Casser une boucle</h6>
 <p>Il est possible de stopper l'exécution d'une boucle, même si la condition d'une boucle <code>while</code> est vérifiée ou même si le tableau d'une boucle <code>for</code> n'a pas été entièrement parcouru. Pour cela, il suffit d'utiliser l'action <code>break loop</code> :</p>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>Cela ne concerne que les boucles <code>while</code> et <code>for</code>.</p>
-</div>
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">numbers</span> <span class="ow">in</span> <span class="nb">range</span> <span class="n">of</span> <span class="mi">10</span><span class="p">:</span>
     <span class="nb">print</span> <span class="n">i</span>
     <span class="k">if</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">4</span><span class="p">:</span>

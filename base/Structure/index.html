@@ -19,7 +19,7 @@
     
     
       
-        <title>La structure d'un sqript - Sqript</title>
+        <title>Les blocs - Sqript</title>
       
     
     
@@ -55,13 +55,18 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#bases-de-sqript" class="md-skip">
+          Aller au contenu
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -145,7 +150,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              La structure d'un sqript
+              Les blocs
             
           </span>
         </div>
@@ -433,18 +438,67 @@
 
     <!-- Hack: see partials/toc.html for more information -->
     
+      
+    
 
     <!-- Render table of contents, if not empty -->
     
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Les blocs
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
     <a
       href="./"
-      title="La structure d'un sqript"
+      title="Les blocs"
       class="md-nav__link md-nav__link--active"
     >
-      La structure d'un sqript
+      Les blocs
     </a>
 
     <!-- Show table of contents -->
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creer-un-script" class="md-nav__link">
+    Créer un script
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blocs" class="md-nav__link">
+    Blocs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#liste-des-blocs-implementes-par-sqript" class="md-nav__link">
+    Liste des blocs implémentés par Sqript
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
     
   </li>
 
@@ -775,47 +829,6 @@
       class="md-nav__link"
     >
       Les options
-    </a>
-  </li>
-
-        
-          
-          
-          <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Determine class according to level -->
-
-
-
-<!-- Main navigation item with nested items -->
-
-  <li class="md-nav__item">
-    <a
-      href="../Liste/"
-      title="Listes des évènements, actions, expressions et blocs implémentés"
-      class="md-nav__link"
-    >
-      Listes des évènements, actions, expressions et blocs implémentés
     </a>
   </li>
 
@@ -1234,6 +1247,52 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creer-un-script" class="md-nav__link">
+    Créer un script
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blocs" class="md-nav__link">
+    Blocs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#liste-des-blocs-implementes-par-sqript" class="md-nav__link">
+    Liste des blocs implémentés par Sqript
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
@@ -1243,19 +1302,20 @@
                   
                 
                 
-                  <h1>La structure d'un sqript</h1>
-                
-                <p>Un script est défini par un unique fichier, dont l'extension est <code>.sq</code>. Chaque fichier possédant cette extension dans le dossier <em>.minecraft/scripts/</em> correspondra donc à un script.</p>
+                <h1 id="bases-de-sqript">Bases de Sqript</h1>
+<h4 id="creer-un-script">Créer un script</h4>
+<p>Un script est défini par un unique fichier, dont l'extension est <code>.sq</code>. Chaque fichier possédant cette extension dans le dossier <em>.minecraft/scripts/</em> correspondra donc à un script.</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>Il est conseillé d'utiliser un éditeur de texte performant pour faciliter ou automatiser certaines tâches lors de la rédaction d'un script.</p>
 </div>
 <p>Pour fonctionner correctement, un script doit respecter une certaine <strong>structure</strong>.</p>
+<h4 id="blocs">Blocs</h4>
 <p>Un script fonctionnel est composé de <strong>blocs</strong>. Un bloc est un ensemble de lignes ayant un certain rôle lors de l'exécution du script, et constitue l'élément le plus important dans un script. Un bloc peut exécuter des <strong>actions</strong>, définir des valeurs, ou indiquer à <em>Sqript</em> comment se comporter avec les autres blocs. Voici un exemple de structure par blocs :</p>
 <p><img alt="" src="../../img/blocs1.png" /></p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Pour l'instant, on ignorera le contenu des blocs. Tout sera expliqué dans les parties suivantes.</p>
+<p>Pour l'instant, on ignorera le contenu de ces blocs. Tout sera expliqué dans les parties suivantes.</p>
 </div>
 <p>Un bloc peut contenir des sauts de lignes, <em>Sqript</em> considérera qu'un bloc s'arrête que lorsqu'un nouveau bloc commence ou lorsqu'on arrive à la fin du fichier. On remarquera qu'un nouveau bloc est défini par une première ligne dont l'<strong>indentation</strong> vaut zéro.</p>
 <div class="admonition info">
@@ -1266,6 +1326,242 @@
 <p class="admonition-title">Warning</p>
 <p>Il est bien précisé ci-dessus que <strong>4</strong> espaces sont nécessaires, si un espace est oublié l'indentation sera mauvaise. Si un script est mal indenté, de nombreuses erreurs peuvent se produire. Il est donc conseillé d'utiliser un éditeur de texte permettant une manipulation efficace et intuitive des tabulations (<a href="https://www.sublimetext.com/">Sublime Text 3 <img alt="👀" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f440.svg" title=":eyes:" /></a>).</p>
 </div>
+<h4 id="liste-des-blocs-implementes-par-sqript">Liste des blocs implémentés par Sqript</h4>
+<p>Certains blocs peuvent être rechargés (recompilés lors de l'exécution de la commande /sqript reload), et d'autres non. Un bloc rechargeable sera indiqué par l'annotation <code>reloadable</code> en haut à droite de celui-ci.</p>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap');
+.block_title {
+    background-color: #34c9c4;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    padding-left: 10px;
+    vertical-align:bottom;
+    padding-bottom: 5px;
+    color:white
+}
+.action_title {
+    background-color: #366cc9;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    padding-left: 10px;
+    vertical-align:bottom;
+    padding-bottom: 5px;
+    color:white
+}
+.reloadable {
+    display: inline-block;
+    background-color: green;
+    border-radius: 15px;
+    font-size:10px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-top: 5px;
+    margin-right:5px;
+    float: right;
+    align-self: right
+}
+.client {
+    display: inline-block;
+    background-color: #e0c865;
+    border-radius: 15px;
+    font-size:10px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-top: 5px;
+    margin-right:5px;
+    float: right;
+    align-self: right
+}
+.server {
+    display: inline-block;
+    background-color: #a957d4;
+    border-radius: 15px;
+    font-size:10px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-top: 5px;
+    margin-right:5px;
+    float: right;
+    align-self: right
+}
+.content {
+    background-color: #1b1b1b;
+    font-size: 13px;
+    position: relative;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding-top: 2px;
+}
+.description {
+    margin-left: 5px;
+}
+.pattern {
+    background-color: #303030;
+    font-family:'Lucida Console';
+    border-radius: 3px;
+    padding-left: 1px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-left: 5px;
+}
+.accesseurs {
+    background-color: #3d3d3d;
+    font-family:'Lucida Console';
+    border-radius: 3px;
+    padding-left: 1px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-left: 5px;
+}
+.example {
+    background-color: #222222;
+    font-family:'Lucida Console';
+    padding-left: 10px;
+    margin-top: -10px;
+    display: block;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.row {
+    padding-left: 5px;
+    margin-left: 5px;
+}
+.field {
+    font-weight: 600; 
+    font-family: 'Open Sans Condensed';
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+</style>
+
+<div id="event">
+    <div class="block_title">
+Events <div class="reloadable">Reloadable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Bloc d'évènement. Permet de déclencher un ensemble d'actions lorsqu'un évènement est déclenché. Les évènements peuvent être déclenchés côté serveur ou côté client. Si un évènement n'est pas exécutable du côté souhaité, considérer l'utilisation des variables synchronisées ou des paquets pour communiquer les informations entre le client et le serveur.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">Events</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on script load:
+    print "Hello world !"
+</pre></div>
+        </div>
+    </div>
+
+<div id="import">
+    <div class="block_title">
+Imports <div class="reloadable">Reloadable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Bloc d'importation. Permet d'importer une ou des fonction d'un autre script.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">Imports</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+import:
+    * from my_script
+</pre></div>
+        </div>
+    </div>
+
+<div id="time_loop">
+    <div class="block_title">
+Time loops <div class="reloadable">Reloadable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Bloc de boucle temporelle. Permet de déclencher un ensemble d'actions à chaque intervalle de temps prédéfini.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">Time loops</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+every 1 minute:
+    ...
+</pre></div>
+        </div>
+    </div>
+
+<div id="item">
+    <div class="block_title">
+Items
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Bloc de nouvel item. Permet de créer un nouvel item utilisable en jeu.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">Items</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+item test_item:
+    name: My Test Item
+    texture: sample:yellow_diamond.png
+    creative tab: miscellaneous
+    max stack size: 8
+    type: item
+</pre></div>
+        </div>
+    </div>
+
+<div id="packet">
+    <div class="block_title">
+Packets <div class="reloadable">Reloadable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Bloc de paquet de données. Permet d'échanger des informations entre le serveur et les clients. Les paquets peuvent transporter des variables entre le serveur et les clients, grâce au paramètres définis après le nom du paquet. Les types des variables données en argument doivent absolument être <b>sérialisable</b>, sans quoi le paquet ne sera pas envoyé. Les types sérialisables les plus communs sont : number, array, string, boolean, dictionary, resource... Les paquets peuvent être envoyés du client vers le serveur, ou du serveur vers un client. Les sous-blocs 'client' et 'server' permettent de définir les actions à effectuer en fonction du côté de réception du paquet.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">Packets</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+packet test_packet(message):
+    client:
+        print message
+    server:
+        print message
+</pre></div>
+        </div>
+    </div>
+
+<div id="function">
+    <div class="block_title">
+Functions <div class="reloadable">Reloadable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Bloc de fonction. Une fonction est bloc représentant un petit bout de code réutilisable n'importe où, qui peut ou non retourner un résultat.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">Functions</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+function broadcast(message): #Fonction qui envoie un message à tous les joueurs
+    for p in all players:
+        send message to p
+</pre></div>
+        </div>
+    </div>
+
+<div id="command">
+    <div class="block_title">
+Commands <div class="reloadable">Reloadable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Bloc de commande. Permet de définir une nouvelle commande. Les sous-blocs permettent de configurer le comportement de la commande. Les actions à exécuter doivent être écrites directement après les sous-blocs.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">Commands</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+command /randomplayer:
+    usage: /randomplayer
+    description: returns a random player
+    send a random element of all players to sender
+</pre></div>
+        </div>
+    </div>
+
+<div id="options">
+    <div class="block_title">
+Options <div class="reloadable">Reloadable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Bloc d'options. Les options sont un ensemble de paramètres définis de manière globale dans un script. Elles permettent de faciliter la configuration d'un script pour modifier son fonctionnement.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">Options</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+options:
+    my_value: 5
+</pre></div>
+        </div>
+    </div>
                 
               
               

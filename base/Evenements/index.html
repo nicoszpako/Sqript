@@ -55,13 +55,18 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#evenements" class="md-skip">
+          Aller au contenu
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -421,10 +426,10 @@
   <li class="md-nav__item">
     <a
       href="../Structure/"
-      title="La structure d'un sqript"
+      title="Les blocs"
       class="md-nav__link"
     >
-      La structure d'un sqript
+      Les blocs
     </a>
   </li>
 
@@ -477,6 +482,13 @@
 
     <!-- Render table of contents, if not empty -->
     
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Les évènements
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
     <a
       href="./"
       title="Les évènements"
@@ -486,6 +498,37 @@
     </a>
 
     <!-- Show table of contents -->
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#evenements" class="md-nav__link">
+    Évènements
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#liste-des-evenements" class="md-nav__link">
+    Liste des évènements
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
     
   </li>
 
@@ -775,47 +818,6 @@
       class="md-nav__link"
     >
       Les options
-    </a>
-  </li>
-
-        
-          
-          
-          <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Determine class according to level -->
-
-
-
-<!-- Main navigation item with nested items -->
-
-  <li class="md-nav__item">
-    <a
-      href="../Liste/"
-      title="Listes des évènements, actions, expressions et blocs implémentés"
-      class="md-nav__link"
-    >
-      Listes des évènements, actions, expressions et blocs implémentés
     </a>
   </li>
 
@@ -1234,6 +1236,43 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#evenements" class="md-nav__link">
+    Évènements
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#liste-des-evenements" class="md-nav__link">
+    Liste des évènements
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
@@ -1245,13 +1284,433 @@
                 
                   <h1>Les évènements</h1>
                 
-                <p>Un évènement est un bloc d'actions qui seront exécutées lorsque cet évènement sera appelé (ou "déclenché"). Plusieurs évènement sont pris en charge nativement par Sqript, comme par exemple l'évènement <code>on script load</code>. Pour déclencher des actions lorsqu'un évènement a lieu, il faut créer un nouveau bloc dont l'entête contiendra le nom de l'évènement, suivi de deux points <code>:</code> . Par exemple, cet évènement affiche "Hello world !" lorsque le script est chargé:</p>
+                <h4 id="evenements">Évènements</h4>
+<p>Un évènement est un bloc d'actions qui sera exécuté lorsque cet évènement sera appelé (ou "déclenché"). Plusieurs évènement sont pris en charge nativement par Sqript, comme par exemple l'évènement <code>on script load</code>. Pour déclencher des actions lorsqu'un évènement a lieu, il faut créer un nouveau bloc dont l'entête contiendra le nom de l'évènement, suivi de deux points <code>:</code> . Par exemple, cet évènement affiche "Hello world !" lorsque le script est chargé:</p>
 <div class="highlight"><pre><span></span><code><span class="n">on</span> <span class="n">script</span> <span class="n">load</span><span class="p">:</span>
     <span class="nb">print</span> <span class="s2">&quot;Hello world !&quot;</span>
 </code></pre></div>
 
 <p>Chaque évènement, lorsqu'il est déclenché, permet l'accès à des variables qui lui sont propres. Ces variables peuvent être obtenues par des <em>accesseurs</em>. Par exemple, l'évènement <code>on script load</code> permet d'accéder à l'instance du fichier du script chargé, via l'accesseur <code>[script] file</code>.  Un évènement peut n'avoir aucun accesseurs. </p>
 <p>Enfin, lorsqu'un évènement est <em>annulable</em>, il est possible de le définir comme tel grâce à l'action <code>cancel event</code>.</p>
+<h4 id="liste-des-evenements">Liste des évènements</h4>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap');
+.event_title {
+    background-color: #c94736;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    padding-left: 10px;
+    vertical-align:bottom;
+    padding-bottom: 5px;
+    color:white
+}
+.action_title {
+    background-color: #366cc9;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    padding-left: 10px;
+    vertical-align:bottom;
+    padding-bottom: 5px;
+    color:white
+}
+.cancelable {
+    display: inline-block;
+    background-color: green;
+    border-radius: 15px;
+    font-size:10px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-top: 5px;
+    margin-right:5px;
+    float: right;
+    align-self: right
+}
+.client {
+    display: inline-block;
+    background-color: #e0c865;
+    border-radius: 15px;
+    font-size:10px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-top: 5px;
+    margin-right:5px;
+    float: right;
+    align-self: right
+}
+.server {
+    display: inline-block;
+    background-color: #a957d4;
+    border-radius: 15px;
+    font-size:10px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-top: 5px;
+    margin-right:5px;
+    float: right;
+    align-self: right
+}
+.content {
+    background-color: #1b1b1b;
+    font-size: 13px;
+    position: relative;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding-top: 2px;
+}
+.description {
+    margin-left: 5px;
+}
+.pattern {
+    background-color: #303030;
+    font-family:'Lucida Console';
+    border-radius: 3px;
+    padding-left: 1px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-left: 5px;
+}
+.accesseurs {
+    background-color: #3d3d3d;
+    font-family:'Lucida Console';
+    border-radius: 3px;
+    padding-left: 1px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-left: 5px;
+}
+.example {
+    background-color: #222222;
+    font-family:'Lucida Console';
+    padding-left: 10px;
+    margin-top: -10px;
+    display: block;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.row {
+    padding-left: 5px;
+    margin-left: 5px;
+}
+.field {
+    font-weight: 600; 
+    font-family: 'Open Sans Condensed';
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+</style>
+
+<div id="world_tick">
+    <div class="event_title">
+On world tick
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Declenché lorsqu'un tick est réalisé dans le monde</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">world tick</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on world tick:
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_attack">
+    <div class="event_title">
+On player attack <div class="cancelable">Cancelable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsqu'un joueur attaque un autre joueur.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">player (hit|attacked)</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on player attacked:
+    cancel event #Enlève le pvp
+</pre></div>
+        </div>
+    </div>
+
+<div id="block_placed">
+    <div class="event_title">
+On block placed <div class="cancelable">Cancelable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsqu'un bloc est placé par un joueur.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">[block] place [of {block}]</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on place of minecraft:stone:
+    cancel event #Empêche la pose des blocs de stone
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_used_an_item">
+    <div class="event_title">
+On player used an item
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsqu'un objet est sur le point d'être utilisé.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">(player use[s] item|item use)</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on item use:
+    if item is minecraft:potion:
+    cancel event
+</pre></div>
+        </div>
+    </div>
+
+<div id="render_of_health_bar">
+    <div class="event_title">
+On render of health bar <div class="cancelable">Cancelable</div> <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsque la barre de vie est sur le point d'être dessinée à l'écran.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">render [of] health bar</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">CLIENT</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on render of health bar:
+    cancel event #Cache la barre de vie du joueur
+</pre></div>
+        </div>
+    </div>
+
+<div id="block_broken">
+    <div class="event_title">
+On block broken <div class="cancelable">Cancelable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsqu'un bloc est cassé par un joueur.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">[block] break [of {block}]</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on break:
+    cancel event #Empêche les joueurs de casser les blocs
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_jump">
+    <div class="event_title">
+On player jump <div class="cancelable">Cancelable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsqu'un joueur saute</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">player (jump|jumped)</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on player jump:
+</pre></div>
+        </div>
+    </div>
+
+<div id="render_of_nameplates">
+    <div class="event_title">
+On render of nameplates <div class="cancelable">Cancelable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsque les étiquettes affichant le nom des joueurs sont sur le point d'être dessinées. L'accesseur <b>player</b> désigne le joueur dont le nom est dessiné à l'écran.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">render [of] player['s] nameplates</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on render of player's namemplates
+</pre></div>
+        </div>
+    </div>
+
+<div id="render_of_chat">
+    <div class="event_title">
+On render of chat <div class="cancelable">Cancelable</div> <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsque le tchat est sur le point d'être dessiné. L'accesseur <b>player</b> désigne le joueur client.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">render [of] chat</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">CLIENT</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on render of chat:
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_login">
+    <div class="event_title">
+On player login <div class="cancelable">Cancelable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsqu'un joueur est sur le point de se connecter.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">player (login|connection)</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on player connection:
+</pre></div>
+        </div>
+    </div>
+
+<div id="render_of_crosshair">
+    <div class="event_title">
+On render of crosshair <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsque le réticule est sur le point d'être dessiné à l'écran.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">render [of] crosshair[s] bar</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">CLIENT</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+
+</pre></div>
+        </div>
+    </div>
+
+<div id="render_of_overlay">
+    <div class="event_title">
+On render of overlay <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsque l'overlay principal est sur le point d'être dessiné. Permet d'afficher des éléments à l'écran grâce aux actions de dessin.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">render [of] overlay</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">CLIENT</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on render overlay:
+    draw textured rectangle at [-15,-7.5] with size [30,15] using texture sample:logo.png
+</pre></div>
+        </div>
+    </div>
+
+<div id="item_pickup">
+    <div class="event_title">
+On item pickup <div class="cancelable">Cancelable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsqu'un joueur ramasse un item par terre.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">(player pickup[s] item|item pickup)</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on item pickup:
+    if item is minecraft:bedrock:
+        cancel event
+</pre></div>
+        </div>
+    </div>
+
+<div id="item_right_clicked">
+    <div class="event_title">
+On item right clicked <div class="cancelable">Cancelable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsqu'un joueur effectue un clic droit sur un item.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">[item] click [with {item}] [with (left|right) hand]</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on item click with minecraft:emerald:
+</pre></div>
+        </div>
+    </div>
+
+<div id="window_setup">
+    <div class="event_title">
+On window setup
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsque la fenêtre est sur le point d'être inititalisée. Permet de modifier le nom de la fenêtre et son icône.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">window setup</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on window setup:
+    set window title to "Sqript !"
+</pre></div>
+        </div>
+    </div>
+
+<div id="script_load">
+    <div class="event_title">
+On script load
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsque le script est chargé ou rechargé.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">[script] load[ed]</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on script load:
+</pre></div>
+        </div>
+    </div>
+
+<div id="render_of_food_bar">
+    <div class="event_title">
+On render of food bar <div class="cancelable">Cancelable</div> <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsque la barre de faim est sur le point d'être dessinée à l'écran.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">render [of] food [bar]</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">CLIENT</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on render of hunger
+</pre></div>
+        </div>
+    </div>
+
+<div id="block_right_clicked">
+    <div class="event_title">
+On block right clicked <div class="cancelable">Cancelable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsqu'un joueur effectue un clic sur un bloc.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">on (left|right) click on (block [of {block}]|{block}) [with (left|right) hand]</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on right click on minecraft:diamond_block:
+</pre></div>
+        </div>
+    </div>
+
+<div id="render_of_experience_bar">
+    <div class="event_title">
+On render of experience bar <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsque la barre d'expérience est sur le point d'être affichée à l'écran.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">render [of] (xp|experience) bar</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">CLIENT</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on render of xp bar:
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_movement">
+    <div class="event_title">
+On player movement <div class="cancelable">Cancelable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché lorsqu'un joueur se déplace.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">player move[ment]</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on player movement:
+    cancel event #Immobilise le joueur
+</pre></div>
+        </div>
+    </div>
+
+<div id="message_sent">
+    <div class="event_title">
+On message sent <div class="cancelable">Cancelable</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Déclenché à l'envoi d'un message sur le tchat par un joueur. L'accesseur message peut être défini pour modifier le contenu du message envoyé.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">([player] sen(d[ing]|t) [a] message|message sent)</span></div>
+        <div class = "row"><span class = "field">Accesseur(s): </span><span class="accesseurs">BOTH</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+on message sent:
+    set message to "My message" #Modifie le contenu du message
+</pre></div>
+        </div>
+    </div>
                 
               
               
@@ -1270,7 +1729,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../Structure/" title="La structure d'un sqript" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../Structure/" title="Les blocs" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -1279,7 +1738,7 @@
                 <span class="md-footer-nav__direction">
                   Précédent
                 </span>
-                La structure d'un sqript
+                Les blocs
               </div>
             </div>
           </a>
