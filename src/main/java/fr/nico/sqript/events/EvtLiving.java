@@ -21,7 +21,7 @@ public class EvtLiving {
     )
     public static class EvtOnLivingDamage extends ScriptEvent {
         public EvtOnLivingDamage(Entity victim, DamageSource damageSource, float amount) {
-            super(victim != null ? new ScriptAccessor(new TypeEntity(victim),"victim") : new ScriptAccessor(new TypeNull(),"victim"), damageSource.getImmediateSource() != null ? new ScriptAccessor(new TypeEntity(damageSource.getImmediateSource()),"attacker") : new ScriptAccessor(new TypeNull(),"attacker"), new ScriptAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptAccessor(new TypeNumber(amount),"amount"));
+            super(new ScriptAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptAccessor(new TypeNumber(amount),"amount"));
         }
     }
 }
