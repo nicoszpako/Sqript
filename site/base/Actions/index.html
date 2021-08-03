@@ -1,0 +1,2602 @@
+
+
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation Sqript">
+      
+      
+        <link rel="canonical" href="https://sqript.fr/base/Actions/">
+      
+      
+      <link rel="shortcut icon" href="../../img/sqriptlogo_s.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.4.0">
+    
+    
+      
+        <title>Les actions et les expressions - Sqript</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.fe0cca5b.min.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#7e57c2">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,400i,700%7C&display=fallback">
+        <style>body,input{font-family:"Lato",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#les-actions-et-les-expressions" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Application header -->
+<header class="md-header" data-md-component="header">
+
+  <!-- Top-level navigation -->
+  <nav class="md-header-nav md-grid" aria-label="Header">
+
+    <!-- Link to home -->
+    <a
+      href="https://sqript.fr/"
+      title="Sqript"
+      class="md-header-nav__button md-logo"
+      aria-label="Sqript"
+    >
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Logo -->
+
+  <img class="img-logo" src="../../img/sqriptlogo_black.png" alt="logo" />
+
+    </a>
+
+    <!-- Button to open drawer -->
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+
+    <!-- Header title -->
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+          Sqript
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Les actions et les expressions
+            
+          </span>
+        </div>
+      
+    </div>
+
+    <!-- Button to open search dialogue -->
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+
+      <!-- Search interface -->
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    <!-- Repository containing source -->
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Main navigation -->
+<nav
+  class="md-nav md-nav--primary"
+  aria-label="Navigation"
+  data-md-level="0"
+>
+
+  <!-- Site title -->
+  <label class="md-nav__title" for="__drawer">
+    <a
+      href="https://sqript.fr/"
+      title="Sqript"
+      class="md-nav__button md-logo"
+      aria-label="Sqript"
+    >
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Logo -->
+
+  <img class="img-logo" src="../../img/sqriptlogo_black.png" alt="logo" />
+
+    </a>
+    Sqript
+  </label>
+
+  <!-- Repository containing source -->
+  
+
+  <!-- Render item list -->
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../.."
+      title="Présentation"
+      class="md-nav__link"
+    >
+      Présentation
+    </a>
+  </li>
+
+    
+      
+      
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+  
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+
+    <!-- Active checkbox expands items contained within nested section -->
+    
+      <input
+        class="md-nav__toggle md-toggle"
+        data-md-toggle="nav-2"
+        type="checkbox"
+        id="nav-2"
+        checked
+      />
+    
+
+    <!-- Expand active pages -->
+    <label class="md-nav__link" for="nav-2">
+      Apprendre Sqript
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav
+      class="md-nav"
+      aria-label="Apprendre Sqript"
+      data-md-level="1"
+    >
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Apprendre Sqript
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+
+        <!-- Render nested item list -->
+        
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Structure/"
+      title="Les blocs"
+      class="md-nav__link"
+    >
+      Les blocs
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Evenements/"
+      title="Les évènements"
+      class="md-nav__link"
+    >
+      Les évènements
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Variables/"
+      title="Les variables"
+      class="md-nav__link"
+    >
+      Les variables
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+  
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item md-nav__item--active">
+    
+
+    <!-- Active checkbox expands items contained within nested section -->
+    <input
+      class="md-nav__toggle md-toggle"
+      data-md-toggle="toc"
+      type="checkbox"
+      id="__toc"
+    />
+
+    <!-- Hack: see partials/toc.html for more information -->
+    
+
+    <!-- Render table of contents, if not empty -->
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Les actions et les expressions
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a
+      href="./"
+      title="Les actions et les expressions"
+      class="md-nav__link md-nav__link--active"
+    >
+      Les actions et les expressions
+    </a>
+
+    <!-- Show table of contents -->
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#les-actions-et-les-expressions" class="md-nav__link">
+    Les actions et les expressions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#liste-des-actions-implementees-par-sqript" class="md-nav__link">
+    Liste des actions implémentées par Sqript
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#listes-des-expressions-implementees-par-sqript" class="md-nav__link">
+    Listes des expressions implémentées par Sqript
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+<!-- Main navigation item -->
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Conditions/"
+      title="Les conditions"
+      class="md-nav__link"
+    >
+      Les conditions
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Collections/"
+      title="Les collections"
+      class="md-nav__link"
+    >
+      Les collections
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Boucles/"
+      title="Les boucles"
+      class="md-nav__link"
+    >
+      Les boucles
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Fonctions/"
+      title="Les fonctions"
+      class="md-nav__link"
+    >
+      Les fonctions
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../Options/"
+      title="Les options"
+      class="md-nav__link"
+    >
+      Les options
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+<!-- Currently active page -->
+
+    
+      
+      
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item md-nav__item--nested">
+
+    <!-- Active checkbox expands items contained within nested section -->
+    
+      <input
+        class="md-nav__toggle md-toggle"
+        data-md-toggle="nav-3"
+        type="checkbox"
+        id="nav-3"
+      />
+    
+
+    <!-- Expand active pages -->
+    <label class="md-nav__link" for="nav-3">
+      Ajouter des fonctionnalités à Sqript
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav
+      class="md-nav"
+      aria-label="Ajouter des fonctionnalités à Sqript"
+      data-md-level="1"
+    >
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Ajouter des fonctionnalités à Sqript
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+
+        <!-- Render nested item list -->
+        
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../fonc/Conventions/"
+      title="Les conventions"
+      class="md-nav__link"
+    >
+      Les conventions
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../fonc/ScriptContext/"
+      title="Le ScriptContext"
+      class="md-nav__link"
+    >
+      Le ScriptContext
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../fonc/Patterns/"
+      title="Les patterns"
+      class="md-nav__link"
+    >
+      Les patterns
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../fonc/Type/"
+      title="Ajouter un type"
+      class="md-nav__link"
+    >
+      Ajouter un type
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../fonc/Evenements/"
+      title="Ajouter un évènement"
+      class="md-nav__link"
+    >
+      Ajouter un évènement
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../fonc/Expressions/"
+      title="Ajouter une expression"
+      class="md-nav__link"
+    >
+      Ajouter une expression
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../fonc/Action/"
+      title="Ajouter une action"
+      class="md-nav__link"
+    >
+      Ajouter une action
+    </a>
+  </li>
+
+        
+          
+          
+          <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine class according to level -->
+
+
+
+<!-- Main navigation item with nested items -->
+
+  <li class="md-nav__item">
+    <a
+      href="../../fonc/Bloc/"
+      title="Ajouter un bloc"
+      class="md-nav__link"
+    >
+      Ajouter un bloc
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+<!-- Currently active page -->
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#les-actions-et-les-expressions" class="md-nav__link">
+    Les actions et les expressions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#liste-des-actions-implementees-par-sqript" class="md-nav__link">
+    Liste des actions implémentées par Sqript
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#listes-des-expressions-implementees-par-sqript" class="md-nav__link">
+    Listes des expressions implémentées par Sqript
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                  <h1>Les actions et les expressions</h1>
+                
+                <h4 id="les-actions-et-les-expressions">Les actions et les expressions</h4>
+<p>Une action est une ligne de script réalisant une ou plusieurs modification, au jeu ou au contexte d'exécution. Pour pouvoir paramétrer le fonctionnement d'une action, celles-si s'appuient sur des <em>expressions</em>. Cependant, une action peut fonctionner sans expression, tout comme une expression peut être utilisée en dehors d'une action, comme pour définir une variable, vérifier une condition, etc. </p>
+<p>La principale différence entre les actions et les expressions réside dans le fait que les actions ne retournent aucun résultat, là où les expressions retournent forcément un résultat. Ce résultat peut être de n'importe quel type.</p>
+<p>Tous les types primitifs peuvent être utilisés en tant que paramètre d'une expression ou d'une action. Par exemple, <code>cos(5)</code> reconnaît le nombre 5 et lui applique la fonction cosinus. Autre exemple, <strong>l'expression</strong>  <code>numbers in range of {number}</code> retourne un <strong>tableau</strong> contenant tous les nombres allant de 0 à <code>{number}</code>.</p>
+<p>Cependant, <strong>l'action</strong> <code>shuffle {array}</code> ne fait que mélanger aléatoirement un tableau, et ne retourne aucun résultat. Elle applique directement la modification sur la variable passée en paramètre.</p>
+<p>Certaines expressions peuvent demander plusieurs paramètres pour pouvoir s'exécuter. Par exemple, l'expression <code>{element} is in {array}</code> fonctionne avec n'importe quel élément en premier paramètre, et avec un tableau en second paramètre.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Les expressions sont reconnues en fonction de leur "position" dans la ligne, les expressions les plus à droites ayant la priorité. Cela permet une interprétation cohérente de la ligne, comme le ferait un lecteur humain.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Pour éviter les confusions, il est possible d'utiliser des <em>parenthèses</em> pour définir l'ordre dans lequel les expressions doivent s'appliquer aux données. Par exemple, l'expression ① <code>random element of numbers in range of (50+20) + 10</code> sera sensiblement différente de l'expression  ② <code>random element of numbers in range of (50) + 20 + 10</code>. Dans ①, le résultat sera la somme d'un élément aléatoire du tableau contenant les nombres entiers jusqu'à 70, et de 10. L'expression ① retournera donc un nombre compris entre 10 et 80. Cependant, l'expression ② retournera la somme d'un élément aléatoire du tableau contenant les nombres entiers jusqu'à 50, et de 10 et de 20. L'expression ② retournera donc un nombre compris entre 30 et 80. Cela peut paraître évident, mais dans des expressions plus complexes l'usage des parenthèses est important, d'une part pour éviter des problèmes liés aux types des paramètres de l'expression, et d'autre part pour permettre une meilleure lecture du script.</p>
+</div>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap');
+.event_title {
+    background-color: #c94736;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    padding-left: 10px;
+    vertical-align:bottom;
+    padding-bottom: 5px;
+    color:white
+}
+.action_title {
+    background-color: #366cc9;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    padding-left: 10px;
+    vertical-align:bottom;
+    padding-bottom: 5px;
+    color:white
+}
+.expression_title {
+    background-color: #15ad1f;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    padding-left: 10px;
+    vertical-align:bottom;
+    padding-bottom: 5px;
+    color:white
+}
+.cancelable {
+    display: inline-block;
+    background-color: green;
+    border-radius: 15px;
+    font-size:10px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-top: 5px;
+    margin-right:5px;
+    float: right;
+    align-self: right
+}
+.client {
+    display: inline-block;
+    background-color: #d433ab;
+    border-radius: 15px;
+    font-size:10px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-top: 5px;
+    margin-right:5px;
+    float: right;
+    align-self: right
+}
+.server {
+    display: inline-block;
+    background-color: #d649c1;
+    border-radius: 15px;
+    font-size:10px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-top: 5px;
+    margin-right:5px;
+    float: right;
+    align-self: right
+}
+.content {
+    background-color: #1b1b1b;
+    font-size: 13px;
+    position: relative;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding-top: 2px;
+}
+.description {
+    margin-left: 5px;
+}
+.pattern {
+    background-color: #303030;
+    font-family:'Lucida Console';
+    border-radius: 3px;
+    padding-left: 1px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-left: 5px;
+}
+.accesseurs {
+    background-color: #3d3d3d;
+    font-family:'Lucida Console';
+    border-radius: 3px;
+    padding-left: 1px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-left: 5px;
+}
+.example {
+    background-color: #222222;
+    font-family:'Lucida Console';
+    padding-left: 10px;
+    margin-top: -10px;
+    display: block;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.row {
+    padding-left: 5px;
+    margin-left: 5px;
+}
+.field {
+    font-weight: 600; 
+    font-family: 'Open Sans Condensed';
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+</style>
+
+<h4 id="liste-des-actions-implementees-par-sqript">Liste des actions implémentées par Sqript</h4>
+<p>Certaines actions ou certaines expressions ne sont executable que du côté client ou du côté serveur. Une annotation <code>client</code> ou <code>server</code> permet de l'indiquer lorsque c'est le cas. Si une action que vous souhaitez utiliser ne fonctionne pas du côté souhaité, considérez l'utilisation de variables synchronisées ou de paquets [<a href="../../base/Structure/#packet">?</a>].</p>
+<div id="arrays_actions">
+    <div class="action_title">
+Shuffle array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Mélange aléatoirement les éléments d'un tableau.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">shuffle {array}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+shuffe [1,2,3,4,5,6]
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays_actions">
+    <div class="action_title">
+Add an array to another array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Ajoute les éléments d'un tableau à un autre tableau.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">add elements of {array to {array}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+add [1,2,3] to [4,5,6]
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays_actions">
+    <div class="action_title">
+Remove an array from an array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Supprime les éléments d'un tableau à un autre tableau.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">remove elements of {array from {array}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+remove ["a","b"] from ["a","b","c"]
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays_actions">
+    <div class="action_title">
+Sort elements of an array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Trie un tableau en ordre ascendant ou descendant. Les dictionnaires peuvent également être triés par clés (par défaut, il sont triés par valeurs) en utilisant le mot-clé keys.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">sort (elements|keys) of {array [by] [(ascending|descending)] [order]</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+sort elements of [1,5,7,4,2,3]
+</pre></div>
+        </div>
+    </div>
+
+<div id="simple_operation_actions">
+    <div class="action_title">
+Add an element to another
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Ajoute un élément à un autre élément. Synonyme de l'opérateur "+"</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">add {element to {element}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+
+</pre></div>
+        </div>
+    </div>
+
+<div id="simple_operation_actions">
+    <div class="action_title">
+Remove an element from another
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Retire un élément à un autre élément. Synonyme de l'opérateur "-"</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">remove {element to {element}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+remove 5 from my_variable
+</pre></div>
+        </div>
+    </div>
+
+<div id="simple_operation_actions">
+    <div class="action_title">
+Set a variable or an element
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Définit un élément à un autre élément.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">set {element to {element}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+set my_variable to 10
+</pre></div>
+        </div>
+    </div>
+
+<div id="return_actions">
+    <div class="action_title">
+Return
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Dans une fonction, permet de retourner un élément.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">return {element}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+return 10
+</pre></div>
+        </div>
+    </div>
+
+<div id="return_actions">
+    <div class="action_title">
+Cancel event
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Dans un évènement, permet de l'annuler</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">cancel event</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+cancel event
+</pre></div>
+        </div>
+    </div>
+
+<div id="return_actions">
+    <div class="action_title">
+Break loop
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Dans une boucle, permet d'interrompre et de quitter la boucle</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">break loop</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+for i in numbers in range of 10:
+    if i = 2:
+    break #Seules les itérations 0, 1 et 2 auront été effectuées
+</pre></div>
+        </div>
+    </div>
+
+<div id="return_actions">
+    <div class="action_title">
+Break multiple loops
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Lorsque plusieurs boucles sont imbriquées, permet d'interrompre et de quitter le nombre de boucles passé en paramètre.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">break {number loops</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+for i in numbers in range of 10:
+        for j in numbers in range of 10:
+ if j*i = 10:
+    break 2 loops
+</pre></div>
+        </div>
+    </div>
+
+<div id="network_actions">
+    <div class="action_title">
+Synchronise an element to all players
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Synchronise un élément sous la clé donnée en second paramètre avec tous les joueurs. Ainsi, les joueurs pourront utiliser l'élément envoyé en utilisant la clé donnée lorsque leurs scripts sont exécutés côté client.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">sync {element as {string to all players</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+sync true as "game_started" to all players #La variable synchronisée "game_started" est maintenant à true pour tous les joueurs
+</pre></div>
+        </div>
+    </div>
+
+<div id="network_actions">
+    <div class="action_title">
+Synchronise an element to a player
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Synchronise un élément sous la clé donnée en second paramètre avec le joueur passé en troisième paramètre. Ainsi, le joueur pourra utiliser l'élément envoyé en utilisant la clé donnée lorsque ses scripts sont exécutés côté client.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">sync {element as {string to {player}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+sync $money[player] as "my_money" to player #La variable synchronisée "my_money" contient maintenant le contenu de la variable $money[player], stockée côté serveur.
+</pre></div>
+        </div>
+    </div>
+
+<div id="wait_actions">
+    <div class="action_title">
+Wait/delay
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Permet de délayer l'exécution d'un script.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">(wait|delay) {date}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+wait 1 minute and 30 seconds
+</pre></div>
+        </div>
+    </div>
+
+<div id="print_actions">
+    <div class="action_title">
+Print
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Affiche un élément dans la console.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">print {element}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+print "Hello world !"
+</pre></div>
+        </div>
+    </div>
+
+<div id="drop">
+    <div class="action_title">
+Drop item
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Fait apparaître un ou des items à la position donnée</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">drop [{+number}] {item at {array}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+drop 1 minecraft:diamond_sword at player's location
+</pre></div>
+        </div>
+    </div>
+
+<div id="draw_actions">
+    <div class="action_title">
+Draw text <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Dessine du texte à l'écran pendant une frame. Cette action n'ayant un effet que pendant une seule frame, elle doit être appelé dans un évènement approprié (les évènements de rendu par exemple).</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">draw [(shadowed)] text {string at {array [with scale {number}] [[and] with color {number}]</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+draw text player's name at [50,150] with scale 0.5
+</pre></div>
+        </div>
+    </div>
+
+<div id="draw_actions">
+    <div class="action_title">
+Draw colored rectangle <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Dessine un rectangle coloré à l'écran. Cette action n'ayant un effet que pendant une seule frame, elle doit être appelé dans un évènement approprié (les évènements de rendu par exemple).</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">draw colored rect[angle] at {array with size {array [and] with color {number}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+draw colored rectangle at [-15,-7.5] with size [30,15] and with color 16711680
+</pre></div>
+        </div>
+    </div>
+
+<div id="draw_actions">
+    <div class="action_title">
+Draw textured rectangle <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Dessine un rectangle texturé à l'écran. Cette action n'ayant un effet que pendant une seule frame, elle doit être appelé dans un évènement approprié (les évènements de rendu par exemple).</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">draw textured rect[angle] at {array with size {array using texture {resource [with uv {array}]</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+draw textured rectangle at [-15,-7.5] with size [30,15] using texture sample:logo.png
+</pre></div>
+        </div>
+    </div>
+
+<div id="draw_actions">
+    <div class="action_title">
+Draw line <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Dessine une ligne entre les deux points données avec une certaine épaisseur et une certaine couleur</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">draw line from {array to {array with stroke {number [and] with color {number}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+draw line from [10,10] to [100,100] with stroke 6 and with color 0
+</pre></div>
+        </div>
+    </div>
+
+<div id="draw_actions">
+    <div class="action_title">
+Rotate canvas <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Applique une rotation de centre 0 et d'un angle donné sur la matrice de projection de l'interface dessinée à l'écran. Tous les éléments dessinés sur la même matrice sont affectés.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">rotate canvas by {number [(degrees|radians)]</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+draw text "Texte 1" at [10,10] #Ne sera pas tourné
+push canvas matrix #Pousse une nouvelle matrice sur la pile de matrices
+rotate canvas by 90 degrees
+draw text "Texte 2" at [20,20] #Sera tourné de 90 degrés
+pop canvas matrix
+draw text "Texte 3" at [20,20] #Ne sera pas tourné car la matrice a été tirée.
+</pre></div>
+        </div>
+    </div>
+
+<div id="draw_actions">
+    <div class="action_title">
+Translate canvas <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Applique une translation de vecteur donné sur la matrice de projection de l'interface dessinée à l'écran. Tous les éléments dessinés sur la même matrice sont affectés.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">translate canvas by {array}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+draw text "Texte 1" at [10,10] #Ne sera pas déplacé
+push canvas matrix #Pousse une nouvelle matrice sur la pile de matrices
+translate canvas by [10,0,0] 
+draw text "Texte 2" at [20,20] #Sera déplacé de 10 unités vers la droite
+pop canvas matrix
+draw text "Texte 3" at [20,20] #Ne sera pas déplacé car la matrice a été tirée.
+</pre></div>
+        </div>
+    </div>
+
+<div id="draw_actions">
+    <div class="action_title">
+Scale canvas <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Applique une homothétie de scalaire donné sur la matrice de projection de l'interface dessinée à l'écran. Tous les éléments dessinés sur la même matrice sont affectés.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">scale canvas by {array}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+draw text "Texte 1" at [10,10] #Ne sera pas agrandi
+push canvas matrix #Pousse une nouvelle matrice sur la pile de matrices
+scale canvas by [2,2,0] 
+draw text "Texte 2" at [20,20] #La taille aura été multipliée par 2
+pop canvas matrix
+draw text "Texte 3" at [20,20] #Ne sera pas agrandi car la matrice a été tirée.
+</pre></div>
+        </div>
+    </div>
+
+<div id="draw_actions">
+    <div class="action_title">
+Push canvas matrix <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Pousse une nouvelle matrice sur la pile de matrices de projection. Permet de "sauvegarder" la configuration précédente avant d'en effectuer une nouvelle.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">push canvas matrix</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+push canvas matrix
+</pre></div>
+        </div>
+    </div>
+
+<div id="draw_actions">
+    <div class="action_title">
+Pop canvas matrix <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Tire la matrice en haut de la pile de matrices de projection et la supprime. Permet de revenir à l'état précédent les modifications faites sur la dernière matrice poussée.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">pop canvas matrix</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+pop canvas matrix
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_actions">
+    <div class="action_title">
+Teleport player
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Téléporte un joueur à une position.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">teleport {player to {array}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+teleport player at [10,25,20]
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_actions">
+    <div class="action_title">
+Give item to player
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Donne un item à un joueur.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">give [{+number}] {item to {player}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+give 1 minecraft:diamond_sword to player
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_actions">
+    <div class="action_title">
+Kick player
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Expulse un joueur du serveur, avec un message.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">kick {player [with message {string}]</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+kick player with message "Vous avez été expulsé pour triche"
+</pre></div>
+        </div>
+    </div>
+
+<div id="send_actions">
+    <div class="action_title">
+Send element to the console/server
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Envoie un message à la console ou au serveur.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">send {element to (console|server)</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+send "Test" to console
+</pre></div>
+        </div>
+    </div>
+
+<div id="send_actions">
+    <div class="action_title">
+Send element
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Envoie un message à un élément qui peut en recevoir. Le message peut être un paquet ou une chaîne de caractères</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">send {element to {element}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+send my_packet(10,"Test") to server
+</pre></div>
+        </div>
+    </div>
+
+<div id="send_actions">
+    <div class="expression_title">
+Send element
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Envoie un message à un élément qui peut en recevoir. Le message peut être un paquet ou une chaîne de caractères</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">send {element to {element}</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+send my_packet(10,"Test") to server
+</pre></div>
+        </div>
+    </div>
+
+<h4 id="listes-des-expressions-implementees-par-sqript">Listes des expressions implémentées par Sqript</h4>
+<div id="locations_expressions">
+    <div class="expression_title">
+X coordinate of location
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la coordonnées x d'un élément qui peut être associé à une position. </span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">x coord[inate] of {array}:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+x coord of [1,52,47] #Renvoie 1
+</pre></div>
+        </div>
+    </div>
+
+<div id="locations_expressions">
+    <div class="expression_title">
+Y coordinate of location
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la coordonnées y d'un élément qui peut être associé à une position. </span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">y coord[inate] of {array}:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+y coord of [1,52,47] #Renvoie 52
+</pre></div>
+        </div>
+    </div>
+
+<div id="locations_expressions">
+    <div class="expression_title">
+Z coordinate of location
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la coordonnées z d'un élément qui peut être associé à une position. </span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">z coord[inate] of {array}:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+z coord of [1,52,47] #Renvoie 47
+</pre></div>
+        </div>
+    </div>
+
+<div id="locations_expressions">
+    <div class="expression_title">
+Location of an element
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la position d'un élément (qui peut en retourner une).</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">(location of {element}|{+element}'s location): array</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+player's location
+</pre></div>
+        </div>
+    </div>
+
+<div id="locations_expressions">
+    <div class="expression_title">
+Distance between two locations
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la distance entre deux éléments qui peuvent être associés à des positions.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">distance between {element and {element}:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+distance between [1,42,56] and [15,65,89]
+</pre></div>
+        </div>
+    </div>
+
+<div id="locations_expressions">
+    <div class="expression_title">
+Vector of a location
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Créé un vecteur à partir d'un élément pouvant être associé à une position. Les vecteurs peuvent être additionnés, multipliés par un scalaire, et plus encore.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">(vector of {array}|{array vector):vector</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+player's location vector
+</pre></div>
+        </div>
+    </div>
+
+<div id="block_expressions">
+    <div class="expression_title">
+Block at location
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le bloc à la position donnée.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">block at {array [in world {number}]:block</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+block at [45,55,65]
+</pre></div>
+        </div>
+    </div>
+
+<div id="block_expressions">
+    <div class="expression_title">
+Blocks in radius of location
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie un tableau de blocs autour d'une position donnée dans un rayon donné.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">blocks in radius {number around {element [in world {number}]:array</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+blocks in radius 5 around [15,54,56]
+</pre></div>
+        </div>
+    </div>
+
+<div id="gui_expressions">
+    <div class="expression_title">
+Screen width <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la largeur de l'écran.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">screen width:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+screen width
+</pre></div>
+        </div>
+    </div>
+
+<div id="gui_expressions">
+    <div class="expression_title">
+Screen height <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la hauteur de l'écran.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">screen height:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+screen height
+</pre></div>
+        </div>
+    </div>
+
+<div id="gui_expressions">
+    <div class="expression_title">
+Screen width of a string <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la largeur d'une chaîne de caractères dessinée à l'écran.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">screen width of {string}:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+screen width of "Test"
+</pre></div>
+        </div>
+    </div>
+
+<div id="gui_expressions">
+    <div class="expression_title">
+Screen height of a string <div class="client">Client</div>
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la hauteur d'une chaîne de caractères dessinée à l'écran.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">screen height of font:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+screen height of "Test"
+</pre></div>
+        </div>
+    </div>
+
+<div id="format_expressions">
+    <div class="expression_title">
+Format
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le formattage d'un élément en une chaîne de caractères selon le format donné.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{element formatted as {string}:string</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+10/3 formatted as "-.-"
+</pre></div>
+        </div>
+    </div>
+
+<div id="date_expressions">
+    <div class="expression_title">
+Date
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le temps donné.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">[{number year[s]] [[and] {number month[s]] [[and] {number week[s]] [[and] {number day[s]] [[and] {number hour[s]] [[and] {number minute[s]] [[and] {number second[s]] [[and] {number tick[s]] [[and] {number (millisecond[s]|ms)]</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+1 hour 25 minutes and 30 seconds
+</pre></div>
+        </div>
+    </div>
+
+<div id="date_expressions">
+    <div class="expression_title">
+Now
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie sous forme de date à partir du Unix Epoch la date actuelle de la machine sur laquelle le script est exécuté.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">now</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+now
+</pre></div>
+        </div>
+    </div>
+
+<div id="dictionaries">
+    <div class="expression_title">
+New dictionary
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie un nouveau dictionaire vide.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">[a] [new] dictionary:dictionary</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+set dict to a new dictionary
+</pre></div>
+        </div>
+    </div>
+
+<div id="dictionaries">
+    <div class="expression_title">
+New dictionary from an array of key-value couples
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie un nouveau dictionaire défini par les couples clé-valeurs donnés.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">[a] [new] dictionary with {array*}:dictionary</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+set dict to a dictionary with [["Clé 1","Valeur 1"]]
+</pre></div>
+        </div>
+    </div>
+
+<div id="console_expressions">
+    <div class="expression_title">
+Console
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la référence de la console.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">console|server:sender</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+console
+</pre></div>
+        </div>
+    </div>
+
+<div id="randomness_expressions">
+    <div class="expression_title">
+Random number
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie un nombre à virgule aléatoire entre les deux bornes données.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">random (number|([float] number)|float) [between {number and {number}]:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+random number between 1 and 50
+</pre></div>
+        </div>
+    </div>
+
+<div id="randomness_expressions">
+    <div class="expression_title">
+Random integer
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie un entier aléatoire entre les bornes données.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">random (integer|(integer number)|int) between {number and {number}:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+random integer between 1 and 100
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_expressions">
+    <div class="expression_title">
+All players
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie un tableau de tous les joueurs connectés au serveur.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">all players:array</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+all players
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_expressions">
+    <div class="expression_title">
+Player from username
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie une référence du joueur avec le nom donné</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">player (named|with username) {string}:player</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+player with username Dartcher
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_expressions">
+    <div class="expression_title">
+Player's name
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le nom du joueur donné.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{+player}['s] name:player</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+player's name
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_expressions">
+    <div class="expression_title">
+Player's health
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la vie du joueur donné.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{+player}['s] health:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+player's health
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_expressions">
+    <div class="expression_title">
+Player's hunger level
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le niveau de faim du joueur donné.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{+player}['s] (hunger|food):number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+player's hunger
+</pre></div>
+        </div>
+    </div>
+
+<div id="player_expressions">
+    <div class="expression_title">
+Player's look vector
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le vecteur du regard du joueur donné.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{+player}['s] look vector:vector</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+player's look vector
+</pre></div>
+        </div>
+    </div>
+
+<div id="system_expressions">
+    <div class="expression_title">
+Execution side
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le côté d'exécution (client ou serveur) du script, sous forme de chaîne de caractères.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">[execution] side:string</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+execution side
+</pre></div>
+        </div>
+    </div>
+
+<div id="system_expressions">
+    <div class="expression_title">
+Window title
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le nom de la fenêtre du jeu.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">window (name|title):string</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+set window name to "Sqript."
+</pre></div>
+        </div>
+    </div>
+
+<div id="system_expressions">
+    <div class="expression_title">
+Window icons
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie les icônes de la fenêtre du jeu. Pour pouvoir définir les icônes de la fenêtre, il faut fournir un tableau comportant deux éléments, qui doivent respectivement pointer vers une image .png de taille 16x16 et une image .png de taille 32x32.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">window icons:array</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+set window icons to [sample:favicon_wb_16.png,sample:favicon_wb_32.png]
+</pre></div>
+        </div>
+    </div>
+
+<div id="network_expressions">
+    <div class="expression_title">
+Key is synced
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie true si la clé donnée est une variable synchronisée.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">value [of] {string is synced:boolean</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+"ma_clé" is synced
+</pre></div>
+        </div>
+    </div>
+
+<div id="network_expressions">
+    <div class="expression_title">
+Synced value of key
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la variable synchronisée associée à la clé donnée.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">synced value [of] {string}:element</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+synced value "ma_clé"
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Permet de définir explicitement un tableau.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">~[{element*}~]:array</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+[1,2,3,5,98,4]
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Size of array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie la taille d'un tableau.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">size of {array}:number</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+size of [1,2,5,6,8] #Renvoie 5
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Random element of an array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie un élément aléatoire d'un tableau.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">[a] random element of {array}:element</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+set winner to a random element of all players #Tire au sort un joueur parmi les joueurs connectés
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+First element of an array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le premier élément d'un tableau.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">first element of {array}:element</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+first element of [1,2,3,4,5] #Renvoie 1
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Last element of an array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le dernier élément d'un tableau.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">last element of {array}:element</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+first element of [1,2,3,4,5] #Renvoie 5
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Element of an array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie l'élément d'indice donné du tableau. Attention, en Sqript, les indices commencent à 0.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{+array}~[{+number}~]:element</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+[7,1,0,2,6][0] #Renvoie 7
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Range of two numbers
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie un tableau contenant les nombres entiers compris entre les deux bornes.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">numbers from {number to {number}:array</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+numbers from 1 to 5 #Renvoie [1,2,3,4,5]
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Range of numbers
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie un tableau contenant les nombres entiers compris entre 0 et la borne donnée.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">[numbers] in range of {number}:array</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+numbers in range of 5 #Renvoie [0,1,2,3,4,5]
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Random numbers in range of number
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie un tableau contenant une partie aléatoire des nombres entiers compris entre 0 et la borne donnée.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">random numbers in range of {number}:array</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+random numbers in range of 10
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Element is in an array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie true si l'élément donné est dans le tableau.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{element is in {array}:boolean</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+1 is in [1,5,6] #Renvoie true
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Element is not in an array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie true si l'élément donné n'est pas dans le tableau.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{element is not in {array}:boolean</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+1 is not in [4,5,6] #Renvoie false
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Array contains an element
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie true si l'élément donné est dans le tableau.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{array contains {element}:boolean</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+1 is in [1,5,6] #Renvoie true
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Sorted array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le tableau trié à partir du tableau donné. Les éléments du tableau ne seront affectés que si leur type est comparable.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">sorted [(ascending|descending)] (elements|keys) of {array}:array</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+sorted elements of [1,8,5,4] #Renvoie [1,4,5,8]
+</pre></div>
+        </div>
+    </div>
+
+<div id="arrays">
+    <div class="expression_title">
+Copy of an array
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie une copie du tableau donné. Permet de modifier la copie sans modifier le tableau donné.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">copy of {array}:array</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+copy of [1,2,5]
+</pre></div>
+        </div>
+    </div>
+
+<div id="types_expressions">
+    <div class="expression_title">
+Type of an element
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie le type de l'élément donné sous forme de chaîne de caractères.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">type of {element}:string</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+type of 5 #Renvoie "number"
+</pre></div>
+        </div>
+    </div>
+
+<div id="types_expressions">
+    <div class="expression_title">
+Element parsed as
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie l'élément sous un autre type.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{element parsed as {string}:element</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+"5" parsed as "number"
+</pre></div>
+        </div>
+    </div>
+
+<div id="types_expressions">
+    <div class="expression_title">
+Element is set
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie true si l'élément est bien défini.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{element is (set|defined):boolean</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+my_variable is defined
+</pre></div>
+        </div>
+    </div>
+
+<div id="types_expressions">
+    <div class="expression_title">
+Element is not set
+    </div>
+    <div class="content">
+        <div class = "row"><span class = "field">Description: </span><span class="description">Renvoie true si l'élément n'est pas défini.</span></div>
+        <div class = "row"><span class = "field">Pattern: </span><span class="pattern">{element is not (set|defined):boolean</span></div>
+        <div class = "row"><span class = "field">Exemple(s): </span></div><div class="example"><pre>
+my_variable is not defined
+</pre></div>
+        </div>
+    </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../Variables/" title="Les variables" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Précédent
+                </span>
+                Les variables
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../Conditions/" title="Les conditions" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Suivant
+                </span>
+                Les conditions
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://discord.gg/DtPPWUx" target="_blank" rel="noopener" title="discord.gg" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M297.216 243.2c0 15.616-11.52 28.416-26.112 28.416-14.336 0-26.112-12.8-26.112-28.416s11.52-28.416 26.112-28.416c14.592 0 26.112 12.8 26.112 28.416zm-119.552-28.416c-14.592 0-26.112 12.8-26.112 28.416s11.776 28.416 26.112 28.416c14.592 0 26.112-12.8 26.112-28.416.256-15.616-11.52-28.416-26.112-28.416zM448 52.736V512c-64.494-56.994-43.868-38.128-118.784-107.776l13.568 47.36H52.48C23.552 451.584 0 428.032 0 398.848V52.736C0 23.552 23.552 0 52.48 0h343.04C424.448 0 448 23.552 448 52.736zm-72.96 242.688c0-82.432-36.864-149.248-36.864-149.248-36.864-27.648-71.936-26.88-71.936-26.88l-3.584 4.096c43.52 13.312 63.744 32.512 63.744 32.512-60.811-33.329-132.244-33.335-191.232-7.424-9.472 4.352-15.104 7.424-15.104 7.424s21.248-20.224 67.328-33.536l-2.56-3.072s-35.072-.768-71.936 26.88c0 0-36.864 66.816-36.864 149.248 0 0 21.504 37.12 78.08 38.912 0 0 9.472-11.52 17.152-21.248-32.512-9.728-44.8-30.208-44.8-30.208 3.766 2.636 9.976 6.053 10.496 6.4 43.21 24.198 104.588 32.126 159.744 8.96 8.96-3.328 18.944-8.192 29.44-15.104 0 0-12.8 20.992-46.336 30.464 7.68 9.728 16.896 20.736 16.896 20.736 56.576-1.792 78.336-38.912 78.336-38.912z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copier dans le presse-papier", "clipboard.copied": "Copi\u00e9 dans le presse-papier", "search.config.lang": "fr", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.a68abb33.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>
