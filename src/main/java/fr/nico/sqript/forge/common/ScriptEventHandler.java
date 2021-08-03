@@ -220,7 +220,7 @@ public class ScriptEventHandler {
 
     @SubscribeEvent
     public void onPlayerDamage(LivingDamageEvent event){
-        if(ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerDamage(event.getEntity(), event.getSource(), event.getAmount()))){
+        if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingDamage(event.getEntity(), event.getSource(), event.getAmount()))){
             event.setCanceled(true);
         }
     }

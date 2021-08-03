@@ -163,17 +163,6 @@ public class EvtPlayer {
 
     }
 
-    @Cancelable
-    @Event(name = "Living Damage",
-            description = "This event is triggered just before damage is applied to an entity.",
-            examples = "on living damage:",
-            patterns = "living (damage)",
-            accessors = {"victim:entity", "damageType:damage_source", "amount:number", "attacker:entity"}
-    )
-    public static class EvtOnPlayerDamage extends ScriptEvent {
-        public EvtOnPlayerDamage(Entity victim, DamageSource damageSource, float amount) {
-            super(victim != null ? new ScriptAccessor(new TypeEntity(victim),"victim") : new ScriptAccessor(new TypeNull(),"victim"), damageSource.getImmediateSource() != null ? new ScriptAccessor(new TypeEntity(damageSource.getImmediateSource()),"attacker") : new ScriptAccessor(new TypeNull(),"attacker"), new ScriptAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptAccessor(new TypeNumber(amount),"amount"));
-        }
-    }
+
 
 }
