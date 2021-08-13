@@ -24,4 +24,17 @@ public class EvtLiving {
             super(new ScriptAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptAccessor(new TypeNumber(amount),"amount"));
         }
     }
+
+    @Cancelable
+    @Event(name = "Living Death",
+            description = "This event is triggered just before an entity dies of damage.",
+            examples = "on living death:",
+            patterns = "living (death)",
+            accessors = {"victim:entity", "damageType:damage_source", "attacker:entity"}
+    )
+    public static class EvtOnLivingDeath extends ScriptEvent {
+        public EvtOnLivingDeath(Entity victim, DamageSource damageSource) {
+            super(new ScriptAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptAccessor(new TypeDamageSource(damageSource),"damageType"));
+        }
+    }
 }

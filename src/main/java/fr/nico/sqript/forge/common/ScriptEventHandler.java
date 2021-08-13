@@ -18,10 +18,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -217,10 +214,16 @@ public class ScriptEventHandler {
         }
     }
 
+    @SubscribeEvent
+    public void onLivingDamage(LivingDamageEvent event){
+        if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingDamage(event.getEntity(), event.getSource(), event.getAmount()))){
+            event.setCanceled(true);
+        }
+    }
 
     @SubscribeEvent
-    public void onPlayerDamage(LivingDamageEvent event){
-        if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingDamage(event.getEntity(), event.getSource(), event.getAmount()))){
+    public void onLivingDeath(LivingDeathEvent event){
+        if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingDeath(event.getEntity(), event.getSource()))){
             event.setCanceled(true);
         }
     }
