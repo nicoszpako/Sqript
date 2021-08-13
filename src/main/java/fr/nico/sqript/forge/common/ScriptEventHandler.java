@@ -227,4 +227,11 @@ public class ScriptEventHandler {
             event.setCanceled(true);
         }
     }
+
+    @SubscribeEvent
+    public void onLivingFall(LivingFallEvent event){
+        if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingFall(event.getEntity(), event.getDistance(), event.getDamageMultiplier()))){
+            event.setCanceled(true);
+        }
+    }
 }

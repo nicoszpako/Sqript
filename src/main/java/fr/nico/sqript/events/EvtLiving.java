@@ -37,4 +37,17 @@ public class EvtLiving {
             super(new ScriptAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptAccessor(new TypeDamageSource(damageSource),"damageType"));
         }
     }
+
+    @Cancelable
+    @Event(name = "Living Fall",
+            description = "This event is triggered as soon as an EntityLivingBase falls.",
+            examples = "on living fall:",
+            patterns = "(living fall|fall)",
+            accessors = {"victim:entity", "distance:number", "damageMultiplier:number"}
+    )
+    public static class EvtOnLivingFall extends ScriptEvent {
+        public EvtOnLivingFall(Entity victim, float distance, float damageMultiplier) {
+            super(new ScriptAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptAccessor(new TypeNumber(distance),"distance"), new ScriptAccessor(new TypeNumber(damageMultiplier),"damageMultiplier"));
+        }
+    }
 }
