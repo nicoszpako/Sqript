@@ -215,6 +215,13 @@ public class ScriptEventHandler {
     }
 
     @SubscribeEvent
+    public void onEntityInteract(PlayerInteractEvent.EntityInteract event){
+        if(ScriptManager.callEvent(new EvtPlayer.EvtOnEntityInteract(event.getTarget(), event.getHand()))){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
     public void onLivingDamage(LivingDamageEvent event){
         if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingDamage(event.getEntity(), event.getSource(), event.getAmount()))){
             event.setCanceled(true);

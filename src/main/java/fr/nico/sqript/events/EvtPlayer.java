@@ -163,6 +163,21 @@ public class EvtPlayer {
 
     }
 
+    @Cancelable
+    @Event(name = "Entity Interact",
+            description = "This event is triggered when a player interacts with an entity (right-click).",
+            examples = "on right click on living entity:",
+            patterns = "right click on living entity",
+            accessors = {"target:entity", "hand:hand"}
+    )
+    public static class EvtOnEntityInteract extends ScriptEvent {
+
+        public EvtOnEntityInteract(Entity entity, EnumHand hand) {
+            super(new ScriptAccessor(new TypeEntity(entity),"target"), new ScriptAccessor(new TypeHand(hand),"hand"));
+        }
+
+    }
+
 
 
 }
