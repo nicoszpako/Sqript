@@ -1,9 +1,9 @@
 package fr.nico.sqript.expressions;
 
-import fr.nico.sqript.SqriptUtils;
-import fr.nico.sqript.types.*;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.types.*;
+import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.client.Minecraft;
@@ -14,9 +14,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 
 @Expression(name = "Player Expressions",
@@ -30,6 +27,7 @@ import java.util.Arrays;
             "{+player}['s] (hunger|food):number",
             "{+player}['s] look vector:vector",
             "block {player} is looking at:block",
+            "{player} is entityplayer:boolean",
             "player:player"
         }
 )
@@ -80,6 +78,8 @@ public class ExprPlayers extends ScriptExpression {
                 }else
                     return new TypeNull();
             case 7:
+                return new TypeBoolean(parameters[0].getObject() instanceof EntityPlayer);
+            case 8:
                 return new TypePlayer(getClientPlayer());
         }
         return null;
