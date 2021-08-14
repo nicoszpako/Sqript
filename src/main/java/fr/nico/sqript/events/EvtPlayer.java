@@ -3,6 +3,7 @@ package fr.nico.sqript.events;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
 import fr.nico.sqript.types.primitive.TypeString;
@@ -230,6 +231,18 @@ public class EvtPlayer {
     public static class EvtOnKeyInputEvent extends ScriptEvent {
         public EvtOnKeyInputEvent() {
             super();
+        }
+    }
+
+    @Event(name = "Player Respawn",
+            description = "This event is triggered when a player reappears in the world after dying or passing through the end portal to the overworld.",
+            examples = "on respawn:",
+            patterns = "[player] respawn[ing]",
+            accessors = {"player:player", "endConquered:boolean"}
+    )
+    public static class EvtOnPlayerRespawnEvent extends ScriptEvent {
+        public EvtOnPlayerRespawnEvent(EntityPlayer entityPlayer, boolean endConquered) {
+            super(new ScriptAccessor(entityPlayer != null ? new TypePlayer(entityPlayer) : new TypeNull(),"player"), new ScriptAccessor(new TypeBoolean(endConquered),"endConquered"));
         }
     }
 }

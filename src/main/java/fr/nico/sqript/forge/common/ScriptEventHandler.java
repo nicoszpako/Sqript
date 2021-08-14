@@ -277,4 +277,9 @@ public class ScriptEventHandler {
             event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getItem());
         }
     }
+
+    @SubscribeEvent
+    public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event){
+        ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerRespawnEvent(event.player, event.isEndConquered()));
+    }
 }
