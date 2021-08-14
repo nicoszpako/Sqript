@@ -14,6 +14,7 @@ import fr.nico.sqript.network.ScriptNetworkManager;
 import fr.nico.sqript.network.ScriptSyncDataMessage;
 import fr.nico.sqript.meta.*;
 import net.minecraft.block.BlockAir;
+import net.minecraft.client.gui.GuiKeyBindingList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.DefaultStateMapper;
 import net.minecraft.item.Item;
@@ -52,8 +53,6 @@ public class SqriptForge {
 
     public static ArrayList<ScriptBlock> blocks = new ArrayList<>();
 
-
-
     public static ArrayList<ScriptItem> scriptItems = new ArrayList<>();
     public static ArrayList<Item> items = new ArrayList<>();
 
@@ -73,8 +72,7 @@ public class SqriptForge {
     }
 
     @Mod.EventHandler
-    public void
-    construction(FMLConstructionEvent event) throws IOException {
+    public void construction(FMLConstructionEvent event) throws IOException {
 
         scriptDir = new File("scripts");
         if (!scriptDir.exists()) {

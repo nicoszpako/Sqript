@@ -219,4 +219,17 @@ public class EvtPlayer {
             super(new ScriptAccessor(entityPlayer != null ? new TypePlayer(entityPlayer) : new TypeNull(),"player"), new ScriptAccessor(new TypeItem(itemEntity.getItem()),"item"));
         }
     }
+
+    @Cancelable
+    @Event(name = "KeyInputHandler",
+            description = "test",
+            examples = "on key input:",
+            patterns = "key input",
+            accessors = {}
+    )
+    public static class EvtOnKeyInputEvent extends ScriptEvent {
+        public EvtOnKeyInputEvent() {
+            super();
+        }
+    }
 }
