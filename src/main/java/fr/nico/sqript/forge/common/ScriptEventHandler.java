@@ -2,23 +2,25 @@ package fr.nico.sqript.forge.common;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.ScriptTimer;
-import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.events.*;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeBlock;
+import fr.nico.sqript.types.TypeItem;
+import fr.nico.sqript.types.TypeNull;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -26,7 +28,8 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
 
 public class ScriptEventHandler {
 
@@ -239,6 +242,32 @@ public class ScriptEventHandler {
     public void onLivingFall(LivingFallEvent event){
         if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingFall(event.getEntity(), event.getDistance(), event.getDamageMultiplier()))){
             event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingDrops(LivingDropsEvent event){
+        ArrayList< TypeItem > list = new ArrayList<>();
+        event.getDrops().forEach(entityItem -> { list.add(new TypeItem(entityItem.getItem())); });
+        if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingDrops(event.getEntity(), event.getSource(), new TypeArray(list)))){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerDrops(PlayerDropsEvent event){
+        ArrayList< TypeItem > list = new ArrayList<>();
+        event.getDrops().forEach(entityItem -> { list.add(new TypeItem(entityItem.getItem())); });
+        if(ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerDrops(event.getEntityPlayer(), event.getSource(), new TypeArray(list)))){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onItemToss(ItemTossEvent event){
+        if(ScriptManager.callEvent(new EvtPlayer.EvtOnItemToss(event.getPlayer(), event.getEntityItem()))){
+            event.setCanceled(true);
+            event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getItem());
         }
     }
 }

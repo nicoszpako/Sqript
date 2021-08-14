@@ -2,6 +2,7 @@ package fr.nico.sqript.events;
 
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeDamageSource;
 import fr.nico.sqript.types.TypeEntity;
 import fr.nico.sqript.types.TypeNull;
@@ -9,6 +10,7 @@ import fr.nico.sqript.types.primitive.TypeNumber;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import sun.net.ftp.FtpDirEntry;
 
 public class EvtLiving {
 
@@ -29,7 +31,7 @@ public class EvtLiving {
     @Event(name = "Living Death",
             description = "This event is triggered just before an entity dies of damage.",
             examples = "on living death:",
-            patterns = "living (death)",
+            patterns = "(living) death",
             accessors = {"victim:entity", "damageType:damage_source", "attacker:entity"}
     )
     public static class EvtOnLivingDeath extends ScriptEvent {
@@ -48,6 +50,19 @@ public class EvtLiving {
     public static class EvtOnLivingFall extends ScriptEvent {
         public EvtOnLivingFall(Entity victim, float distance, float damageMultiplier) {
             super(new ScriptAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptAccessor(new TypeNumber(distance),"distance"), new ScriptAccessor(new TypeNumber(damageMultiplier),"damageMultiplier"));
+        }
+    }
+
+    @Cancelable
+    @Event(name = "Living Drops",
+            description = "This event is triggered when the death of an entity causes the appearance of objects.",
+            examples = "on living drop of death:",
+            patterns = "(living) drop[s] of death",
+            accessors = {"victim:entity", "damageType:damage_source", "attacker:entity", "drops:array"}
+    )
+    public static class EvtOnLivingDrops extends ScriptEvent {
+        public EvtOnLivingDrops(Entity victim, DamageSource damageSource, TypeArray typeArray) {
+            super(new ScriptAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptAccessor(typeArray,"drops"));
         }
     }
 }
