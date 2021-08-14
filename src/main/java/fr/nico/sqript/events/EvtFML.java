@@ -1,6 +1,13 @@
 package fr.nico.sqript.events;
 
 import fr.nico.sqript.meta.Event;
+import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.types.TypeConsole;
+import fr.nico.sqript.types.TypeNull;
+import fr.nico.sqript.types.TypePlayer;
+import fr.nico.sqript.types.primitive.TypeBoolean;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 
 public class EvtFML {
 
@@ -37,6 +44,18 @@ public class EvtFML {
     public static class EvtOnPostInit extends ScriptEvent {
         public EvtOnPostInit() {
             super();
+        }
+    }
+
+    @Event(name = "Server Starting",
+            description = " This event allows for customizations of the server, such as loading custom commands, perhaps customizing recipes or other activities.",
+            examples = "on server start:",
+            patterns = "server start:",
+            accessors = {"server:console"}
+    )
+    public static class EvtOnServerStartingEvent extends ScriptEvent {
+        public EvtOnServerStartingEvent(MinecraftServer server) {
+            super(new ScriptAccessor(new TypeConsole(server),"server"));
         }
     }
 }

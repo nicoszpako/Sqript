@@ -64,6 +64,7 @@ public class SqriptForge {
             event.getServer().getCommandManager().getCommands().remove(command.getName());
             event.registerServerCommand(command);
         }
+        ScriptManager.callEvent(new EvtFML.EvtOnServerStartingEvent(event.getServer()));
     }
 
     @Mod.EventHandler
