@@ -50,7 +50,7 @@ public class EvtFML {
     @Event(name = "Server Starting",
             description = " This event allows for customizations of the server, such as loading custom commands, perhaps customizing recipes or other activities.",
             examples = "on server start:",
-            patterns = "server start:",
+            patterns = "server start",
             accessors = {"server:console"}
     )
     public static class EvtOnServerStartingEvent extends ScriptEvent {
