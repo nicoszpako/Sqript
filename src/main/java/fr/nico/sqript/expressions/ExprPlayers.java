@@ -27,7 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
             "{+player}['s] (hunger|food):number",
             "{+player}['s] look vector:vector",
             "block {player} is looking at:block",
-            "{player} is entityplayer:boolean",
+            "{player} is a player:boolean",
             "player:player"
         }
 )
