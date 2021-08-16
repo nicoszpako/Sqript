@@ -25,7 +25,20 @@ public class ScriptTypeAccessor {
     public int hash;
 
     public ScriptTypeAccessor(ScriptType element, String match) {
-        this(element,match,0);
+        this.element = element;
+        try {
+            this.pattern = ScriptDecoder.patternToRegex(match).pattern;
+            this.key = match;
+            if(pattern == null)
+                throw new ScriptException.ScriptPatternError("");
+        } catch (ScriptException.ScriptPatternError scriptPatternError) {
+            ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+eventType.getSimpleName());
+            scriptPatternError.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //System.out.println("Setting with match : "+match+" giving : "+match.hashCode());
+        this.hash=match.hashCode();
     }
 
     public ScriptTypeAccessor(ScriptType element, int hash) {

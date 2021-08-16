@@ -16,19 +16,19 @@ public class ScriptException extends Exception {
         return line;
     }
 
-    public ScriptException(ScriptToken line){
-        this.line=line;
-        this.message="";
+    public ScriptException(ScriptToken line) {
+        this.line = line;
+        this.message = "";
     }
 
-    public ScriptException(ScriptToken line, String message){
-        this.line=line;
-        this.message=message;
+    public ScriptException(ScriptToken line, String message) {
+        this.line = line;
+        this.message = message;
     }
 
     @Override
     public String getMessage() {
-        return message;
+        return line + " " + message;
     }
 
     public static class ScriptExceptionList extends ScriptException {
@@ -41,13 +41,12 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            StringBuilder r= new StringBuilder();
-            for(Throwable exception : exceptionList){
-                if(exception instanceof ScriptException){
+            StringBuilder r = new StringBuilder();
+            for (Throwable exception : exceptionList) {
+                if (exception instanceof ScriptException) {
                     r.append(exception.getMessage()).append("\n");
-                }
-                else
-                    r.append("Fatal exception : "+exception.getLocalizedMessage());
+                } else
+                    r.append("Fatal exception : " + exception.getLocalizedMessage());
             }
             return r.toString();
         }
@@ -78,27 +77,28 @@ public class ScriptException extends Exception {
 
         public ScriptTypeNotSaveableException(Class type) {
             super(null);
-            this.type=type;
+            this.type = type;
         }
 
         @Override
         public String getMessage() {
-            return "Type is not savable : "+type.getSimpleName();
+            return "Type is not savable : " + type.getSimpleName();
         }
     }
 
     public static class ScriptInterfaceNotImplementedException extends ScriptException {
 
-        Class interfaceClass,given;
+        Class interfaceClass, given;
+
         public ScriptInterfaceNotImplementedException(ScriptToken line, Class interfaceClass, Class given) {
             super(line);
-            this.interfaceClass=interfaceClass;
+            this.interfaceClass = interfaceClass;
             this.given = given;
         }
 
         @Override
         public String getMessage() {
-            return line.getText()+" of type "+given.getSimpleName()+" does not implement the features of "+interfaceClass.getSimpleName()+". Thus this expression cannot be applied on it.";
+            return line.getText() + " of type " + given.getSimpleName() + " does not implement the features of " + interfaceClass.getSimpleName() + ". Thus this expression cannot be applied on it.";
         }
     }
 
@@ -110,7 +110,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Empty expression at line : "+line;
+            return "Empty expression at line : " + line;
         }
     }
 
@@ -122,7 +122,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Empty loop at line : "+line;
+            return "Empty loop at line : " + line;
         }
     }
 
@@ -131,7 +131,7 @@ public class ScriptException extends Exception {
         String reason;
 
         public ScriptPatternError(String reason) {
-            this.reason=reason;
+            this.reason = reason;
         }
 
         @Override
@@ -148,7 +148,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Not enough arguments given to function: \n"+line;
+            return "Not enough arguments given to function: \n" + line;
         }
     }
 
@@ -160,7 +160,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Unknown trigger: \n"+line;
+            return "Unknown trigger: \n" + line;
         }
     }
 
@@ -173,7 +173,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Not function defined as following in the given script instance: \n"+line;
+            return "Not function defined as following in the given script instance: \n" + line;
         }
     }
 
@@ -185,7 +185,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Unknown script instance (no script file found with the given parameter): \n"+line;
+            return "Unknown script instance (no script file found with the given parameter): \n" + line;
         }
     }
 
@@ -197,7 +197,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Unknown expression: \n"+line;
+            return "Unknown expression: \n" + line;
         }
     }
 
@@ -210,23 +210,23 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Unknown expression or undefined variable: \n"+line;
+            return "Unknown expression or undefined variable: \n" + line;
         }
     }
 
     public static class ScriptTypeException extends ScriptException {
 
-        Class wanted,given;
+        Class wanted, given;
 
         public ScriptTypeException(ScriptToken line, Class wanted, Class given) {
             super(line);
-            this.wanted=wanted;
-            this.given=given;
+            this.wanted = wanted;
+            this.given = given;
         }
 
         @Override
         public String getMessage() {
-            return "Type error, given type is "+given.getSimpleName()+", it should be "+wanted.getSimpleName()+": \n"+line;
+            return "Type error, given type is " + given.getSimpleName() + ", it should be " + wanted.getSimpleName() + ": \n" + line;
         }
     }
 
@@ -239,7 +239,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "No whitespaces are allowed in variables names ! : \n"+line;
+            return "No whitespaces are allowed in variables names ! : \n" + line;
         }
     }
 
@@ -252,7 +252,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Type is not operable: \n"+line;
+            return "Type is not operable: \n" + line;
         }
     }
 
@@ -264,7 +264,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Unexpected token: \n"+line;
+            return "Unexpected token: \n" + line;
         }
     }
 
@@ -276,7 +276,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Unknown block head: \n"+line;
+            return "Unknown block head: \n" + line;
         }
     }
 
@@ -288,7 +288,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Unknown token: \n"+line;
+            return "Unknown token: \n" + line;
         }
     }
 
@@ -305,7 +305,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Field \""+requiredFieldName+"\" for block \""+blockName+"\" cannot be undefined: \n"+line;
+            return "Field \"" + requiredFieldName + "\" for block \"" + blockName + "\" cannot be undefined: \n" + line;
         }
     }
 
@@ -319,7 +319,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "A closing token is missing (it could be : '}' ')' ']' or '%') : \n"+getLine();
+            return "A closing token is missing (it could be : '}' ')' ']' or '%') : \n" + getLine();
         }
     }
 
@@ -331,7 +331,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Missing token: \n"+line;
+            return "Missing token: \n" + line;
         }
     }
 
@@ -341,12 +341,12 @@ public class ScriptException extends Exception {
 
         public ScriptNonSettableException(ScriptToken line, ScriptExpression e) {
             super(line);
-            this.e=e;
+            this.e = e;
         }
 
         @Override
         public String getMessage() {
-            return e.getClass().getSimpleName()+" is not settable for pattern n°"+e.getMatchedIndex()+":"+line;
+            return e.getClass().getSimpleName() + " is not settable for pattern n°" + e.getMatchedIndex() + ":" + line;
         }
     }
 
@@ -358,7 +358,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Array index out of bounds : "+line;
+            return "Array index out of bounds : " + line;
         }
     }
 
@@ -370,7 +370,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Indentation error (make sure that you use tabs and not whitespaces !): "+line;
+            return "Indentation error (make sure that you use tabs and not whitespaces !): " + line;
         }
     }
 
@@ -380,12 +380,12 @@ public class ScriptException extends Exception {
 
         public ScriptSyntaxException(ScriptToken line, String detail) {
             super(line);
-            this.detail=detail;
+            this.detail = detail;
         }
 
         @Override
         public String getMessage() {
-            return "Syntax error ("+detail+"): \n"+line;
+            return "Syntax error (" + detail + "): \n" + line;
         }
     }
 
@@ -397,7 +397,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return line.getText()+" contains a value which has not been declared or which is null in this special context : \n"+line;
+            return line.getText() + " contains a value which has not been declared or which is null in this special context : \n" + line;
         }
     }
 
@@ -409,14 +409,14 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return line.getText()+" is not recognized as a valid expression or as a reference to the context : \n"+line;
+            return line.getText() + " is not recognized as a valid expression or as a reference to the context : \n" + line;
         }
     }
 
     public static class ScriptOperationNotSupportedException extends ScriptException {
 
         ScriptOperator o;
-        Class a,b;
+        Class a, b;
 
         public ScriptOperationNotSupportedException(ScriptToken line, ScriptOperator o, Class<? extends ScriptType> b, Class<? extends ScriptType> a) {
             super(line);
@@ -427,7 +427,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return line+" Operation : '" + o + "' with " + (b!=null ? b.getSimpleName() : "null") + " is not supported by " + (a!=null ? a.getSimpleName() : "null");
+            return line + " Operation : '" + o + "' with " + (b != null ? b.getSimpleName() : "null") + " is not supported by " + (a != null ? a.getSimpleName() : "null");
         }
     }
 }

@@ -70,7 +70,7 @@ public class ScriptLoop extends ScriptWrapper {
         @Override
         public void build(ScriptToken line, ScriptCompileGroup compileGroup) throws ScriptException {
             String condition = line.getText().replaceFirst("\\s*if\\s*", "").trim();
-            condition = condition.substring(0,condition.length()-1);
+            condition = condition.substring(0, condition.length() - 1);
             line = line.with(condition);
             ScriptToken transformed = new ScriptToken(condition, line.getLineNumber(), line.getScriptInstance());
             ScriptExpression scriptExpression = ScriptDecoder.parseExpression(transformed, compileGroup);
@@ -155,6 +155,7 @@ public class ScriptLoop extends ScriptWrapper {
     public class ScriptLoopFOR extends ScriptLoopRepeated {
 
         int varHash;
+        String varName;
         ScriptExpression array;
         TypeArray typeArray = null;
 
@@ -164,19 +165,20 @@ public class ScriptLoop extends ScriptWrapper {
             Pattern p = Pattern.compile("\\s*for (\\{.*}) in\\s+(.*):\\s*$");
             Matcher m = p.matcher(line.getText());
             if (m.matches()) {
-                String varName = m.group(1);
+                varName = m.group(1);
                 String array = m.group(2);
-                //System.out.println("ARRAY IS : " + array + " " + line.toString());
                 ScriptExpression scriptExpression = ScriptDecoder.parseExpression(line.with(array), compileGroup);
                 Class<? extends ScriptElement> type;
+
                 if (scriptExpression == null)
                     throw new ScriptException.ScriptUnknownExpressionException(line);
+
                 if (scriptExpression.getClass().getAnnotation(Expression.class) != null)
                     type = ScriptDecoder.parseType(scriptExpression.getClass().getAnnotation(Expression.class).patterns()[scriptExpression.getMatchedIndex()].split(":")[1]);
                 else
                     type = scriptExpression.getReturnType();
-                assert type != null;
-                if (!type.isAssignableFrom(TypeArray.class)) {
+
+                if (type != null && !type.isAssignableFrom(TypeArray.class)) {
                     throw new ScriptException.ScriptTypeException(line, TypeArray.class, type);
                 }
                 this.varHash = varName.hashCode();
@@ -191,14 +193,17 @@ public class ScriptLoop extends ScriptWrapper {
 
         @Override
         public IScript getNext(ScriptContext context) throws ScriptException {
-            if (context.getVariable(varHash) == null) {
-                context.put(new ScriptTypeAccessor(new TypeNumber(-1), varHash));
+            if (context.getVariable(varName+"'s index") == null) {
+                context.put(new ScriptTypeAccessor(new TypeNumber(-1), varName+"'s index"));
             }
-            TypeNumber index = (TypeNumber) context.getVariable(varHash);
-            //System.out.println(index);
+            TypeNumber index = (TypeNumber) context.getVariable(varName+"'s index");
             index.setObject(index.getObject() + 1);
-            if (index.getObject() == 0) {
-                typeArray = (TypeArray) array.get(context);
+            //System.out.println("o:"+index.getObject());
+            typeArray = (TypeArray) array.get(context);
+
+            //System.out.println(typeArray+" "+index.getObject().intValue()+" "+varHash);
+            if (context.getVariable(varHash) == null) {
+                context.put(new ScriptTypeAccessor(typeArray.get(index.getObject().intValue()), varHash));
             }
             //System.out.println("This.varHash : "+varHash);
             //System.out.println("typeArray is null : " + (typeArray == null) + " " + array.getClass() + " " + array.getMatchedIndex());
@@ -209,7 +214,9 @@ public class ScriptLoop extends ScriptWrapper {
                 context.put(sa);
                 return getWrapped();
             } else {
+                //We exit the loop, we clear the data.
                 context.remove(varHash);
+                context.remove(varName+"'s index");
             }
             broken = false;
             return super.getNext(context);
@@ -217,7 +224,6 @@ public class ScriptLoop extends ScriptWrapper {
 
         @Override
         public IScript run(ScriptContext context) throws ScriptException {
-
             return getNext(context);
         }
     }

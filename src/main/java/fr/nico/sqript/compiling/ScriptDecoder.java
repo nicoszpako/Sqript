@@ -745,7 +745,7 @@ public class ScriptDecoder {
      * @param text The string to split.
      * @return an array of the given text split at each coma.
      */
-    private static String[] splitAtComa(String text) {
+    public static String[] splitAtComa(String text) {
         //System.out.println("Splitting at coma for : "+text);
         List<String> splits = new ArrayList<>();
         int c = 0;
@@ -844,7 +844,7 @@ public class ScriptDecoder {
 
     /**
      * Returns the class of the type associated to the given String.
-     * @param type The type's name registered in it's @Type annotation.
+     * @param type The type's name registered in its @Type annotation.
      * @return The class of the type.
      */
     public static Class<? extends ScriptElement<?>> parseType(String type) {
