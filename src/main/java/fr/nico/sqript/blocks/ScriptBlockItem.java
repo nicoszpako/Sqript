@@ -22,7 +22,12 @@ import java.io.FileWriter;
 
 @Block(name = "item",
         description = "item blocks",
-        examples = "item my_item:",
+        examples = "item test_item:\n" +
+                "    name: My Test Item\n" +
+                "    texture: sample:yellow_diamond.png\n" +
+                "    creative tab: miscellaneous\n" +
+                "    max stack size: 8\n" +
+                "    type: item",
         regex = "^item .*",
         side = Side.BOTH,
         fields = {"name", "texture", "max stack size", "creative tab", "item type", "material", "protection type", "armor texture"},

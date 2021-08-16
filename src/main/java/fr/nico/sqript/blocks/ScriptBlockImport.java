@@ -11,7 +11,8 @@ import java.util.regex.Pattern;
 
 @Block(name = "import",
         description = "Import blocks",
-        examples = "import:",
+        examples = "import:\n" +
+                "    * from my_script",
         regex = "^imports:\\s*")
 public class ScriptBlockImport extends ScriptBlock {
 

@@ -32,7 +32,10 @@ import java.util.List;
 
 @Block(name = "command",
         description = "Command blocks",
-        examples = "command /heal:",
+        examples = "command /randomplayer:\n" +
+                "    usage: /randomplayer\n" +
+                "    description: returns a random player\n" +
+                "    send a random element of all players to sender",
         regex = "^command /.*",
         fields = {
         "side","description","usage","aliases"

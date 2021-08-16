@@ -11,7 +11,8 @@ import fr.nico.sqript.structures.ScriptContext;
 
 @Block(name = "time loop",
         description = "Time looping blocks",
-        examples = "every 1 day:",
+        examples = "every 1 minute:\n" +
+                "    ...",
         regex = "every .*")
 public class ScriptBlockTimeLoop extends ScriptBlock {
 

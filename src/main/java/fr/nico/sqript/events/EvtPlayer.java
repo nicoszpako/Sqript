@@ -16,8 +16,9 @@ public class EvtPlayer {
 
     @Cancelable
     @Event(name = "Player movement",
-            description = "Called when a player move",
-            examples = "on player movement:",
+            description = "Called when a player moves.",
+            examples = "on player movement:\n" +
+                    "    cancel event #Freezes the player",
             patterns = "player move[ment]",
             accessors = "player:player")
     public static class EvtOnPlayerMove extends ScriptEvent {
@@ -30,8 +31,8 @@ public class EvtPlayer {
 
     @Cancelable
     @Event(name = "Item right clicked",
-            description = "Called when a player right clicks an item",
-            examples = "on click on stick:",
+            description = "Called when a player right clicks an item.",
+            examples = "on item click with minecraft:emerald:",
             patterns = "[item] click [with {item}] [with ((1;left)|(2;right)) hand]",
             accessors = {"player:player","[click[ed]] item:item"
             }
@@ -69,7 +70,8 @@ public class EvtPlayer {
     @Cancelable
     @Event(name = "message sent",
             description = "Called when a player sends a message",
-            examples = "on player sending message:",
+            examples = "on message sent:\n" +
+                    "    set message to \"My message\" #Edit message content",
             patterns = "(([player] sen(d[ing]|t) [a] message|message sent))",
             accessors = {"(player|sender):player","message:string"}
     )
@@ -84,7 +86,9 @@ public class EvtPlayer {
     @Cancelable
     @Event(name = "Item pickup",
             description = "Called when a player pickups an item",
-            examples = "on item pickup:",
+            examples = "on item pickup:\n" +
+                    "    if item is minecraft:bedrock:\n" +
+                    "        cancel event #Prevents bedrock pickup.",
             patterns = "(player pickup[s] item|item pickup)",
             accessors = {"player:player","[picked [up]] item:item"
             }
@@ -101,7 +105,9 @@ public class EvtPlayer {
     @Cancelable
     @Event(name = "Item use",
             description = "Called when a player uses an item",
-            examples = "on item use:",
+            examples = "on item use:\n" +
+                    "    if item is minecraft:potion:\n" +
+                    "    cancel event",
             patterns = "(player use[s] item|item use)",
             accessors = {"player:player","[used] item:item"
             }
@@ -120,7 +126,8 @@ public class EvtPlayer {
     @Cancelable
     @Event(name = "Player attack",
             description = "Called when a player is hit by another player",
-            examples = "on player hit:",
+            examples = "on player attacked:\n" +
+                    "    cancel event #Removes pvp",
             patterns = "player (hit|attacked)",
             accessors = {"attacker:player","victim:player"
             }

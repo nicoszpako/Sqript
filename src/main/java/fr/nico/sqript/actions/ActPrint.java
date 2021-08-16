@@ -7,7 +7,7 @@ import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.expressions.ScriptExpression;
 
 @Action(name = "Print Actions",
-        description ="Print something in console",
+        description ="Prints something in console",
         examples = {"print \"Hello world !\""
         },
         patterns = {

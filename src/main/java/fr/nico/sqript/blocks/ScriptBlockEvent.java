@@ -14,7 +14,8 @@ import java.util.Arrays;
 
 @Block(name = "event",
         description = "Event blocks",
-        examples = "on player death:",
+        examples = "on script load:\n" +
+                "    print \"Hello world !\"",
         regex = "^on .*",
         fields = {"side"}
 )

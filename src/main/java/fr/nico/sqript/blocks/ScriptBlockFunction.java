@@ -6,7 +6,9 @@ import fr.nico.sqript.meta.Block;
 
 @Block(name = "function",
         description = "Function blocks",
-        examples = "function isEven(x):",
+        examples = "function broadcast(message): #Sends a message to all players\n" +
+                "    for p in all players:\n" +
+                "        send message to p",
         regex = "^function .*")
 public class ScriptBlockFunction extends ScriptFunctionalBlock {
 

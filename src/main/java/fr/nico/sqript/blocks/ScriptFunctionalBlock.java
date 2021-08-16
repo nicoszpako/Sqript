@@ -4,6 +4,7 @@ import fr.nico.sqript.compiling.ScriptCompileGroup;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
+import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.ScriptClock;
 import fr.nico.sqript.structures.ScriptContext;
@@ -12,10 +13,14 @@ import fr.nico.sqript.types.ScriptType;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * Subclass of ScriptBlock allow to easily create function-like structured blocks.
+ */
 public class ScriptFunctionalBlock extends ScriptBlock {
 
-    //Execute the IScript associated to the function and return the value
+    /**
+     * Execute the IScript associated to the function and return the value
+     */
     public ScriptType get(ScriptContext context, ScriptType<?>[] parameters) throws ScriptException {
         //System.out.println("Launching function "+name+" with parameters : "+ Arrays.toString(parameters));
         ScriptContext functionContext = new ScriptContext(context);
@@ -53,7 +58,6 @@ public class ScriptFunctionalBlock extends ScriptBlock {
 
     public String name;
 
-
     public String[] parameters;
 
     public ScriptFunctionalBlock(ScriptToken head) throws ScriptException {
@@ -72,7 +76,6 @@ public class ScriptFunctionalBlock extends ScriptBlock {
             }
         }
     }
-
 
     @Override
     public void init(ScriptLineBlock block) throws Exception {

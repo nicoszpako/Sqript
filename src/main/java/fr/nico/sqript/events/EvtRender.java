@@ -11,7 +11,8 @@ public class EvtRender {
 
     @Event(name = "render of overlay",
             description = "Called when overlay is rendered",
-            examples = "on render overlay:",
+            examples = "on render overlay:\n" +
+                    "    draw textured rectangle at [-15,-7.5] with size [30,15] using texture sample:logo.png",
             patterns = "render [of] overlay",
             accessors = {"player:player"},
             side = Side.CLIENT)
@@ -88,7 +89,8 @@ public class EvtRender {
     @Cancelable
     @Event(name = "render of health bar",
             description = "Called when health bar is rendered",
-            examples = "on render health bar:",
+            examples = "on render of health bar:\n" +
+                    "    cancel event #Hides the player's health bar",
             patterns = "render [of] health [bar]",
             accessors = {"player:player"},
             side = Side.CLIENT)

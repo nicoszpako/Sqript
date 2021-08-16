@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 
 @Block(name = "options",
         description = "Options block",
-        examples = "options:",
+        examples = "options:\n" +
+                "    my_value: 5",
         regex = "^options:\\s*")
 public class ScriptBlockOptions extends ScriptBlock {
 

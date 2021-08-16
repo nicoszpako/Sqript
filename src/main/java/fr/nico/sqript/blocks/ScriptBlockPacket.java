@@ -13,7 +13,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Block(name = "packet",
         description = "Network packet blocks",
-        examples = "packet frame1_packet(parameter):",
+        examples = "packet test_packet(message):\n" +
+                "    client:\n" +
+                "        print message\n" +
+                "    server:\n" +
+                "        print message",
         regex = "^packet .*",
         side = Side.BOTH,
         fields = {"client","server"}
