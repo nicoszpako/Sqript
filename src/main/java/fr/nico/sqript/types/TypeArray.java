@@ -18,7 +18,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,7 +83,7 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISer
                 ISerialisable i = (ISerialisable) t;
                 NBTTagCompound nbt = new NBTTagCompound();
                 nbt.setTag("value",i.write(new NBTTagCompound()));
-                nbt.setString("type", Objects.requireNonNull(ScriptDecoder.getNameForType(t.getClass())));
+                nbt.setString("type", Objects.requireNonNull(ScriptDecoder.getNameOfType(t.getClass())));
                 list.appendTag(nbt);
             }else{
                 ScriptManager.log.error("Tried to register "+t.getClass().getSimpleName()+" but it's not serialisable.");
@@ -103,7 +102,7 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISer
             NBTTagCompound nbt = (NBTTagCompound) it.next();
             String typeName = nbt.getString("type");
             NBTTagCompound value = nbt.getCompoundTag("value");
-            Class typeClass = ScriptDecoder.getType(typeName);
+            Class typeClass = ScriptDecoder.parseType(typeName);
             //System.out.println("Typeclass is : "+typeClass);
             assert typeClass != null;
             //System.out.println("Iterating on : "+typeName+" "+value);

@@ -54,13 +54,15 @@ public class SqriptCommand extends CommandBase {
                 }
                 sendMessage("Done in "+((System.currentTimeMillis()-t)/1000d)+" seconds",sender);
             }
-            if(args[0].equalsIgnoreCase("generateDoc")){
+            else if(args[0].equalsIgnoreCase("generateDoc")){
                 try {
                     SqriptUtils.generateDoc();
                     sendMessage("Generated documentation at scripts/doc.md",sender);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }else{
+                sendHelp(sender);
             }
         }else{
             sendHelp(sender);

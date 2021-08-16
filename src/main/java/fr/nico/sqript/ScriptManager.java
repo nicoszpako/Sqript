@@ -138,7 +138,7 @@ public class ScriptManager {
     }
 
     public static void registerType(Class<? extends ScriptElement<?>> type, String name) throws Exception {
-        if (ScriptDecoder.getType(name) != null)
+        if (ScriptDecoder.parseType(name) != null)
             throw new Exception("a Type with the name " + name + " already exists !");
         TypeDefinition d = new TypeDefinition(name, new String[0], new String[]{""}, type);
         types.put(type, d);
@@ -271,8 +271,8 @@ public class ScriptManager {
         }
     }
 
-    public static void handleError(ScriptLine line, Throwable throwable){
-        ScriptManager.log.error("Error while loading " + line.scriptInstance.getName() + " : ");
+    public static void handleError(ScriptToken line, Throwable throwable){
+        ScriptManager.log.error("Error while loading " + line.getScriptInstance().getName() + " : ");
         if (throwable instanceof ScriptException) {
             for (String s : throwable.getMessage().split("\n"))
                 ScriptManager.log.error(s);
@@ -343,7 +343,7 @@ public class ScriptManager {
     //Runs the events triggers and returns the final context (that has passed through all the triggers)
     public static ScriptContext callEventAndGetContext(ScriptEvent event) throws ScriptException {
         ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
-        context.returnValue = new ScriptAccessor(TypeBoolean.FALSE(), "");
+        context.setReturnValue(new ScriptTypeAccessor(TypeBoolean.FALSE(), ""));
         for(ScriptInstance instance : scripts) {
             context = instance.callEventAndGetContext(context,event);
         }
@@ -353,15 +353,20 @@ public class ScriptManager {
 
     //True if the event has been cancelled
     public static boolean callEvent(ScriptEvent event) {
-        ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
-        if(RELOADING)
-            return false;
-        for (int i = 0; i < scripts.size(); i++) {
+        Optional<EventDefinition> optional = ScriptManager.events.stream().filter(a->a.eventClass == event.getClass()).findFirst();
+        EventDefinition eventDefinition = null;
+        if(optional.isPresent())
+            eventDefinition = optional.get();
+        if( eventDefinition!=null && eventDefinition.getSide().isStrictlyValid()) {
+            ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
             if(RELOADING)
                 return false;
-            if(scripts.get(i).callEvent(context,event))
-            {
-                return true;
+            for (ScriptInstance script : scripts) {
+                if (RELOADING)
+                    return false;
+                if (script.callEvent(context, event)) {
+                    return true;
+                }
             }
         }
         return false;

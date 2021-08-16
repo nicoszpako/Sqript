@@ -1,10 +1,9 @@
 package fr.nico.sqript.events;
 
 import fr.nico.sqript.meta.Event;
-import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.TypePlayer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
@@ -12,14 +11,15 @@ public class EvtRender {
 
     @Event(name = "render of overlay",
             description = "Called when overlay is rendered",
-            examples = "on render overlay:",
+            examples = "on render overlay:\n" +
+                    "    draw textured rectangle at [-15,-7.5] with size [30,15] using texture sample:logo.png",
             patterns = "render [of] overlay",
             accessors = {"player:player"},
             side = Side.CLIENT)
     public static class EvtOnRenderOverlay extends ScriptEvent {
 
         public EvtOnRenderOverlay(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
         }
 
     }
@@ -33,7 +33,7 @@ public class EvtRender {
     public static class EvtOnRenderCrosshair extends ScriptEvent {
 
         public EvtOnRenderCrosshair(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
         }
 
     }
@@ -47,7 +47,7 @@ public class EvtRender {
     public static class EvtOnRenderXPBar extends ScriptEvent {
 
         public EvtOnRenderXPBar(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
         }
 
     }
@@ -63,7 +63,7 @@ public class EvtRender {
 
 
         public EvtOnRenderChat(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
 
         }
 
@@ -80,7 +80,7 @@ public class EvtRender {
 
 
         public EvtOnRenderFoodBar(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
 
         }
 
@@ -89,7 +89,8 @@ public class EvtRender {
     @Cancelable
     @Event(name = "render of health bar",
             description = "Called when health bar is rendered",
-            examples = "on render health bar:",
+            examples = "on render of health bar:\n" +
+                    "    cancel event #Hides the player's health bar",
             patterns = "render [of] health [bar]",
             accessors = {"player:player"},
             side = Side.CLIENT)
@@ -97,7 +98,7 @@ public class EvtRender {
 
 
         public EvtOnRenderHealthBar(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
 
         }
 
@@ -112,7 +113,7 @@ public class EvtRender {
     public static class EvtOnDrawNameplate extends ScriptEvent {
 
         public EvtOnDrawNameplate(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
         }
 
     }

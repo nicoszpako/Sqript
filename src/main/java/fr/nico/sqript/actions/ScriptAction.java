@@ -3,14 +3,12 @@ package fr.nico.sqript.actions;
 import fr.nico.sqript.compiling.ScriptCompileGroup;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.types.ScriptType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class ScriptAction extends IScript {
@@ -73,11 +71,11 @@ public abstract class ScriptAction extends IScript {
     @Override
     public abstract void execute(ScriptContext context) throws ScriptException;
 
-    public void build(ScriptLine line, ScriptCompileGroup compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
+    public void build(ScriptToken line, ScriptCompileGroup compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
         List<ScriptExpression> expressions = new ArrayList<>(parameters.size());
         //System.out.println("Building action for line : "+line+", parameters are :"+ Arrays.toString(parameters.toArray(new String[0])));
         //System.out.println("Marks are : "+Integer.toBinaryString(marks));
-        String[] strings = ScriptDecoder.extractStrings(line.text);
+        String[] strings = ScriptDecoder.extractStrings(line.getText());
         //System.out.println("for line : "+line+" marks are : "+Integer.toBinaryString(marks));
         for (String parameter : parameters) {
             //System.out.println("Processing parameter : "+parameter);
@@ -85,7 +83,7 @@ public abstract class ScriptAction extends IScript {
                 expressions.add(null);
                 continue;
             }
-            ScriptExpression e = ScriptDecoder.getExpression(line.with(parameter),compileGroup, strings);
+            ScriptExpression e = ScriptDecoder.parseExpression(line.with(parameter),compileGroup, strings);
             if (e != null)
                 expressions.add(e);
             else {

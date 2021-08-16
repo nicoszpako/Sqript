@@ -1,7 +1,7 @@
 package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.network.ScriptMessage;
 import fr.nico.sqript.network.ScriptNetworkManager;
@@ -13,7 +13,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Block(name = "packet",
         description = "Network packet blocks",
-        examples = "packet frame1_packet(parameter):",
+        examples = "packet test_packet(message):\n" +
+                "    client:\n" +
+                "        print message\n" +
+                "    server:\n" +
+                "        print message",
         regex = "^packet .*",
         side = Side.BOTH,
         fields = {"client","server"}
@@ -38,7 +42,7 @@ public class ScriptBlockPacket extends ScriptFunctionalBlock {
         return new TypeMessagePrototype(new ScriptMessage(this.name, parameters));
     }
 
-    public ScriptBlockPacket(ScriptLine head) throws ScriptException {
+    public ScriptBlockPacket(ScriptToken head) throws ScriptException {
         super(head);
     }
 

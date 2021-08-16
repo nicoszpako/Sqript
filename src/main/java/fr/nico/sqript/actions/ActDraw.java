@@ -1,10 +1,8 @@
 package fr.nico.sqript.actions;
 
-import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
-import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
@@ -12,23 +10,17 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.primitive.TypeNumber;
-import fr.nico.sqript.types.primitive.TypeResource;
 import fr.nico.sqript.types.primitive.TypeString;
-import javafx.scene.paint.Color;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Action(name = "Draw Actions",
@@ -51,7 +43,7 @@ import java.util.stream.Collectors;
 public class ActDraw extends ScriptAction {
 
     @Override
-    public void setLine(ScriptLine line) {
+    public void setLine(ScriptToken line) {
         super.setLine(line);
         //System.out.println("Set draw line to : "+line);
         //System.out.println("getLine gives : "+getLine());

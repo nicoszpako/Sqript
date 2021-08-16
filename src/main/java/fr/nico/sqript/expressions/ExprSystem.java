@@ -12,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.lwjgl.opengl.Display;
-import sun.net.ResourceManager;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

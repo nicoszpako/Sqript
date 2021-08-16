@@ -14,13 +14,12 @@ import java.util.Arrays;
 
 @Block(name = "event",
         description = "Event blocks",
-        examples = "on player death:",
+        examples = "on script load:\n" +
+                "    print \"Hello world !\"",
         regex = "^on .*",
         fields = {"side"}
 )
 public class ScriptBlockEvent extends ScriptBlock {
-
-    //ScriptWrapper déclenchant un IScript muni du contexte donné par un objet de type "eventType", wrappé lors de l'appel de l'event (voir ScriptManager.callEvent()).
 
     public Class<? extends ScriptEvent> eventType;
     public ScriptType[] parameters;
@@ -29,10 +28,10 @@ public class ScriptBlockEvent extends ScriptBlock {
     //By default, events will launch on server
     public Side side;
 
-    public ScriptBlockEvent(ScriptLine head) throws ScriptException {
+    public ScriptBlockEvent(ScriptToken head) throws ScriptException {
         super(head);
-        getHead().text = head.text.trim().replaceFirst("(^|\\s+)on\\s+", ""); //Extracting the event parameters
-        getHead().text = head.text.substring(0,head.text.length()-1); //Removing the last ":"
+        getHead().setText(head.getText().trim().replaceFirst("(^|\\s+)on\\s+", "")); //Extracting the event parameters
+        getHead().setText(head.getText().substring(0,head.getText().length()-1)); //Removing the last ":"
     }
 
     @Override
@@ -44,20 +43,20 @@ public class ScriptBlockEvent extends ScriptBlock {
         super.init(block);
     }
 
-    public Class<? extends ScriptEvent> getEvent(ScriptLine line) {
+    public Class<? extends ScriptEvent> getEvent(ScriptToken line) {
         for (EventDefinition eventDefinition : ScriptManager.events) {
             //System.out.println("Checking for : "+line+" with "+eventDefinition.eventClass);
             int matchedPatternIndex = -1;
-            if ((matchedPatternIndex = eventDefinition.getMatchedPatternIndex(line.text)) != -1) {
+            if ((matchedPatternIndex = eventDefinition.getMatchedPatternIndex(line.getText())) != -1) {
                 //System.out.println(matchedPatternIndex);
                 //Parsing the arguments
-                String[] arguments = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllArguments(line.text);
+                String[] arguments = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllArguments(line.getText());
                 //System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length);
                 parameters = new ScriptType[arguments.length];
-                marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.text);
+                marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.getText());
                 for (int i = 0; i < arguments.length; i++) {
                     try {
-                        parameters[i] = ScriptDecoder.getExpression(line.with(arguments[i]),new ScriptCompileGroup()).get(ScriptContext.fromGlobal());
+                        parameters[i] = ScriptDecoder.parseExpression(line.with(arguments[i]),new ScriptCompileGroup()).get(ScriptContext.fromGlobal());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -1,18 +1,19 @@
 package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
-import fr.nico.sqript.structures.*;
 
 @Block(name = "function",
         description = "Function blocks",
-        examples = "function isEven(x):",
+        examples = "function broadcast(message): #Sends a message to all players\n" +
+                "    for p in all players:\n" +
+                "        send message to p",
         regex = "^function .*")
 public class ScriptBlockFunction extends ScriptFunctionalBlock {
 
 
-    public ScriptBlockFunction(ScriptLine head) throws ScriptException {
+    public ScriptBlockFunction(ScriptToken head) throws ScriptException {
         super(head);
     }
 

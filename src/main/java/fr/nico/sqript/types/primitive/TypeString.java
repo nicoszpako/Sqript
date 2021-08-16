@@ -2,19 +2,14 @@ package fr.nico.sqript.types.primitive;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptDecoder;
-import fr.nico.sqript.compiling.ScriptLine;
-import fr.nico.sqript.expressions.ExprReference;
 import fr.nico.sqript.meta.Primitive;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
-import fr.nico.sqript.types.interfaces.IComparable;
 import fr.nico.sqript.types.interfaces.ISerialisable;
 import fr.nico.sqript.types.ScriptType;
 import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;
-import java.util.Comparator;
-import java.util.stream.Collectors;
 
 @Primitive(name = "string",
         parsableAs = {},

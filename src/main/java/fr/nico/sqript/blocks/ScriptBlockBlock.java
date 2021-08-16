@@ -2,23 +2,15 @@ package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.forge.SqriptForge;
-import fr.nico.sqript.forge.common.item.*;
 import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.structures.Side;
-import fr.nico.sqript.types.TypeArray;
-import net.minecraft.block.BlockOre;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.EnumHelper;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,13 +28,13 @@ import java.io.FileWriter;
 public class ScriptBlockBlock extends ScriptBlock {
 
 
-    public ScriptBlockBlock(ScriptLine head) throws ScriptException {
+    public ScriptBlockBlock(ScriptToken head) throws ScriptException {
         super(head);
     }
 
     @Override
     protected void load() throws Exception {
-        String registryName = getHead().text.replaceFirst("block\\s+(.*)", "$1").replaceAll(":","").replaceAll(" ","_").trim();
+        String registryName = getHead().getText().replaceFirst("block\\s+(.*)", "$1").replaceAll(":","").replaceAll(" ","_").trim();
         String texture = "";
         CreativeTabs tab = CreativeTabs.MISC;
         String displayName;
@@ -70,8 +62,8 @@ public class ScriptBlockBlock extends ScriptBlock {
             hardness = Float.parseFloat(getSubBlock("hardness").getRawContent());
             //System.out.println("ITEM TYPE FIELD IS NOT DEFINED");
         fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock block = new fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock(material,drop,harvestLevel);
-        block.setRegistryName(this.getHead().scriptInstance.getName(),registryName);
-        texture = this.getHead().scriptInstance.getName()+":"+texture;
+        block.setRegistryName(this.getHead().getScriptInstance().getName(),registryName);
+        texture = this.getHead().getScriptInstance().getName()+":"+texture;
         block.setUnlocalizedName(registryName);
         block.setHardness(hardness);
         block.setCreativeTab(tab);
@@ -99,7 +91,7 @@ public class ScriptBlockBlock extends ScriptBlock {
         //System.out.println("Creating model file for item : "+registryName);
         if(!fieldDefined("model")){
             //File scriptFile
-            File mainFolder = new File(ScriptManager.scriptDir,this.getHead().scriptInstance.getName());
+            File mainFolder = new File(ScriptManager.scriptDir,this.getHead().getScriptInstance().getName());
             if(!mainFolder.exists())
                 mainFolder.mkdir();
 
@@ -124,7 +116,7 @@ public class ScriptBlockBlock extends ScriptBlock {
         //System.out.println("Creating model file for item : "+registryName);
         if(!fieldDefined("model")){
             //File scriptFile
-            File mainFolder = new File(ScriptManager.scriptDir,this.getHead().scriptInstance.getName());
+            File mainFolder = new File(ScriptManager.scriptDir,this.getHead().getScriptInstance().getName());
             if(!mainFolder.exists())
                 mainFolder.mkdir();
 
@@ -136,7 +128,7 @@ public class ScriptBlockBlock extends ScriptBlock {
             String content = ("{"+"\n"
                     +"    \"variants\": {\n"
                     +"        \"normal\": [\n"
-                    +"            { \"model\": \""+this.getHead().scriptInstance.getName()+":"+registryName+"\" }\n"
+                    +"            { \"model\": \""+this.getHead().getScriptInstance().getName()+":"+registryName+"\" }\n"
                     +"        ]\n"
                     +"    }\n"
                     +"}"
@@ -151,7 +143,7 @@ public class ScriptBlockBlock extends ScriptBlock {
         //System.out.println("Creating model file for item : "+registryName);
         if(!fieldDefined("model")){
             //File scriptFile
-            File mainFolder = new File(ScriptManager.scriptDir,this.getHead().scriptInstance.getName());
+            File mainFolder = new File(ScriptManager.scriptDir,this.getHead().getScriptInstance().getName());
             if(!mainFolder.exists())
                 mainFolder.mkdir();
 
@@ -161,7 +153,7 @@ public class ScriptBlockBlock extends ScriptBlock {
             //Il faut créer le dossier et l'enregistrer à la main
             File jsonFile = new File(itemModelsFolder,registryName+".json");
             String content = ("{"+"\n"
-                    +"  'parent': '"+this.getHead().scriptInstance.getName()+":block/"+registryName+"'\n"
+                    +"  'parent': '"+this.getHead().getScriptInstance().getName()+":block/"+registryName+"'\n"
                     +"}").replaceAll("'","\"");
             createFile(jsonFile,content);
         }

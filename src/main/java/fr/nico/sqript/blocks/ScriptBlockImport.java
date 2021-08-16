@@ -2,7 +2,7 @@ package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.structures.ScriptInstance;
 
@@ -11,19 +11,20 @@ import java.util.regex.Pattern;
 
 @Block(name = "import",
         description = "Import blocks",
-        examples = "import:",
+        examples = "import:\n" +
+                "    * from my_script",
         regex = "^imports:\\s*")
 public class ScriptBlockImport extends ScriptBlock {
 
-    public ScriptBlockImport(ScriptLine head) throws ScriptException.ScriptSyntaxException {
+    public ScriptBlockImport(ScriptToken head) throws ScriptException.ScriptSyntaxException {
         super(head);
     }
 
     @Override
     public void init(ScriptLineBlock scriptLineBlock) throws Exception {
         Pattern p = Pattern.compile("\\s+(.*) from (.*)");
-        for(ScriptLine s : scriptLineBlock.getContent()){
-            Matcher m = p.matcher(s.text);
+        for(ScriptToken s : scriptLineBlock.getContent()){
+            Matcher m = p.matcher(s.getText());
             if(m.find()){
                 String function = m.group(1);
                 String script = m.group(2);

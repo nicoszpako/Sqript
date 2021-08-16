@@ -9,7 +9,7 @@ import fr.nico.sqript.types.ScriptType;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class ScriptAccessor {
+public class ScriptTypeAccessor {
 
     //Permet d'accéder à une variable d'un event
 
@@ -24,32 +24,19 @@ public class ScriptAccessor {
       */
     public int hash;
 
-    public ScriptAccessor(ScriptType element, String match) {
-        this.element = element;
-        try {
-            this.pattern = ScriptDecoder.patternToRegex(match).pattern;
-            this.key = match;
-            if(pattern == null)
-                throw new ScriptException.ScriptPatternError("");
-        } catch (ScriptException.ScriptPatternError scriptPatternError) {
-            ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+eventType.getSimpleName());
-            scriptPatternError.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //System.out.println("Setting with match : "+match+" giving : "+match.hashCode());
-        this.hash=match.hashCode();
+    public ScriptTypeAccessor(ScriptType element, String match) {
+        this(element,match,0);
     }
 
-    public ScriptAccessor(ScriptType element, int hash) {
+    public ScriptTypeAccessor(ScriptType element, int hash) {
         this.element = element;
         this.hash=hash;
     }
 
-    public ScriptAccessor(ScriptType element, String match, int varHash) {
+    public ScriptTypeAccessor(ScriptType element, String match, int varHash) {
         this.element = element;
         try {
-            this.pattern = ScriptDecoder.patternToRegex(match).pattern;
+            this.pattern = ScriptDecoder.transformPattern(match).pattern;
             this.key = match;
         } catch (ScriptException.ScriptPatternError scriptPatternError) {
             ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+eventType.getSimpleName());

@@ -9,7 +9,6 @@ import fr.nico.sqript.structures.ScriptLoop;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +48,11 @@ public class ScriptLoader
             dispScriptTree(s.next, i);
     }
 
-    public static List<ScriptLine> stringToLines(File file, ScriptInstance instance) throws IOException {
-        List<ScriptLine> scriptlines = new ArrayList<>();
+    public static List<ScriptToken> stringToLines(File file, ScriptInstance instance) throws IOException {
+        List<ScriptToken> scriptlines = new ArrayList<>();
         int i = 0;
         for (String s : Files.readAllLines(file.toPath())) {
-            scriptlines.add(new ScriptLine(s, i, instance));
+            scriptlines.add(new ScriptToken(s, i, instance));
             i++;
         }
         return scriptlines;
@@ -65,26 +64,26 @@ public class ScriptLoader
         ScriptManager.log.info("Loading : " + file.getName());
         ScriptInstance instance = new ScriptInstance(name,file);
         long c = System.currentTimeMillis();
-        List<ScriptLine> lines = null;
+        List<ScriptToken> lines = null;
         try {
             lines = stringToLines(file,instance);
         } catch (IOException e) {
             exceptionList.exceptionList.add(e);
         }
-        List<ScriptLine> block = new ArrayList<>();
+        List<ScriptToken> block = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
-            ScriptLine line = lines.get(i);
-            if(line.text.matches("\\s*") || line.text.matches("\\s*#.*"))
+            ScriptToken line = lines.get(i);
+            if(line.getText().matches("\\s*") || line.getText().matches("\\s*#.*"))
                 continue;
 
             //Else, we add the line to the actual block
-            if (ScriptDecoder.getTabLevel(line.text) > 0 || block.isEmpty()) {
+            if (ScriptDecoder.getTabLevel(line.getText()) > 0 || block.isEmpty()) {
                 //System.out.println("Added:"+line);
                 block.add(line);
                 continue;
             }
 
-            if ((ScriptDecoder.getTabLevel(line.text) == 0) || line == lines.get(lines.size() - 1)) {//si nouveau trigger ou derniere ligne du fichier
+            if ((ScriptDecoder.getTabLevel(line.getText()) == 0) || line == lines.get(lines.size() - 1)) {//si nouveau trigger ou derniere ligne du fichier
                 //System.out.println("Processing block : "+line+" with size : "+block.size());
                 //The block is ended, we process it
                 try {
@@ -109,10 +108,10 @@ public class ScriptLoader
         return instance;
     }
 
-    public void loadBlock(List<ScriptLine> block, ScriptInstance instance ) throws Exception {
+    public void loadBlock(List<ScriptToken> block, ScriptInstance instance ) throws Exception {
         if(block.isEmpty())
             return;
-        ScriptLine head = block.remove(0);
+        ScriptToken head = block.remove(0);
         if(!block.isEmpty()){
             BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
             if(blockDefinition==null)
@@ -120,7 +119,7 @@ public class ScriptLoader
             if(blockDefinition.getSide().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())){
                 Class scriptBlockClass = blockDefinition.getBlockClass();
                 //^2
-                ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(head);
+                ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptToken.class).newInstance(head);
                 scriptBlock.setLine(head);
                 scriptBlock.setScriptInstance(instance);
                 scriptBlock.init(new ScriptBlock.ScriptLineBlock("main",block));

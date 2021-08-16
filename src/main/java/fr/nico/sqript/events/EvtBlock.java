@@ -1,7 +1,7 @@
 package fr.nico.sqript.events;
 
 import fr.nico.sqript.meta.Event;
-import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeBlock;
 import fr.nico.sqript.types.TypePlayer;
@@ -15,7 +15,8 @@ public class EvtBlock {
     @Cancelable
     @Event(name = "Block placed",
             description = "Called when a player placed a block",
-            examples = "on place of stone:",
+            examples = "on place of minecraft:stone:\n" +
+                    "    cancel event #Prevents stone placing",
             patterns = "[block] place [of {block}]",
             accessors = {"player:player","(placed block|event-block):block"
             }
@@ -25,7 +26,7 @@ public class EvtBlock {
         public TypeBlock placedBlock;
 
         public EvtOnBlockPlace(EntityPlayer player, TypeBlock broken) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"),new ScriptAccessor(broken,"(placed block|event-block)"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(broken,"(placed block|event-block)"));
             this.placedBlock = broken;
         }
 
@@ -37,7 +38,8 @@ public class EvtBlock {
     @Cancelable
     @Event(name = "Block broken",
             description = "Called when a player breaks a block",
-            examples = "on break of stone:",
+            examples = "on break:\n" +
+                    "    cancel event #Prevents players from breaking blocks",
             patterns = "[block] break [of {block}]",
             accessors = {"player:player","(broken block|break-block|event-block):block"
             }
@@ -47,7 +49,7 @@ public class EvtBlock {
         public TypeBlock brokenBlock;
 
         public EvtOnBlockBreak(EntityPlayer player, TypeBlock broken) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"),new ScriptAccessor(broken,"(broken block|break-block|event-block)"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(broken,"(broken block|break-block|event-block)"));
             this.brokenBlock = broken;
         }
 
@@ -59,7 +61,7 @@ public class EvtBlock {
     @Cancelable
     @Event(name = "Block right clicked",
             description = "Called when a player clicks on a block",
-            examples = "on click on block of stone:",
+            examples = "on right click on minecraft:diamond_block:\n",
             patterns = "on ((1;left)|(2;right)) click on (block [of {block}]|{block}) [with ((3;left)|(4;right)) hand]",
             accessors = {"player:player","(clicked block|click-block):block"
             }
@@ -71,7 +73,7 @@ public class EvtBlock {
         public int clickType = 1; //1 = right, 0 = left
 
         public EvtOnBlockClick(EntityPlayer player, TypeBlock clicked, EnumHand hand, int clickType, BlockPos pos) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"),new ScriptAccessor(clicked,"(clicked block|click-block)"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(clicked,"(clicked block|click-block)"));
             this.clickedBlock = clicked;
             this.hand = hand;
             this.clickType = clickType;
