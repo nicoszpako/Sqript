@@ -22,7 +22,7 @@ public class ScriptCompileGroup {
     public Integer getHashFor(String parameter){
         //System.out.println("Getting hash for : "+parameter);
         for(ScriptAccessor s : declaredVariables){
-            //System.out.println("Comparing "+parameter +" with "+s.key);
+            //System.out.println("Comparing "+parameter +" with "+s.key+" with pattern : "+s.getPattern().pattern());
             if(s.getPattern().matcher(parameter).matches()){
                 //System.out.println("Matched ! Returning "+s.hash+ " while using + "+s.key+" : "+s.getPattern().pattern().hashCode());
                 return s.hash;//TODO Dynamic type matching

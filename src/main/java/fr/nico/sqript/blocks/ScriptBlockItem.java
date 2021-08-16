@@ -25,7 +25,7 @@ import java.io.FileWriter;
         examples = "item my_item:",
         regex = "^item .*",
         side = Side.BOTH,
-        fields = {"name","texture","max stack size","creative tab","item type","material","protection type","armor texture"},
+        fields = {"name", "texture", "max stack size", "creative tab", "item type", "material", "protection type", "armor texture"},
         reloadable = false
 )
 public class ScriptBlockItem extends ScriptBlock {
@@ -37,9 +37,9 @@ public class ScriptBlockItem extends ScriptBlock {
 
     @Override
     protected void load() throws Exception {
-        String registryName = getHead().text.replaceFirst("item\\s+(.*)", "$1").replaceAll(":","").replaceAll(" ","_").trim();
+        String registryName = getHead().text.replaceFirst("item\\s+(.*)", "$1").replaceAll(":", "").replaceAll(" ", "_").trim();
         String texture = "";
-        String model ="";
+        String model = "";
         String armorTexture;
         int maxStackSize = 1;
         CreativeTabs tab = CreativeTabs.MISC;
@@ -48,69 +48,69 @@ public class ScriptBlockItem extends ScriptBlock {
         String displayName;
 
 
-        if(!fieldDefined("name"))
-            throw new ScriptException.ScriptMissingFieldException(this.getLine(),"item","name");
-        if(!fieldDefined("texture") && !fieldDefined("model"))
-            throw new ScriptException.ScriptMissingFieldException(this.getLine(),"item","texture or model");
+        if (!fieldDefined("name"))
+            throw new ScriptException.ScriptMissingFieldException(this.getLine(), "item", "name");
+        if (!fieldDefined("texture") && !fieldDefined("model"))
+            throw new ScriptException.ScriptMissingFieldException(this.getLine(), "item", "texture or model");
 
         displayName = getSubBlock("name").getRawContent();
 
-        if(fieldDefined("texture"))
-            texture = getSubBlock("texture").getRawContent().replaceAll("\\.png","");
-        if(fieldDefined("model"))
+        if (fieldDefined("texture"))
+            texture = getSubBlock("texture").getRawContent().replaceAll("\\.png", "");
+        if (fieldDefined("model"))
             model = getSubBlock("model").getRawContent();
-        if(fieldDefined("max stack size"))
+        if (fieldDefined("max stack size"))
             maxStackSize = Integer.parseInt(getSubBlock("max stack size").getRawContent());
-        if(fieldDefined("creative tab"))
+        if (fieldDefined("creative tab"))
             tab = loadTabFromName(getSubBlock("creative tab").getRawContent());
-        if(fieldDefined("item type"))
+        if (fieldDefined("item type"))
             toolType = getSubBlock("item type").getRawContent();
         else
             //System.out.println("ITEM TYPE FIELD IS NOT DEFINED");
-        if(fieldDefined("material"))
-            toolMaterial = getSubBlock("material").getRawContent();
+            if (fieldDefined("material"))
+                toolMaterial = getSubBlock("material").getRawContent();
         //System.out.println("TOOLTYPE : "+toolType);
         Item item;
-        switch (toolType.toLowerCase()){
+        switch (toolType.toLowerCase()) {
             case "axe":
-                item = new ScriptItemAxe(displayName,toolMaterial);
+                item = new ScriptItemAxe(displayName, toolMaterial);
                 break;
             case "pickaxe":
-                item = new ScriptItemPickaxe(displayName,toolMaterial);
+                item = new ScriptItemPickaxe(displayName, toolMaterial);
                 break;
             case "sword":
-                item = new ScriptItemSword(displayName,toolMaterial);
+                item = new ScriptItemSword(displayName, toolMaterial);
                 break;
             case "shovel":
-                item = new ScriptItemShovel(displayName,toolMaterial);
+                item = new ScriptItemShovel(displayName, toolMaterial);
                 break;
             case "hoe":
-                item = new ScriptItemHoe(displayName,toolMaterial);
+                item = new ScriptItemHoe(displayName, toolMaterial);
                 break;
             case "armor":
-                if(fieldDefined("armor texture"))
+                if (fieldDefined("armor texture"))
                     armorTexture = getSubBlock("armor texture").getRawContent();
-                else throw new ScriptException.ScriptMissingFieldException(getLine(),"item","armor texture");
+                else throw new ScriptException.ScriptMissingFieldException(getLine(), "item", "armor texture");
                 //feet / legs / chest / head
-                armorTexture = armorTexture.split(":")[0]+":textures/"+armorTexture.split(":")[1];
+                armorTexture = armorTexture.split(":")[0] + ":textures/" + armorTexture.split(":")[1];
                 String protectionType = "chest";
-                if(fieldDefined("protection type"))
+                if (fieldDefined("protection type"))
                     protectionType = getSubBlock("protection type").getRawContent();
-                else throw new ScriptException.ScriptMissingFieldException(getLine(),"item","protection type");
+                else throw new ScriptException.ScriptMissingFieldException(getLine(), "item", "protection type");
                 //System.out.println("ARMOR ITEM : "+protectionType+" "+ EntityEquipmentSlot.valueOf(protectionType.toUpperCase()));
-                item = new ScriptItemArmor(displayName,toolMaterial, EntityEquipmentSlot.valueOf(protectionType.toUpperCase()),armorTexture);
+                item = new ScriptItemArmor(displayName, toolMaterial, EntityEquipmentSlot.valueOf(protectionType.toUpperCase()), armorTexture);
                 break;
-            case "item": default:
+            case "item":
+            default:
                 item = new ScriptItemBase(displayName);
         }
-        item.setRegistryName(this.getHead().scriptInstance.getName(),registryName);
-        texture = this.getHead().scriptInstance.getName()+":"+texture;
+        item.setRegistryName(this.getHead().scriptInstance.getName(), registryName);
+        texture = this.getHead().scriptInstance.getName() + ":" + texture;
         item.setUnlocalizedName(registryName);
         //System.out.println("Max stack size of item is : "+maxStackSize);
         item.setMaxStackSize(maxStackSize);
         item.setCreativeTab(tab);
-        SqriptForge.scriptItems.add(new ScriptItem(this.getHead().scriptInstance.getName(),model,item));
-
+        SqriptForge.scriptItems.add(new ScriptItem(this.getHead().scriptInstance.getName(), model, item));
 
         createItem(registryName, texture, toolType);
 
@@ -119,32 +119,32 @@ public class ScriptBlockItem extends ScriptBlock {
     private void createItem(String registryName, String texture, String toolType) throws Exception {
         //Creating the model/blockstate file if the model file was not specified
         //System.out.println("Creating model file for item : "+registryName);
-        if(!fieldDefined("model")){
+        if (!fieldDefined("model")) {
             //File scriptFile
-            File mainFolder = new File(ScriptManager.scriptDir,this.getHead().scriptInstance.getName());
-            if(!mainFolder.exists())
+            File mainFolder = new File(ScriptManager.scriptDir, this.getHead().scriptInstance.getName());
+            if (!mainFolder.exists())
                 mainFolder.mkdir();
 
-            File itemModelsFolder = new File(mainFolder,"/models/item");
-            if(!itemModelsFolder.exists())
+            File itemModelsFolder = new File(mainFolder, "/models/item");
+            if (!itemModelsFolder.exists())
                 itemModelsFolder.mkdirs();
             //Il faut créer le dossier et l'enregistrer à la main
-            String parent = toolType.equalsIgnoreCase("item") || toolType.equalsIgnoreCase("armor")? "generated" : "handheld";
-            File jsonFile = new File(itemModelsFolder,registryName+".json");
-            String content = ("{"+"\n"
-                    +"  'parent': 'item/"+parent+"',"+"\n"
-                    +"  'textures': {"+"\n"
-                    +"      'layer0': '"+texture+"'"+"\n"
-                    +"  }"+"\n"
-                    +"}").replaceAll("'","\"");
-            createFile(jsonFile,content);
+            String parent = toolType.equalsIgnoreCase("item") || toolType.equalsIgnoreCase("armor") ? "generated" : "handheld";
+            File jsonFile = new File(itemModelsFolder, registryName + ".json");
+            String content = ("{" + "\n"
+                    + "  'parent': 'item/" + parent + "'," + "\n"
+                    + "  'textures': {" + "\n"
+                    + "      'layer0': '" + texture + "'" + "\n"
+                    + "  }" + "\n"
+                    + "}").replaceAll("'", "\"");
+            createFile(jsonFile, content);
         }
     }
 
     private CreativeTabs loadTabFromName(String creative_tab) {
-        System.out.println("Getting creative tab from : "+creative_tab);
-        for(CreativeTabs tab : CreativeTabs.CREATIVE_TAB_ARRAY){
-            if(tab.getTabLabel().equalsIgnoreCase(creative_tab) || creative_tab.startsWith(tab.getTabLabel()))
+        System.out.println("Getting creative tab from : " + creative_tab);
+        for (CreativeTabs tab : CreativeTabs.CREATIVE_TAB_ARRAY) {
+            if (tab.getTabLabel().equalsIgnoreCase(creative_tab) || creative_tab.startsWith(tab.getTabLabel()))
                 return tab;
         }
         //System.out.println("Returning null for tab");
@@ -152,28 +152,25 @@ public class ScriptBlockItem extends ScriptBlock {
     }
 
 
-    private void createFile(File file, String contents) throws Exception {
-
-
+    private void createFile(File file, String content) throws Exception {
         if (file.exists()) {
             return;
         }
         //System.out.println("Creating file : "+file.getAbsolutePath());
         file.createNewFile();
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
-        out.write(contents);
+        out.write(content);
         out.close();
     }
 
     @Block(name = "tool material",
-          description = "tool material blocks",
-          examples = "tool material ruby:",
-          regex = "^tool material .*",
-          side = Side.BOTH,
-          fields = {"name","harvest level","durability","efficiency","damage","enchantability"},
-    reloadable = false)
+            description = "tool material blocks",
+            examples = "tool material ruby:",
+            regex = "^tool material .*",
+            side = Side.BOTH,
+            fields = {"name", "harvest level", "durability", "efficiency", "damage", "enchantability"},
+            reloadable = false)
     public static class ScriptBlockToolMaterial extends ScriptBlock {
-
 
         public ScriptBlockToolMaterial(ScriptLine head) throws ScriptException {
             super(head);
@@ -204,7 +201,6 @@ public class ScriptBlockItem extends ScriptBlock {
             EnumHelper.addToolMaterial(name, harvestLevel, durability, efficiency, damage, enchantability);
         }
 
-
     }
 
     @Block(name = "armor material",
@@ -212,7 +208,7 @@ public class ScriptBlockItem extends ScriptBlock {
             examples = "armor material ruby:",
             regex = "^armor material .*",
             side = Side.BOTH,
-            fields = {"name","harvest level","durability","efficiency","damage","enchantability"},
+            fields = {"name", "harvest level", "durability", "efficiency", "damage", "enchantability"},
             reloadable = false)
     public static class ScriptBlockArmorMaterial extends ScriptBlock {
 
@@ -235,11 +231,10 @@ public class ScriptBlockItem extends ScriptBlock {
             int enchantability = Item.ToolMaterial.IRON.getEnchantability();
 
 
-
             if (fieldDefined("durability factor"))
                 durabilityfactor = Integer.parseInt(getSubBlock("durability factor").getRawContent());
             if (fieldDefined("protection array"))
-                protection = (((TypeArray) (getSubBlock("protection array").evaluate())).getObject()).stream().mapToInt(a-> (int) a.getObject()).toArray();
+                protection = (((TypeArray) (getSubBlock("protection array").evaluate())).getObject()).stream().mapToInt(a -> (int) a.getObject()).toArray();
             if (fieldDefined("enchantability"))
                 enchantability = Integer.parseInt(getSubBlock("enchantability").getRawContent());
 

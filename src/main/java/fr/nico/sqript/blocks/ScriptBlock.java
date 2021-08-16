@@ -28,7 +28,7 @@ public abstract class ScriptBlock extends IScript {
     public ScriptBlock() {
     }
 
-    /***
+    /**
      * Be careful, no error must be thrown during the call of constructor.
      * @param head The very first line of the block (e.g : "on jump:")
      * @throws ScriptException.ScriptSyntaxException When the head of the block doesn't match the required pattern
@@ -87,7 +87,7 @@ public abstract class ScriptBlock extends IScript {
         return str;
     }
 
-    /***
+    /**
      * Generates the sub-blocks within this block
      * @param block The complete block to work with
      * @throws ScriptException.ScriptIndentationErrorException When a line is indented while it shouldn't

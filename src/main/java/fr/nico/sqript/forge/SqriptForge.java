@@ -207,11 +207,9 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : events) {
             try {
-                if(!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder)c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
-                    Class toRegister = Class.forName(c.getClassName());
-                    Event e = (Event) toRegister.getAnnotation(Event.class);
-                    ScriptManager.registerEvent(toRegister, e.name(), e.description(), e.examples(), e.patterns(), e.side(), e.accessors());
-                }
+                Class toRegister = Class.forName(c.getClassName());
+                Event e = (Event) toRegister.getAnnotation(Event.class);
+                ScriptManager.registerEvent(toRegister, e.name(), e.description(), e.examples(), e.patterns(), e.side(), e.accessors());
             } catch (Exception e) {
                 ScriptManager.log.error("Error trying to load ScriptEvent : "+c.getClassName());
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();

@@ -21,6 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +31,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class ScriptManager {
 
@@ -353,15 +355,20 @@ public class ScriptManager {
 
     //True if the event has been cancelled
     public static boolean callEvent(ScriptEvent event) {
-        ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
-        if(RELOADING)
-            return false;
-        for (int i = 0; i < scripts.size(); i++) {
+        Optional<EventDefinition> optional = ScriptManager.events.stream().filter(a->a.eventClass == event.getClass()).findFirst();
+        EventDefinition eventDefinition = null;
+        if(optional.isPresent())
+            eventDefinition = optional.get();
+        if( eventDefinition!=null && eventDefinition.getSide().isStrictlyValid()) {
+            ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
             if(RELOADING)
                 return false;
-            if(scripts.get(i).callEvent(context,event))
-            {
-                return true;
+            for (ScriptInstance script : scripts) {
+                if (RELOADING)
+                    return false;
+                if (script.callEvent(context, event)) {
+                    return true;
+                }
             }
         }
         return false;
