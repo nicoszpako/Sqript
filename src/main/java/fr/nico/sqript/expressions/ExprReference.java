@@ -55,7 +55,7 @@ public class ExprReference extends ScriptExpression {
             //System.out.println("Context vars are : "+context.printVariables());
             varHash = var.hashCode();
             if (varHash == 0)
-                varHash = context.getVariable(line.getText());
+                varHash = context.getHash(line.getText());
             return context.getVariable(varHash);
         } else {
             //System.out.println("Getting reference for : "+line.text+", its null ? : "+(context.get(varHash)==null));
@@ -78,7 +78,7 @@ public class ExprReference extends ScriptExpression {
             //System.out.println("Context vars are : "+context.printVariables());
             varHash = var.hashCode();
             if (varHash == 0)
-                varHash = context.getVariable(line.getText());
+                varHash = context.getHash(line.getText());
             ScriptTypeAccessor accessor = new ScriptTypeAccessor(to, varHash);
             accessor.key = var;
             context.put(accessor);
