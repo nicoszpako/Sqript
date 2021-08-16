@@ -9,8 +9,6 @@ import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.interfaces.IIndexedCollection;
 import fr.nico.sqript.types.interfaces.ISerialisable;
-import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -93,11 +91,11 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
 
                 NBTTagCompound key = new NBTTagCompound();
                 key.setTag("value",i.write(new NBTTagCompound()));
-                key.setString("type", Objects.requireNonNull(ScriptDecoder.getNameForType(i.getClass())));
+                key.setString("type", Objects.requireNonNull(ScriptDecoder.getNameOfType(i.getClass())));
 
                 NBTTagCompound value = new NBTTagCompound();
                 value.setTag("value",j.write(new NBTTagCompound()));
-                value.setString("type", Objects.requireNonNull(ScriptDecoder.getNameForType(j.getClass())));
+                value.setString("type", Objects.requireNonNull(ScriptDecoder.getNameOfType(j.getClass())));
 
                 nbt.setTag("key",key);
                 nbt.setTag("value",value);

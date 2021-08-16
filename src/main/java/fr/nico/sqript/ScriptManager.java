@@ -21,7 +21,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +30,6 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 public class ScriptManager {
 
@@ -140,7 +138,7 @@ public class ScriptManager {
     }
 
     public static void registerType(Class<? extends ScriptElement<?>> type, String name) throws Exception {
-        if (ScriptDecoder.getType(name) != null)
+        if (ScriptDecoder.parseType(name) != null)
             throw new Exception("a Type with the name " + name + " already exists !");
         TypeDefinition d = new TypeDefinition(name, new String[0], new String[]{""}, type);
         types.put(type, d);
@@ -273,8 +271,8 @@ public class ScriptManager {
         }
     }
 
-    public static void handleError(ScriptLine line, Throwable throwable){
-        ScriptManager.log.error("Error while loading " + line.scriptInstance.getName() + " : ");
+    public static void handleError(ScriptToken line, Throwable throwable){
+        ScriptManager.log.error("Error while loading " + line.getScriptInstance().getName() + " : ");
         if (throwable instanceof ScriptException) {
             for (String s : throwable.getMessage().split("\n"))
                 ScriptManager.log.error(s);
@@ -345,7 +343,7 @@ public class ScriptManager {
     //Runs the events triggers and returns the final context (that has passed through all the triggers)
     public static ScriptContext callEventAndGetContext(ScriptEvent event) throws ScriptException {
         ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
-        context.returnValue = new ScriptAccessor(TypeBoolean.FALSE(), "");
+        context.setReturnValue(new ScriptTypeAccessor(TypeBoolean.FALSE(), ""));
         for(ScriptInstance instance : scripts) {
             context = instance.callEventAndGetContext(context,event);
         }

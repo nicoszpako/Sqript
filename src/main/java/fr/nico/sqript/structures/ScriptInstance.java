@@ -42,7 +42,7 @@ public class ScriptInstance {
         //System.out.println("Calling event : "+event.getClass());
         try {
             ScriptContext returnContext = callEventAndGetContext(context, event);
-            return (boolean) returnContext.returnValue.element.getObject();
+            return (boolean) returnContext.getReturnValue().element.getObject();
         } catch (Exception e) {
             ScriptManager.log.error("Error while calling event : " + event.getClass().getSimpleName());
             if (e instanceof ScriptException.ScriptWrappedException) {
@@ -75,7 +75,7 @@ public class ScriptInstance {
 
     public ScriptContext callEventAndGetContext(ScriptContext context, ScriptEvent event) throws ScriptException {
         //System.out.println("Trying to call event : "+event.getClass().getSimpleName());
-        context.returnValue = new ScriptAccessor(TypeBoolean.FALSE(), "");
+        context.setReturnValue(new ScriptTypeAccessor(TypeBoolean.FALSE(), ""));
         //long t1 = //System.currentTimeMillis();
         for (ScriptBlock b : getBlocksOfClass(ScriptBlockEvent.class)) {
             ScriptBlockEvent t = (ScriptBlockEvent) b;

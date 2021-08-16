@@ -7,10 +7,10 @@ public interface IScriptParser {
     /**
      * Return an IScript from a ScriptLine and a ScriptCompileGroup.
      * Should return null if the line is not matching this parser.
-     * @param line
-     * @param compileGroup
-     * @return the IScript
+     * @param line The ScriptToken associated to the line to parse.
+     * @param compileGroup The CompileGroup to use during parsing.
+     * @return the parsed IScript.
      */
-    public IScript parse(ScriptLine line, ScriptCompileGroup compileGroup);
+    IScript parse(ScriptToken line, ScriptCompileGroup compileGroup);
 
 }

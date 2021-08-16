@@ -46,7 +46,7 @@ public class ScriptSyncDataMessage implements IMessage {
         ByteBufUtils.writeUTF8String(buf, key);
         if (element instanceof ISerialisable) {
             buf.writeBoolean(true);
-            ByteBufUtils.writeUTF8String(buf, ScriptDecoder.getNameForType(element.getClass()));
+            ByteBufUtils.writeUTF8String(buf, ScriptDecoder.getNameOfType(element.getClass()));
             ISerialisable s = (ISerialisable) element;
             ByteBufUtils.writeTag(buf, s.write(new NBTTagCompound()));
         }else{

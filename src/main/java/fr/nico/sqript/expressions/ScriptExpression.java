@@ -1,7 +1,7 @@
 package fr.nico.sqript.expressions;
 
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.types.ScriptType;
@@ -35,7 +35,7 @@ public abstract class ScriptExpression {
 
     int marks;
 
-    ScriptLine line;
+    ScriptToken line;
 
     public <T> T getParameterOrDefault(ScriptType<T> parameter, T defaultValue){
         return parameter == null ? defaultValue : parameter.getObject();
@@ -53,7 +53,7 @@ public abstract class ScriptExpression {
         return matchedIndex;
     }
 
-    public ScriptLine getLine() {
+    public ScriptToken getLine() {
         return line;
     }
 
@@ -61,11 +61,11 @@ public abstract class ScriptExpression {
         this.matchedIndex = matchedIndex;
     }
 
-    public void setLine(ScriptLine line) {
+    public void setLine(ScriptToken line) {
         this.line = line;
     }
 
-    public boolean validate(ScriptLine line){
+    public boolean validate(ScriptToken line){
         return true;
     }
 }

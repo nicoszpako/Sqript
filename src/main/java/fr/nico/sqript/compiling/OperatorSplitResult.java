@@ -3,12 +3,12 @@ package fr.nico.sqript.compiling;
 
 import fr.nico.sqript.meta.Expression;
 
-public class OperatorSplittedResult {
+public class OperatorSplitResult {
 
     private  Token[] operands;
     private  Integer[] operatorIndices;
 
-    public OperatorSplittedResult(Token[] operands, Integer[] operatorIndices) {
+    public OperatorSplitResult(Token[] operands, Integer[] operatorIndices) {
         this.operands = operands;
         this.operatorIndices = operatorIndices;
     }

@@ -1,10 +1,10 @@
 package fr.nico.sqript.events;
 
+import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeItem;
 import fr.nico.sqript.types.TypePlayer;
 import fr.nico.sqript.meta.Event;
-import fr.nico.sqript.structures.ScriptAccessor;
 import fr.nico.sqript.types.primitive.TypeResource;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +23,7 @@ public class EvtPlayer {
     public static class EvtOnPlayerMove extends ScriptEvent {
 
         public EvtOnPlayerMove(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
         }
 
     }
@@ -42,7 +42,7 @@ public class EvtPlayer {
         public EnumHand hand;
 
         public EvtOnItemRightClick(EntityPlayer player, ItemStack clicked, EnumHand hand) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"),new ScriptAccessor(new TypeItem(clicked),"[click[ed]] item"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(new TypeItem(clicked),"[click[ed]] item"));
             this.clickedItem = clicked;
             this.hand = hand;
         }
@@ -76,8 +76,8 @@ public class EvtPlayer {
     public static class EvtOnPlayerSendMessage extends ScriptEvent {
 
         public EvtOnPlayerSendMessage(EntityPlayer player, String message) {
-            super(new ScriptAccessor(new TypePlayer(player), "player"),
-                    new ScriptAccessor(new TypeString(message), "message"));
+            super(new ScriptTypeAccessor(new TypePlayer(player), "player"),
+                    new ScriptTypeAccessor(new TypeString(message), "message"));
         }
     }
 
@@ -92,8 +92,8 @@ public class EvtPlayer {
     public static class EvtOnItemPickup extends ScriptEvent {
 
         public EvtOnItemPickup(EntityPlayer player,ItemStack item) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"),
-                    new ScriptAccessor(new TypeItem(item),"[picked [up]] item"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),
+                    new ScriptTypeAccessor(new TypeItem(item),"[picked [up]] item"));
         }
 
     }
@@ -109,8 +109,8 @@ public class EvtPlayer {
     public static class EvtOnItemUse extends ScriptEvent {
 
         public EvtOnItemUse(EntityPlayer player,ItemStack item) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"),
-                    new ScriptAccessor(new TypeItem(item),"[used] item"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),
+                    new ScriptTypeAccessor(new TypeItem(item),"[used] item"));
         }
 
     }
@@ -128,8 +128,8 @@ public class EvtPlayer {
     public static class EvtOnPlayerHit extends ScriptEvent {
 
         public EvtOnPlayerHit(EntityPlayer victim,EntityPlayer attacker) {
-            super(new ScriptAccessor(new TypePlayer(victim),"victim"),
-                    new ScriptAccessor(new TypePlayer(attacker),"attacker"));
+            super(new ScriptTypeAccessor(new TypePlayer(victim),"victim"),
+                    new ScriptTypeAccessor(new TypePlayer(attacker),"attacker"));
         }
 
     }
@@ -147,7 +147,7 @@ public class EvtPlayer {
     public static class EvtOnPlayerJump extends ScriptEvent {
 
         public EvtOnPlayerJump(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
         }
 
     }
@@ -163,7 +163,7 @@ public class EvtPlayer {
     public static class EvtOnPlayerLogin extends ScriptEvent {
 
         public EvtOnPlayerLogin(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
         }
 
     }

@@ -1,6 +1,5 @@
 package fr.nico.sqript.meta;
 
-import fr.nico.sqript.compiling.ScriptLine;
 import fr.nico.sqript.structures.ScriptLoop;
 import fr.nico.sqript.structures.Side;
 

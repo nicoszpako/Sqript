@@ -112,7 +112,7 @@ public class ScriptEventHandler {
             }
             if(context.getAccessor("message") != null)
                 event.setComponent(new TextComponentString((String) context.getAccessor("message").element.getObject()));
-            if ((boolean) context.returnValue.element.getObject()) {
+            if ((boolean) context.getReturnValue().element.getObject()) {
                 event.setCanceled(true);
             }
         }

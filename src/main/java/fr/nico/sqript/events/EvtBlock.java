@@ -1,7 +1,7 @@
 package fr.nico.sqript.events;
 
 import fr.nico.sqript.meta.Event;
-import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeBlock;
 import fr.nico.sqript.types.TypePlayer;
@@ -25,7 +25,7 @@ public class EvtBlock {
         public TypeBlock placedBlock;
 
         public EvtOnBlockPlace(EntityPlayer player, TypeBlock broken) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"),new ScriptAccessor(broken,"(placed block|event-block)"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(broken,"(placed block|event-block)"));
             this.placedBlock = broken;
         }
 
@@ -47,7 +47,7 @@ public class EvtBlock {
         public TypeBlock brokenBlock;
 
         public EvtOnBlockBreak(EntityPlayer player, TypeBlock broken) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"),new ScriptAccessor(broken,"(broken block|break-block|event-block)"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(broken,"(broken block|break-block|event-block)"));
             this.brokenBlock = broken;
         }
 
@@ -71,7 +71,7 @@ public class EvtBlock {
         public int clickType = 1; //1 = right, 0 = left
 
         public EvtOnBlockClick(EntityPlayer player, TypeBlock clicked, EnumHand hand, int clickType, BlockPos pos) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"),new ScriptAccessor(clicked,"(clicked block|click-block)"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(clicked,"(clicked block|click-block)"));
             this.clickedBlock = clicked;
             this.hand = hand;
             this.clickType = clickType;

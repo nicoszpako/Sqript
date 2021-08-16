@@ -1,6 +1,6 @@
 package fr.nico.sqript.events;
 
-import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.ScriptType;
 
 public abstract class ScriptEvent {
@@ -12,8 +12,8 @@ public abstract class ScriptEvent {
     **Utiliser l'annonation Cancelable de forge pour indiquer qu'il est cancelable**
      */
 
-    public ScriptAccessor[] accessors;
-    public ScriptEvent(ScriptAccessor... accessors){
+    public ScriptTypeAccessor[] accessors;
+    public ScriptEvent(ScriptTypeAccessor... accessors){
         this.accessors=accessors;
     }
 

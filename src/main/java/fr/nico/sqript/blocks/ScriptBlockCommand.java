@@ -44,8 +44,8 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
     private final String name;
 
 
-    public ScriptBlockCommand(ScriptLine head) {
-        final String def = ScriptDecoder.splitAtDoubleDot(head.text.replaceFirst("command\\s+/", ""))[0];
+    public ScriptBlockCommand(ScriptToken head) {
+        final String def = ScriptDecoder.splitAtDoubleDot(head.getText().replaceFirst("command\\s+/", ""))[0];
         final String[] args = def.split(" ");
         final List<ScriptParameterDefinition> parameterDefinitions = new ArrayList<>();
         for (int i = 1; i < args.length; i++) {
@@ -83,7 +83,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
             this.setUsage(getSubBlock("usage").getRawContent());
 
         if (fieldDefined("aliases"))
-            this.setAliases(getSubBlock("aliases").getContent().stream().map(s -> s.text).toArray(String[]::new));
+            this.setAliases(getSubBlock("aliases").getContent().stream().map(ScriptToken::getText).toArray(String[]::new));
 
         if (side == fr.nico.sqript.structures.Side.BOTH || (side == fr.nico.sqript.structures.Side.CLIENT)) {
             SqriptForge.addClientCommand(this);
@@ -175,28 +175,28 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
                     r+=strings[j]+" ";
                 }
                 r=r.substring(0,r.length()-1);
-                c.put(new ScriptAccessor(new TypeString(r),"arg[ument] "+(i+1)));
+                c.put(new ScriptTypeAccessor(new TypeString(r),"arg[ument] "+(i+1)));
             }else{
                 if(p == TypeString.class)
                 {
-                    c.put(new ScriptAccessor(new TypeString(strings[i]),"arg[ument] "+(i+1)));
+                    c.put(new ScriptTypeAccessor(new TypeString(strings[i]),"arg[ument] "+(i+1)));
                 }
                 else if(p == TypeNumber.class)
                 {
-                    c.put(new ScriptAccessor(new TypeNumber(strings[i]),"arg[ument] "+(i+1)));
+                    c.put(new ScriptTypeAccessor(new TypeNumber(strings[i]),"arg[ument] "+(i+1)));
                 }
                 else if(p == TypePlayer.class)
                 {
-                    c.put(new ScriptAccessor(new TypePlayer(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(strings[i])),"arg[ument] "+(i+1)));
+                    c.put(new ScriptTypeAccessor(new TypePlayer(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(strings[i])),"arg[ument] "+(i+1)));
                 }
             }
         }
         //System.out.println("ICOMMANDSENDER NULL : "+(iCommandSender==null));
         if(iCommandSender instanceof EntityPlayer){
-            c.put(new ScriptAccessor(new TypePlayer((EntityPlayer) iCommandSender), "(sender|player)","(sender|player|console|server)".hashCode()));
+            c.put(new ScriptTypeAccessor(new TypePlayer((EntityPlayer) iCommandSender), "(sender|player)","(sender|player|console|server)".hashCode()));
 
         }else if(iCommandSender instanceof MinecraftServer){
-            c.put(new ScriptAccessor(new TypeConsole((MinecraftServer) iCommandSender), "(sender|console|server)","(sender|player|console|server)".hashCode()));
+            c.put(new ScriptTypeAccessor(new TypeConsole((MinecraftServer) iCommandSender), "(sender|console|server)","(sender|player|console|server)".hashCode()));
         }
 
         //Running the associated script

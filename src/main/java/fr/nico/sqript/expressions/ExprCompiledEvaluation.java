@@ -2,7 +2,7 @@ package fr.nico.sqript.expressions;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.structures.IOperation;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptElement;
@@ -12,18 +12,17 @@ import fr.nico.sqript.types.TypeNull;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class ExprCompiledEvaluation extends ScriptExpression {
 
     public LinkedList<Token> out = new LinkedList<>();
-    public ScriptLine in;
+    public ScriptToken in;
 
     public ScriptExpression[] operands;
     public ScriptOperator[] operators;
 
-    public ExprCompiledEvaluation(ScriptLine infixedExpression, ScriptExpression[] operands, ScriptOperator[] operators) {
+    public ExprCompiledEvaluation(ScriptToken infixedExpression, ScriptExpression[] operands, ScriptOperator[] operators) throws ScriptException.ScriptMissingTokenException {
         this.operands = operands;
         this.operators = operators;
         this.in = infixedExpression;
@@ -33,61 +32,76 @@ public class ExprCompiledEvaluation extends ScriptExpression {
 
     private Stack<Token> pile = new Stack<>();
 
-    public void compile() {
+    public void compile() throws ScriptException.ScriptMissingTokenException {
         //System.out.println("Compiling : "+in.text +" with "+ Arrays.stream(operands).map(a-> {            try {                return (a instanceof ExprPrimitive ? a.get(null).toString():"/")+" ";            } catch (ScriptException e) {                e.printStackTrace();            }            return "";        }).collect(Collectors.joining())+" with operators : "+ Arrays.toString(operators));
         //Shunting-yard algorithm implementation by Nico- to get a RPN ("Notation polonaise inversée") with an unfixed notation
         int c = 0;
-        while (c < in.text.length()) {//While there are tokens to be read
-            char r = in.text.charAt(c);
-            if (r == ',') {//Argument separator
+        while (c < in.getText().length()) {//While there are tokens to be read
+            char r = in.getText().charAt(c);
+            //Argument separator
+            if (r == ',') {
                 while (!pile.empty() && pile.peek().token_type != TOKEN_TYPE.LEFT_PARENTHESIS) {
                     out.add(pile.pop());
                 }
                 if (pile.empty()) {
-                    ////System.out.println("Parenthesage error");
+                    //System.out.println("Parenthesage error");
                 }
             }
-            if (r == '@' && (c == 0 || in.text.charAt(c - 1) != '\\')) {//Operand
+            //Operand
+            if (r == '@' && (c == 0 || in.getText().charAt(c - 1) != '\\')) {
                 //Eating full token;
-
                 char n;
-                c++;//First "{"
 
-                String id = "";
-                while (c + 1 < in.text.length() && (n = in.text.charAt(c + 1)) <= '9' && n >= '0') {
-                    c++;
-                    id += n;
-                }
-                c++;//"/" separator for arity
-                String arity = "";
-                while (c + 1 < in.text.length() && (n = in.text.charAt(c + 1)) <= '9' && n >= '0') {
-                    c++;
-                    arity += n;
-                }
-                int id_int = Integer.parseInt(id);
-                int arity_int = Integer.parseInt(arity);
+                //Skipping first parenthese
+                c++;
 
-                c++;//Last "}"
+                StringBuilder id = new StringBuilder();
+                while (c + 1 < in.getText().length() && (n = in.getText().charAt(c + 1)) <= '9' && n >= '0') {
+                    c++;
+                    id.append(n);
+                }
+
+                // Skipping separation character
+                c++;
+
+                StringBuilder arity = new StringBuilder();
+                while (c + 1 < in.getText().length() && (n = in.getText().charAt(c + 1)) <= '9' && n >= '0') {
+                    c++;
+                    arity.append(n);
+                }
+                int id_int = Integer.parseInt(id.toString());
+                int arity_int = Integer.parseInt(arity.toString());
+
+                //Skipping last parenthese
+                c++;
+
                 Token e = new Token(TOKEN_TYPE.EXPRESSION, arity_int, id_int);
                 if (arity_int > 0)
                     pile.add(e);
                 else out.add(e);
-            } else if (r == '#' && (c == 0 || in.text.charAt(c - 1) != '\\')) {//Operator
+            } else if (r == '#' && (c == 0 || in.getText().charAt(c - 1) != '\\')) {//Operator
                 char n;
-                c++;//First "{"
+
+                //Skipping first parenthese
+                c++;
+
                 String id = "";
-                while (c + 1 < in.text.length() && (n = in.text.charAt(c + 1)) <= '9' && n >= '0') {
+                while (c + 1 < in.getText().length() && (n = in.getText().charAt(c + 1)) <= '9' && n >= '0') {
                     c++;
                     id += n;
                 }
-                c++;//Last "}"
+
+                //Skipping last parenthese
+                c++;
+
                 int id_int = Integer.parseInt(id);
                 ScriptOperator o1 = operators[id_int];
                 //System.out.println("#{"+id_int+"} is a "+o1);
-                if (o1.postfixed) {//Already postfixed, we add it normally
+                if (o1.postfixed) {
+                    //Already post-fixed, we add it normally
                     out.add(new Token(TOKEN_TYPE.OPERATOR, 0, id_int));
                 } else {
-                    ScriptOperator o2 = null;
+                    ScriptOperator o2;
                     if (!pile.empty() && pile.peek().token_type != TOKEN_TYPE.LEFT_PARENTHESIS) {
                         o2 = (operators[pile.peek().id]);
                         while ((!pile.empty() && pile.peek().token_type != TOKEN_TYPE.LEFT_PARENTHESIS) && (
@@ -107,7 +121,7 @@ public class ExprCompiledEvaluation extends ScriptExpression {
                     out.add(pile.pop());
                 }
                 if (pile.empty()) {
-                    ////System.out.println("Parenthesis error");
+                    throw new ScriptException.ScriptMissingTokenException(getLine());
                 }
                 pile.pop();
 

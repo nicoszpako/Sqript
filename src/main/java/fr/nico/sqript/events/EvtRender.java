@@ -1,10 +1,9 @@
 package fr.nico.sqript.events;
 
 import fr.nico.sqript.meta.Event;
-import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.TypePlayer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
@@ -19,7 +18,7 @@ public class EvtRender {
     public static class EvtOnRenderOverlay extends ScriptEvent {
 
         public EvtOnRenderOverlay(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
         }
 
     }
@@ -33,7 +32,7 @@ public class EvtRender {
     public static class EvtOnRenderCrosshair extends ScriptEvent {
 
         public EvtOnRenderCrosshair(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
         }
 
     }
@@ -47,7 +46,7 @@ public class EvtRender {
     public static class EvtOnRenderXPBar extends ScriptEvent {
 
         public EvtOnRenderXPBar(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
         }
 
     }
@@ -63,7 +62,7 @@ public class EvtRender {
 
 
         public EvtOnRenderChat(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
 
         }
 
@@ -80,7 +79,7 @@ public class EvtRender {
 
 
         public EvtOnRenderFoodBar(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
 
         }
 
@@ -97,7 +96,7 @@ public class EvtRender {
 
 
         public EvtOnRenderHealthBar(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
 
         }
 
@@ -112,7 +111,7 @@ public class EvtRender {
     public static class EvtOnDrawNameplate extends ScriptEvent {
 
         public EvtOnDrawNameplate(EntityPlayer player) {
-            super(new ScriptAccessor(new TypePlayer(player),"player"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
         }
 
     }

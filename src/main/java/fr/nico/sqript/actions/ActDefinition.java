@@ -5,8 +5,7 @@ import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptCompileGroup;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
-import fr.nico.sqript.expressions.ExprReference;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.structures.ScriptContext;
@@ -52,14 +51,14 @@ public class ActDefinition extends ScriptAction {
     }
 
     @Override
-    public void build(ScriptLine line, ScriptCompileGroup compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
+    public void build(ScriptToken line, ScriptCompileGroup compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
         //If accessing a global variable,
         //we parse the argument as a string to make the action
         //able to register the new variable in the context
         if (matchedIndex == 2) {
             //System.out.println("Set ! : "+line);
-            ScriptExpression arg = ScriptDecoder.getExpression(line.with(parameters.get(0)),compileGroup);
-            ScriptExpression to = ScriptDecoder.getExpression(line.with(parameters.get(1)),compileGroup);
+            ScriptExpression arg = ScriptDecoder.parseExpression(line.with(parameters.get(0)),compileGroup);
+            ScriptExpression to = ScriptDecoder.parseExpression(line.with(parameters.get(1)),compileGroup);
             if (to == null)
                 throw new ScriptException.ScriptUnknownExpressionException(line.with(parameters.get(1)));
             this.setParameters(Lists.newArrayList(arg, to));

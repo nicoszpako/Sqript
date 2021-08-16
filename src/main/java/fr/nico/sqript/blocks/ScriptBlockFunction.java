@@ -1,9 +1,8 @@
 package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
-import fr.nico.sqript.structures.*;
 
 @Block(name = "function",
         description = "Function blocks",
@@ -12,7 +11,7 @@ import fr.nico.sqript.structures.*;
 public class ScriptBlockFunction extends ScriptFunctionalBlock {
 
 
-    public ScriptBlockFunction(ScriptLine head) throws ScriptException {
+    public ScriptBlockFunction(ScriptToken head) throws ScriptException {
         super(head);
     }
 

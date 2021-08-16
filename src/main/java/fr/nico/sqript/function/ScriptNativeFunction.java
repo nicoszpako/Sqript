@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public abstract class ScriptNativeFunction {
 
     int matchedDefinition;
-    Class returnType = null;
+    Class returnType;
     int nbParameters;
 
     public String getFuncName() {
@@ -37,30 +37,31 @@ public abstract class ScriptNativeFunction {
         //System.out.println("Instanciating a function : "+this.getClass().getSimpleName());
         this.matchedDefinition=matchedDefinition;
         //System.out.println("Matched defintion is : "+matchedDefinition);
-        Native fun = ((Native)this.getClass().getAnnotation(Native.class));
+        Native fun = this.getClass().getAnnotation(Native.class);
         Pattern p = Pattern.compile("(^[\\w]+)");
         Matcher m = p.matcher(fun.definitions()[matchedDefinition]);
-        m.find();
-        String funcname = m.group(1);
-        //System.out.println("Funcname is : "+funcname);
-        nbParameters=fun.definitions()[matchedDefinition].split(",").length;
-        parametersTypeName = fun.definitions()[matchedDefinition].split(":")[0].split(",");
-        for (int i = 0; i < parametersTypeName.length; i++) {
-            parametersTypeName[i]=parametersTypeName[i].replace("(","").replace(")","").replace(funcname,"");
-        }
-        //System.out.println("Parameters type are : " + Arrays.toString(parametersTypeName));
+        if(m.find()){
+            String funcname = m.group(1);
+            //System.out.println("Funcname is : "+funcname);
+            nbParameters=fun.definitions()[matchedDefinition].split(",").length;
+            parametersTypeName = fun.definitions()[matchedDefinition].split(":")[0].split(",");
+            for (int i = 0; i < parametersTypeName.length; i++) {
+                parametersTypeName[i]=parametersTypeName[i].replace("(","").replace(")","").replace(funcname,"");
+            }
+            //System.out.println("Parameters type are : " + Arrays.toString(parametersTypeName));
 
-        String typeName=fun.definitions()[matchedDefinition].split(":")[1];
-        //System.out.println("TypeName is : " + typeName);
+            String typeName=fun.definitions()[matchedDefinition].split(":")[1];
+            //System.out.println("TypeName is : " + typeName);
 
-        parametersType=new Class[parametersTypeName.length];
-        for (int i = 0; i < parametersType.length; i++) {
-            parametersType[i]= ScriptDecoder.getType(parametersTypeName[i]);
-            //System.out.println("Parameters "+i+"th is a "+parametersType[i].getSimpleName());
+            parametersType=new Class[parametersTypeName.length];
+            for (int i = 0; i < parametersType.length; i++) {
+                parametersType[i]= ScriptDecoder.parseType(parametersTypeName[i]);
+                //System.out.println("Parameters "+i+"th is a "+parametersType[i].getSimpleName());
+            }
+            returnType= ScriptDecoder.parseType(typeName);
+            //System.out.println("Return type is : "+returnType);
         }
-        returnType= ScriptDecoder.getType(typeName);
-        //System.out.println("Return type is : "+returnType);
-    };
+    }
 
     public abstract ScriptType get(ScriptContext context, ScriptType... parameters);
 

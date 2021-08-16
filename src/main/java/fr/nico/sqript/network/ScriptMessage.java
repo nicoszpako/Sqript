@@ -72,7 +72,7 @@ public class ScriptMessage implements IMessage {
         for(ScriptType parameter : parameters){
             if (parameter instanceof ISerialisable) {
                 ISerialisable s = (ISerialisable) parameter;
-                ByteBufUtils.writeUTF8String(buf, Objects.requireNonNull(ScriptDecoder.getNameForType(parameter.getClass())));
+                ByteBufUtils.writeUTF8String(buf, Objects.requireNonNull(ScriptDecoder.getNameOfType(parameter.getClass())));
                 ByteBufUtils.writeTag(buf, s.write(new NBTTagCompound()));
             }else{
                 ScriptManager.log.error("Could not serialize : "+parameter+" for message : "+message_id);

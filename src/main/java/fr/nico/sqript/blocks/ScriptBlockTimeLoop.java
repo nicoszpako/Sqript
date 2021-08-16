@@ -4,20 +4,10 @@ import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.ScriptTimer;
 import fr.nico.sqript.compiling.ScriptCompileGroup;
 import fr.nico.sqript.compiling.ScriptDecoder;
-import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
-import fr.nico.sqript.events.ScriptEvent;
-import fr.nico.sqript.expressions.ExprDate;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Block;
-import fr.nico.sqript.meta.Event;
-import fr.nico.sqript.meta.EventDefinition;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.structures.ScriptInstance;
-import fr.nico.sqript.types.TypeDate;
-
-import java.util.Arrays;
-import java.util.regex.Pattern;
 
 @Block(name = "time loop",
         description = "Time looping blocks",
@@ -27,7 +17,7 @@ public class ScriptBlockTimeLoop extends ScriptBlock {
 
     public long delay;
 
-    public ScriptBlockTimeLoop(ScriptLine head) {
+    public ScriptBlockTimeLoop(ScriptToken head) {
         try{
             this.delay = getDelay(head);
         }catch(Exception e){
@@ -35,17 +25,17 @@ public class ScriptBlockTimeLoop extends ScriptBlock {
         }
     }
 
-    public long getDelay(ScriptLine line) throws Exception {
-        line.text = line.text.replaceAll("every\\s+", "").replaceAll(":", "");
-        if(line.text.endsWith("server")){
-            line.text = line.text.replaceAll("server","");
+    public long getDelay(ScriptToken line) throws Exception {
+        line.setText(line.getText().replaceAll("every\\s+", "").replaceAll(":", ""));
+        if(line.getText().endsWith("server")){
+            line.setText(line.getText().replaceAll("server",""));
 
         }
-        ScriptExpression expr = ScriptDecoder.getExpression(line,new ScriptCompileGroup());
+        ScriptExpression expr = ScriptDecoder.parseExpression(line,new ScriptCompileGroup());
         //System.out.println("Loading time looping block :");
         //System.out.println(expr.getClass());
-        //System.out.println(expr.get(new ScriptContext()).getClass());
-        //System.out.println(expr.get(new ScriptContext()).getObject());
+        //System.out.println(expr.get(new ScriptCongetText()()).getClass());
+        //System.out.println(expr.get(new ScriptCongetText()()).getObject());
         return (((Long)expr.get(new ScriptContext()).getObject()));
     }
 

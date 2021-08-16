@@ -18,10 +18,10 @@ public abstract class ScriptBlock extends IScript {
 
     private ScriptLineBlock mainField;
     private IScript root;
-    private ScriptLine head;
+    private ScriptToken head;
     private ScriptInstance scriptInstance;
     private Side side = Side.BOTH;
-    public ScriptLine getHead() {
+    public ScriptToken getHead() {
         return head;
     }
 
@@ -33,9 +33,9 @@ public abstract class ScriptBlock extends IScript {
      * @param head The very first line of the block (e.g : "on jump:")
      * @throws ScriptException.ScriptSyntaxException When the head of the block doesn't match the required pattern
      */
-    public ScriptBlock(ScriptLine head) throws ScriptException.ScriptSyntaxException {
+    public ScriptBlock(ScriptToken head) throws ScriptException.ScriptSyntaxException {
         this.head = head;
-        scriptInstance = head.scriptInstance;
+        scriptInstance = head.getScriptInstance();
     }
 
     public ScriptLineBlock getMainField() {
@@ -93,31 +93,31 @@ public abstract class ScriptBlock extends IScript {
      * @throws ScriptException.ScriptIndentationErrorException When a line is indented while it shouldn't
      * @throws ScriptException.ScriptMissingTokenException When a sub-block is empty
      */
-    protected void groupFields(List<ScriptLine> block) throws ScriptException.ScriptIndentationErrorException, ScriptException.ScriptMissingTokenException {
+    protected void groupFields(List<ScriptToken> block) throws ScriptException.ScriptIndentationErrorException, ScriptException.ScriptMissingTokenException {
         Pattern getLabel = Pattern.compile("\\s*([\\w ]*)(?: )?:(.*)");
         String currentLabel = "";
-        ScriptLine next;
+        ScriptToken next;
         setMainField(new ScriptLineBlock(currentLabel, new ArrayList<>()));
         while (!block.isEmpty()) {
             next = block.remove(0);
             //System.out.println(next);
             //Indentation error
-            if (ScriptDecoder.getTabLevel(next.text) > 1) {
+            if (ScriptDecoder.getTabLevel(next.getText()) > 1) {
                 throw new ScriptException.ScriptIndentationErrorException(next);
             }
             //System.out.println("this fields : "+Arrays.asList(this.getClass().getAnnotation(Block.class).fields()));
-            Matcher m = getLabel.matcher(next.text);
+            Matcher m = getLabel.matcher(next.getText());
             if (m.find() && Arrays.asList(this.getClass().getAnnotation(Block.class).fields()).contains(currentLabel = m.group(1))) {
                 //Found the description of a sub-block
 
-                List<ScriptLine> content = new ArrayList<>();
+                List<ScriptToken> content = new ArrayList<>();
 
                 if (m.groupCount() < 2 || !m.group(2).isEmpty())
                     content.add(next.with(m.group(2)));
 
-                while (!block.isEmpty() && ScriptDecoder.getTabLevel(block.get(0).text) > 1) {
+                while (!block.isEmpty() && ScriptDecoder.getTabLevel(block.get(0).getText()) > 1) {
                     next = block.remove(0);
-                    next = next.with(shiftIndentation(next.text, 2));
+                    next = next.with(shiftIndentation(next.getText(), 2));
                     content.add(next);
                 }
 
@@ -130,12 +130,12 @@ public abstract class ScriptBlock extends IScript {
             }else {
                 //System.out.println("Can't find : "+next.text);
                 //Found a block which is not in a field, it's the mainField
-                List<ScriptLine> content = new ArrayList<>();
-                content.add(next.with(shiftIndentation(next.text, 1)));
+                List<ScriptToken> content = new ArrayList<>();
+                content.add(next.with(shiftIndentation(next.getText(), 1)));
                 //System.out.println("Added : "+next);
                 while (!block.isEmpty()) {
                     next = block.remove(0);
-                    next = next.with(shiftIndentation(next.text, 1));
+                    next = next.with(shiftIndentation(next.getText(), 1));
                     content.add(next);
                     //System.out.println("Added : "+next);
                 }
@@ -188,10 +188,10 @@ public abstract class ScriptBlock extends IScript {
     public static class ScriptLineBlock {
 
         private final List<ScriptLineBlock> subBlocks = new ArrayList<>();
-        private List<ScriptLine> content;
+        private List<ScriptToken> content;
         private String label;
 
-        public ScriptLineBlock(String label, List<ScriptLine> block) {
+        public ScriptLineBlock(String label, List<ScriptToken> block) {
             setLabel(label);
             setContent(block);
         }
@@ -204,11 +204,11 @@ public abstract class ScriptBlock extends IScript {
             this.subBlocks.add(subBlock);
         }
 
-        public List<ScriptLine> getContent() {
+        public List<ScriptToken> getContent() {
             return content;
         }
 
-        public void setContent(List<ScriptLine> content) {
+        public void setContent(List<ScriptToken> content) {
             this.content = content;
         }
 
@@ -237,11 +237,11 @@ public abstract class ScriptBlock extends IScript {
         }
 
         public ScriptType evaluate(ScriptCompileGroup group, ScriptContext context) throws Exception {
-            return ScriptDecoder.getExpression(content.get(0), group).get(context);
+            return ScriptDecoder.parseExpression(content.get(0), group).get(context);
         }
 
         public String getRawContent() {
-            return content.get(0).text.split("#")[0].trim();
+            return content.get(0).getText().split("#")[0].trim();
         }
 
         public ScriptType evaluate() throws Exception {

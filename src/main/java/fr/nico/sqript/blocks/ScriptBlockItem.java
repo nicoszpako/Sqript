@@ -2,7 +2,7 @@ package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.forge.SqriptForge;
 import fr.nico.sqript.forge.common.item.*;
 import fr.nico.sqript.meta.Block;
@@ -31,13 +31,13 @@ import java.io.FileWriter;
 public class ScriptBlockItem extends ScriptBlock {
 
 
-    public ScriptBlockItem(ScriptLine head) throws ScriptException {
+    public ScriptBlockItem(ScriptToken head) throws ScriptException {
         super(head);
     }
 
     @Override
     protected void load() throws Exception {
-        String registryName = getHead().text.replaceFirst("item\\s+(.*)", "$1").replaceAll(":", "").replaceAll(" ", "_").trim();
+        String registryName = getHead().getText().replaceFirst("item\\s+(.*)", "$1").replaceAll(":", "").replaceAll(" ", "_").trim();
         String texture = "";
         String model = "";
         String armorTexture;
@@ -104,13 +104,13 @@ public class ScriptBlockItem extends ScriptBlock {
             default:
                 item = new ScriptItemBase(displayName);
         }
-        item.setRegistryName(this.getHead().scriptInstance.getName(), registryName);
-        texture = this.getHead().scriptInstance.getName() + ":" + texture;
+        item.setRegistryName(this.getHead().getScriptInstance().getName(), registryName);
+        texture = this.getHead().getScriptInstance().getName() + ":" + texture;
         item.setUnlocalizedName(registryName);
         //System.out.println("Max stack size of item is : "+maxStackSize);
         item.setMaxStackSize(maxStackSize);
         item.setCreativeTab(tab);
-        SqriptForge.scriptItems.add(new ScriptItem(this.getHead().scriptInstance.getName(), model, item));
+        SqriptForge.scriptItems.add(new ScriptItem(this.getHead().getScriptInstance().getName(), model, item));
 
         createItem(registryName, texture, toolType);
 
@@ -121,7 +121,7 @@ public class ScriptBlockItem extends ScriptBlock {
         //System.out.println("Creating model file for item : "+registryName);
         if (!fieldDefined("model")) {
             //File scriptFile
-            File mainFolder = new File(ScriptManager.scriptDir, this.getHead().scriptInstance.getName());
+            File mainFolder = new File(ScriptManager.scriptDir, this.getHead().getScriptInstance().getName());
             if (!mainFolder.exists())
                 mainFolder.mkdir();
 
@@ -172,7 +172,7 @@ public class ScriptBlockItem extends ScriptBlock {
             reloadable = false)
     public static class ScriptBlockToolMaterial extends ScriptBlock {
 
-        public ScriptBlockToolMaterial(ScriptLine head) throws ScriptException {
+        public ScriptBlockToolMaterial(ScriptToken head) throws ScriptException {
             super(head);
         }
 
@@ -213,7 +213,7 @@ public class ScriptBlockItem extends ScriptBlock {
     public static class ScriptBlockArmorMaterial extends ScriptBlock {
 
 
-        public ScriptBlockArmorMaterial(ScriptLine head) throws ScriptException {
+        public ScriptBlockArmorMaterial(ScriptToken head) throws ScriptException {
             super(head);
         }
 

@@ -1,7 +1,7 @@
 package fr.nico.sqript.events;
 
 import fr.nico.sqript.meta.Event;
-import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.TypeFile;
 
 import java.io.File;
@@ -14,7 +14,7 @@ import java.io.File;
 public class EvtOnScriptLoad extends ScriptEvent {
 
     public EvtOnScriptLoad(File scriptFile) {
-        super(new ScriptAccessor(new TypeFile(scriptFile),"[script] file"));
+        super(new ScriptTypeAccessor(new TypeFile(scriptFile),"[script] file"));
     }
 
 }

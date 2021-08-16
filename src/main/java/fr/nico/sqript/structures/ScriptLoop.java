@@ -3,7 +3,7 @@ package fr.nico.sqript.structures;
 import fr.nico.sqript.compiling.ScriptCompileGroup;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptLine;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.meta.Loop;
@@ -29,7 +29,7 @@ public class ScriptLoop extends ScriptWrapper {
     }
 
 
-    public void build(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {
+    public void build(ScriptToken line, ScriptCompileGroup compileGroup) throws ScriptException {
     }
 
 
@@ -68,12 +68,12 @@ public class ScriptLoop extends ScriptWrapper {
 
 
         @Override
-        public void build(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {
-            String condition = line.text.replaceFirst("\\s*if\\s*", "").trim();
+        public void build(ScriptToken line, ScriptCompileGroup compileGroup) throws ScriptException {
+            String condition = line.getText().replaceFirst("\\s*if\\s*", "").trim();
             condition = condition.substring(0,condition.length()-1);
             line = line.with(condition);
-            ScriptLine transformed = new ScriptLine(condition, line.number, line.scriptInstance);
-            ScriptExpression scriptExpression = ScriptDecoder.getExpression(transformed, compileGroup);
+            ScriptToken transformed = new ScriptToken(condition, line.getLineNumber(), line.getScriptInstance());
+            ScriptExpression scriptExpression = ScriptDecoder.parseExpression(transformed, compileGroup);
             setLine(line);
             if (scriptExpression != null)
                 setCondition(scriptExpression);
@@ -114,7 +114,7 @@ public class ScriptLoop extends ScriptWrapper {
         }
 
         @Override
-        public void build(ScriptLine line, ScriptCompileGroup compileGroup) {
+        public void build(ScriptToken line, ScriptCompileGroup compileGroup) {
 
         }
     }
@@ -139,11 +139,10 @@ public class ScriptLoop extends ScriptWrapper {
         }
 
         @Override
-        public void build(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {
-            line = line.with(line.text.replaceFirst("\\s*", ""));
-
-            ScriptLine transformed = new ScriptLine(line.text.replaceFirst("\\s*else if\\s*", "").replaceAll(":", ""), line.number, line.scriptInstance);
-            ScriptExpression scriptExpression = ScriptDecoder.getExpression(transformed, new ScriptCompileGroup());
+        public void build(ScriptToken line, ScriptCompileGroup compileGroup) throws ScriptException {
+            line = line.with(line.getText().replaceFirst("\\s*", ""));
+            ScriptToken transformed = new ScriptToken(line.getText().replaceFirst("\\s*else if\\s*", "").replaceAll(":", ""), line.getLineNumber(), line.getScriptInstance());
+            ScriptExpression scriptExpression = ScriptDecoder.parseExpression(transformed, new ScriptCompileGroup());
             if (scriptExpression != null)
                 setCondition(scriptExpression);
             else {
@@ -160,20 +159,20 @@ public class ScriptLoop extends ScriptWrapper {
         TypeArray typeArray = null;
 
         @Override
-        public void build(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {
-            line = line.with(line.text.replaceFirst("\\s*", ""));
+        public void build(ScriptToken line, ScriptCompileGroup compileGroup) throws ScriptException {
+            line = line.with(line.getText().replaceFirst("\\s*", ""));
             Pattern p = Pattern.compile("\\s*for (\\{.*}) in\\s+(.*):\\s*$");
-            Matcher m = p.matcher(line.text);
+            Matcher m = p.matcher(line.getText());
             if (m.matches()) {
                 String varName = m.group(1);
                 String array = m.group(2);
                 //System.out.println("ARRAY IS : " + array + " " + line.toString());
-                ScriptExpression scriptExpression = ScriptDecoder.getExpression(line.with(array), compileGroup);
+                ScriptExpression scriptExpression = ScriptDecoder.parseExpression(line.with(array), compileGroup);
                 Class<? extends ScriptElement> type;
                 if (scriptExpression == null)
                     throw new ScriptException.ScriptUnknownExpressionException(line);
                 if (scriptExpression.getClass().getAnnotation(Expression.class) != null)
-                    type = ScriptDecoder.getType(scriptExpression.getClass().getAnnotation(Expression.class).patterns()[scriptExpression.getMatchedIndex()].split(":")[1]);
+                    type = ScriptDecoder.parseType(scriptExpression.getClass().getAnnotation(Expression.class).patterns()[scriptExpression.getMatchedIndex()].split(":")[1]);
                 else
                     type = scriptExpression.getReturnType();
                 assert type != null;
@@ -192,10 +191,10 @@ public class ScriptLoop extends ScriptWrapper {
 
         @Override
         public IScript getNext(ScriptContext context) throws ScriptException {
-            if (context.get(varHash) == null) {
-                context.put(new ScriptAccessor(new TypeNumber(-1), varHash));
+            if (context.getVariable(varHash) == null) {
+                context.put(new ScriptTypeAccessor(new TypeNumber(-1), varHash));
             }
-            TypeNumber index = (TypeNumber) context.get(varHash);
+            TypeNumber index = (TypeNumber) context.getVariable(varHash);
             //System.out.println(index);
             index.setObject(index.getObject() + 1);
             if (index.getObject() == 0) {
@@ -206,7 +205,7 @@ public class ScriptLoop extends ScriptWrapper {
             if (index.getObject() < typeArray.getObject().size() && !broken) {
                 //System.out.println("Added variable "+sa+", now it contains : "+context.printVariables());
                 //System.out.println("Executing : "+((ScriptContainer)(wrapped)).subScripts.get(0).getClass().getSimpleName());
-                ScriptAccessor sa = new ScriptAccessor((ScriptType<?>) typeArray.getObject().get(index.getObject().intValue()), varHash);
+                ScriptTypeAccessor sa = new ScriptTypeAccessor((ScriptType<?>) typeArray.getObject().get(index.getObject().intValue()), varHash);
                 context.put(sa);
                 return getWrapped();
             } else {
@@ -229,10 +228,10 @@ public class ScriptLoop extends ScriptWrapper {
 
 
         @Override
-        public void build(ScriptLine line, ScriptCompileGroup compileGroup) throws ScriptException {
-            line = line.with(line.text.replaceFirst("\\s*", ""));
-            ScriptLine transformed = line.with(line.text.replaceFirst("\\s*while\\s*", "").replaceAll(":", ""));
-            ScriptExpression scriptExpression = ScriptDecoder.getExpression(transformed, compileGroup);
+        public void build(ScriptToken line, ScriptCompileGroup compileGroup) throws ScriptException {
+            line = line.with(line.getText().replaceFirst("\\s*", ""));
+            ScriptToken transformed = line.with(line.getText().replaceFirst("\\s*while\\s*", "").replaceAll(":", ""));
+            ScriptExpression scriptExpression = ScriptDecoder.parseExpression(transformed, compileGroup);
             this.setLine(line);
             if (scriptExpression != null)
                 this.condition = scriptExpression;
