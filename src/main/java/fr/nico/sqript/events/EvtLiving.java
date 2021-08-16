@@ -1,7 +1,7 @@
 package fr.nico.sqript.events;
 
 import fr.nico.sqript.meta.Event;
-import fr.nico.sqript.structures.ScriptAccessor;
+import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeDamageSource;
 import fr.nico.sqript.types.TypeEntity;
@@ -10,7 +10,6 @@ import fr.nico.sqript.types.primitive.TypeNumber;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import sun.net.ftp.FtpDirEntry;
 
 public class EvtLiving {
 
@@ -23,7 +22,7 @@ public class EvtLiving {
     )
     public static class EvtOnLivingDamage extends ScriptEvent {
         public EvtOnLivingDamage(Entity victim, DamageSource damageSource, float amount) {
-            super(new ScriptAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptAccessor(new TypeNumber(amount),"amount"));
+            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptTypeAccessor(new TypeNumber(amount),"amount"));
         }
     }
 
@@ -36,7 +35,7 @@ public class EvtLiving {
     )
     public static class EvtOnLivingDeath extends ScriptEvent {
         public EvtOnLivingDeath(Entity victim, DamageSource damageSource) {
-            super(new ScriptAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptAccessor(new TypeDamageSource(damageSource),"damageType"));
+            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource),"damageType"));
         }
     }
 
@@ -49,7 +48,7 @@ public class EvtLiving {
     )
     public static class EvtOnLivingFall extends ScriptEvent {
         public EvtOnLivingFall(Entity victim, float distance, float damageMultiplier) {
-            super(new ScriptAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptAccessor(new TypeNumber(distance),"distance"), new ScriptAccessor(new TypeNumber(damageMultiplier),"damageMultiplier"));
+            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptTypeAccessor(new TypeNumber(distance),"distance"), new ScriptTypeAccessor(new TypeNumber(damageMultiplier),"damageMultiplier"));
         }
     }
 
@@ -62,7 +61,7 @@ public class EvtLiving {
     )
     public static class EvtOnLivingDrops extends ScriptEvent {
         public EvtOnLivingDrops(Entity victim, DamageSource damageSource, TypeArray typeArray) {
-            super(new ScriptAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptAccessor(typeArray,"drops"));
+            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptTypeAccessor(typeArray,"drops"));
         }
     }
 }
