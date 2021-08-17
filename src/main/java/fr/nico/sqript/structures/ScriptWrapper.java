@@ -4,17 +4,14 @@ import fr.nico.sqript.compiling.ScriptException;
 
 public abstract class ScriptWrapper extends IScript {
 
-
-
-
     private IScript wrapped;
 
     public IScript getWrapped() {
         return wrapped;
     }
 
-    public void wrap(IScript wrapped) {
-        this.wrapped = wrapped;
+    public void wrap(IScript wrap) {
+        this.wrapped = wrap;
     }
 
     public ScriptWrapper(IScript wrapped){

@@ -42,7 +42,7 @@ public class ScriptToken {
 
     @Override
     public String toString() {
-        return "[line n°"+(lineNumber +1)+"] \""+ text+"\"";
+        return "["+getScriptInstance().getScriptFile().getName()+" at line n°"+(lineNumber +1)+"] \""+ text+"\"";
     }
 
     @Override
