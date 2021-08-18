@@ -2,13 +2,11 @@ package fr.nico.sqript.events;
 
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
-import fr.nico.sqript.types.TypeArray;
-import fr.nico.sqript.types.TypeDamageSource;
-import fr.nico.sqript.types.TypeEntity;
-import fr.nico.sqript.types.TypeNull;
+import fr.nico.sqript.types.*;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 public class EvtLiving {
@@ -62,6 +60,19 @@ public class EvtLiving {
     public static class EvtOnLivingDrops extends ScriptEvent {
         public EvtOnLivingDrops(Entity victim, DamageSource damageSource, TypeArray typeArray) {
             super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptTypeAccessor(typeArray,"drops"));
+        }
+    }
+
+    @Cancelable
+    @Event(name = "EntityJoin World",
+            description = "This event is triggered when an entity is added to the world.",
+            examples = "on entity join world:",
+            patterns = "entity join world",
+            accessors = {"entity:entity", "world:world"}
+    )
+    public static class EvtOnEntityJoinWorld extends ScriptEvent {
+        public EvtOnEntityJoinWorld(Entity entity, World world) {
+            super(new ScriptTypeAccessor(entity != null ? new TypeEntity(entity) : new TypeNull(),"entity"), new ScriptTypeAccessor(new TypeWorld(world),"world"));
         }
     }
 }

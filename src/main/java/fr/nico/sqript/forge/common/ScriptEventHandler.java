@@ -18,6 +18,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
@@ -262,6 +263,13 @@ public class ScriptEventHandler {
     }
 
     @SubscribeEvent
+    public void onLivingDrops(EntityJoinWorldEvent event){
+        if(ScriptManager.callEvent(new EvtLiving.EvtOnEntityJoinWorld(event.getEntity(), event.getWorld()))){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
     public void onPlayerDrops(PlayerDropsEvent event){
         ArrayList< TypeItem > list = new ArrayList<>();
         event.getDrops().forEach(entityItem -> { list.add(new TypeItem(entityItem.getItem())); });
@@ -282,4 +290,5 @@ public class ScriptEventHandler {
     public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event){
         ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerRespawnEvent(event.player, event.isEndConquered()));
     }
+
 }
