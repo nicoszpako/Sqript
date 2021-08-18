@@ -263,7 +263,7 @@ public class ScriptEventHandler {
     }
 
     @SubscribeEvent
-    public void onLivingDrops(EntityJoinWorldEvent event){
+    public void onEntityJoinWorld(EntityJoinWorldEvent event){
         if(ScriptManager.callEvent(new EvtLiving.EvtOnEntityJoinWorld(event.getEntity(), event.getWorld()))){
             event.setCanceled(true);
         }
