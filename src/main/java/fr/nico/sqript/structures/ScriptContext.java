@@ -137,7 +137,7 @@ public class ScriptContext {
         if (parent != null) {
             return parent.getHash(variableName);
         }
-        return 0;
+        return variableName.hashCode();
     }
 
     /**
@@ -163,7 +163,9 @@ public class ScriptContext {
         }
         if (parent != null)
             return parent.getAccessor(token);
-        return null;
+        ScriptTypeAccessor typeAccessor = new ScriptTypeAccessor(null, token);
+        put(typeAccessor);
+        return typeAccessor;
     }
 
     public void put(ScriptTypeAccessor accessor) {
@@ -196,5 +198,9 @@ public class ScriptContext {
 
     public void setReturnValue(ScriptTypeAccessor returnValue) {
         this.returnValue = returnValue;
+    }
+
+    public ScriptTypeAccessor getAccessor(Integer varHash) {
+        return variables.get(varHash);
     }
 }

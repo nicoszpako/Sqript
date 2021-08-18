@@ -78,4 +78,32 @@ public class ScriptTypeAccessor {
     public Pattern getPattern() {
         return pattern;
     }
+
+    public ScriptType getElement() {
+        return element;
+    }
+
+    public void setElement(ScriptType element) {
+        this.element = element;
+    }
+
+    public void setPattern(Pattern pattern) {
+        this.pattern = pattern;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public int getHash() {
+        return hash;
+    }
+
+    public void setHash(int hash) {
+        this.hash = hash;
+    }
 }
