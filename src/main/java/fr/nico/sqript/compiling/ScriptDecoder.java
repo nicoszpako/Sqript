@@ -936,7 +936,7 @@ public class ScriptDecoder {
                     }
                     while (c + 1 < lines.size() && ScriptDecoder.getTabLevel((lines.get(c + 1).getText())) > tabLevel);
 
-                    ((ScriptLoop.ScriptLoopIF) (script)).wrap(group(script, ifContainer, compileGroup));
+                    ((ScriptLoop.ScriptLoopIF) (script)).wrap(script);
 
                     if (previousAddedScript != null && (script instanceof ScriptLoop.ScriptLoopELSE || script instanceof ScriptLoop.ScriptLoopELSEIF)) {
                         if (previousAddedScript instanceof ScriptLoop.ScriptLoopIF) {
@@ -946,7 +946,7 @@ public class ScriptDecoder {
                             throw new ScriptException.ScriptSyntaxException(line, "else statement not following an if statement");
                         }
                     }
-                } else {//While-loop and for-loop
+                } else {//Other control structures
                     //System.out.println(c+" "+lines.get(c+1).text+" "+tabLevel+" | "+lines.size());
                     if (c + 1 < lines.size() && ScriptDecoder.getTabLevel(lines.get(c + 1).getText()) == tabLevel)
                         throw new ScriptException.ScriptIndentationErrorException(lines.get(c + 1));
@@ -962,6 +962,8 @@ public class ScriptDecoder {
                         throw new ScriptException.ScriptEmptyLoopException(line);
                     }
                     IScript grouped = group(script, forContainer, compileGroup);
+                    grouped.setParent(script);
+                    grouped.setLine(forContainer.get(0));
                     ((ScriptLoop) (script)).wrap(grouped);
                 }
 

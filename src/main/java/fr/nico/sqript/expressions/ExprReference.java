@@ -69,25 +69,22 @@ public class ExprReference extends ScriptExpression {
 
     @Override
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) throws ScriptException {
-        int varHash;
         if (global)
             context = ScriptManager.GLOBAL_CONTEXT;
         if (this.varHash == null) {
             String var = stringExpression.get(context).getObject().toString();
             //System.out.println("Setting  var hash for : "+var+" : "+var.hashCode());
             //System.out.println("Context vars are : "+context.printVariables());
-            varHash = var.hashCode();
-            if (varHash == 0)
-                varHash = context.getHash(line.getText());
-            ScriptTypeAccessor accessor = new ScriptTypeAccessor(to, varHash);
-            accessor.key = var;
-            context.put(accessor);
+            varHash = context.getHash(line.getText());
+            ScriptTypeAccessor typeAccessor = context.getAccessor(var);
+            typeAccessor.setElement(to);
         } else {
             //System.out.println("Setting reference for : "+line.text+", its null ? : "+(context.get(varHash)==null));
             //System.out.println("varHash : "+this.varHash);
             //System.out.println("Context vars are : "+context.printVariables());
             //System.out.println("Result is null : "+(context.get(this.varHash)==null));
-            context.put(new ScriptTypeAccessor(to, this.varHash));
+            ScriptTypeAccessor typeAccessor = context.getAccessor(varHash);
+            typeAccessor.setElement(to);
         }
 
         return true;
