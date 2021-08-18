@@ -4,6 +4,7 @@ import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Action;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
@@ -24,21 +25,44 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Action(name = "Draw Actions",
-        description ="Draw something on the screen. Must be used in an appropriated event !",
-        examples = {"draw \"Hello !\" at [0,100] with scale 2"
-        },
-        patterns = {
-            "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number}]",
-            "draw [colored] rect[angle] at {array} with size {array} [and] with color {number} [(1;without alpha)]",
-            "draw textured rect[angle] at {array} with size {array} (with|using) texture {resource} [with uv {array}]",
-            "draw line from {array} to {array} with stroke {number} [and] with color {number}",
-            "rotate canvas by {number} [((1;degrees)|(2;radians))]", //Default is degrees
-            "translate canvas by {array}",
-            "scale canvas by {array}",
-            "push canvas matrix",
-            "pop canvas matrix"
-        },
-        side = Side.CLIENT
+        features = {
+            @Feature(name = "Draw text",description = "Draws a string at a specific position on the screen.",examples = "draw text \"Health : %player's health%\" at [10,10]", pattern = "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number}]", side = Side.CLIENT),
+            @Feature(name = "Draw rectangle",description = "Draws a coloured filled custom sized rectangle at a specific position on the screen.", examples = "draw rectangle at [10,10] with size [20,5] with color 0xFFFF0000",pattern = "draw [colored] rect[angle] at {array} with size {array} [and] with color {number} [(1;without alpha)]", side = Side.CLIENT),
+            @Feature(name = "Draw textured rectangle",description = "Draws a textured custom sized rectangle at a specific position on the screen.", examples = "draw textured rectangle at [-15,-7.5] with size [30,15] using texture sample:logo.png",pattern = "draw textured rect[angle] at {array} with size {array} (with|using) texture {resource} [with uv {array}]", side = Side.CLIENT),
+            @Feature(name = "Draw line",description = "Draws a line between given positions on the screen.", examples = "draw line from [10,10] to [100,100] with stroke 6 and with color 0",pattern = "draw line from {array} to {array} with stroke {number} [and] with color {number}", side = Side.CLIENT),
+            @Feature(name = "Rotate canvas",description = "Rotate the draw canvas.",
+                    examples =
+                    "draw text \"Text 1\" at [10,10] #Won't be rotated\n" +
+                    "push canvas matrix #Pushes a new matrix onto the matrix pile\n" +
+                    "rotate canvas by 90 degrees\n" +
+                    "draw text \"Text 2\" at [20,20] #Will be displayed rotated by 90 degrees\n" +
+                    "pop canvas matrix\n" +
+                    "draw text \"Text 3\" at [20,20] #Won't be rotated because the matrix has been popped.",
+                    pattern = "rotate canvas by {number} [((1;degrees)|(2;radians))]",
+                    side = Side.CLIENT),
+            @Feature(name = "Translate canvas",description = "Translate the draw canvas.",
+                    examples =
+                            "draw text \"Text 1\" at [10,10] #Won't be translated\n" +
+                                    "push canvas matrix #Pushes a new matrix onto the matrix pile\n" +
+                                    "translate canvas by [10,0,0]\n" +
+                                    "draw text \"Text 2\" at [20,20] #Will be displayed translated by 10 units to the right\n" +
+                                    "pop canvas matrix\n" +
+                                    "draw text \"Text 3\" at [20,20] #Won't be translated because the matrix has been popped.",
+                    pattern = "translate canvas by {array}",
+                    side = Side.CLIENT),
+            @Feature(name = "Scale canvas",description = "Scale the draw canvas.",
+                    examples =
+                            "draw text \"Text 1\" at [10,10] #Won't be scaled\n" +
+                                    "push canvas matrix #Pushes a new matrix onto the matrix pile\n" +
+                                    "scale canvas by [2,2,2]\n" +
+                                    "draw text \"Text 2\" at [20,20] #Will be displayed scaled by 2\n" +
+                                    "pop canvas matrix\n" +
+                                    "draw text \"Text 3\" at [20,20] #Won't be scaled because the matrix has been popped.",
+                    pattern = "scale canvas by {array}",
+                    side = Side.CLIENT),
+            @Feature(name = "Push canvas matrix",description = "Pushes a new matrix onto the matrix pile. Allows to \"save the current\" matrix configuration.", examples = "push canvas matrix",pattern = "push canvas matrix", side = Side.CLIENT),
+            @Feature(name = "Pop canvas matrix",description = "Pops the top matrix from the matrix pile. Allows to \"come back to the previous\" matrix configuration.", examples = "pop canvas matrix",pattern = "pop canvas matrix", side = Side.CLIENT),
+        }
 )
 public class ActDraw extends ScriptAction {
 

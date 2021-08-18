@@ -8,6 +8,7 @@ import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Action;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.ScriptType;
@@ -15,11 +16,10 @@ import fr.nico.sqript.types.ScriptType;
 import java.util.List;
 
 @Action(name = "Simple Operation Actions",
-        description ="Add, remove or set a variable to another",
-        examples = "add 1 to A",
-        patterns = {"add {element} to {element}",
-                "remove {element} to {element}",
-                "set {element} to {element}",
+        features = {
+                @Feature(name = "Add an element to another", description = "Adds an element to another elements if the + operation can be applied on it.", examples = {"add \"d\" to [\"a\",\"b\",\"c\"]", "add 1 to {counter}"}, pattern = "add {element} to {element}"),
+                @Feature(name = "Remove an element from another", description = "Removes an element from another element if the - operation can be applied on it.", examples = {"remove \"c\" from [\"a\",\"b\",\"c\"]", "remove 1 from player's health"}, pattern = "remove {element} to {element}"),
+                @Feature(name = "Set an element to another", description = "Defines the value of an element.", examples = {"set player's health to 20", "set {variable} to 8"}, pattern = "set {element} to {element}")
         }
 )
 public class ActDefinition extends ScriptAction {

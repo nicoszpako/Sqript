@@ -1,29 +1,23 @@
 package fr.nico.sqript.actions;
 
-import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Action;
-import fr.nico.sqript.structures.IOperation;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeDictionary;
 import fr.nico.sqript.types.interfaces.IIndexedCollection;
 
 import java.util.Collections;
-import java.util.Comparator;
 
 @Action(name = "Arrays Actions",
-        description ="Arrays relative actions",
-        examples = "shuffle array",
-        patterns = {
-            "shuffle {array}",
-            "add elements of {array} to {array}",
-            "remove elements of {array} from {array}",
-            "sort ((2;elements)|(3;keys)) of {array} [by] [(0;ascending)|(1;descending)] [order]"
-
+        features = {
+        @Feature(name = "Shuffle array", description = "Randomly shuffles the elements of an array.",examples = "shuffle [1,2,3,4,5,6]", pattern = "shuffle {array}"),
+        @Feature(name = "Add an array to another array", description = "Adds the elements of an array to another array.",examples = "add [1,2,3] to [4,5,6]", pattern = "add elements of {array} to {array}"),
+        @Feature(name = "Remove an array from an array", description = "Removes the elements of an array from another array.",examples = "remove [\"a\",\"b\"] from [\"a\",\"b\",\"c\"]\n", pattern = "remove elements of {array} from {array}"),
+        @Feature(name = "Sort elements of an array", description = "Sort an array in ascending or descending order if their elements are comparable. Dictionaries can also be sorted, in this case by default they are sorted by keys but you can also sort them by values.",examples = "sort elements of [1,5,7,4,2,3]\n", pattern = "sort ((2;elements)|(3;keys)) of {array} [by] [(0;ascending)|(1;descending)] [order]"),
         },
         priority=1
 )

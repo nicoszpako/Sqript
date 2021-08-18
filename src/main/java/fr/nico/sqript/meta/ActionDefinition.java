@@ -11,17 +11,13 @@ import java.util.regex.Matcher;
 public class ActionDefinition {
 
     String name;
-    String[] description;
-    String[] patterns;
-    String[] example;
-    Side side;
+    Feature[] features;
+    public TransformedPattern[] transformedPatterns;
+    final int priority;
+
     public int getPriority() {
         return priority;
     }
-
-    final int priority;
-
-    public TransformedPattern[] transformedPatterns;
 
     //[0] : index
     //[1] : marks
@@ -39,29 +35,22 @@ public class ActionDefinition {
         return new int[0];
     }
 
-    public Side getSide() {
-        return side;
-    }
-
     public Class<? extends ScriptAction> getActionClass() {
         return cls;
     }
 
     public Class<? extends ScriptAction> cls;
 
-    public ActionDefinition(String name, String[] description, String[] example, Class<? extends ScriptAction> cls, int priority, Side side, @Nullable String... patterns) {
+    public ActionDefinition(String name, Class<? extends ScriptAction> cls, int priority, @Nullable Feature... features) {
         this.name = name;
-        this.example = example;
-        this.description = description;
         this.cls=cls;
         this.priority=priority;
-        this.side=side;
-        if(patterns!=null){
-            this.patterns = patterns;
-            this.transformedPatterns = new TransformedPattern[patterns.length];
-            for(int i = 0;i<this.patterns.length;i++){
+        if(features!=null){
+            this.features = features;
+            this.transformedPatterns = new TransformedPattern[this.features.length];
+            for(int i = 0; i<this.features.length; i++){
                 try {
-                    this.transformedPatterns[i]=ScriptDecoder.transformPattern(patterns[i]);
+                    this.transformedPatterns[i]=ScriptDecoder.transformPattern(this.features[i].pattern());
                     //System.out.println("Regex for "+patterns[i]+" is : "+transformedPatterns[i].getRegex());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -79,27 +68,9 @@ public class ActionDefinition {
         this.name = name;
     }
 
-    public String[] getExample() {
-        return example;
+
+    public Feature[] getFeatures() {
+        return features;
     }
 
-    public void setExample(String[] example) {
-        this.example = example;
-    }
-
-    public String[] getDescription() {
-        return description;
-    }
-
-    public void setDescription(String[] description) {
-        this.description = description;
-    }
-
-    public String[] getPatterns() {
-        return patterns;
-    }
-
-    public void setPatterns(String... patterns) {
-        this.patterns = patterns;
-    }
 }

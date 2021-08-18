@@ -2,20 +2,19 @@ package fr.nico.sqript.actions;
 
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptLoop;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeNumber;
 
-@Action(name = "Return Actions",
-        description ="Return values and cancel events",
-        examples = "return cos(x)",
-        patterns = {
-        "return {element}",
-        "cancel event",
-        "break loop",
-        "break {number} loops"
+@Action(name = "Return/break Actions",
+        features = {
+        @Feature(name = "Return", description = "In a function, returns a value to be used as a result of the function", examples = "function plusOne(n):\n    return n + 1", pattern = "return {element}"),
+        @Feature(name = "Cancel event", description = "In an event, cancels it.", examples = "on player movement:\n    cancel event", pattern = "cancel event"),
+        @Feature(name = "Break loop", description = "In a loop, interrupts it and exit it.", examples = "for {i} in numbers in range of 10:\n   if {i} = 9:\n      break loop",pattern = "break loop"),
+        @Feature(name = "Break multiple loops", description = "In multiple loop, interrupts a specific number of loops and exit them.", examples = "for {i} in numbers in range of 10:\n   for {j} in numbers in range of 10:\n      if {j} = 9:\n         break 2 loops",pattern = "break loops"),
         }
 )
 public class ActReturn extends ScriptAction {

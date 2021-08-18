@@ -119,8 +119,8 @@ public class ScriptManager {
 
     public static final boolean FULL_DEBUG = true;
 
-    public static void registerExpression(Class<? extends ScriptExpression> exp, String name, String[] description, String example[], int priority, Side side,String... patterns) {
-        expressions.add(new ExpressionDefinition(name, description, example, exp, priority, side, patterns));
+    public static void registerExpression(Class<? extends ScriptExpression> exp, String name, int priority, Feature... features) {
+        expressions.add(new ExpressionDefinition(name, exp, priority, features));
         expressions.sort((a,b)->b.getPriority()-a.getPriority());
         log.debug("Registering expression : " + name + " (" + exp.getSimpleName() + ")");
     }
@@ -165,9 +165,9 @@ public class ScriptManager {
         events.add(new EventDefinition(name, description, example, cls, side, patterns).setAccessors(accessors));
     }
 
-    public static void registerAction(Class<? extends ScriptAction> cls, String name, String[] description, String[] example, int priority, Side side, String... patterns) {
+    public static void registerAction(Class<? extends ScriptAction> cls, String name, int priority, Feature... features) {
         log.debug("Registering action : " + name + " (" + cls.getSimpleName() + ")");
-        actions.add(new ActionDefinition(name, description, example, cls, priority, side, patterns));
+        actions.add(new ActionDefinition(name, cls, priority, features));
     }
 
     public static void registerBlock(Class<? extends ScriptBlock> cls, String name, String description, String[] examples, String regex, Side side, boolean reloadable) {

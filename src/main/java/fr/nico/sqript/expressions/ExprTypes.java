@@ -1,24 +1,21 @@
 package fr.nico.sqript.expressions;
 
-import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.meta.Expression;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeNull;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeString;
 
 @Expression(name = "Types Expressions",
-        description = "Manipulate the type of a variable",
-        examples = "type of \"test\"",
-        patterns = {
-            "type of {element}:string",
-            "{element} parsed as {string}:element",
-            "{element} is (set|defined):boolean",
-            "{element} is not (set|defined):boolean",
-            "{element} is not {element}:boolean",
-            "{element} is {element}:boolean",
+        features = {
+            @Feature(name = "Type of element", description = "Returns the type of an element.", examples = "type of {my_variable}", pattern = "type of {element}", type = "string"),
+            @Feature(name = "Element parsed as another type", description = "Returns the element parsed as another given type.", examples = "\"5\" parsed as \"number\" #Returns 5", pattern = "{element} parsed as {string}"),
+            @Feature(name = "Element is set", description = "Returns whether a given element is defined (not null).", examples = "{my_variable} is defined", pattern = "{element} is (set|defined)", type = "boolean"),
+            @Feature(name = "Element is not set", description = "Returns whether a given element is not defined (null).", examples = "{my_variable} is not defined", pattern = "{element} is not (set|defined)", type = "boolean"),
+            @Feature(name = "Element is not element (is not equal to)", description = "Returns whether a given element is not equal to another one.", examples = "{my_variable} is not \"Test\"", pattern = "{element} is not {element}", type = "boolean"),
+            @Feature(name = "Element is element (is equal to)", description = "Returns whether a given element is equal to another one.", examples = "{my_variable} is \"Test\"", pattern = "{element} is {element}", type = "boolean"),
         },
         priority = -2
 )

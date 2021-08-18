@@ -2,8 +2,8 @@ package fr.nico.sqript.actions;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Action;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeItem;
@@ -19,11 +19,8 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import java.util.Objects;
 
 @Action(name = "Drop",
-        description ="Drops an item somewhere",
-        examples = {"drop 1 minecraft:diamond at [11,65,-24]"
-        },
-        patterns = {
-            "drop [{+number}] {item} at {array}"
+        features = {
+            @Feature(name = "Drop an item",description = "Drops an item somewhere.",examples = "drop 1 minecraft:diamond_sword at player's location", pattern = "drop [{+number}] {item} at {array}")
         }
 )
 public class ActDrop extends ScriptAction {

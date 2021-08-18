@@ -1,18 +1,14 @@
 package fr.nico.sqript.actions;
 
 import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.expressions.ScriptExpression;
 
 @Action(name = "Print Actions",
-        description ="Prints something in console",
-        examples = {"print \"Hello world !\""
-        },
-        patterns = {
-            "print {element}"
-        }
+        features = @Feature(name = "Print", description = "Prints something in the console.", examples = "print \"Hello world !\"", pattern = "print {element}")
 )
 public class ActPrint extends ScriptAction {
 

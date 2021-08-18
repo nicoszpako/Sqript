@@ -1,6 +1,7 @@
 package fr.nico.sqript.actions;
 
 import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeItem;
 import fr.nico.sqript.compiling.ScriptException;
@@ -13,19 +14,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import scala.annotation.meta.param;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 @Action(name = "Player Actions",
-        description ="Player related actions",
-        examples = {"teleport player at location at 5 8 9"
-        },
-        patterns = {
-                "teleport {player} to {array}",
-                "give [{+number}] {item} to {player}",
-                "kick {player} [with message {string}]",
+        features = {
+            @Feature(name = "Teleport player", description = "Teleports a player to a given location.", examples = "teleport player at [10,25,20]", pattern = "teleport {player} to {array}"),
+            @Feature(name = "Give item to player", description = "Gives an item to a player.", examples = "give 1 minecraft:diamond_sword to player\n", pattern = "give [{+number}] {item} to {player}"),
+            @Feature(name = "Kick player", description = "Kicks a player from the server.", examples = "kick player with message \"You've been kicked for cheating\"", pattern = "kick {player} [with message {string}]")
         }
 )
 public class ActPlayer extends ScriptAction {
