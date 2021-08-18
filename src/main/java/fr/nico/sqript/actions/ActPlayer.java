@@ -1,11 +1,13 @@
 package fr.nico.sqript.actions;
 
 import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeItem;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,7 +38,7 @@ public class ActPlayer extends ScriptAction {
             case 0:
                 EntityPlayer player = (EntityPlayer) getParameters().get(0).get(context).getObject();
                 ArrayList pos = (ArrayList) getParameters().get(1).get(context).getObject();
-                player.setPositionAndUpdate((double)pos.get(0), (double)pos.get(1),(double) pos.get(2));
+                player.setPositionAndUpdate(((TypeNumber)pos.get(0)).getObject(), ((TypeNumber)pos.get(1)).getObject(),((TypeNumber)pos.get(2)).getObject());
                 return;
             case 1:
                 int amount = getParameterOrDefault(getParameter(1),1, context);

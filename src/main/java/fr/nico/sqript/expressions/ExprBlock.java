@@ -1,21 +1,19 @@
 package fr.nico.sqript.expressions;
 
-import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeBlock;
-
-import fr.nico.sqript.types.TypeNull;
 import fr.nico.sqript.types.interfaces.ILocatable;
+import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
+import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -26,7 +24,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 @Expression(name = "Block Expressions",
         description = "Manipulate blocks",
@@ -36,7 +33,8 @@ import java.util.Arrays;
             "blocks in radius {number} around {element} [in world {number}]:array",
             "{resource} with metadata {number}:block",
             "{block} color [in world {number}]:number",
-            "terrain height at {array} [in world {number}]:number"
+            "terrain height at {array} [in world {number}]:number",
+            "name of {block}:string"
         }
 )
 public class ExprBlock extends ScriptExpression {
@@ -103,6 +101,9 @@ public class ExprBlock extends ScriptExpression {
                 ILocatable location = (ILocatable) parameters[0];
                 Chunk chunk = world.getChunkFromBlockCoords(location.getPos());
                 return new TypeNumber(chunk.getHeight(location.getPos()));
+            case 5:
+                blockstate = (TypeBlock) parameters[0];
+                return new TypeString(blockstate.getObject().getBlock().getLocalizedName());
         }
         return null;
     }
