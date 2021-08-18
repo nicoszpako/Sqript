@@ -8,13 +8,12 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Action {
 
+    /**
+     * @return The global name of this class.
+     */
     String name();
-    String[] description();
-    String[] examples();
-    String[] patterns();
-    Side side() default Side.BOTH;
 
-    //Highest priorities are checked first
+    Feature[] features();
+
     int priority() default 0;
-
 }

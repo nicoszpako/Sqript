@@ -2,19 +2,16 @@ package fr.nico.sqript.expressions;
 
 
 import fr.nico.sqript.meta.Expression;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeDate;
 import fr.nico.sqript.types.primitive.TypeNumber;
 
-import java.util.Arrays;
-
 @Expression(name = "Date Expressions",
-        description = "Manipulate dates",
-        examples = "15 minutes and 4 seconds",
-        patterns = {
-                "[{number} year[s]] [[and] {number} month[s]] [[and] {number} week[s]] [[and] {number} day[s]] [[and] {number} hour[s]] [[and] {number} minute[s]] [[and] {number} second[s]] [[and] {number} tick[s]]",
-                "now"
+        features = {
+                @Feature(name = "Date", description = "Returns the given date or time.", examples = "15 minutes and 4 seconds", pattern = "[{number} year[s]] [[and] {number} month[s]] [[and] {number} week[s]] [[and] {number} day[s]] [[and] {number} hour[s]] [[and] {number} minute[s]] [[and] {number} second[s]] [[and] {number} tick[s]]", type = "date"),
+                @Feature(name = "Now", description = "Returns the current date.", examples = "now", pattern = "now", type = "date")
         })
 public class ExprDate extends ScriptExpression{
 

@@ -3,17 +3,15 @@ package fr.nico.sqript.actions;
 import fr.nico.sqript.ScriptTimer;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptClock;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.TypeDate;
 
 @Action(name = "Wait Actions",
-        description ="Delays actions",
-        examples = "wait 5 seconds",
-        patterns = {
-                "wait {date}",
-                "delay {date}"
+        features = {
+            @Feature(name = "Wait/delay",description = "Delays the execution of the script of a specific amount of time.",examples = "wait 10 seconds",pattern = "(wait|delay) {date}")
         }
 )
 public class ActWait extends ScriptAction {

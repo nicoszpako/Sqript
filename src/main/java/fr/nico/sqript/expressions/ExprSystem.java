@@ -2,13 +2,11 @@ package fr.nico.sqript.expressions;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.meta.Expression;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
-import fr.nico.sqript.types.TypeConsole;
-import fr.nico.sqript.types.TypeItem;
 import fr.nico.sqript.types.primitive.TypeString;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.lwjgl.opengl.Display;
@@ -19,12 +17,10 @@ import java.io.*;
 import java.nio.ByteBuffer;
 
 @Expression(name = "System Expressions",
-        description = "Get informations about the system",
-        examples = "execution side",
-        patterns = {
-            "[execution] side:string",
-            "window (name|title):string",
-            "window icons:array"
+        features = {
+            @Feature(name = "Execution side", description = "Returns the current execution side.", examples = "execution side", pattern = "[execution] side", type = "string"),
+            @Feature(name = "Window title", description = "Returns the current window title.", examples = "set the window title to \"Sqript\"", pattern = "window (name|title)", type = "string"),
+            @Feature(name = "Window icons", description = "Returns the current window icons.", examples = "set window icons to [sample:favicon_wb_16.png,sample:favicon_wb_32.png]", pattern = "window icons", type = "array"),
         }
 )
 public class ExprSystem extends ScriptExpression {

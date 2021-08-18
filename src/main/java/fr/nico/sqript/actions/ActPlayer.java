@@ -1,13 +1,12 @@
 package fr.nico.sqript.actions;
 
 import fr.nico.sqript.ScriptManager;
-import fr.nico.sqript.meta.Type;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeItem;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -15,19 +14,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import scala.annotation.meta.param;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 @Action(name = "Player Actions",
-        description ="Player related actions",
-        examples = {"teleport player at location at 5 8 9"
-        },
-        patterns = {
-                "teleport {player} to {array}",
-                "give [{+number}] {item} to {player}",
-                "kick {player} [with message {string}]",
+        features = {
+            @Feature(name = "Teleport player", description = "Teleports a player to a given location.", examples = "teleport player at [10,25,20]", pattern = "teleport {player} to {array}"),
+            @Feature(name = "Give item to player", description = "Gives an item to a player.", examples = "give 1 minecraft:diamond_sword to player\n", pattern = "give [{+number}] {item} to {player}"),
+            @Feature(name = "Kick player", description = "Kicks a player from the server.", examples = "kick player with message \"You've been kicked for cheating\"", pattern = "kick {player} [with message {string}]")
         }
 )
 public class ActPlayer extends ScriptAction {
@@ -38,7 +33,7 @@ public class ActPlayer extends ScriptAction {
             case 0:
                 EntityPlayer player = (EntityPlayer) getParameters().get(0).get(context).getObject();
                 ArrayList pos = (ArrayList) getParameters().get(1).get(context).getObject();
-                player.setPositionAndUpdate(((TypeNumber)pos.get(0)).getObject(), ((TypeNumber)pos.get(1)).getObject(),((TypeNumber)pos.get(2)).getObject());
+                player.setPositionAndUpdate((double)pos.get(0), (double)pos.get(1),(double) pos.get(2));
                 return;
             case 1:
                 int amount = getParameterOrDefault(getParameter(1),1, context);

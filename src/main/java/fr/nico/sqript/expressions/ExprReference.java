@@ -10,9 +10,6 @@ import fr.nico.sqript.types.ScriptType;
 
 public class ExprReference extends ScriptExpression {
 
-    //Special one (not registered commonly)
-
-
     public Class<? extends ScriptElement> type;
 
     public ScriptExpression stringExpression;

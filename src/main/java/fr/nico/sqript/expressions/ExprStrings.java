@@ -1,27 +1,22 @@
 package fr.nico.sqript.expressions;
 
 import fr.nico.sqript.meta.Expression;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 
 import java.util.ArrayList;
 
 @Expression(name = "Strings Expressions",
-        description = "Manipulate strings",
-        examples = "length of \"test\"",
-        patterns = {
-            "length of {string}:number",
-            "substring of {string} from {number} to {number}:string",
-            "{string} split at each {string}:array",
-            "character at [position] {number} of {string}:{string}",
-        },
-        side = Side.CLIENT
+        features = {
+                @Feature(name = "Length of a string", description = "Returns the number of characters in a string.", examples = "length of \"Test\"", pattern = "length of {string}", type = "number"),
+                @Feature(name = "Substring of a string", description = "Returns a substring from a string.", examples = "substring of \"Test string\" from 1 to 4 #Returns \"est\"", pattern = "substring of {string} from {number} to {number}", type = "string"),
+                @Feature(name = "Split of a string", description = "Returns an array of a split string.", examples = "\"Hello world\" split at each \" \" #Returns [\"Hello\",\"world\"]", pattern = "{string} split at each {string}", type = "array"),
+                @Feature(name = "Character of a string", description = "Returns the character at a specific position of a string.", examples = "character at position 2 of \"Hello world\" #Returns \"l\"", pattern = "character at [position] {number} of {string}", type = "array"),
+        }
 )
 public class ExprStrings extends ScriptExpression {
 

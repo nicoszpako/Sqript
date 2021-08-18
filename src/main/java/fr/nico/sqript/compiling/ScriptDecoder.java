@@ -129,7 +129,7 @@ public class ScriptDecoder {
                 //Sorting expressions to find the latest one, using the "score" got in "getMatchedPatternIndexAndScore"
                 int[] t = expressionDefinition.getMatchedPatternIndexAndPosition(line.getText());
                 //If we found an expression that is nearer to the end of the sentence or an expression that don't take any parameters
-                if ((t != null && (index == null || t[1] > index[1] || !expressionDefinition.getPatterns()[t[0]].contains("{")))) {
+                if ((t != null && (index == null || t[1] > index[1] || !expressionDefinition.getFeatures()[t[0]].pattern().contains("{")))) {
                     index = t;
                     def = expressionDefinition;
                 }
@@ -184,26 +184,26 @@ public class ScriptDecoder {
 
     public static IScript parseLine(ScriptToken line, ScriptCompileGroup compileGroup) throws Exception {
 
-        IScript sc = parseLoop(line, compileGroup); //On rentre dans un bloc
-        if (sc == null)
-            sc = parseAction(line, compileGroup);//Si c'est pas une boucle c'est une action
+        IScript script = parseLoop(line, compileGroup); //On rentre dans un bloc
+        if (script == null)
+            script = parseAction(line, compileGroup);//Si c'est pas une boucle c'est une action
 
         //Custom parsers
         for (IScriptParser parser : ScriptManager.parsers) {
-            if ((sc = parser.parse(line, compileGroup)) != null)
-                return sc;
+            if ((script = parser.parse(line, compileGroup)) != null)
+                return script;
         }
-        return sc;
+        return script;
     }
 
     public static ScriptNativeFunction getNativeFunction(ScriptToken name) {
-        for (NativeDefinition i : ScriptManager.nativeFunctions.values()) {
-            int r;
-            if ((r = i.getMatchedPatternIndex(name.getText())) != -1) {
-                Class<? extends ScriptNativeFunction> funcClass = i.getNativeClass();
+        for (NativeDefinition nativeDefinition : ScriptManager.nativeFunctions.values()) {
+            int matchedPatternIndex;
+            if ((matchedPatternIndex = nativeDefinition.getMatchedPatternIndex(name.getText())) != -1) {
+                Class<? extends ScriptNativeFunction> funcClass = nativeDefinition.getNativeClass();
                 try {
                     Constructor<? extends ScriptNativeFunction> t = funcClass.getDeclaredConstructor(int.class);
-                    return t.newInstance(r);
+                    return t.newInstance(matchedPatternIndex);
                 } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
@@ -216,17 +216,11 @@ public class ScriptDecoder {
         Class<ExprNativeFunction> function = ExprNativeFunction.class;
         ScriptNativeFunction f = getNativeFunction(parameter);
         if (f != null) {
-            Constructor<ExprNativeFunction> c = null;
+            Constructor<ExprNativeFunction> nativeFunctionConstructor = null;
             try {
-                c = function.getConstructor(ScriptNativeFunction.class);
-                return c.newInstance(f);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+                nativeFunctionConstructor = function.getConstructor(ScriptNativeFunction.class);
+                return nativeFunctionConstructor.newInstance(f);
+            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
@@ -936,7 +930,7 @@ public class ScriptDecoder {
                     }
                     while (c + 1 < lines.size() && ScriptDecoder.getTabLevel((lines.get(c + 1).getText())) > tabLevel);
 
-                    ((ScriptLoop.ScriptLoopIF) (script)).wrap(script);
+                    ((ScriptLoop.ScriptLoopIF) (script)).wrap(group(script, ifContainer, compileGroup));
 
                     if (previousAddedScript != null && (script instanceof ScriptLoop.ScriptLoopELSE || script instanceof ScriptLoop.ScriptLoopELSEIF)) {
                         if (previousAddedScript instanceof ScriptLoop.ScriptLoopIF) {

@@ -1,9 +1,8 @@
 package fr.nico.sqript.actions;
 
-import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Action;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
@@ -13,12 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Action(name = "Run a command",
-        description ="Runs a command as the server or as a player",
-        examples = {"make console execute command \"time set day\""
-        },
-        patterns = {
-            "make {player} execute command {string}"
-        }
+        features = @Feature(name = "Run a command", description = "Runs a command as the server or as a player", examples = "make console execute command \"time set day\"",pattern = "make {player} execute command {string}")
 )
 public class ActRunCommand extends ScriptAction {
 
