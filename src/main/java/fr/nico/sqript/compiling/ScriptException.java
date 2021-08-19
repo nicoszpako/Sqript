@@ -46,7 +46,8 @@ public class ScriptException extends Exception {
                 if (exception instanceof ScriptException) {
                     r.append(exception.getMessage()).append("\n");
                 } else
-                    r.append("Fatal exception : " + exception.getLocalizedMessage());
+                    r.append("Fatal exception : " + exception.getMessage());
+                    exception.printStackTrace();
             }
             return r.toString();
         }

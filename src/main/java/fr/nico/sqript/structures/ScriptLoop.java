@@ -11,6 +11,7 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeNumber;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -179,7 +180,7 @@ public class ScriptLoop extends ScriptWrapper {
                     throw new ScriptException.ScriptUnknownExpressionException(line);
 
                 if (scriptExpression.getClass().getAnnotation(Expression.class) != null)
-                    type = ScriptDecoder.parseType(scriptExpression.getClass().getAnnotation(Expression.class).features()[scriptExpression.getMatchedIndex()].pattern().split(":")[1]);
+                    type = ScriptDecoder.parseType(scriptExpression.getClass().getAnnotation(Expression.class).features()[scriptExpression.getMatchedIndex()].type());
                 else
                     type = scriptExpression.getReturnType();
 
