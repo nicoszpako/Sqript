@@ -3,6 +3,7 @@ package fr.nico.sqript.forge;
 import com.google.common.collect.SetMultimap;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.blocks.ScriptBlockCommand;
+import fr.nico.sqript.events.EvtFML;
 import fr.nico.sqript.events.EvtOnWindowSetup;
 import fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock;
 import fr.nico.sqript.forge.common.ScriptEventHandler;
@@ -26,10 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
-import net.minecraftforge.fml.common.event.FMLConstructionEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -64,6 +62,7 @@ public class SqriptForge {
             event.getServer().getCommandManager().getCommands().remove(command.getName());
             event.registerServerCommand(command);
         }
+        ScriptManager.callEvent(new EvtFML.EvtOnServerStartingEvent(event.getServer()));
     }
 
     @Mod.EventHandler
@@ -282,6 +281,17 @@ public class SqriptForge {
         ScriptNetworkManager.init();
 
         MinecraftForge.EVENT_BUS.register(new ScriptEventHandler());
+        ScriptManager.callEvent(new EvtFML.EvtOnPreInit());
+    }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event){
+        ScriptManager.callEvent(new EvtFML.EvtOnInit());
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event){
+        ScriptManager.callEvent(new EvtFML.EvtOnPostInit());
     }
 
     @SubscribeEvent
