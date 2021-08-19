@@ -2,59 +2,62 @@ package fr.nico.sqript.forge.common;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.ScriptTimer;
-import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.events.*;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeBlock;
+import fr.nico.sqript.types.TypeItem;
+import fr.nico.sqript.types.TypeNull;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
 
 public class ScriptEventHandler {
 
     @SubscribeEvent
     public void onTick(TickEvent.ServerTickEvent event) throws ScriptException {
-        if(event.phase== TickEvent.Phase.START)
+        if(event.phase == TickEvent.Phase.START)
             ScriptTimer.tick();
     }
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) throws ScriptException {
-        if(event.phase== TickEvent.Phase.START)
+        if(event.phase == TickEvent.Phase.START)
             ScriptManager.callEvent(new EvtOnWorldTick());
     }
 
-
     @SubscribeEvent
     public void onItemUse(PlayerEvent.ItemPickupEvent event) throws ScriptException {
-            ScriptManager.callEvent(new EvtPlayer.EvtOnItemPickup((EntityPlayer) event.player,event.getStack()));
+        ScriptManager.callEvent(new EvtPlayer.EvtOnItemPickup((EntityPlayer) event.player,event.getStack()));
     }
 
     @SubscribeEvent
     public void onItemUse(LivingEntityUseItemEvent.Start event) throws ScriptException {
         if(event.getEntity() instanceof EntityPlayer){
-            if(ScriptManager.callEvent(new EvtPlayer.EvtOnItemUse((EntityPlayer) event.getEntity(),event.getItem())));
+            if(ScriptManager.callEvent(new EvtPlayer.EvtOnItemUse((EntityPlayer) event.getEntity(),event.getItem()))) {
                 event.setCanceled(true);
+            }
         }
     }
 
@@ -97,8 +100,6 @@ public class ScriptEventHandler {
         }catch(Exception e){
             Minecraft.getMinecraft().fontRenderer.drawString(e.toString(),0,0,0xFFFF0000);
         }
-
-
     }
 
     @SubscribeEvent
@@ -126,6 +127,12 @@ public class ScriptEventHandler {
                 event.setCanceled(true);
             }
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onKeyInput(InputEvent.KeyInputEvent event) {
+        ScriptManager.callEvent(new EvtPlayer.EvtOnKeyInputEvent());
     }
 
     @SubscribeEvent
@@ -166,7 +173,6 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         if (event.getEntity() instanceof EntityPlayer) {
-
             if(ScriptManager.callEvent(new EvtPlayer.EvtOnItemRightClick((EntityPlayer)event.getEntity(),event.getItemStack(),event.getHand()))) {
                 event.setCanceled(true);
             }
@@ -201,7 +207,6 @@ public class ScriptEventHandler {
                 }
             }
         }
-
     }
 
     @SubscribeEvent
@@ -219,4 +224,71 @@ public class ScriptEventHandler {
             }
         }
     }
+
+    @SubscribeEvent
+    public void onEntityInteract(PlayerInteractEvent.EntityInteract event){
+        if(ScriptManager.callEvent(new EvtPlayer.EvtOnEntityInteract(event.getTarget(), event.getHand()))){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingDamage(LivingDamageEvent event){
+        if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingDamage(event.getEntity(), event.getSource(), event.getAmount()))){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingDeath(LivingDeathEvent event){
+        if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingDeath(event.getEntity(), event.getSource()))){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingFall(LivingFallEvent event){
+        if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingFall(event.getEntity(), event.getDistance(), event.getDamageMultiplier()))){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingDrops(LivingDropsEvent event){
+        ArrayList< TypeItem > list = new ArrayList<>();
+        event.getDrops().forEach(entityItem -> { list.add(new TypeItem(entityItem.getItem())); });
+        if(ScriptManager.callEvent(new EvtLiving.EvtOnLivingDrops(event.getEntity(), event.getSource(), new TypeArray(list)))){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onEntityJoinWorld(EntityJoinWorldEvent event){
+        if(ScriptManager.callEvent(new EvtLiving.EvtOnEntityJoinWorld(event.getEntity(), event.getWorld()))){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerDrops(PlayerDropsEvent event){
+        ArrayList< TypeItem > list = new ArrayList<>();
+        event.getDrops().forEach(entityItem -> { list.add(new TypeItem(entityItem.getItem())); });
+        if(ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerDrops(event.getEntityPlayer(), event.getSource(), new TypeArray(list)))){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onItemToss(ItemTossEvent event){
+        if(ScriptManager.callEvent(new EvtPlayer.EvtOnItemToss(event.getPlayer(), event.getEntityItem()))){
+            event.setCanceled(true);
+            event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getItem());
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event){
+        ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerRespawnEvent(event.player, event.isEndConquered()));
+    }
+
 }

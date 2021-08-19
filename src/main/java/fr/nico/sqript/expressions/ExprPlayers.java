@@ -4,6 +4,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.client.Minecraft;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
                 @Feature(name = "Player's hunger level", description = "Returns the given player's hunger level.", examples = "player's hunger", pattern = "{+player}['s] (hunger|food [level])", type = "number"),
                 @Feature(name = "Player's look vector", description = "Returns the given player's look vector.", examples = "player's look vector", pattern = "{+player}['s] look vector", type = "vector"),
                 @Feature(name = "Block player is looking at", description = "Returns the block the given player is looking at", examples = "block player's looking at", pattern = "block {player} is looking at", type = "block"),
+                @Feature(name = "Player check", description = "Check if the object is a player.", examples = "{player} is a player", pattern = "{player} is a player", type = "player"),
                 @Feature(name = "Player", description = "Returns the player playing on the client side", examples = "player", pattern = "player", type = "player", side = fr.nico.sqript.structures.Side.CLIENT),
         }
 )
@@ -75,6 +77,8 @@ public class ExprPlayers extends ScriptExpression {
                 } else
                     return new TypeNull();
             case 7:
+                return new TypeBoolean(parameters[0].getObject() instanceof EntityPlayer);
+            case 8:
                 return new TypePlayer(getClientPlayer());
         }
         return null;
