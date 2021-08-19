@@ -191,6 +191,7 @@ public class ScriptLoop extends ScriptWrapper {
                 //System.out.println("This.varHash : " + varHash);
                 this.array = scriptExpression;
                 this.setLine(line);
+                compileGroup.add(varName+"'s index");
                 return;
             }
             throw new ScriptException.ScriptSyntaxException(line, "Incorrect for-loop definition");
