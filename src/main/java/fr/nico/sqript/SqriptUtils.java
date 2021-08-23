@@ -1,11 +1,17 @@
 package fr.nico.sqript;
 
+import com.google.gson.*;
 import fr.nico.sqript.meta.*;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.JsonUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import scala.actors.migration.pattern;
 import sun.reflect.ReflectionFactory;
 
 import java.io.*;
@@ -59,46 +65,93 @@ public class SqriptUtils {
     }
 
     public static void generateDoc() throws IOException {
-        File doc = new File(ScriptManager.scriptDir, "doc.md");
-
+        File doc = new File(ScriptManager.scriptDir, "/doc.json");
         //Delete the content of the file
         new PrintWriter(doc).close();
 
-        BufferedWriter bw = new BufferedWriter(new FileWriter(doc, true));
+        JsonObject object = new JsonObject();
 
-        bw.write("**Events**\n");
+
+        JsonObject events = new JsonObject();
         for (EventDefinition eventDefinition : ScriptManager.events) {
-            for (String pattern : eventDefinition.getPatterns()) {
-                bw.write("{" + eventDefinition.getName() + "} " + Arrays.toString(eventDefinition.getAccessors()) + " " + eventDefinition.getSide() + " " + "(" + Arrays.stream(eventDefinition.getEventClass().getAnnotations()).map(a -> a.annotationType().getSimpleName()).collect(Collectors.joining(",")) + ") `" + pattern + "`\n");
-            }
-        }
+                JsonObject event = new JsonObject();
+                event.addProperty("name",eventDefinition.getFeature().name());
 
-        bw.write("\n");
-        bw.write("**Actions**\n");
+                JsonObject accessors = new JsonObject();
+                for(Feature feature : eventDefinition.getAccessors()){
+                    JsonObject accessor = new JsonObject();
+                    accessor.addProperty("name", feature.name());
+                    accessor.addProperty("description", feature.description());
+                    accessor.addProperty("pattern", feature.pattern());
+                    accessor.addProperty("type", feature.type());
+                    accessor.addProperty("side", feature.side().toString());
+                    accessors.add(feature.name(),accessor);
+                }
+                event.add("accessors", accessors);
+                event.addProperty("description", eventDefinition.getFeature().description());
+                event.add("examples", toJsonArray(eventDefinition.getFeature().examples()));
+                event.addProperty("pattern", eventDefinition.getFeature().pattern());
+                events.add(eventDefinition.getFeature().name(), event);
+        }
+        object.add("events",events );
+
+        JsonObject actions = new JsonObject();
         for (ActionDefinition actionDefinition : ScriptManager.actions) {
             for (Feature feature : actionDefinition.getFeatures()) {
-                bw.write("{" + actionDefinition.getName() + "} " + " " + "(" + Arrays.stream(actionDefinition.getActionClass().getAnnotations()).map(a -> a.annotationType().getSimpleName()).collect(Collectors.joining(",")) + ") `" + feature + "`\n");
+                JsonObject action = new JsonObject();
+                action.addProperty("group", actionDefinition.getName());
+                action.addProperty("name", feature.name());
+                action.addProperty("description", feature.description());
+                action.addProperty("pattern", feature.pattern());
+                action.addProperty("side", feature.side().toString());
+                action.add("examples", toJsonArray(feature.examples()));
+                actions.add(feature.name(), action);
             }
         }
+        object.add("actions",actions);
 
-        bw.write("\n");
-        bw.write("**Expressions**\n");
+        JsonObject expressions = new JsonObject();
         for (ExpressionDefinition expressionDefinition : ScriptManager.expressions) {
             for (Feature feature : expressionDefinition.getFeatures()) {
-                bw.write("{" + expressionDefinition.getName() + "} " + " " + "(" + Arrays.stream(expressionDefinition.getExpressionClass().getAnnotations()).map(a -> a.annotationType().getSimpleName()).collect(Collectors.joining(",")) + ") `" + feature + "`\n");
+                JsonObject expression = new JsonObject();
+                expression.addProperty("group", expressionDefinition.getName());
+                expression.addProperty("name", feature.name());
+                expression.addProperty("description", feature.description());
+                expression.addProperty("pattern", feature.pattern());
+                expression.addProperty("type", feature.type());
+                expression.addProperty("side", feature.side().toString());
+                expression.add("examples", toJsonArray(feature.examples()));
+                expressions.add(feature.name(), expression);
             }
         }
+        object.add("expressions",expressions);
 
-        bw.write("\n");
-        bw.write("**Blocks**\n");
+        JsonObject blocks = new JsonObject();
         for (BlockDefinition blockDefinition : ScriptManager.blocks) {
-            bw.write("{" + blockDefinition.getName() + "} " + blockDefinition.getSide() + " " + blockDefinition.isReloadable() + " " + "(" + Arrays.stream(blockDefinition.getBlockClass().getAnnotations()).map(a -> a.annotationType().getSimpleName()).collect(Collectors.joining(",")) + ")");
-            bw.write("\n");
+            JsonObject block = new JsonObject();
+            block.addProperty("name",blockDefinition.getName());
+            block.addProperty("description",blockDefinition.getDescription());
+            block.addProperty("side",blockDefinition.getSide().toString());
+            block.addProperty("reloadable",blockDefinition.isReloadable());
+            block.addProperty("regex",blockDefinition.getRegex().pattern());
+            block.add("example",toJsonArray(blockDefinition.getExample()));
         }
-        bw.flush();
-        bw.close();
+        object.add("blocks",blocks);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        PrintWriter printWriter = new PrintWriter(doc);
+        printWriter.println(gson.toJson(object));
+        printWriter.close();
     }
 
+    public static JsonArray toJsonArray(String[] array){
+        JsonArray jsonArray = new JsonArray();
+        for(String string: array){
+            jsonArray.add(string);
+        }
+        return jsonArray;
+    }
 
     public static <T> T rawInstantiation(Class<?> parent, Class<T> child) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         ReflectionFactory rf = ReflectionFactory.getReflectionFactory();

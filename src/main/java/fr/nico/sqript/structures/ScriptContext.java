@@ -201,6 +201,11 @@ public class ScriptContext {
     }
 
     public ScriptTypeAccessor getAccessor(Integer varHash) {
-        return variables.get(varHash);
+        final ScriptTypeAccessor a = variables.get(varHash);
+        if (a != null)
+            return a;
+        else if (parent != null)
+            return parent.getAccessor(varHash);
+        else return null;
     }
 }

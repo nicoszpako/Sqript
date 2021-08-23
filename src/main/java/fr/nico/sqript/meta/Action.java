@@ -13,6 +13,9 @@ public @interface Action {
      */
     String name();
 
+    /**
+     * @return An array of features that class contains.
+     */
     Feature[] features();
 
     int priority() default 0;

@@ -8,10 +8,14 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Event {
 
-    String name();
-    String[] description();
-    String[] examples();
-    String[] patterns();
-    String[] accessors();
-    Side side() default Side.BOTH;
+    /**
+     * @return The main feature describing this event.
+     */
+    Feature feature();
+
+    /**
+     * @return An array of features describing the accessors available in this event.
+     */
+    Feature[] accessors();
+
 }

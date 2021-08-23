@@ -202,7 +202,7 @@ public class SqriptForge {
             try {
                 Class toRegister = Class.forName(c.getClassName());
                 Event e = (Event) toRegister.getAnnotation(Event.class);
-                ScriptManager.registerEvent(toRegister, e.name(), e.description(), e.examples(), e.patterns(), e.side(), e.accessors());
+                ScriptManager.registerEvent(toRegister, e.feature(), e.accessors());
             } catch (Exception e) {
                 ScriptManager.log.error("Error trying to load ScriptEvent : " + c.getClassName());
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();

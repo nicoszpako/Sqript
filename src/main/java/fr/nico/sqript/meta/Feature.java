@@ -20,17 +20,17 @@ public @interface Feature {
     /**
      * @return The description of this feature.
      */
-    String description();
+    String description() default "";
 
     /**
      * @return A list of examples of this feature.
      */
-    String[] examples();
+    String[] examples() default "";
 
     /**
      * @return The pattern of this feature.
      */
-    String pattern();
+    String pattern() default "";
 
     /**
      * @return If an expression, the return type of this expression.

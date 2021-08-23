@@ -68,7 +68,7 @@ public class ScriptManager {
     public static List<ScriptOperator> operators = new ArrayList<>();
 
     public static boolean RELOADING = false;
-    
+
     public static void registerBinaryOperation(ScriptOperator o, Class a, Class b, IOperation operation) {
         binaryOperations.computeIfAbsent(o, k -> new HashMap<>());
         binaryOperations.get(o).computeIfAbsent(a, k -> new HashMap<>());
@@ -160,9 +160,9 @@ public class ScriptManager {
 
     }
 
-    public static void registerEvent(Class<? extends ScriptEvent> cls, String name, String[] description, String[] example, String[] patterns, Side side,String... accessors) {
-        log.debug("Registering event : " + name + " (" + cls.getSimpleName() + ")");
-        events.add(new EventDefinition(name, description, example, cls, side, patterns).setAccessors(accessors));
+    public static void registerEvent(Class<? extends ScriptEvent> cls, Feature feature, Feature[] accesors) {
+        log.debug("Registering event : " + feature.name() + " (" + cls.getSimpleName() + ")");
+        events.add(new EventDefinition(cls, feature, accesors));
     }
 
     public static void registerAction(Class<? extends ScriptAction> cls, String name, int priority, Feature... features) {
@@ -357,7 +357,7 @@ public class ScriptManager {
         EventDefinition eventDefinition = null;
         if(optional.isPresent())
             eventDefinition = optional.get();
-        if( eventDefinition!=null && eventDefinition.getSide().isStrictlyValid()) {
+        if( eventDefinition!=null && eventDefinition.getFeature().side().isStrictlyValid()) {
             ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
             if(RELOADING)
                 return false;

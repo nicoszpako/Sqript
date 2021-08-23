@@ -227,7 +227,7 @@ public class ScriptEventHandler {
 
     @SubscribeEvent
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event){
-        if(ScriptManager.callEvent(new EvtPlayer.EvtOnEntityInteract(event.getTarget(), event.getHand()))){
+        if(ScriptManager.callEvent(new EvtPlayer.EvtOnEntityInteract(event.getTarget(), event.getHand(), event.getEntityPlayer()))){
             event.setCanceled(true);
         }
     }

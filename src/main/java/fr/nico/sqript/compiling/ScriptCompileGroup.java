@@ -1,5 +1,6 @@
 package fr.nico.sqript.compiling;
 
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 
 import java.util.ArrayList;
@@ -51,8 +52,8 @@ public class ScriptCompileGroup {
     }
 
 
-    public void addArray(List<String> asList) {
-        for(String s : asList)
-            add(s.split(":",2)[0]);
+    public void addArray(List<Feature> asList) {
+        for(Feature s : asList)
+            add(s.pattern());
     }
 }

@@ -39,7 +39,7 @@ public class ScriptBlockEvent extends ScriptBlock {
         this.eventType = getEvent(getHead());
         if(eventType == null)
             throw new ScriptException.ScriptUnknownEventException(getHead());
-        this.side = eventType.getAnnotation(Event.class).side();
+        this.side = eventType.getAnnotation(Event.class).feature().side();
         super.init(block);
     }
 

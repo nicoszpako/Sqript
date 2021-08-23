@@ -1,5 +1,6 @@
 package fr.nico.sqript.events;
 
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.meta.Event;
@@ -17,12 +18,15 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 public class EvtPlayer {
 
     @Cancelable
-    @Event(name = "Player movement",
-            description = "Called when a player moves.",
-            examples = "on player movement:\n" +
-                    "    cancel event #Freezes the player",
-            patterns = "player move[ment]",
-            accessors = "player:player")
+    @Event(
+            feature = @Feature(name = "Player movement",
+                    description = "Called when a player moves.",
+                    examples = "on player movement:\n" + "    cancel event #Freezes the player",
+                    pattern = "player move[ment]"),
+            accessors = {
+                    @Feature(name = "Player", description = "The player that moved.", pattern = "player", type = "player"),
+            }
+    )
     public static class EvtOnPlayerMove extends ScriptEvent {
 
         public EvtOnPlayerMove(EntityPlayer player) {
@@ -32,11 +36,14 @@ public class EvtPlayer {
     }
 
     @Cancelable
-    @Event(name = "Item right clicked",
-            description = "Called when a player right clicks an item.",
-            examples = "on item click with minecraft:emerald:",
-            patterns = "[item] click [with {item}] [with ((1;left)|(2;right)) hand]",
-            accessors = {"player:player","[click[ed]] item:item"
+    @Event(
+            feature = @Feature(name = "Item right clicked",
+                    description = "Called when a player right clicks an item.",
+                    examples = "on item click with minecraft:emerald:",
+                    pattern = "[item] click [with {item}] [with ((1;left)|(2;right)) hand]"),
+            accessors = {
+                    @Feature(name = "Player", description = "The player that clicked on the item.", pattern = "player", type = "player"),
+                    @Feature(name = "Clicked item", description = "The clicked item.", pattern = "[click[ed]] item", type = "item"),
             }
     )
     public static class EvtOnItemRightClick extends ScriptEvent {
@@ -70,12 +77,15 @@ public class EvtPlayer {
 
 
     @Cancelable
-    @Event(name = "message sent",
-            description = "Called when a player sends a message",
-            examples = "on message sent:\n" +
-                    "    set message to \"My message\" #Edit message content",
-            patterns = "(([player] sen(d[ing]|t) [a] message|message sent))",
-            accessors = {"(player|sender):player","message:string"}
+    @Event(
+            feature = @Feature(name = "Message sent",
+                    description = "Called when a player sends a message.",
+                    examples = "on message sent:\n" + "    set message to \"My message\" #Edit message content",
+                    pattern = "([player] sen(d[ing]|t) [a] message|message sent)"),
+            accessors = {
+                    @Feature(name = "Sender", description = "The sender of this message.", pattern = "(player|sender)", type = "player"),
+                    @Feature(name = "Message", description = "The content of the message.", pattern = "message", type = "string"),
+            }
     )
     public static class EvtOnPlayerSendMessage extends ScriptEvent {
 
@@ -86,13 +96,16 @@ public class EvtPlayer {
     }
 
     @Cancelable
-    @Event(name = "Item pickup",
-            description = "Called when a player pickups an item",
-            examples = "on item pickup:\n" +
-                    "    if item is minecraft:bedrock:\n" +
-                    "        cancel event #Prevents bedrock pickup.",
-            patterns = "(player pickup[s] item|item pickup)",
-            accessors = {"player:player","[picked [up]] item:item"
+    @Event(
+            feature = @Feature(name = "Item pickup",
+                    description = "Called when a player pickups an item",
+                    examples = "on item pickup:\n" +
+                            "    if item is minecraft:bedrock:\n" +
+                            "        cancel event #Prevents bedrock pickup.",
+                    pattern = "(player pickup[s] item|item pickup)"),
+            accessors = {
+                    @Feature(name = "Player", description = "The player that picked up the items.", pattern = "player", type = "player"),
+                    @Feature(name = "Picked up item", description = "The picked up item.", pattern = "[picked [up]] item", type = "item"),
             }
     )
     public static class EvtOnItemPickup extends ScriptEvent {
@@ -105,13 +118,16 @@ public class EvtPlayer {
     }
 
     @Cancelable
-    @Event(name = "Item use",
-            description = "Called when a player uses an item",
-            examples = "on item use:\n" +
-                    "    if item is minecraft:potion:\n" +
-                    "    cancel event",
-            patterns = "(player use[s] item|item use)",
-            accessors = {"player:player","[used] item:item"
+    @Event(
+            feature = @Feature(name = "Item use",
+                    description = "Called when a player uses an item",
+                    examples = "on item use:\n" +
+                            "    if item is minecraft:potion:\n" +
+                            "    cancel event",
+                    pattern = "(player use[s] item|item use)"),
+            accessors = {
+                    @Feature(name = "Player", description = "The player that used the item.", pattern = "player", type = "player"),
+                    @Feature(name = "Used item", description = "The used item.", pattern = "[used] item", type = "item"),
             }
     )
     public static class EvtOnItemUse extends ScriptEvent {
@@ -126,12 +142,15 @@ public class EvtPlayer {
 
 
     @Cancelable
-    @Event(name = "Player attack",
-            description = "Called when a player is hit by another player",
-            examples = "on player attacked:\n" +
-                    "    cancel event #Removes pvp",
-            patterns = "player (hit|attacked)",
-            accessors = {"attacker:player","victim:player"
+    @Event(
+            feature = @Feature(name = "Player attack",
+                    description = "Called when a player is hit by another player.",
+                    examples = "on player attacked:\n" +
+                            "    cancel event #Removes pvp",
+                    pattern = "player (hit|attacked)"),
+            accessors = {
+                    @Feature(name = "Attacker",description = "The player that attacked.", pattern = "attacker", type = "player"),
+                    @Feature(name = "Victim",description = "The player that was attacked.", pattern = "victim", type = "player"),
             }
     )
     public static class EvtOnPlayerHit extends ScriptEvent {
@@ -147,11 +166,15 @@ public class EvtPlayer {
 
 
     @Cancelable
-    @Event(name = "Player jump",
-            description = "Called when a player jumps",
-            examples = "on player jump:",
-            patterns = "[player] (jump|jumped)",
-            accessors = {"player:player"}
+    @Event(
+            feature = @Feature(name = "Player jump",
+                    description = "Called when a player jumps.",
+                    examples = "on player jump:\n" +
+                            "    cancel event #Forbid jumping",
+                    pattern = "[player] (jump|jumped)"),
+            accessors = {
+                    @Feature(name = "Player",description = "The player that jumped.", pattern = "player", type = "player"),
+            }
     )
     public static class EvtOnPlayerJump extends ScriptEvent {
 
@@ -163,11 +186,14 @@ public class EvtPlayer {
 
 
     @Cancelable
-    @Event(name = "Player login",
-            description = "Called when a player logs in",
-            examples = "on player login:",
-            patterns = "player (login|connection)",
-            accessors = {"player:player"}
+    @Event(
+            feature = @Feature(name = "Player login",
+                    description = "Called when a player logs in.",
+                    examples = "on player login:",
+                    pattern = "[player] (login|connection)"),
+            accessors = {
+                    @Feature(name = "Player",description = "The player that logged in.", pattern = "player", type = "player"),
+            }
     )
     public static class EvtOnPlayerLogin extends ScriptEvent {
 
@@ -178,26 +204,36 @@ public class EvtPlayer {
     }
 
     @Cancelable
-    @Event(name = "Entity Interact",
-            description = "This event is triggered when a player interacts with an entity (right-click).",
-            examples = "on right click on living entity:",
-            patterns = "right click on living entity",
-            accessors = {"target:entity", "hand:hand"}
+    @Event(
+            feature = @Feature(name = "Entity interact",
+                    description = "This event is triggered when a player interacts with an entity (right-click).",
+                    examples = "on right click on living entity:",
+                    pattern = "right click on living entity"),
+            accessors = {
+                    @Feature(name = "Interaction entity",description = "The entity that has been interacted with.", pattern = "target", type = "entity"),
+                    @Feature(name = "Interaction hand",description = "The hand that has been used to interact.", pattern = "hand", type = "hand"),
+                    @Feature(name = "Player",description = "The player that interacted with the entity.", pattern = "player", type = "player"),
+            }
     )
     public static class EvtOnEntityInteract extends ScriptEvent {
 
-        public EvtOnEntityInteract(Entity entity, EnumHand hand) {
-            super(new ScriptTypeAccessor(new TypeEntity(entity),"target"), new ScriptTypeAccessor(new TypeHand(hand),"hand"));
+        public EvtOnEntityInteract(Entity entity, EnumHand hand, EntityPlayer player) {
+            super(new ScriptTypeAccessor(new TypeEntity(entity),"target"), new ScriptTypeAccessor(new TypeHand(hand),"hand"), new ScriptTypeAccessor(new TypePlayer(player), "player"));
         }
 
     }
 
     @Cancelable
-    @Event(name = "Player Death",
-            description = "This event is triggered just before an entity dies of damage.",
-            examples = "on living death:",
-            patterns = "(living) death",
-            accessors = {"victim:entity", "damageType:damage_source", "attacker:entity"}
+    @Event(
+            feature = @Feature(name = "Player death",
+                    description = "This event is triggered just before a player dies of damage.",
+                    examples = "on player death:",
+                    pattern = "[player] death"),
+            accessors = {
+                    @Feature(name = "Victim", description = "The victim of the death event.", pattern = "victim", type = "player"),
+                    @Feature(name = "Damage type", description = "The damage type of dealt damage.", pattern = "damage type", type = "damage_source"),
+                    @Feature(name = "Attacker", description = "The damage dealer of the death event.", pattern = "attacker", type = "entity"),
+            }
     )
     public static class EvtOnLivingDeath extends ScriptEvent {
 
@@ -208,11 +244,17 @@ public class EvtPlayer {
     }
 
     @Cancelable
-    @Event(name = "Player Drops",
-            description = "This event is triggered when a player dies and is about to drop all his items on the ground.",
-            examples = "on player drop of death:",
-            patterns = "(player) drop[s] of death",
-            accessors = {"player:player", "damageType:damage_source", "attacker:entity", "drops:array"}
+    @Event(
+            feature = @Feature(name = "Player death drops",
+                    description = "This event is triggered when the death of an player causes the appearance of objects.",
+                    examples = "on drop of player death:",
+                    pattern = "drop[s] of player death"),
+            accessors = {
+                    @Feature(name = "Player", description = "The victim of the death event.", pattern = "victim", type = "player"),
+                    @Feature(name = "Damage type", description = "The damage type of dealt damage.", pattern = "damage type", type = "damage_source"),
+                    @Feature(name = "Attacker", description = "The damage dealer of the death event.", pattern = "attacker", type = "entity"),
+                    @Feature(name = "Drops", description = "An array of the items that are going to be dropped.", pattern = "drops", type = "array"),
+            }
     )
     public static class EvtOnPlayerDrops extends ScriptEvent {
 
@@ -223,11 +265,15 @@ public class EvtPlayer {
     }
 
     @Cancelable
-    @Event(name = "Player Drops",
-            description = "Event that is fired whenever a player tosses (Q) an item or drag-n-drops a stack of items outside the inventory GUI screens.",
-            examples = "on player drop:",
-            patterns = "[player] drop[ing]",
-            accessors = {"player:player", "item:item"}
+    @Event(
+            feature = @Feature(name = "Player drop",
+                    description = "Event that is fired whenever a player tosses (Q) an item or drag-n-drops a stack of items outside the inventory GUI screens.",
+                    examples = "on player drop:",
+                    pattern = "[player] drop[ing]"),
+            accessors = {
+                    @Feature(name = "Player", description = "The player that dropped the item.", pattern = "player", type = "player"),
+                    @Feature(name = "Item", description = "The item that has been tossed.", pattern = "item", type = "item")
+            }
     )
     public static class EvtOnItemToss extends ScriptEvent {
 
@@ -238,10 +284,11 @@ public class EvtPlayer {
     }
 
     @Cancelable
-    @Event(name = "KeyInputHandler",
-            description = "test",
-            examples = "on key input:",
-            patterns = "key input",
+    @Event(
+            feature = @Feature(name = "Key input",
+                    description = "Event that is fired whenever a registered key input is triggered.",
+                    examples = "on key input:",
+                    pattern = "key input"),
             accessors = {}
     )
     public static class EvtOnKeyInputEvent extends ScriptEvent {
@@ -252,11 +299,15 @@ public class EvtPlayer {
 
     }
 
-    @Event(name = "Player Respawn",
-            description = "This event is triggered when a player reappears in the world after dying or passing through the end portal to the overworld.",
-            examples = "on respawn:",
-            patterns = "[player] respawn[ing]",
-            accessors = {"player:player", "endConquered:boolean"}
+    @Event(
+            feature = @Feature(name = "Player respawn",
+                    description = "This event is triggered when a player reappears in the world after dying or passing through the end portal to the overworld.",
+                    examples = "on respawn:",
+                    pattern = "[player] respawn[ing]"),
+            accessors = {
+                    @Feature(name = "Player", description = "The player that respawned.", pattern = "player", type = "player"),
+                    @Feature(name = "End conquered", description = "Whether the respawn is due to the end conquest.", pattern = "end conquered", type = "boolean")
+            }
     )
     public static class EvtOnPlayerRespawnEvent extends ScriptEvent {
 
