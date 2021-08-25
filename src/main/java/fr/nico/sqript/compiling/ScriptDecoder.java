@@ -1147,7 +1147,7 @@ public class ScriptDecoder {
 
         //Now we care about {type} catches
 
-        List<ScriptParameterDefinition> paramTypes = new ArrayList<>();
+        List<ScriptParameterDefinition[]> paramTypes = new ArrayList<>();
 
         Pattern p = Pattern.compile("\\{(.*?)}");
         Matcher m = p.matcher(pattern);
@@ -1168,28 +1168,31 @@ public class ScriptDecoder {
                 n_args = true;
                 t = t.substring(0, t.length() - 1);
             }
-
-            for (TypeDefinition typeDefinition : ScriptManager.types.values()) {
-                if (typeDefinition.getName().equals(t)) {
-                    pattern = pattern.replaceFirst("\\{" + Pattern.quote(g) + "}", "(?<a" + argCount + ">" + exp_capture + ")");
-                    paramTypes.add(new ScriptParameterDefinition(typeDefinition.getTypeClass(), n_args));
-                    argCount++;
-                    continue m;
+            List<ScriptParameterDefinition> parameterDefinitions = new ArrayList<>();
+            for(String type : t.split("\\|")){
+                for (TypeDefinition typeDefinition : ScriptManager.types.values()) {
+                    if (typeDefinition.getName().equals(type)) {
+                        pattern = pattern.replaceFirst("\\{" + Pattern.quote(g) + "}", "(?<a" + argCount + ">" + exp_capture + ")");
+                        parameterDefinitions.add(new ScriptParameterDefinition(typeDefinition.getTypeClass(), n_args));
+                        argCount++;
+                        continue m;
+                    }
+                }
+                for (TypeDefinition primitiveDefinition : ScriptManager.primitives.values()) {
+                    if (primitiveDefinition.getName().equals(type)) {
+                        pattern = pattern.replaceFirst("\\{" + Pattern.quote(g) + "}", "(?<a" + argCount + ">" + exp_capture + ")");
+                        parameterDefinitions.add(new ScriptParameterDefinition(primitiveDefinition.getTypeClass(), n_args));
+                        argCount++;
+                        continue m;
+                    }
                 }
             }
-            for (TypeDefinition primitiveDefinition : ScriptManager.primitives.values()) {
-                if (primitiveDefinition.getName().equals(t)) {
-                    pattern = pattern.replaceFirst("\\{" + Pattern.quote(g) + "}", "(?<a" + argCount + ">" + exp_capture + ")");
-                    paramTypes.add(new ScriptParameterDefinition(primitiveDefinition.getTypeClass(), n_args));
-                    argCount++;
-                    continue m;
-                }
-            }
+            paramTypes.add(parameterDefinitions.toArray(new ScriptParameterDefinition[0]));
             throw new Exception(t + " type is either not registered or not recognized");
         }
         pattern = "^\\s*" + pattern + "$";//End of parsing;
         //System.out.println("Transformed : "+pattern+" with :"+markCount+" marks\n");
-        return new TransformedPattern(pattern, markCount, argCount, paramTypes.toArray(new ScriptParameterDefinition[0]));
+        return new TransformedPattern(pattern, markCount, argCount, paramTypes.toArray(new ScriptParameterDefinition[0][0]));
     }
 
     public static TransformedPattern patternToRegex(String pattern) throws Exception {
@@ -1331,7 +1334,7 @@ public class ScriptDecoder {
 
         //System.out.println("Basic translation : "+pattern);
         //System.out.println("Transformed : "+pattern+" with :"+markCount+" marks\n");
-        return new TransformedPattern(pattern, markCount, argCount, new ScriptParameterDefinition[0]);
+        return new TransformedPattern(pattern, markCount, argCount, new ScriptParameterDefinition[0][0]);
     }
 
     public static boolean shouldBeLazy(String p, int s) {

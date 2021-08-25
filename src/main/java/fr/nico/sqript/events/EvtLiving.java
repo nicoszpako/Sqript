@@ -5,19 +5,27 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.types.primitive.TypeNumber;
+import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class EvtLiving {
 
     @Cancelable
     @Event(
             feature = @Feature(name = "Living damage",
-                    description = "This event is triggered just before damage is applied to an entity.",
-                    examples = "on living damage:",
-                    pattern = "living damage"),
+                    description = "This event is triggered on server side just before damage is applied to an entity.",
+                    examples = "on pig damage:",
+                    pattern = "((1;(living|entity))|(2;{entity|resource})) damage[d]"),
             accessors = {
                     @Feature(name = "Victim", description = "The victim of the damage event.", pattern = "victim", type = "entity"),
                     @Feature(name = "Damage type", description = "The damage type of dealt damage.", pattern = "damage type", type = "damage_source"),
@@ -26,8 +34,23 @@ public class EvtLiving {
             }
     )
     public static class EvtOnLivingDamage extends ScriptEvent {
+        Entity victim;
+
         public EvtOnLivingDamage(Entity victim, DamageSource damageSource, float amount) {
-            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptTypeAccessor(new TypeNumber(amount),"amount"));
+            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(), "victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(), "attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource), "damageType"), new ScriptTypeAccessor(new TypeNumber(amount), "amount"));
+            this.victim = victim;
+        }
+
+        @Override
+        public boolean check(ScriptType[] parameters, int marks) {
+            if (parameters.length == 0 || parameters[0] == null)
+                return true;
+            else if (parameters[0] instanceof TypeEntity) {
+                return victim.getClass().isAssignableFrom(((TypeEntity) parameters[0]).getObject().getClass());
+            } else if (parameters[0] instanceof TypeResource) {
+                return ForgeRegistries.ENTITIES.getValue((ResourceLocation) (parameters[0]).getObject()).getEntityClass() == victim.getClass();
+            }
+            return false;
         }
     }
 
@@ -35,8 +58,8 @@ public class EvtLiving {
     @Event(
             feature = @Feature(name = "Living death",
                     description = "This event is triggered just before an entity dies of damage.",
-                    examples = "on living death:",
-                    pattern = "living death"),
+                    examples = "on zombie death:",
+                    pattern = "((1;(living|entity))|(2;{entity|resource}))['s] death"),
             accessors = {
                     @Feature(name = "Victim", description = "The victim of the death event.", pattern = "victim", type = "entity"),
                     @Feature(name = "Damage type", description = "The damage type of dealt damage.", pattern = "damage type", type = "damage_source"),
@@ -44,8 +67,23 @@ public class EvtLiving {
             }
     )
     public static class EvtOnLivingDeath extends ScriptEvent {
+        Entity victim;
+
         public EvtOnLivingDeath(Entity victim, DamageSource damageSource) {
-            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource),"damageType"));
+            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(), "victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(), "attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource), "damageType"));
+            this.victim = victim;
+        }
+
+        @Override
+        public boolean check(ScriptType[] parameters, int marks) {
+            if (parameters.length == 0 || parameters[0] == null)
+                return true;
+            else if (parameters[0] instanceof TypeEntity) {
+                return victim.getClass().isAssignableFrom(((TypeEntity) parameters[0]).getObject().getClass());
+            } else if (parameters[0] instanceof TypeResource) {
+                return ForgeRegistries.ENTITIES.getValue((ResourceLocation) (parameters[0]).getObject()).getEntityClass() == victim.getClass();
+            }
+            return false;
         }
     }
 
@@ -54,7 +92,7 @@ public class EvtLiving {
             feature = @Feature(name = "Living fall",
                     description = "This event is triggered as soon as an EntityLivingBase falls.",
                     examples = "on living fall:",
-                    pattern = "[living] fall"),
+                    pattern = "((1;(living|entity))|(2;{entity|resource}))['s] fall"),
             accessors = {
                     @Feature(name = "Victim", description = "The victim of the damage event.", pattern = "victim", type = "entity"),
                     @Feature(name = "Distance", description = "The distance fallen.", pattern = "damage distance", type = "number"),
@@ -62,8 +100,23 @@ public class EvtLiving {
             }
     )
     public static class EvtOnLivingFall extends ScriptEvent {
+        Entity victim;
+
         public EvtOnLivingFall(Entity victim, float distance, float damageMultiplier) {
-            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptTypeAccessor(new TypeNumber(distance),"distance"), new ScriptTypeAccessor(new TypeNumber(damageMultiplier),"damageMultiplier"));
+            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(), "victim"), new ScriptTypeAccessor(new TypeNumber(distance), "distance"), new ScriptTypeAccessor(new TypeNumber(damageMultiplier), "damageMultiplier"));
+            this.victim = victim;
+        }
+
+        @Override
+        public boolean check(ScriptType[] parameters, int marks) {
+            if (parameters.length == 0 || parameters[0] == null)
+                return true;
+            else if (parameters[0] instanceof TypeEntity) {
+                return victim.getClass().isAssignableFrom(((TypeEntity) parameters[0]).getObject().getClass());
+            } else if (parameters[0] instanceof TypeResource) {
+                return ForgeRegistries.ENTITIES.getValue((ResourceLocation) (parameters[0]).getObject()).getEntityClass() == victim.getClass();
+            }
+            return false;
         }
     }
 
@@ -72,7 +125,7 @@ public class EvtLiving {
             feature = @Feature(name = "Death drops",
                     description = "This event is triggered when the death of an entity causes the appearance of objects.",
                     examples = "on living drop of death:",
-                    pattern = "(living) drop[s] of death"),
+                    pattern = "((1;(living|entity))|(2;{entity|resource}))['s] drop[s] of death"),
             accessors = {
                     @Feature(name = "Victim", description = "The victim of the death event.", pattern = "victim", type = "entity"),
                     @Feature(name = "Damage type", description = "The damage type of dealt damage.", pattern = "damage type", type = "damage_source"),
@@ -81,8 +134,23 @@ public class EvtLiving {
             }
     )
     public static class EvtOnLivingDrops extends ScriptEvent {
+        Entity victim;
+
         public EvtOnLivingDrops(Entity victim, DamageSource damageSource, TypeArray typeArray) {
-            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource),"damageType"), new ScriptTypeAccessor(typeArray,"drops"));
+            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(), "victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(), "attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource), "damageType"), new ScriptTypeAccessor(typeArray, "drops"));
+            this.victim = victim;
+        }
+
+        @Override
+        public boolean check(ScriptType[] parameters, int marks) {
+            if (parameters.length == 0 || parameters[0] == null)
+                return true;
+            else if (parameters[0] instanceof TypeEntity) {
+                return victim.getClass().isAssignableFrom(((TypeEntity) parameters[0]).getObject().getClass());
+            } else if (parameters[0] instanceof TypeResource) {
+                return ForgeRegistries.ENTITIES.getValue((ResourceLocation) (parameters[0]).getObject()).getEntityClass() == victim.getClass();
+            }
+            return false;
         }
     }
 
@@ -91,15 +159,30 @@ public class EvtLiving {
             feature = @Feature(name = "Entity join World",
                     description = "This event is triggered when an entity is added to the world.",
                     examples = "on entity join world:",
-                    pattern = "entity join world"),
+                    pattern = "((1;(living|entity))|(2;{entity|resource})) join world"),
             accessors = {
                     @Feature(name = "Entity", description = "The spawned entity.", pattern = "entity", type = "entity"),
                     @Feature(name = "World", description = "The instance of the world the entity has spawn.", pattern = "world", type = "world"),
             }
     )
     public static class EvtOnEntityJoinWorld extends ScriptEvent {
+        Entity entity;
+
         public EvtOnEntityJoinWorld(Entity entity, World world) {
-            super(new ScriptTypeAccessor(entity != null ? new TypeEntity(entity) : new TypeNull(),"entity"), new ScriptTypeAccessor(new TypeWorld(world),"world"));
+            super(new ScriptTypeAccessor(entity != null ? new TypeEntity(entity) : new TypeNull(), "entity"), new ScriptTypeAccessor(new TypeWorld(world), "world"));
+            this.entity = entity;
+        }
+
+        @Override
+        public boolean check(ScriptType[] parameters, int marks) {
+            if (parameters.length == 0 || parameters[0] == null)
+                return true;
+            else if (parameters[0] instanceof TypeEntity) {
+                return entity.getClass().isAssignableFrom(((TypeEntity) parameters[0]).getObject().getClass());
+            } else if (parameters[0] instanceof TypeResource) {
+                return ForgeRegistries.ENTITIES.getValue((ResourceLocation) (parameters[0]).getObject()).getEntityClass() == entity.getClass();
+            }
+            return false;
         }
     }
 }

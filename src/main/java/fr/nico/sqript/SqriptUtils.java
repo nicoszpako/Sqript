@@ -5,6 +5,7 @@ import com.google.gson.*;
 import fr.nico.sqript.meta.*;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeNumber;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,6 +13,9 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import scala.actors.migration.pattern;
 import sun.reflect.ReflectionFactory;
@@ -174,5 +178,13 @@ public class SqriptUtils {
         Constructor objDef = parent.getDeclaredConstructor();
         Constructor intConstr = rf.newConstructorForSerialization(child, objDef);
         return child.cast(intConstr.newInstance());
+    }
+
+    public static void sendMessage(String message, ICommandSender sender){
+        sender.sendMessage(new TextComponentString("\2478[\2473Sqript\2478]\247r ").appendSibling(new TextComponentString(message)));
+    }
+
+    public static void sendError(String message, ICommandSender sender){
+        sender.sendMessage(new TextComponentString("\2478[\2473Sqript\2478]\247r ").appendSibling(new TextComponentString(message).setStyle(new Style().setColor(TextFormatting.RED))));
     }
 }

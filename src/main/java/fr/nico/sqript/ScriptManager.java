@@ -148,7 +148,7 @@ public class ScriptManager {
     public static void registerPrimitive(Class<? extends PrimitiveType<?>> type, String name, String... patterns) {
         log.debug("Registering primitive : " + name + " (" + type.getSimpleName() + ")");
         TypeDefinition primitiveDefinition = new TypeDefinition(name, new String[0], new String[]{""}, type);
-        primitiveDefinition.transformedPattern = new TransformedPattern(patterns[0],0,0, new ScriptParameterDefinition[]{new ScriptParameterDefinition(type,false)});
+        primitiveDefinition.transformedPattern = new TransformedPattern(patterns[0],0,0, new ScriptParameterDefinition[][]{{new ScriptParameterDefinition(type,false)}});
         primitives.put(type, primitiveDefinition);
     }
 

@@ -38,22 +38,22 @@ public class ScriptBlockEvent extends ScriptBlock {
 
     @Override
     public void init(ScriptLineBlock block) throws Exception {
-        this.eventType = getEvent(getHead());
+        this.eventType = parseEvent(getHead());
         if(eventType == null)
             throw new ScriptException.ScriptUnknownEventException(getHead());
         this.side = eventType.getAnnotation(Event.class).feature().side();
         super.init(block);
     }
 
-    public Class<? extends ScriptEvent> getEvent(ScriptToken line) {
+    public Class<? extends ScriptEvent> parseEvent(ScriptToken line) {
         for (EventDefinition eventDefinition : ScriptManager.events) {
-            //System.out.println("Checking for : "+line+" with "+eventDefinition.eventClass);
+            System.out.println("Checking for : "+line+" with "+eventDefinition.eventClass);
             int matchedPatternIndex = -1;
             if ((matchedPatternIndex = eventDefinition.getMatchedPatternIndex(line.getText())) != -1) {
-                //System.out.println(matchedPatternIndex);
+                System.out.println(matchedPatternIndex);
                 //Parsing the arguments
                 String[] arguments = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllArguments(line.getText());
-                //System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length);
+                System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length);
                 parameters = new ScriptType[arguments.length];
                 marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.getText());
                 for (int i = 0; i < arguments.length; i++) {

@@ -11,6 +11,7 @@ import fr.nico.sqript.forge.common.SqriptCommand;
 import fr.nico.sqript.forge.common.item.ScriptItem;
 import fr.nico.sqript.network.ScriptMessage;
 import fr.nico.sqript.network.ScriptNetworkManager;
+import fr.nico.sqript.network.ScriptReloadMessage;
 import fr.nico.sqript.network.ScriptSyncDataMessage;
 import fr.nico.sqript.meta.*;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -277,6 +278,9 @@ public class SqriptForge {
 
         channel.registerMessage(ScriptMessage.ScriptMessageHandler.class, ScriptMessage.class, 1, Side.CLIENT);
         channel.registerMessage(ScriptMessage.ScriptMessageHandler.class, ScriptMessage.class, 1, Side.SERVER);
+
+        channel.registerMessage(ScriptReloadMessage.ScriptMessageHandler.class, ScriptReloadMessage.class, 2, Side.CLIENT);
+        channel.registerMessage(ScriptReloadMessage.ScriptMessageHandler.class, ScriptReloadMessage.class, 2, Side.SERVER);
 
         ScriptNetworkManager.init();
 

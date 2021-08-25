@@ -48,14 +48,14 @@ import java.util.List;
 )
 public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
-    ScriptParameterDefinition[] argumentsDefinitions;
+    ScriptParameterDefinition[][] argumentsDefinitions;
     private final String name;
 
 
     public ScriptBlockCommand(ScriptToken head) {
         final String def = ScriptDecoder.splitAtDoubleDot(head.getText().replaceFirst("command\\s+/", ""))[0];
         final String[] args = def.split(" ");
-        final List<ScriptParameterDefinition> parameterDefinitions = new ArrayList<>();
+        final List<ScriptParameterDefinition[]> parameterDefinitions = new ArrayList<>();
         for (int i = 1; i < args.length; i++) {
             try {
                 parameterDefinitions.add(ScriptDecoder.transformPattern(args[i]).getTypes()[0]);
@@ -64,7 +64,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
             }
         }
         this.name = args[0];
-        this.argumentsDefinitions = parameterDefinitions.toArray(new ScriptParameterDefinition[0]);
+        this.argumentsDefinitions = parameterDefinitions.toArray(new ScriptParameterDefinition[0][0]);
     }
 
 
@@ -176,7 +176,8 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         //Adding arguments to the context
         //Arguments can only be numbers, strings or player.
         for (int i = 0; i < argumentsDefinitions.length && i < strings.length; i++) {
-            Class p = argumentsDefinitions[i].getTypeClass();
+            //Todo : Dynamic command parameters type check
+            Class p = argumentsDefinitions[i][0].getTypeClass();
             if(i== argumentsDefinitions.length-1 && p== TypeString.class){
                 String r = "";
                 for(int j = i;j<strings.length;j++){
@@ -241,7 +242,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         return false;
     }
 
-    public ScriptParameterDefinition[] getArgumentsDefinitions() {
+    public ScriptParameterDefinition[][] getArgumentsDefinitions() {
         return argumentsDefinitions;
     }
 

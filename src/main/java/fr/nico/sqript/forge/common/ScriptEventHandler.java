@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -24,6 +25,7 @@ import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -104,14 +106,14 @@ public class ScriptEventHandler {
 
     @SubscribeEvent
     public void onPlayerSendMessage(ServerChatEvent event) {
-        if (event.getPlayer() instanceof EntityPlayer) {
+        if (event.getPlayer() != null && event.getPhase() == EventPriority.NORMAL) {
             ScriptContext context = null;
             try {
                 context = ScriptManager.callEventAndGetContext(new EvtPlayer.EvtOnPlayerSendMessage(event.getPlayer(), event.getMessage()));
             } catch (ScriptException e) {
                 e.printStackTrace();
             }
-            if(context.getAccessor("message") != null)
+            if(context.getAccessor("message") != null && context.getAccessor("message").element != null)
                 event.setComponent(new TextComponentString((String) context.getAccessor("message").element.getObject()));
             if ((boolean) context.getReturnValue().element.getObject()) {
                 event.setCanceled(true);
@@ -227,7 +229,7 @@ public class ScriptEventHandler {
 
     @SubscribeEvent
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event){
-        if(ScriptManager.callEvent(new EvtPlayer.EvtOnEntityInteract(event.getTarget(), event.getHand(), event.getEntityPlayer()))){
+        if(event.getHand() == EnumHand.MAIN_HAND && ScriptManager.callEvent(new EvtPlayer.EvtOnEntityInteract(event.getTarget(), event.getHand(), event.getEntityPlayer()))){
             event.setCanceled(true);
         }
     }

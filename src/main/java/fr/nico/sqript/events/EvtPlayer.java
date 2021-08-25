@@ -13,7 +13,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class EvtPlayer {
 
@@ -207,8 +209,8 @@ public class EvtPlayer {
     @Event(
             feature = @Feature(name = "Entity interact",
                     description = "This event is triggered when a player interacts with an entity (right-click).",
-                    examples = "on right click on living entity:",
-                    pattern = "right click on living entity"),
+                    examples = "on right click on villager:",
+                    pattern = "[right] click on ((1;(living|entity))|(2;{entity|resource})) [entity]"),
             accessors = {
                     @Feature(name = "Interaction entity",description = "The entity that has been interacted with.", pattern = "target", type = "entity"),
                     @Feature(name = "Interaction hand",description = "The hand that has been used to interact.", pattern = "hand", type = "hand"),
@@ -217,8 +219,23 @@ public class EvtPlayer {
     )
     public static class EvtOnEntityInteract extends ScriptEvent {
 
+        Entity entity;
+
         public EvtOnEntityInteract(Entity entity, EnumHand hand, EntityPlayer player) {
             super(new ScriptTypeAccessor(new TypeEntity(entity),"target"), new ScriptTypeAccessor(new TypeHand(hand),"hand"), new ScriptTypeAccessor(new TypePlayer(player), "player"));
+            this.entity = entity;
+        }
+
+        @Override
+        public boolean check(ScriptType[] parameters, int marks) {
+            if (parameters.length == 0 || parameters[0] == null)
+                return true;
+            else if (parameters[0] instanceof TypeEntity) {
+                return entity.getClass().isAssignableFrom(((TypeEntity) parameters[0]).getObject().getClass());
+            } else if (parameters[0] instanceof TypeResource) {
+                return ForgeRegistries.ENTITIES.getValue((ResourceLocation) (parameters[0]).getObject()).getEntityClass() == entity.getClass();
+            }
+            return false;
         }
 
     }

@@ -14,7 +14,7 @@ public class TransformedPattern {
     int marksCount; //Number of (¦n) marks in the expression
     int argsCount; //Number of {type} arguments in the expression
 
-    ScriptParameterDefinition[] parameterDefinitions = new ScriptParameterDefinition[0];
+    ScriptParameterDefinition[][] parameterDefinitions = new ScriptParameterDefinition[0][0];
 
     public TransformedPattern(String pattern) {
         this.pattern = Pattern.compile(pattern);
@@ -38,7 +38,7 @@ public class TransformedPattern {
         this.argsCount = argsCount;
     }
 
-    public TransformedPattern(String pattern, int marksCount, int argsCount, ScriptParameterDefinition[] parameterDefinitions) {
+    public TransformedPattern(String pattern, int marksCount, int argsCount, ScriptParameterDefinition[][] parameterDefinitions) {
         this.pattern = Pattern.compile(pattern);
         this.marksCount = marksCount;
         this.argsCount = argsCount;
@@ -49,7 +49,7 @@ public class TransformedPattern {
         return pattern;
     }
 
-    public ScriptParameterDefinition[] getTypes() {
+    public ScriptParameterDefinition[][] getTypes() {
         return parameterDefinitions;
     }
 
