@@ -33,6 +33,11 @@ public @interface Feature {
     String pattern() default "";
 
     /**
+     * @return The regex of this feature.
+     */
+    String regex() default "";
+
+    /**
      * @return If an expression, the return type of this expression.
      */
     String type() default "element";

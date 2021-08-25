@@ -5,6 +5,7 @@ import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.forge.SqriptForge;
 import fr.nico.sqript.meta.Block;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.Side;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -17,12 +18,21 @@ import java.io.File;
 import java.io.FileWriter;
 
 
-@Block(name = "block",
-        description = "block blocks",
-        examples = "block my_block:",
-        regex = "^block .*",
-        side = Side.BOTH,
-        fields = {"name","texture","creative tab","harvest level","drop","hardness"},
+@Block(
+        feature = @Feature(name = "Block",
+                description = "Define a Minecraft block that will be added to the game.",
+                examples = "block my_block:",
+                regex = "^block .*",
+                side = Side.BOTH),
+
+        fields = {
+                @Feature(name = "name"),
+                @Feature(name = "texture"),
+                @Feature(name = "creative tab"),
+                @Feature(name = "harvest level"),
+                @Feature(name = "drop"),
+                @Feature(name = "hardness")
+        },
         reloadable = false
 )
 public class ScriptBlockBlock extends ScriptBlock {

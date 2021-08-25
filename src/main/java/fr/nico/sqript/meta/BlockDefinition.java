@@ -7,16 +7,10 @@ import java.util.regex.Pattern;
 
 public class BlockDefinition {
 
-    String name;
-    String description;
-    Pattern regex;
-    String[] example;
-    Side side;
+    Feature feature;
+    Feature[] fields;
     boolean reloadable;
-
-    public Side getSide() {
-        return side;
-    }
+    Pattern regex;
 
     public boolean isReloadable() {
         return reloadable;
@@ -28,45 +22,29 @@ public class BlockDefinition {
 
     private Class<? extends ScriptBlock> cls;
 
-    public BlockDefinition(String name, String description, String[] example, Class<? extends ScriptBlock> cls, String regex, Side side, boolean reloadable) {
-        this.name = name;
-        this.example = example;
-        this.description = description;
+    public BlockDefinition(Class<? extends ScriptBlock> cls, Feature feature, Feature[] fields, boolean reloadable) {
         this.cls=cls;
-        this.regex = Pattern.compile(regex);
-        this.side = side;
+        this.feature = feature;
+        this.fields = fields;
+        this.regex = Pattern.compile(feature.regex());
         this.reloadable = reloadable;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String[] getExample() {
-        return example;
-    }
-
-    public void setExample(String[] example) {
-        this.example = example;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Pattern getRegex() {
         return regex;
     }
 
-    public void setRegex(String regex) {
-        this.regex = Pattern.compile(regex);
+
+    public Feature getFeature() {
+        return feature;
+    }
+
+    public Class<? extends ScriptBlock> getCls() {
+        return cls;
+    }
+
+
+    public Feature[] getFields() {
+        return fields;
     }
 }

@@ -1,5 +1,6 @@
 package fr.nico.sqript;
 
+import com.google.common.collect.Lists;
 import com.google.gson.*;
 import fr.nico.sqript.meta.*;
 import fr.nico.sqript.types.TypeArray;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import scala.actors.migration.pattern;
 import sun.reflect.ReflectionFactory;
 
@@ -88,6 +90,8 @@ public class SqriptUtils {
                     accessors.add(feature.name(),accessor);
                 }
                 event.add("accessors", accessors);
+                event.addProperty("cancelable",eventDefinition.eventClass.getAnnotation(Cancelable.class) != null);
+                event.addProperty("side",eventDefinition.getFeature().side().toString());
                 event.addProperty("description", eventDefinition.getFeature().description());
                 event.add("examples", toJsonArray(eventDefinition.getFeature().examples()));
                 event.addProperty("pattern", eventDefinition.getFeature().pattern());
@@ -129,12 +133,24 @@ public class SqriptUtils {
         JsonObject blocks = new JsonObject();
         for (BlockDefinition blockDefinition : ScriptManager.blocks) {
             JsonObject block = new JsonObject();
-            block.addProperty("name",blockDefinition.getName());
-            block.addProperty("description",blockDefinition.getDescription());
-            block.addProperty("side",blockDefinition.getSide().toString());
+            block.addProperty("name",blockDefinition.getFeature().name());
+            block.addProperty("description",blockDefinition.getFeature().description());
+            block.addProperty("side",blockDefinition.getFeature().side().toString());
             block.addProperty("reloadable",blockDefinition.isReloadable());
             block.addProperty("regex",blockDefinition.getRegex().pattern());
-            block.add("example",toJsonArray(blockDefinition.getExample()));
+            block.add("examples",toJsonArray(blockDefinition.getFeature().examples()));
+            JsonObject fields = new JsonObject();
+            for(Feature feature : blockDefinition.getFields()){
+                JsonObject field = new JsonObject();
+                field.addProperty("name", feature.name());
+                field.addProperty("description", feature.description());
+                field.addProperty("pattern", feature.pattern());
+                field.addProperty("type", feature.type());
+                field.addProperty("side", feature.side().toString());
+                fields.add(feature.name(),field);
+            }
+            block.add("fields", fields);
+            blocks.add(blockDefinition.getFeature().name(), block);
         }
         object.add("blocks",blocks);
 

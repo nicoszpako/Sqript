@@ -8,12 +8,8 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Block {
 
-    String name();
-    String description();
-    String[] examples();
-    String[] fields() default {};
-    String regex();
-    Side side() default Side.BOTH;
+    Feature feature();
+    Feature[] fields() default {};
     boolean reloadable() default true;
 
 }

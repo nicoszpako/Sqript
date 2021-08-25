@@ -4,16 +4,19 @@ import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptInstance;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Block(name = "import",
-        description = "Import blocks",
-        examples = "import:\n" +
-                "    * from my_script",
-        regex = "^imports:\\s*")
+@Block(
+        feature = @Feature(name = "Import",
+                description = "Import a bunch of functions from another script file.",
+                examples = "import:\n" +
+                        "    * from my_script",
+                regex = "^imports:\\s*")
+        )
 public class ScriptBlockImport extends ScriptBlock {
 
     public ScriptBlockImport(ScriptToken head) throws ScriptException.ScriptSyntaxException {

@@ -3,15 +3,18 @@ package fr.nico.sqript.blocks;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.compiling.*;
+import fr.nico.sqript.meta.Feature;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Block(name = "options",
-        description = "Options block",
-        examples = "options:\n" +
-                "    my_value: 5",
-        regex = "^options:\\s*")
+@Block(
+        feature = @Feature(name = "Options",
+                description = "Define options in your script to give it more flexibility and configuration.",
+                examples = "options:\n" +
+                        "    my_value: 5",
+                regex = "^options:\\s*")
+)
 public class ScriptBlockOptions extends ScriptBlock {
 
     public ScriptBlockOptions(ScriptToken head) throws ScriptException.ScriptSyntaxException {

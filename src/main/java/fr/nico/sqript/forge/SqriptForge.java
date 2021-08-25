@@ -229,7 +229,7 @@ public class SqriptForge {
             try {
                 Class toRegister = Class.forName(c.getClassName());
                 Block e = (Block) toRegister.getAnnotation(Block.class);
-                ScriptManager.registerBlock(toRegister, e.name(), e.description(), e.examples(), e.regex(), e.side(), e.reloadable());
+                ScriptManager.registerBlock(toRegister, e.feature(), e.fields(), e.reloadable());
             } catch (Exception e) {
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();
             }

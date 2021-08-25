@@ -1,6 +1,7 @@
 package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.forge.SqriptForge;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.types.TypeConsole;
 import fr.nico.sqript.types.TypePlayer;
 import fr.nico.sqript.ScriptManager;
@@ -30,15 +31,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Block(name = "command",
-        description = "Command blocks",
-        examples = "command /randomplayer:\n" +
-                "    usage: /randomplayer\n" +
-                "    description: returns a random player\n" +
-                "    send a random element of all players to sender",
-        regex = "^command /.*",
+@Block(
+        feature = @Feature(name = "Command",
+                description = "Define a new command that can be executed and have some action.",
+                examples = "command /randomplayer:\n" +
+                        "    usage: /randomplayer\n" +
+                        "    description: returns a random player\n" +
+                        "    send a random element of all players to sender",
+                regex = "^command /.*"),
         fields = {
-        "side","description","usage","aliases"
+                @Feature(name = "side"),
+                @Feature(name = "description"),
+                @Feature(name = "usage"),
+                @Feature(name = "aliases")
         }
 )
 public class ScriptBlockCommand extends ScriptBlock implements ICommand {

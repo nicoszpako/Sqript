@@ -6,18 +6,20 @@ import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.meta.EventDefinition;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 
 import java.util.Arrays;
 
-@Block(name = "event",
-        description = "Event blocks",
-        examples = "on script load:\n" +
-                "    print \"Hello world !\"",
-        regex = "^on .*",
-        fields = {"side"}
+@Block(
+        feature = @Feature(name = "Event",
+                description = "Run code when a specific event is triggered.",
+                examples = "on script load:\n" +
+                        "    print \"Hello world !\"",
+                regex = "^on .*"),
+        fields = {@Feature(name = "side")}
 )
 public class ScriptBlockEvent extends ScriptBlock {
 

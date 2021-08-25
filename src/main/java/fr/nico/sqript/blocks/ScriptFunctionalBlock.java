@@ -63,7 +63,7 @@ public class ScriptFunctionalBlock extends ScriptBlock {
     public ScriptFunctionalBlock(ScriptToken head) throws ScriptException {
         //System.out.println("Loading function : "+head.text);
         super(head);
-        head = head.with(head.getText().replaceFirst(this.getClass().getAnnotation(Block.class).name() + "\\s+", ""));
+        head = head.with(head.getText().replaceFirst(this.getClass().getAnnotation(Block.class).feature().name() + "\\s+", ""));
         Pattern p = Pattern.compile("\\s*^([\\w ]*)\\((.*)\\)\\s*:");
         Matcher m = p.matcher(head.getText());
         if (m.find()) {

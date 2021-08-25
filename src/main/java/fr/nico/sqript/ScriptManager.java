@@ -170,9 +170,9 @@ public class ScriptManager {
         actions.add(new ActionDefinition(name, cls, priority, features));
     }
 
-    public static void registerBlock(Class<? extends ScriptBlock> cls, String name, String description, String[] examples, String regex, Side side, boolean reloadable) {
-        log.debug("Registering block : " + name + " (" + cls.getSimpleName() + ")");
-        blocks.add(new BlockDefinition(name, description, examples, cls, regex, side, reloadable));
+    public static void registerBlock(Class<? extends ScriptBlock> cls, Feature feature, Feature[] fields,boolean reloadable) {
+        log.debug("Registering block : " + feature.name() + " (" + cls.getSimpleName() + ")");
+        blocks.add(new BlockDefinition(cls, feature, fields, reloadable));
     }
 
 

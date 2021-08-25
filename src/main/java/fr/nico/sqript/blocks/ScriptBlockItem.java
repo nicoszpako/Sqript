@@ -6,6 +6,7 @@ import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.forge.SqriptForge;
 import fr.nico.sqript.forge.common.item.*;
 import fr.nico.sqript.meta.Block;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.TypeArray;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,17 +21,27 @@ import java.io.File;
 import java.io.FileWriter;
 
 
-@Block(name = "item",
-        description = "item blocks",
-        examples = "item test_item:\n" +
-                "    name: My Test Item\n" +
-                "    texture: sample:yellow_diamond.png\n" +
-                "    creative tab: miscellaneous\n" +
-                "    max stack size: 8\n" +
-                "    type: item",
-        regex = "^item .*",
-        side = Side.BOTH,
-        fields = {"name", "texture", "max stack size", "creative tab", "item type", "material", "protection type", "armor texture"},
+@Block(
+        feature = @Feature(name = "Item",
+                description = "Define an item that will be added to the game, that you can give a certain behavior to.",
+                examples = "item test_item:\n" +
+                        "    name: My Test Item\n" +
+                        "    texture: sample:yellow_diamond.png\n" +
+                        "    creative tab: miscellaneous\n" +
+                        "    max stack size: 8\n" +
+                        "    type: item",
+                regex = "^item .*",
+                side = Side.BOTH),
+        fields = {
+                @Feature(name = "name"),
+                @Feature(name = "texture"),
+                @Feature(name = "max stack size"),
+                @Feature(name = "creative tab"),
+                @Feature(name = "item type"),
+                @Feature(name = "material"),
+                @Feature(name = "protection type"),
+                @Feature(name = "armor texture"),
+        },
         reloadable = false
 )
 public class ScriptBlockItem extends ScriptBlock {
@@ -168,12 +179,20 @@ public class ScriptBlockItem extends ScriptBlock {
         out.close();
     }
 
-    @Block(name = "tool material",
-            description = "tool material blocks",
-            examples = "tool material ruby:",
-            regex = "^tool material .*",
-            side = Side.BOTH,
-            fields = {"name", "harvest level", "durability", "efficiency", "damage", "enchantability"},
+    @Block(
+            feature = @Feature(name = "Tool material",
+                    description = "Define a tool material that you will be able to apply on your items in order to give them a durability and an efficiency.",
+                    examples = "tool material ruby:",
+                    regex = "^tool material .*",
+                    side = Side.BOTH),
+            fields = {
+                    @Feature(name = "name"),
+                    @Feature(name = "harvest level"),
+                    @Feature(name = "durability"),
+                    @Feature(name = "efficiency"),
+                    @Feature(name = "damage"),
+                    @Feature(name = "enchantability"),
+            },
             reloadable = false)
     public static class ScriptBlockToolMaterial extends ScriptBlock {
 
@@ -208,12 +227,18 @@ public class ScriptBlockItem extends ScriptBlock {
 
     }
 
-    @Block(name = "armor material",
-            description = "armor material blocks",
-            examples = "armor material ruby:",
-            regex = "^armor material .*",
-            side = Side.BOTH,
-            fields = {"name", "harvest level", "durability", "efficiency", "damage", "enchantability"},
+    @Block(
+            feature = @Feature(name = "Armor material",
+                    description = "Define an armor material that you will be able to apply on your armor pieces in order to give them a durability and a protection coefficient.",
+                    examples = "armor material ruby:",
+                    regex = "^armor material .*",
+                    side = Side.BOTH),
+            fields = {
+                    @Feature(name = "name"),
+                    @Feature(name = "durability"),
+                    @Feature(name = "protection array"),
+                    @Feature(name = "enchantability"),
+            },
             reloadable = false)
     public static class ScriptBlockArmorMaterial extends ScriptBlock {
 
@@ -236,8 +261,8 @@ public class ScriptBlockItem extends ScriptBlock {
             int enchantability = Item.ToolMaterial.IRON.getEnchantability();
 
 
-            if (fieldDefined("durability factor"))
-                durabilityfactor = Integer.parseInt(getSubBlock("durability factor").getRawContent());
+            if (fieldDefined("durability"))
+                durabilityfactor = Integer.parseInt(getSubBlock("durability").getRawContent());
             if (fieldDefined("protection array"))
                 protection = (((TypeArray) (getSubBlock("protection array").evaluate())).getObject()).stream().mapToInt(a -> (int) a.getObject()).toArray();
             if (fieldDefined("enchantability"))
