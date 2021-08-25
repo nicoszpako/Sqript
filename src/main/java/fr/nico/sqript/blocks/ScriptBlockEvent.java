@@ -1,6 +1,7 @@
 package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.events.ScriptEvent;
 import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.meta.Event;
@@ -8,9 +9,12 @@ import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.meta.EventDefinition;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeNull;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 @Block(
@@ -46,24 +50,36 @@ public class ScriptBlockEvent extends ScriptBlock {
     }
 
     public Class<? extends ScriptEvent> parseEvent(ScriptToken line) {
+        System.out.println("Parsing event for : "+line);
         for (EventDefinition eventDefinition : ScriptManager.events) {
-            System.out.println("Checking for : "+line+" with "+eventDefinition.eventClass);
+            System.out.println("Checking for : "+eventDefinition.getEventClass());
             int matchedPatternIndex = -1;
             if ((matchedPatternIndex = eventDefinition.getMatchedPatternIndex(line.getText())) != -1) {
-                System.out.println(matchedPatternIndex);
                 //Parsing the arguments
                 String[] arguments = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllArguments(line.getText());
-                System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length);
-                parameters = new ScriptType[arguments.length];
-                marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.getText());
+                System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length+" "+Arrays.toString(arguments));
+                ScriptType[] parameters = new ScriptType[arguments.length];
+                int marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.getText());
                 for (int i = 0; i < arguments.length; i++) {
                     try {
-                        parameters[i] = ScriptDecoder.parseExpression(line.with(arguments[i]),new ScriptCompileGroup()).get(ScriptContext.fromGlobal());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        if(arguments[i] != null)
+                            parameters[i] = ScriptDecoder.parseExpression(line.with(arguments[i]),new ScriptCompileGroup()).get(ScriptContext.fromGlobal());
+                        else parameters[i] = new TypeNull();
+                    } catch (Exception ignored) {
                     }
                 }
-                return eventDefinition.getEventClass();
+                try {
+                    ScriptEvent event = SqriptUtils.rawInstantiation(ScriptEvent.class, eventDefinition.getEventClass());
+                    if (event.validate(parameters, marks)) {
+                        this.marks = marks;
+                        this.parameters = parameters;
+                        System.out.println("Validated");
+                        return eventDefinition.getEventClass();
+                    }else{
+                        System.out.println("Not validated");
+                    }
+                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ignored) {
+                }
             }
         }
         return null;
@@ -95,4 +111,5 @@ public class ScriptBlockEvent extends ScriptBlock {
     public int getMarks() {
         return marks;
     }
+
 }

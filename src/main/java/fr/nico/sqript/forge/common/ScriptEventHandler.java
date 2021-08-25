@@ -15,6 +15,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -141,7 +142,7 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onBlockRightClick(PlayerInteractEvent.RightClickBlock event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer)event.getEntity(),new TypeBlock(Block.getBlockFromItem(event.getItemStack().getItem()).getDefaultState()),event.getHand(),1,event.getPos()))) {
+            if(ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer)event.getEntity(),new TypeBlock(event.getEntityPlayer().getEntityWorld().getBlockState(new BlockPos(event.getPos()))),event.getHand(),1,event.getPos()))) {
                 event.setCanceled(true);
             }
         }

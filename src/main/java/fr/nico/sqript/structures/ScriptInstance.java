@@ -45,6 +45,7 @@ public class ScriptInstance {
             return (boolean) returnContext.getReturnValue().element.getObject();
         } catch (Exception e) {
             ScriptManager.log.error("Error while calling event : " + event.getClass().getSimpleName());
+            e.printStackTrace();
             if (e instanceof ScriptException.ScriptWrappedException) {
                 Throwable ex = ((ScriptException.ScriptWrappedException) (e)).getWrapped();
                 ScriptManager.log.error(((ScriptException.ScriptWrappedException) (e)).getLine() + " : " + ex.getMessage());
@@ -83,7 +84,7 @@ public class ScriptInstance {
             if (t.eventType == event.getClass() && event.check(t.getParameters(), t.getMarks()) && t.side.isEffectivelyValid()) {
                 //System.out.println("Calling event : "+event.getClass().getSimpleName());
                 ScriptClock clock = new ScriptClock(context);
-                context.wrap(event.accessors);
+                context.wrap(event.getAccessors());
                 clock.start(t);
 
                 ////System.out.println("Finished ! It took : " + (System.currentTimeMillis() - t1) + " ms");

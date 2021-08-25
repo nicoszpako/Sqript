@@ -38,7 +38,7 @@ public class EvtBlock {
 
     @Cancelable
     @Event(
-            feature = @Feature(name = "Block broken", description = "Called when a player breaks a block", examples = "on break:\n" +"    cancel event #Prevents players from breaking blocks", pattern = "[block] break [of {block}]"),
+            feature = @Feature(name = "Block broken", description = "Called when a player breaks a block", examples = "on break:\n" + "    cancel event #Prevents players from breaking blocks", pattern = "[block] break [of {block}]"),
             accessors = {
                     @Feature(name = "Player", description = "The player that broke the block.", pattern = "player", type = "player"),
                     @Feature(name = "Broken block", description = "The broken block.", pattern = "(broken block|break-block|event-block)", type = "block"),
@@ -64,7 +64,7 @@ public class EvtBlock {
             feature = @Feature(name = "Block right clicked",
                     description = "Called when a player clicks on a block",
                     examples = "on right click on minecraft:diamond_block:\n",
-                    pattern = "on ((1;left)|(2;right)) click on (block [of {block}]|{block}) [with ((3;left)|(4;right)) hand]"),
+                    pattern = "((1;left)|(2;right)) click on (block|[block of] {block}) [with ((3;left)|(4;right)) hand]"),
             accessors = {
                     @Feature(name = "Player", description = "The player that clicked the block.", pattern = "player", type = "player"),
                     @Feature(name = "Clicked block", description = "The clicked block.", pattern = "(clicked block|click-block)", type = "block"),
@@ -85,21 +85,24 @@ public class EvtBlock {
         }
 
         @Override
+        public boolean validate(ScriptType[] parameters, int marks) {
+            return super.validate(parameters, marks);
+        }
+
+        @Override
         public boolean check(ScriptType[] parameters, int marks) {
-            Object registryName = parameters[0] == null ? parameters[1].getObject() == null ? null : parameters[1].getObject() : parameters[0].getObject();
+            Object registryName = null;
+            if(parameters[0] != null)
+                registryName = parameters[0].getObject();
 
-            boolean hand = true;
-            if (this.hand == EnumHand.MAIN_HAND)
-                hand = ((marks >> 4) & 1) == 1;
+            boolean hand = this.hand == EnumHand.MAIN_HAND;
 
-            if (this.hand == EnumHand.OFF_HAND)
-                hand = ((marks >> 3) & 1) == 1;
-
-            hand = hand | marks == 0; //Case in which no hand has been configured
+            if(((marks >> 3) & 1) == 1){
+                hand = this.hand == EnumHand.OFF_HAND;
+            }
 
             if (registryName == null)
                 return hand;
-
 
             return registryName.equals(clickedBlock.getObject().getBlock().getRegistryName()) && hand;
         }

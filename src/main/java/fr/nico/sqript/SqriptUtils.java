@@ -180,6 +180,12 @@ public class SqriptUtils {
         return child.cast(intConstr.newInstance());
     }
 
+    public static <T> T rawInstantiation(Class<?> parent, Class<T> child, Constructor<?> parentConstructor) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
+        Constructor<?> intConstr = rf.newConstructorForSerialization(child, parentConstructor);
+        return child.cast(intConstr.newInstance());
+    }
+
     public static void sendMessage(String message, ICommandSender sender){
         sender.sendMessage(new TextComponentString("\2478[\2473Sqript\2478]\247r ").appendSibling(new TextComponentString(message)));
     }

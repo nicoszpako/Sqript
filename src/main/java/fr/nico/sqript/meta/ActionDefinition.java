@@ -23,7 +23,7 @@ public class ActionDefinition {
     //[1] : marks
     public int[] getMatchedPatternIndexAndMarks(String line){
         for (int i = 0; i < transformedPatterns.length ; i++) {
-            System.out.println("Checking if "+line+" matches "+transformedPatterns[i].getPattern().pattern());
+            //System.out.println("Checking if "+line+" matches "+transformedPatterns[i].getPattern().pattern());
             Matcher m = transformedPatterns[i].getPattern().matcher(line);
             if(m.matches()){
                 m.reset();
@@ -51,7 +51,7 @@ public class ActionDefinition {
             for(int i = 0; i<this.features.length; i++){
                 try {
                     this.transformedPatterns[i]=ScriptDecoder.transformPattern(this.features[i].pattern());
-                    System.out.println("Regex for "+features[i]+" is : "+transformedPatterns[i].getPattern().pattern());
+                    //System.out.println("Regex for "+features[i]+" is : "+transformedPatterns[i].getPattern().pattern());
                 } catch (Exception e) {
                     e.printStackTrace();
                     throw e;

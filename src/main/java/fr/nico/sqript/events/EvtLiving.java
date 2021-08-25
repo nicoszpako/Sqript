@@ -46,6 +46,8 @@ public class EvtLiving {
             this.source = damageSource.getImmediateSource();
         }
 
+
+
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
             boolean result = true;

@@ -17,6 +17,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import java.util.Arrays;
+
 public class EvtPlayer {
 
     @Cancelable
@@ -57,6 +59,13 @@ public class EvtPlayer {
             super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(new TypeItem(clicked),"[click[ed]] item"));
             this.clickedItem = clicked;
             this.hand = hand;
+        }
+
+        @Override
+        public boolean validate(ScriptType[] parameters, int marks) {
+            if (parameters[0] != null && parameters[0] instanceof TypeResource)
+                return ForgeRegistries.ITEMS.getValue((ResourceLocation) parameters[0].getObject()) != null;
+            return super.validate(parameters, marks);
         }
 
         @Override
@@ -260,6 +269,18 @@ public class EvtPlayer {
                     new ScriptTypeAccessor(new TypeHand(hand),"hand"),
                     new ScriptTypeAccessor(new TypePlayer(player), "player"));
             this.entity = entity;
+        }
+
+        @Override
+        public boolean validate(ScriptType[] parameters, int marks) {
+            System.out.println("validating with : "+ Arrays.toString(parameters)+" "+(parameters[0]==null));
+            if (parameters[0] != null){
+                if(parameters[0] instanceof TypeResource)
+                    return ForgeRegistries.ENTITIES.getValue((ResourceLocation) parameters[0].getObject()) != null;
+                else return parameters[0] instanceof TypeEntity
+                        || parameters[0] instanceof TypeNull;
+            }
+            return false;
         }
 
         @Override
