@@ -15,7 +15,7 @@ public class ExpressionDefinition {
     String name;
     Feature[] features;
 
-    public ExpressionDefinition(String name, Class<? extends ScriptExpression> cls, int priority, Feature... features) {
+    public ExpressionDefinition(String name, Class<? extends ScriptExpression> cls, int priority, Feature... features) throws Exception {
         this.name = name;
         this.cls = cls;
         this.priority = priority;
@@ -30,6 +30,7 @@ public class ExpressionDefinition {
                 } catch (Exception e) {
                     ScriptManager.log.info("Error trying to build expression : " + name);
                     e.printStackTrace();
+                    throw e;
                 }
             }
         }

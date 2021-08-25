@@ -14,7 +14,7 @@ public class EventDefinition {
     private Feature feature;
     private Feature[] accessors;
 
-    public EventDefinition(Class<? extends ScriptEvent> eventClass, Feature feature, Feature[] accessors) {
+    public EventDefinition(Class<? extends ScriptEvent> eventClass, Feature feature, Feature[] accessors) throws Exception {
         this.feature = feature;
         this.accessors = accessors;
         this.eventClass = eventClass;
@@ -23,6 +23,7 @@ public class EventDefinition {
                 this.transformedPatterns = new TransformedPattern[]{ScriptDecoder.transformPattern(feature.pattern())};
             } catch (Exception e) {
                 e.printStackTrace();
+                throw e;
             }
         }
 

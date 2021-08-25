@@ -22,6 +22,7 @@ import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -207,6 +208,15 @@ public class ScriptEventHandler {
                 if(ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerHit((EntityPlayer)event.getEntity(),(EntityPlayer)event.getSource().getImmediateSource()))){
                     event.setCanceled(true);
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerAttack(AttackEntityEvent event){
+        if(event.getEntity() instanceof EntityPlayer){
+            if(ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerHit((EntityPlayer)event.getTarget(), event.getEntityPlayer()))){
+                event.setCanceled(true);
             }
         }
     }

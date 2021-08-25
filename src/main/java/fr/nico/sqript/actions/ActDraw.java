@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
             @Feature(name = "Draw text",description = "Draws a string at a specific position on the screen.",examples = "draw text \"Health : %player's health%\" at [10,10]", pattern = "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number}]", side = Side.CLIENT),
             @Feature(name = "Draw rectangle",description = "Draws a coloured filled custom sized rectangle at a specific position on the screen.", examples = "draw rectangle at [10,10] with size [20,5] with color 0xFFFF0000",pattern = "draw [colored] rect[angle] at {array} with size {array} [and] with color {number} [(1;without alpha)]", side = Side.CLIENT),
             @Feature(name = "Draw textured rectangle",description = "Draws a textured custom sized rectangle at a specific position on the screen.", examples = "draw textured rectangle at [-15,-7.5] with size [30,15] using texture sample:logo.png",pattern = "draw textured rect[angle] at {array} with size {array} (with|using) texture {resource} [with uv {array}]", side = Side.CLIENT),
-            @Feature(name = "Draw line",description = "Draws a line between given positions on the screen.", examples = "draw line from [10,10] to [100,100] with stroke 6 and with color 0",pattern = "draw line from {array} to {array} with stroke {number} [and] with color {number}", side = Side.CLIENT),
+            @Feature(name = "Draw line",description = "Draws a line between given positions on the screen.", examples = "draw line from [10,10] to [100,100] with stroke 6 and with color 0",pattern = "draw line from {location} to {location} with stroke {number} [and] with color {number}", side = Side.CLIENT),
             @Feature(name = "Rotate canvas",description = "Rotate the draw canvas.",
                     examples =
                     "draw text \"Text 1\" at [10,10] #Won't be rotated\n" +
@@ -62,6 +62,8 @@ import java.util.stream.Collectors;
                     side = Side.CLIENT),
             @Feature(name = "Push canvas matrix",description = "Pushes a new matrix onto the matrix pile. Allows to \"save the current\" matrix configuration.", examples = "push canvas matrix",pattern = "push canvas matrix", side = Side.CLIENT),
             @Feature(name = "Pop canvas matrix",description = "Pops the top matrix from the matrix pile. Allows to \"come back to the previous\" matrix configuration.", examples = "pop canvas matrix",pattern = "pop canvas matrix", side = Side.CLIENT),
+            @Feature(name = "Draw circle",description = "Draws a circle of given radius at given position on the screen.", examples = "draw circle at [10,10] with radius 6 and with color 0",pattern = "draw circle at {location} with radius {number} [and] with color {number}", side = Side.CLIENT),
+
         }
 )
 public class ActDraw extends ScriptAction {
@@ -204,9 +206,45 @@ public class ActDraw extends ScriptAction {
             case 8:
                 GL11.glPopMatrix();
                 break;
+            case 9:
+                location = (ILocatable) getParameter(1).get(context);
+                double radius = (double) getParameter(2).get(context).getObject();
+                color = getParametersSize() >=3 ? ((Double) getParameter(3,context)).intValue() :0xFFFFFFFF;
+                red = (float)(color >> 16 & 255) / 255.0F;
+                blue = (float)(color >> 8 & 255) / 255.0F;
+                green = (float)(color & 255) / 255.0F;
+                alpha = 255;
+                GlStateManager.color(red, green, blue, alpha);
+                GL11.glPushMatrix();
+                drawCircle(location.getVector().x,location.getVector().y,radius);
+                GL11.glColor3f(1,1,1);
+                GL11.glPopMatrix();
+                break;
         }
 
     }
+
+    public static void drawCircle(double x, double y, double r) {
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder vertexbuffer = tessellator.getBuffer();
+        vertexbuffer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION);
+        vertexbuffer.pos(x, y,0).endVertex();
+        // for some the circle is only drawn if theta is decreasing rather than
+        // ascending
+        double end = Math.PI * 2.0;
+        double incr = end / 40d;
+        for (double theta = -incr; theta < end; theta += incr) {
+            vertexbuffer.pos(x + r * Math.cos(-theta), y + r * Math.sin(-theta), 0).endVertex();
+        }
+        // renderer.finishDrawing();
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
+
     public static void drawLine(double x,double y, double z,double x2, double y2, float lineWidth, float r, float g, float b, float a) {
         GlStateManager.enableBlend();
         GL11.glEnable(GL11.GL_LINE_SMOOTH);

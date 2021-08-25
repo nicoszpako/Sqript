@@ -145,7 +145,7 @@ public class EvtPlayer {
 
     @Cancelable
     @Event(
-            feature = @Feature(name = "Player attack",
+            feature = @Feature(name = "Player hit",
                     description = "Called when a player is hit by another player.",
                     examples = "on player attacked:\n" +
                             "    cancel event #Removes pvp",
@@ -164,7 +164,41 @@ public class EvtPlayer {
 
     }
 
+    @Cancelable
+    @Event(
+            feature = @Feature(name = "Player attack",
+                    description = "Called when a player attacks another entity.",
+                    examples = "on player attacking minecraft:pig :\n" +
+                            "    cancel event #Removes pvp",
+                    pattern = "player attack[ing] [{entity|resource}]"),
+            accessors = {
+                    @Feature(name = "Attacker",description = "The player that attacked.", pattern = "attacker", type = "player"),
+                    @Feature(name = "Victim",description = "The entity that was attacked.", pattern = "victim", type = "entity"),
+            }
+    )
+    public static class EvtOnPlayerAttack extends ScriptEvent {
 
+        Entity victim;
+
+        public EvtOnPlayerAttack(Entity victim,EntityPlayer attacker) {
+            super(new ScriptTypeAccessor(new TypeEntity(victim),"victim"),
+                    new ScriptTypeAccessor(new TypePlayer(attacker),"attacker"));
+            this.victim = victim;
+        }
+
+        @Override
+        public boolean check(ScriptType[] parameters, int marks) {
+            if (parameters.length == 0 || parameters[0] == null)
+                return true;
+            else if (parameters[0] instanceof TypeEntity) {
+                return victim.getClass().isAssignableFrom(((TypeEntity) parameters[0]).getObject().getClass());
+            } else if (parameters[0] instanceof TypeResource) {
+                return ForgeRegistries.ENTITIES.getValue((ResourceLocation) (parameters[0]).getObject()).getEntityClass() == victim.getClass();
+            }
+            return false;
+        }
+
+    }
 
 
     @Cancelable
@@ -212,7 +246,7 @@ public class EvtPlayer {
                     examples = "on right click on villager:",
                     pattern = "[right] click on ((1;(living|entity))|(2;{entity|resource})) [entity]"),
             accessors = {
-                    @Feature(name = "Interaction entity",description = "The entity that has been interacted with.", pattern = "target", type = "entity"),
+                    @Feature(name = "Interaction entity",description = "The entity that has been interacted with.", pattern = "(target|entity)", type = "entity"),
                     @Feature(name = "Interaction hand",description = "The hand that has been used to interact.", pattern = "hand", type = "hand"),
                     @Feature(name = "Player",description = "The player that interacted with the entity.", pattern = "player", type = "player"),
             }
@@ -222,7 +256,9 @@ public class EvtPlayer {
         Entity entity;
 
         public EvtOnEntityInteract(Entity entity, EnumHand hand, EntityPlayer player) {
-            super(new ScriptTypeAccessor(new TypeEntity(entity),"target"), new ScriptTypeAccessor(new TypeHand(hand),"hand"), new ScriptTypeAccessor(new TypePlayer(player), "player"));
+            super(new ScriptTypeAccessor(new TypeEntity(entity),"(target|entity)"),
+                    new ScriptTypeAccessor(new TypeHand(hand),"hand"),
+                    new ScriptTypeAccessor(new TypePlayer(player), "player"));
             this.entity = entity;
         }
 

@@ -25,9 +25,9 @@ public class EvtLiving {
             feature = @Feature(name = "Living damage",
                     description = "This event is triggered on server side just before damage is applied to an entity.",
                     examples = "on pig damage:",
-                    pattern = "((1;(living|entity))|(2;{entity|resource})) damage[d]"),
+                    pattern = "((1;(living|entity))|(2;{entity|resource})) damage[d] [by {entity|resource}]"),
             accessors = {
-                    @Feature(name = "Victim", description = "The victim of the damage event.", pattern = "victim", type = "entity"),
+                    @Feature(name = "Victim", description = "The victim of the damage event.", pattern = "(victim|entity)", type = "entity"),
                     @Feature(name = "Damage type", description = "The damage type of dealt damage.", pattern = "damage type", type = "damage_source"),
                     @Feature(name = "Damage amount", description = "The amount of dealt damage.", pattern = "[damage] amount", type = "number"),
                     @Feature(name = "Attacker", description = "The damage dealer of the damage event.", pattern = "attacker", type = "entity"),
@@ -35,22 +35,36 @@ public class EvtLiving {
     )
     public static class EvtOnLivingDamage extends ScriptEvent {
         Entity victim;
+        Entity source;
 
         public EvtOnLivingDamage(Entity victim, DamageSource damageSource, float amount) {
-            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(), "victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(), "attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource), "damageType"), new ScriptTypeAccessor(new TypeNumber(amount), "amount"));
+            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(), "(victim|entity)"),
+                    new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(), "attacker"),
+                    new ScriptTypeAccessor(new TypeDamageSource(damageSource), "damageType"),
+                    new ScriptTypeAccessor(new TypeNumber(amount), "amount"));
             this.victim = victim;
+            this.source = damageSource.getImmediateSource();
         }
 
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
+            boolean result = true;
             if (parameters.length == 0 || parameters[0] == null)
-                return true;
+                result = false;
             else if (parameters[0] instanceof TypeEntity) {
-                return victim.getClass().isAssignableFrom(((TypeEntity) parameters[0]).getObject().getClass());
+                result = victim.getClass().isAssignableFrom(((TypeEntity) parameters[0]).getObject().getClass());
             } else if (parameters[0] instanceof TypeResource) {
-                return ForgeRegistries.ENTITIES.getValue((ResourceLocation) (parameters[0]).getObject()).getEntityClass() == victim.getClass();
+                result = ForgeRegistries.ENTITIES.getValue((ResourceLocation) (parameters[0]).getObject()).getEntityClass() == victim.getClass();
             }
-            return false;
+
+            if (parameters[1] == null)
+                result = false;
+            else if (parameters[1] instanceof TypeEntity && source != null) {
+                result = result && source.getClass().isAssignableFrom(((TypeEntity) parameters[1]).getObject().getClass());
+            } else if (parameters[0] instanceof TypeResource && source != null) {
+                result = result && ForgeRegistries.ENTITIES.getValue((ResourceLocation) (parameters[1]).getObject()).getEntityClass() == source.getClass();
+            }
+            return result;
         }
     }
 

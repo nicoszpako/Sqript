@@ -119,7 +119,7 @@ public class ScriptManager {
 
     public static final boolean FULL_DEBUG = true;
 
-    public static void registerExpression(Class<? extends ScriptExpression> exp, String name, int priority, Feature... features) {
+    public static void registerExpression(Class<? extends ScriptExpression> exp, String name, int priority, Feature... features) throws Exception {
         expressions.add(new ExpressionDefinition(name, exp, priority, features));
         expressions.sort((a,b)->b.getPriority()-a.getPriority());
         log.debug("Registering expression : " + name + " (" + exp.getSimpleName() + ")");
@@ -160,12 +160,12 @@ public class ScriptManager {
 
     }
 
-    public static void registerEvent(Class<? extends ScriptEvent> cls, Feature feature, Feature[] accesors) {
+    public static void registerEvent(Class<? extends ScriptEvent> cls, Feature feature, Feature[] accesors) throws Exception {
         log.debug("Registering event : " + feature.name() + " (" + cls.getSimpleName() + ")");
         events.add(new EventDefinition(cls, feature, accesors));
     }
 
-    public static void registerAction(Class<? extends ScriptAction> cls, String name, int priority, Feature... features) {
+    public static void registerAction(Class<? extends ScriptAction> cls, String name, int priority, Feature... features) throws Exception {
         log.debug("Registering action : " + name + " (" + cls.getSimpleName() + ")");
         actions.add(new ActionDefinition(name, cls, priority, features));
     }
