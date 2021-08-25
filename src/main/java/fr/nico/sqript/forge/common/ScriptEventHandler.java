@@ -65,6 +65,15 @@ public class ScriptEventHandler {
         }
     }
 
+    @SubscribeEvent
+    public void onItemUsed(LivingEntityUseItemEvent.Finish event) throws ScriptException {
+        if(event.getEntity() instanceof EntityPlayer){
+            if(ScriptManager.callEvent(new EvtPlayer.EvtOnItemUsed((EntityPlayer) event.getEntity(),event.getItem()))) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent.Pre event) {

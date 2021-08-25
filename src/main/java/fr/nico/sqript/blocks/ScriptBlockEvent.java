@@ -22,7 +22,7 @@ import java.util.Arrays;
                 description = "Run code when a specific event is triggered.",
                 examples = "on script load:\n" +
                         "    print \"Hello world !\"",
-                regex = "^on .*"),
+                regex = "^(on|when) .*"),
         fields = {@Feature(name = "side")}
 )
 public class ScriptBlockEvent extends ScriptBlock {
@@ -50,14 +50,15 @@ public class ScriptBlockEvent extends ScriptBlock {
     }
 
     public Class<? extends ScriptEvent> parseEvent(ScriptToken line) {
-        System.out.println("Parsing event for : "+line);
+        //System.out.println("Parsing event for : "+line);
+        line = line.with(line.getText().trim());
         for (EventDefinition eventDefinition : ScriptManager.events) {
-            System.out.println("Checking for : "+eventDefinition.getEventClass());
+            //System.out.println("Checking for : "+eventDefinition.getEventClass());
             int matchedPatternIndex = -1;
             if ((matchedPatternIndex = eventDefinition.getMatchedPatternIndex(line.getText())) != -1) {
                 //Parsing the arguments
                 String[] arguments = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllArguments(line.getText());
-                System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length+" "+Arrays.toString(arguments));
+                //System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length+" "+Arrays.toString(arguments));
                 ScriptType[] parameters = new ScriptType[arguments.length];
                 int marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.getText());
                 for (int i = 0; i < arguments.length; i++) {
@@ -73,10 +74,10 @@ public class ScriptBlockEvent extends ScriptBlock {
                     if (event.validate(parameters, marks)) {
                         this.marks = marks;
                         this.parameters = parameters;
-                        System.out.println("Validated");
+                        //System.out.println("Validated");
                         return eventDefinition.getEventClass();
                     }else{
-                        System.out.println("Not validated");
+                        //System.out.println("Not validated");
                     }
                 } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ignored) {
                 }

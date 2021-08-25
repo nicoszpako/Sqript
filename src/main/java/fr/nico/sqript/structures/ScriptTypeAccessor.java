@@ -27,7 +27,7 @@ public class ScriptTypeAccessor {
     public ScriptTypeAccessor(ScriptType element, String match) {
         this.element = element;
         try {
-            this.pattern = ScriptDecoder.patternToRegex(match).pattern;
+            this.pattern = ScriptDecoder.transformPattern(match).pattern;
             this.key = match;
             if(pattern == null)
                 throw new ScriptException.ScriptPatternError("");

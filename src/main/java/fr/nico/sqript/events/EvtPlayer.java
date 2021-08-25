@@ -150,6 +150,27 @@ public class EvtPlayer {
 
     }
 
+    @Event(
+            feature = @Feature(name = "Item used",
+                    description = "Called when a player has finished using an item",
+                    examples = "on item used:\n" +
+                            "    if item is minecraft:potion:\n",
+                    pattern = "(player used item|item used)"),
+            accessors = {
+                    @Feature(name = "Player", description = "The player that used the item.", pattern = "player", type = "player"),
+                    @Feature(name = "Used item", description = "The used item.", pattern = "[used] item", type = "item"),
+            }
+    )
+    public static class EvtOnItemUsed extends ScriptEvent {
+
+        public EvtOnItemUsed(EntityPlayer player,ItemStack item) {
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),
+                    new ScriptTypeAccessor(new TypeItem(item),"[used] item"));
+        }
+
+    }
+
+
 
 
     @Cancelable
@@ -273,7 +294,7 @@ public class EvtPlayer {
 
         @Override
         public boolean validate(ScriptType[] parameters, int marks) {
-            System.out.println("validating with : "+ Arrays.toString(parameters)+" "+(parameters[0]==null));
+            //System.out.println("validating with : "+ Arrays.toString(parameters)+" "+(parameters[0]==null));
             if (parameters[0] != null){
                 if(parameters[0] instanceof TypeResource)
                     return ForgeRegistries.ENTITIES.getValue((ResourceLocation) parameters[0].getObject()) != null;

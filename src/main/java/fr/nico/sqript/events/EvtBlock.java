@@ -11,6 +11,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import java.util.Arrays;
 
 public class EvtBlock {
     @Cancelable
@@ -86,6 +89,8 @@ public class EvtBlock {
 
         @Override
         public boolean validate(ScriptType[] parameters, int marks) {
+            if(parameters[0] == null)
+                return false;
             return super.validate(parameters, marks);
         }
 

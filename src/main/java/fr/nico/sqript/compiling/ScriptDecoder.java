@@ -1185,7 +1185,7 @@ public class ScriptDecoder {
                 }
                 for (TypeDefinition primitiveDefinition : ScriptManager.primitives.values()) {
                     if (primitiveDefinition.getName().equals(type)) {
-                        pattern = pattern.replaceFirst("\\{" + Pattern.quote(g) + "}", "(?<a" + argCount + ">" + exp_capture + ")");
+                        pattern = pattern.replaceFirst("\\{" + Pattern.quote(g) + "}", "(?<a" + argCount + ">" + primitiveDefinition.transformedPattern.getPattern().pattern() + ")");
                         parameterDefinitions.add(new ScriptParameterDefinition(primitiveDefinition.getTypeClass(), n_args));
                         argCount++;
                         continue m;
