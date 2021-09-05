@@ -56,7 +56,7 @@ public class EventDefinition {
 
     public int getMatchedPatternIndex(String line){
         for (int i = 0; i < transformedPatterns.length ; i++) {
-            System.out.println("Checking if "+line+" matches "+transformedPatterns[i].getPattern().pattern());
+            //System.out.println("Checking if "+line+" matches "+transformedPatterns[i].getPattern().pattern());
             if(transformedPatterns[i].getPattern().matcher(line).matches())
                 return i;
         }

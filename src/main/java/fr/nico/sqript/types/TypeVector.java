@@ -21,16 +21,16 @@ public class TypeVector extends ScriptType<Vec3d> implements ILocatable {
     }
 
     static {
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeVector .class, TypeVector.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeVector .class, TypeVector.class, TypeVector.class,
                 (a,b) -> new TypeVector(((TypeVector)a).getObject().add(((TypeVector)b).getObject())));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.SUBTRACT, TypeVector .class, TypeVector.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.SUBTRACT, TypeVector .class, TypeVector.class, TypeVector.class,
                 (a,b) -> new TypeVector(((TypeVector)a).getObject().subtract(((TypeVector)b).getObject())));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.MULTIPLY, TypeVector .class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.MULTIPLY, TypeVector .class, TypeNumber.class, TypeVector.class,
                 (a,b) -> new TypeVector(((TypeVector)a).getObject().scale(((TypeNumber)b).getObject())));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.MULTIPLY, TypeNumber .class, TypeVector.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.MULTIPLY, TypeNumber .class, TypeVector.class, TypeVector.class,
                 (a,b) -> new TypeVector(((TypeVector)b).getObject().scale(((TypeNumber)a).getObject())));
     }
 

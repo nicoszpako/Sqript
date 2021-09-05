@@ -69,32 +69,32 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
     }
 
     static{
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeNumber.class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                  (a,b) -> new TypeNumber(((TypeNumber)a).getObject()+((TypeNumber)b).getObject()));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.SUBTRACT, TypeNumber.class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.SUBTRACT, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                  (a,b) -> new TypeNumber(((TypeNumber)a).getObject()-((TypeNumber)b).getObject()));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.MULTIPLY, TypeNumber.class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.MULTIPLY, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                  (a,b) -> new TypeNumber(((TypeNumber)a).getObject()*((TypeNumber)b).getObject()));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.MOD, TypeNumber.class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.MOD, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                 (a,b) -> new TypeNumber(((TypeNumber)a).getObject()%((TypeNumber)b).getObject()));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.QUOTIENT, TypeNumber.class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.QUOTIENT, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                 (a,b) -> new TypeNumber(Math.floorDiv(((TypeNumber)a).getObject().intValue(),((TypeNumber)b).getObject().intValue())));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.DIVIDE, TypeNumber.class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.DIVIDE, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                  (a,b) -> new TypeNumber(((TypeNumber)a).getObject()/((TypeNumber)b).getObject()));
 
-        ScriptManager.registerUnaryOperation(ScriptOperator.MINUS_UNARY, TypeNumber.class,
+        ScriptManager.registerUnaryOperation(ScriptOperator.MINUS_UNARY, TypeNumber.class, TypeNumber.class,
                  (a,b) -> new TypeNumber(-((TypeNumber)a).getObject()));
 
-        ScriptManager.registerUnaryOperation(ScriptOperator.PLUS_UNARY, TypeNumber.class,
+        ScriptManager.registerUnaryOperation(ScriptOperator.PLUS_UNARY, TypeNumber.class, TypeNumber.class,
                  (a,b) -> a);
 
 
-        ScriptManager.registerUnaryOperation(ScriptOperator.FACTORIAL, TypeNumber.class,
+        ScriptManager.registerUnaryOperation(ScriptOperator.FACTORIAL, TypeNumber.class, TypeNumber.class,
                 new IOperation() {
                     double factorial(double n){
                         if (n <= 0)
@@ -109,23 +109,23 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
                 }
         );
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.MT, TypeNumber.class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.MT, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                 (a, b) ->
             new TypeBoolean((((TypeNumber)a).getObject())>(((TypeNumber)b).getObject())));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.MTE, TypeNumber.class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.MTE, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                  (a, b) -> new TypeBoolean(((TypeNumber)a).getObject()>=((TypeNumber)b).getObject()));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.LT, TypeNumber.class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.LT, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                  (a, b) ->  {return new TypeBoolean((((TypeNumber)a).getObject())<(((TypeNumber)b).getObject()));});
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.LTE, TypeNumber.class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.LTE, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                  (a, b) -> new TypeBoolean(((TypeNumber)a).getObject()<=((TypeNumber)b).getObject()));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.EXP, TypeNumber.class, TypeNumber.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.EXP, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                  (a,b) -> new TypeNumber(Math.pow(((TypeNumber)a).getObject(),((TypeNumber)b).getObject())));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeNumber.class, TypeString.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeNumber.class, TypeString.class, TypeNumber.class,
                  (a,b) -> new TypeString(((TypeNumber)a).getObject()+((TypeString)b).getObject()));
 
     }

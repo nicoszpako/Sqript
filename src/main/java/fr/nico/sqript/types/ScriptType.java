@@ -10,11 +10,11 @@ import java.util.Comparator;
 
 public abstract class ScriptType<T>  extends ScriptElement<T>  {
 
+    public ScriptType(){}
+
     public ScriptType(T object) {
         super(object);
     }
-
-
 
     @Override
     public boolean equals(Object o){

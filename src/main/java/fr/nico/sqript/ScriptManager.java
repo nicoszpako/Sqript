@@ -63,36 +63,36 @@ public class ScriptManager {
     public static List<ScriptBlockCommand> serverCommands = new ArrayList<>();
 
     //Operations between types
-    public static HashMap<ScriptOperator, HashMap<Class, HashMap<Class, IOperation>>> binaryOperations = new HashMap<>();
-    public static HashMap<ScriptOperator, HashMap<Class, IOperation>> unaryOperations = new HashMap<>();
+    public static HashMap<ScriptOperator, HashMap<Class, HashMap<Class, OperatorDefinition>>> binaryOperations = new HashMap<>();
+    public static HashMap<ScriptOperator, HashMap<Class, OperatorDefinition>> unaryOperations = new HashMap<>();
     public static List<ScriptOperator> operators = new ArrayList<>();
 
     public static boolean RELOADING = false;
 
-    public static void registerBinaryOperation(ScriptOperator o, Class a, Class b, IOperation operation) {
+    public static void registerBinaryOperation(ScriptOperator o, Class a, Class b, Class<? extends ScriptElement<?>> returnType, IOperation operation) {
         binaryOperations.computeIfAbsent(o, k -> new HashMap<>());
         binaryOperations.get(o).computeIfAbsent(a, k -> new HashMap<>());
-        binaryOperations.get(o).get(a).put(b, operation);
+        binaryOperations.get(o).get(a).put(b, new OperatorDefinition(operation, returnType));
     }
 
-    public static void registerUnaryOperation(ScriptOperator o, Class a, IOperation operation) {
+    public static void registerUnaryOperation(ScriptOperator o, Class<? extends ScriptElement<?>> a, Class<? extends ScriptElement<?>> returnType, IOperation operation) {
         unaryOperations.computeIfAbsent(o, k -> new HashMap<>());
-        unaryOperations.get(o).put(a, operation);
+        unaryOperations.get(o).put(a, new OperatorDefinition(operation, returnType));
     }
 
-    public static IOperation getBinaryOperation(Class<? extends ScriptType> a, Class<? extends ScriptType> b, ScriptOperator o) {
+    public static OperatorDefinition getBinaryOperation(Class<? extends ScriptType> a, Class<? extends ScriptType> b, ScriptOperator o) {
         if (binaryOperations.get(o).get(ScriptType.class) != null) {
-            final IOperation op;
+            final OperatorDefinition op;
             if ((op = binaryOperations.get(o).get(ScriptType.class).get(b)) != null)
                 return op;
         }
         if (binaryOperations.get(o).get(a) != null) {
-            final IOperation op;
+            final OperatorDefinition op;
             if ((op = binaryOperations.get(o).get(a).get(ScriptType.class)) != null)
                 return op;
         }
         if (binaryOperations.get(o).get(a) != null) {
-            final IOperation op;
+            final OperatorDefinition op;
             if ((op = binaryOperations.get(o).get(a).get(b)) != null)
                 return op;
         }
@@ -106,7 +106,7 @@ public class ScriptManager {
         return null;
     }
 
-    public static IOperation getUnaryOperation(Class a, ScriptOperator o) {
+    public static OperatorDefinition getUnaryOperation(Class a, ScriptOperator o) {
         try {
             return unaryOperations.get(o).get(a);
         } catch (NullPointerException e) {
@@ -116,6 +116,13 @@ public class ScriptManager {
     }
 
 
+    public static ActionDefinition getDefinitionFromAction(Class<? extends ScriptAction> cls){
+        for(ActionDefinition actionDefinition : actions){
+            if(actionDefinition.getActionClass() == cls)
+                return actionDefinition;
+        }
+        return null;
+    }
 
     public static final boolean FULL_DEBUG = true;
 

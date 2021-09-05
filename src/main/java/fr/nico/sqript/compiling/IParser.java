@@ -1,7 +1,10 @@
 package fr.nico.sqript.compiling;
 
+import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.structures.ScriptParameterDefinition;
+
 public interface IParser {
 
-    ParseResult parse(ScriptToken line, ScriptCompileGroup group) throws ScriptException;
+    ExpressionTree parse(ScriptToken expressionToken, ScriptCompilationContext group) throws ScriptException;
 
 }

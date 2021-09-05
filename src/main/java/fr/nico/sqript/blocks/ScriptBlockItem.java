@@ -264,7 +264,7 @@ public class ScriptBlockItem extends ScriptBlock {
             if (fieldDefined("durability"))
                 durabilityfactor = Integer.parseInt(getSubBlock("durability").getRawContent());
             if (fieldDefined("protection array"))
-                protection = (((TypeArray) (getSubBlock("protection array").evaluate())).getObject()).stream().mapToInt(a -> (int) a.getObject()).toArray();
+                protection = (((TypeArray) (getSubBlock("protection array").evaluate())).getObject()).stream().mapToInt(a -> (Integer) a.getObject()).toArray();
             if (fieldDefined("enchantability"))
                 enchantability = Integer.parseInt(getSubBlock("enchantability").getRawContent());
 

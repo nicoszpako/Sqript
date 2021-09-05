@@ -39,8 +39,8 @@ public class ExprBlock extends ScriptExpression {
     @Override
     public ScriptType get(ScriptContext context, ScriptType[] parameters) {
 
-        switch (getMatchedIndex()) {
-            case 0:
+        switch (getMatchedName()) {
+            case "Block at location":
                 int worldId = parameters[1] == null ? 0 : (int) parameters[1].getObject();
                 World world;
                 if (FMLCommonHandler.instance().getSide() == Side.SERVER)
@@ -55,7 +55,7 @@ public class ExprBlock extends ScriptExpression {
                     return new TypeBlock(b, pos, world);
                 }
                 return null;
-            case 1:
+            case "Blocks in radius of location":
                 worldId = parameters[1] == null ? 0 : (int) parameters[2].getObject();
                 if (FMLCommonHandler.instance().getSide() == Side.SERVER)
                     world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId];
@@ -73,13 +73,13 @@ public class ExprBlock extends ScriptExpression {
                     }
                 }
                 return new TypeArray(list);
-            case 2:
+            case "Block":
                 TypeResource resource = (TypeResource) parameters[0];
                 int metadata = ((Double) parameters[1].getObject()).intValue();
                 Block block = ForgeRegistries.BLOCKS.getValue(resource.getObject());
                 IBlockState state = block.getStateFromMeta(metadata);
                 return new TypeBlock(state);
-            case 3:
+            case "Block color":
                 //System.out.println("Parameters : "+ Arrays.toString(parameters));
                 worldId = parameters[1] == null ? 0 : (int) parameters[2].getObject();
                 if (FMLCommonHandler.instance().getSide() == Side.SERVER)
@@ -88,7 +88,7 @@ public class ExprBlock extends ScriptExpression {
                     world = getClientWorld();
                 TypeBlock blockstate = (TypeBlock) parameters[0];
                 return new TypeNumber(blockstate.getObject().getMapColor(world, blockstate.getPos()).colorValue);
-            case 4:
+            case "Terrain height":
                 worldId = parameters[1] == null ? 0 : (int) parameters[2].getObject();
                 if (FMLCommonHandler.instance().getSide() == Side.SERVER)
                     world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId];

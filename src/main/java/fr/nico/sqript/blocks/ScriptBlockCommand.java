@@ -74,7 +74,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         if (fieldDefined("side"))
             this.setSide(fr.nico.sqript.structures.Side.from(getSubBlock("side").getRawContent()));
 
-        ScriptCompileGroup compileGroup = new ScriptCompileGroup();
+        ScriptCompilationContext compileGroup = new ScriptCompilationContext();
         //Adding the "arg" expression to the compile group to prevent false-positive errors
         for (int j = 0; j < argumentsDefinitions.length; j++) {
             compileGroup.add("arg[ument] " + (j + 1));

@@ -21,7 +21,7 @@ import java.util.Objects;
 @Action(name = "Player Actions",
         features = {
             @Feature(name = "Teleport player", description = "Teleports a player to a given location.", examples = "teleport player at [10,25,20]", pattern = "teleport {player} to {array}"),
-            @Feature(name = "Give item to player", description = "Gives an item to a player.", examples = "give 1 minecraft:diamond_sword to player\n", pattern = "give [{+number}] {item|resource} to {player}"),
+            @Feature(name = "Give item to player", description = "Gives an item to a player.", examples = "give 1 minecraft:diamond_sword to player\n", pattern = "give {item} to {player}"),
             @Feature(name = "Kick player", description = "Kicks a player from the server.", examples = "kick player with message \"You've been kicked for cheating\"", pattern = "kick {player} [with message {string}]")
         }
 )
@@ -36,23 +36,12 @@ public class ActPlayer extends ScriptAction {
                 player.setPositionAndUpdate((double)pos.get(0), (double)pos.get(1),(double) pos.get(2));
                 return;
             case 1:
-                int amount = getParameterOrDefault(getParameter(1),1, context);
                 ScriptType param = getParameter(2).get(context);
                 ItemStack item = null;
-                if (param instanceof TypeResource) {
-                    Item i = ForgeRegistries.ITEMS.getValue(((TypeResource) (param)).getObject());
-                    if (i == null) {
-                        i = Item.getItemFromBlock(Objects.requireNonNull(ForgeRegistries.BLOCKS.getValue(((TypeResource) (param)).getObject())));
-                        if (i == null){
-                            ScriptManager.log.error("No item found for identifier : " + param.getObject().toString());
-                            return;
-                        }
-                    }
-                    item = new ItemStack(i,amount);
-                }
                 if (param instanceof TypeItem) {
                     item = ((TypeItem) (param)).getObject();
                 }
+                System.out.println("Item : "+item);
                 if(item==null)
                     return;
                 player = (EntityPlayer) getParameter(2).get(context).getObject();

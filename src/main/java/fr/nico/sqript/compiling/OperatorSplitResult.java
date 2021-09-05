@@ -1,24 +1,25 @@
 package fr.nico.sqript.compiling;
 
 
-import fr.nico.sqript.meta.Expression;
+import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.structures.ScriptOperator;
 
 public class OperatorSplitResult {
 
-    private  Token[] operands;
+    private  Token[] expressionTokens;
     private  Integer[] operatorIndices;
 
     public OperatorSplitResult(Token[] operands, Integer[] operatorIndices) {
-        this.operands = operands;
+        this.expressionTokens = operands;
         this.operatorIndices = operatorIndices;
     }
 
-    public Token[] getOperands() {
-        return operands;
+    public Token[] getExpressionTokens() {
+        return expressionTokens;
     }
 
-    public void setOperands(Token[] operands) {
-        this.operands = operands;
+    public void setExpressionTokens(Token[] expressionTokens) {
+        this.expressionTokens = expressionTokens;
     }
 
     public Integer[] getOperatorIndices() {
@@ -31,27 +32,39 @@ public class OperatorSplitResult {
 
     public static class Token {
 
-        EnumTokenType type;
-        String expression;
+        private final EnumTokenType type;
+        private final String expressionString;
+        private ScriptOperator operator;
 
         public Token(EnumTokenType type, String expression) {
             this.type = type;
-            this.expression = expression;
+            this.expressionString = expression;
+        }
+
+        public Token(ScriptOperator operator) {
+            this.operator = operator;
+            this.type = EnumTokenType.OPERATOR;
+            this.expressionString = null;
         }
 
         @Override
         public String toString() {
             return "Token{" +
                     "type=" + type +
-                    ", expression='" + expression + '\'' +
+                    ", expression='" + expressionString + '\'' +
                     '}';
         }
+
+        public EnumTokenType getType() {
+            return type;
+        }
+
+        public String getExpressionString() {
+            return expressionString;
+        }
+
+
     }
 
-    public enum EnumTokenType {
-        EXPRESSION,
-        OPERATOR,
-        LEFT_PARENTHESIS,
-        RIGHT_PARENTHESIS
-    }
+
 }

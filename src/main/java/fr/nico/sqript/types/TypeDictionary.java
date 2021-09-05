@@ -60,7 +60,7 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
     }
 
     static {
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeDictionary.class, ScriptType.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeDictionary.class, ScriptType.class, TypeDictionary.class,
                 (a,b) -> {
                     if(!(b instanceof TypeArray)){
                         ScriptManager.log.error("Only arrays with two coupled objects like [\"key\",8] can be added to dictionaries");
@@ -71,7 +71,7 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
                     o.getObject().put(p.getObject().get(0),p.getObject().get(1));
                     return o;
                 });
-        ScriptManager.registerBinaryOperation(ScriptOperator.SUBTRACT, TypeDictionary.class, ScriptType.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.SUBTRACT, TypeDictionary.class, ScriptType.class, TypeDictionary.class,
                 (a,b) -> {
                         TypeDictionary o = (TypeDictionary)a;
                         o.getObject().remove(b);
@@ -144,8 +144,8 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
         setObject(getObject().entrySet()
                     .stream()
                     .sorted(byValue ? Map.Entry.comparingByValue((o1, o2) -> {
-                        IOperation lt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.LT);
-                        IOperation mt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.MT);
+                        IOperation lt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.LT).getOperation();
+                        IOperation mt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.MT).getOperation();
                         if(lt != null && mt != null){
                             //System.out.println("operating "+o1+"<"+o2+" it's : "+(Boolean)(lt.operate(o1,o2).getObject()));
                             if((Boolean)(lt.operate(o1,o2).getObject())){
@@ -157,8 +157,8 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
                         }
                         return 0;
                     }) : Map.Entry.comparingByKey((o1, o2) -> {
-                        IOperation lt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.LT);
-                        IOperation mt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.MT);
+                        IOperation lt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.LT).getOperation();
+                        IOperation mt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.MT).getOperation();
                         if(lt != null && mt != null){
                             if((Boolean)(lt.operate(o1,o2).getObject())){
                                 return n_lt;

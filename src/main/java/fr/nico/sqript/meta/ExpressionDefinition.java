@@ -2,9 +2,14 @@ package fr.nico.sqript.meta;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptDecoder;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.structures.ScriptParameterDefinition;
 import fr.nico.sqript.structures.TransformedPattern;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 public class ExpressionDefinition {
@@ -26,6 +31,7 @@ public class ExpressionDefinition {
                 try {
                     String[] t = ScriptDecoder.splitAtDoubleDot(features[i].pattern());
                     this.transformedPatterns[i] = ScriptDecoder.transformPattern(t[0]);
+                    this.transformedPatterns[i].setReturnType(ScriptDecoder.parseType(features[i].type()));
                     //System.out.println("Pattern "+i+" : "+this.transformedPatterns[i].getPattern().pattern());
                 } catch (Exception e) {
                     ScriptManager.log.info("Error trying to build expression : " + name);
@@ -40,46 +46,60 @@ public class ExpressionDefinition {
     //[0] : pattern index
     //[1] : pattern index relative position in match
     //[2] : marks
-    public int[] getMatchedPatternIndexAndPosition(String line) {
+    public MatchResult getMatchResult(String line) {
         int shortestIndex = -1;
         int shortestPosition = -1;
         t:
         for (int i = 0; i < transformedPatterns.length; i++) {
-            //System.out.println("Checking if "+line+" matches "+transformedPatterns[i].getPattern());
-            Matcher m = transformedPatterns[i].getPattern().matcher(line);
+            TransformedPattern pattern = transformedPatterns[i];
+            //System.out.println("Class : "+cls);
+            Matcher m = pattern.getPattern().matcher(line);
             if (m.matches()) {
-                for (String argument : transformedPatterns[i].getAllArguments(line)) {
-                    if (!ScriptDecoder.isParenthesageGood(argument))
-                        continue t;
-                }
-                if (m.groupCount() > 0) {
-                    int leastGroupStartPosition = -1;
-                    for (int j = 1; j < m.groupCount() + 1; j++) {
-                        if (m.start(j) != -1) {
-                            leastGroupStartPosition = m.start(j);
-                            break;
+                //System.out.println(getExpressionClass()+" "+i+" possibleTypes : "+possibleTypes+" returnType: "+pattern.getReturnType());
+                if (m.matches()) {
+                    for (String argument : pattern.getAllArguments(line)) {
+                        if (!ScriptDecoder.isParenthesageGood(argument))
+                            continue t;
+                    }
+                    if (m.groupCount() > 0) {
+                        int leastGroupStartPosition = -1;
+                        for (int j = 1; j < m.groupCount() + 1; j++) {
+                            if (m.start(j) != -1) {
+                                leastGroupStartPosition = m.start(j);
+                                break;
+                            }
                         }
-                    }
-                    //System.out.println("OK : "+this.name+":"+i+" ("+transformedPatterns[i].getPattern()+") with position "+leastGroupStartPosition+" (actual shortest position : "+shortestPosition+")");
-                    if (leastGroupStartPosition > shortestPosition) {
-                        shortestPosition = leastGroupStartPosition;
-                        shortestIndex = i;
-                    }
-                } else {
-                    if (line.length() + 1 > shortestPosition) {
-                        shortestPosition = line.length() + 1;
-                        shortestIndex = i;
+                        //System.out.println("OK : "+this.name+":"+i+" ("+transformedPatterns[i].getPattern()+") with position "+leastGroupStartPosition+" (actual shortest position : "+shortestPosition+")");
+                        if (leastGroupStartPosition > shortestPosition) {
+                            shortestPosition = leastGroupStartPosition;
+                            shortestIndex = i;
+                        }
+                    } else {
+                        if (line.length() + 1 > shortestPosition) {
+                            shortestPosition = line.length() + 1;
+                            shortestIndex = i;
+                        }
                     }
                 }
             }
 
+
         }
         if (shortestIndex != -1) {
             //System.out.println("Returning : "+this.name+":"+shortestIndex+" ("+transformedPatterns[shortestIndex].getPattern()+") for "+line);
-            return new int[]{shortestIndex, shortestPosition, transformedPatterns[shortestIndex].getAllMarks(line)};
+            return new MatchResult(shortestIndex, shortestPosition, transformedPatterns[shortestIndex].getAllMarks(line));
         } else
             return null;
 
+    }
+
+    public ScriptExpression instanciate(ScriptToken line, int matchedIndex, int marks) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        ScriptExpression instance = getExpressionClass().getConstructor().newInstance();
+        instance.setMatchedIndex(matchedIndex);
+        instance.setMarks(marks);
+        instance.setLine((ScriptToken) line.clone());
+        instance.setReturnType(transformedPatterns[matchedIndex].getReturnType());
+        return instance;
     }
 
     public int getPriority() {

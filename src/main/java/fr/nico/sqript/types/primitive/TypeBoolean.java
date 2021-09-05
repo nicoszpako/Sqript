@@ -3,6 +3,7 @@ package fr.nico.sqript.types.primitive;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.meta.Primitive;
+import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.interfaces.ISerialisable;
@@ -40,13 +41,13 @@ public class TypeBoolean extends PrimitiveType<Boolean> implements ISerialisable
     }
 
     static {
-        ScriptManager.registerBinaryOperation(ScriptOperator.AND,TypeBoolean.class,TypeBoolean.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.AND,TypeBoolean.class,TypeBoolean.class, TypeBoolean.class,
                 (a,b) -> new TypeBoolean(((TypeBoolean)a).getObject()&&((TypeBoolean)b).getObject()));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.OR,TypeBoolean.class,TypeBoolean.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.OR,TypeBoolean.class,TypeBoolean.class, TypeBoolean.class,
                 (a,b) -> new TypeBoolean(((TypeBoolean)a).getObject()||((TypeBoolean)b).getObject()));
 
-        ScriptManager.registerUnaryOperation(ScriptOperator.NOT,TypeBoolean.class,
+        ScriptManager.registerUnaryOperation(ScriptOperator.NOT,TypeBoolean.class, TypeBoolean.class,
                 (a,b) -> new TypeBoolean(!((TypeBoolean)a).getObject()));
     }
 

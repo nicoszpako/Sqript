@@ -1,10 +1,9 @@
 package fr.nico.sqript.blocks;
 
-import fr.nico.sqript.compiling.ScriptCompileGroup;
+import fr.nico.sqript.compiling.ScriptCompilationContext;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
-import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.ScriptClock;
 import fr.nico.sqript.structures.ScriptContext;
@@ -45,8 +44,8 @@ public class ScriptFunctionalBlock extends ScriptBlock {
         }
     }
 
-    public ScriptCompileGroup createCompileGroup() throws ScriptException.ScriptNotEnoughArgumentException {
-        ScriptCompileGroup compileGroup = new ScriptCompileGroup();
+    public ScriptCompilationContext createCompileGroup() throws ScriptException.ScriptNotEnoughArgumentException {
+        ScriptCompilationContext compileGroup = new ScriptCompilationContext();
         if (parameters.length > 0)
             for (String s : parameters) {
                 if (!s.isEmpty())

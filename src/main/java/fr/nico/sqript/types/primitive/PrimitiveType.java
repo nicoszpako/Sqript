@@ -1,5 +1,6 @@
 package fr.nico.sqript.types.primitive;
 
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 
@@ -12,13 +13,10 @@ public abstract class PrimitiveType<T> extends ScriptType<T> {
 
     // /!\ Le regex doit comprendre les parenthèses pour recevoir le groupe à parser. Un regex sans parenthèses sera ignoré. /!\
 
+    public PrimitiveType(){};
+
     public PrimitiveType(T object) {
         super(object);
-    }
-
-
-    public void build(ScriptContext context){
-
     }
 
     @Override

@@ -2,22 +2,34 @@ package fr.nico.sqript.expressions;
 
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
+import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.types.ScriptType;
 
+
+/**
+ * Something that returns a ScriptElement, according to parameters
+ * <br>Ex : inventory of player -> ExprItemContainer return TypeArray<TypeItem>
+ * <br>Ex : item in hand of player -> ExprItem return TypeItem
+ * <br>Ex : 5+9*9 -> ExprCompiledEvaluation return TypeNumber
+ */
 public abstract class ScriptExpression {
 
-    //Quelque chose qui retourne un ScriptElement.
-    //ex : inventory of player -> ExprItemContainer return TypeArray<TypeItem>
-    //ex : item in hand of player -> ExprItem return TypeItem
-    //ex : 5+9*9 -> ExprCompiledEvaluation return TypeNumber
+    private Class<? extends ScriptElement> returnType;
 
-    //Default implementation of expressions returns null, because return type is get with patterns
-    //Only useful with special expressions which are not registered commonly
+    /**
+     * Default implementation of expressions returns null, because return type is get with patterns
+     * <br>Only useful with special expressions which are not registered commonly
+     * @return The return type of this expression.
+     */
     public Class<? extends ScriptElement> getReturnType(){
-        return null;
+        return returnType;
     };
+
+    public void setReturnType(Class<? extends ScriptElement> returnType) {
+        this.returnType = returnType;
+    }
 
     public ScriptType get(ScriptContext context) throws ScriptException {
         return this.get(context, new ScriptType[0]);
@@ -53,6 +65,10 @@ public abstract class ScriptExpression {
         return matchedIndex;
     }
 
+    public String getMatchedName() {
+        return this.getClass().getAnnotation(Expression.class).features()[getMatchedIndex()].name();
+    }
+
     public ScriptToken getLine() {
         return line;
     }
@@ -65,7 +81,22 @@ public abstract class ScriptExpression {
         this.line = line;
     }
 
-    public boolean validate(ScriptToken line){
+    /**
+     * Executed during interpretation time, the parsing check of this expression will be ignored if this method returns false. Use it as a way to restrain the possible interpretation of your pattern or to check additional conditions that regular expressions cannot.
+     * @param parameters The given parameters of this event instance.
+     * @return True if the given configuration should come to a correct instance of this expression (for an example, check if resources give the good type of object).
+     */
+    public boolean validate(String[] parameters, ScriptToken line){
         return true;
     }
+
+    /**
+     * Debug purposes.
+     * @return A visual description of this expression.
+     */
+    @Override
+    public String toString() {
+        return getClass().getSimpleName()+":"+getMatchedIndex();
+    }
+
 }

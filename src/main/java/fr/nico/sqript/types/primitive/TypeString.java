@@ -32,22 +32,22 @@ public class TypeString extends PrimitiveType<String> implements ISerialisable {
     }
 
     static {
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeString.class, ScriptType.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeString.class, ScriptType.class, TypeString.class,
                 (a, b) -> new TypeString((a==null ? "null" : a.getObject()) + (b==null ? "null" : b.toString())));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, ScriptType.class, TypeString.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, ScriptType.class, TypeString.class, TypeString.class,
                 (a, b) -> new TypeString((a==null ? "null" : a.toString()) + (b==null ? "null" : b.getObject())));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.MT, TypeString.class, TypeString.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.MT, TypeString.class, TypeString.class, TypeString.class,
                 (a, b) -> new TypeBoolean(((TypeString) a).getObject().compareTo(((TypeString) b).getObject()) > 0));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.MTE, TypeString.class, TypeString.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.MTE, TypeString.class, TypeString.class, TypeString.class,
                 (a, b) -> new TypeBoolean(((TypeString) a).getObject().compareTo(((TypeString) b).getObject()) >= 0));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.LT, TypeString.class, TypeString.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.LT, TypeString.class, TypeString.class, TypeString.class,
                 (a, b) -> new TypeBoolean(((TypeString) a).getObject().compareTo(((TypeString) b).getObject()) < 0));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.LTE, TypeString.class, TypeString.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.LTE, TypeString.class, TypeString.class, TypeString.class,
                 (a, b) -> new TypeBoolean(((TypeString) a).getObject().compareTo(((TypeString) b).getObject()) <= 0));
 
     }

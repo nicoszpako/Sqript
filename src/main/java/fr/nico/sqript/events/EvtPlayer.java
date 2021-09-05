@@ -4,6 +4,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.meta.Event;
+import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeResource;
 import fr.nico.sqript.types.primitive.TypeString;
@@ -294,7 +295,7 @@ public class EvtPlayer {
 
         @Override
         public boolean validate(ScriptType[] parameters, int marks) {
-            //System.out.println("validating with : "+ Arrays.toString(parameters)+" "+(parameters[0]==null));
+            System.out.println("Validating with : "+ Arrays.toString(parameters)+" "+(parameters[0]==null));
             if (parameters[0] != null){
                 if(parameters[0] instanceof TypeResource)
                     return ForgeRegistries.ENTITIES.getValue((ResourceLocation) parameters[0].getObject()) != null;

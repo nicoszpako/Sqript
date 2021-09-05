@@ -1,6 +1,7 @@
 package fr.nico.sqript.compiling;
 
 import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.blocks.ScriptBlock;
 import fr.nico.sqript.meta.BlockDefinition;
 import fr.nico.sqript.structures.IScript;
@@ -30,7 +31,7 @@ public class ScriptLoader
     public static void dispScriptTree(IScript s, int i) {
         String tab = "";
         for (int j = 0; j < i; j++) tab += "|    ";
-        ScriptManager.log.info(tab + (s.parent != null ? s.parent.getClass().getSimpleName() + " >> " : "") + s.getClass().getSimpleName() + " -> " + ((s.next != null ? s.next.getClass().getSimpleName(): "[null]")));
+        ScriptManager.log.info(tab + (s.parent != null ? s.parent.getClass().getSimpleName() + " >> " : "") + s.getClass().getSimpleName() + (s instanceof ScriptAction ? "("+((ScriptAction)s).getParameters() +")" : "") + " -> " + ((s.next != null ? s.next.getClass().getSimpleName(): "[null]")));
         if (s instanceof ScriptLoop) {
             ScriptLoop sl = (ScriptLoop) s;
             if (sl.getWrapped() != null)

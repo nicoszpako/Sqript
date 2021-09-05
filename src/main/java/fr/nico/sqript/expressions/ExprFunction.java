@@ -2,12 +2,8 @@ package fr.nico.sqript.expressions;
 
 import fr.nico.sqript.blocks.ScriptFunctionalBlock;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.blocks.ScriptBlockFunction;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
-import fr.nico.sqript.types.TypeArray;
-
-import java.util.Arrays;
 
 public class ExprFunction extends ScriptExpression{
 

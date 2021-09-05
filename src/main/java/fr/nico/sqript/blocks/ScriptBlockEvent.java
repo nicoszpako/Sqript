@@ -9,7 +9,6 @@ import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.meta.EventDefinition;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeNull;
@@ -64,7 +63,7 @@ public class ScriptBlockEvent extends ScriptBlock {
                 for (int i = 0; i < arguments.length; i++) {
                     try {
                         if(arguments[i] != null)
-                            parameters[i] = ScriptDecoder.parseExpression(line.with(arguments[i]),new ScriptCompileGroup()).get(ScriptContext.fromGlobal());
+                            parameters[i] = ScriptDecoder.parse(line.with(arguments[i]),new ScriptCompilationContext()).get(ScriptContext.fromGlobal());
                         else parameters[i] = new TypeNull();
                     } catch (Exception ignored) {
                     }
@@ -94,7 +93,7 @@ public class ScriptBlockEvent extends ScriptBlock {
         if(side!=null && !side.isStrictlyValid())
             return;
 
-        ScriptCompileGroup group = new ScriptCompileGroup();
+        ScriptCompilationContext group = new ScriptCompilationContext();
         group.addArray(Arrays.asList(eventType.getAnnotation(Event.class).accessors()));
         setRoot(getMainField().compile(group));
         getScriptInstance().registerBlock(this);

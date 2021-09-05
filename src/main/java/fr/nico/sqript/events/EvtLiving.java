@@ -4,6 +4,7 @@ import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.*;
+import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.Entity;
@@ -11,12 +12,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class EvtLiving {
 

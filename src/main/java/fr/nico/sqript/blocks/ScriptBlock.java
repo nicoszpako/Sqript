@@ -236,8 +236,8 @@ public abstract class ScriptBlock extends IScript {
             return (Integer) evaluate().getObject();
         }
 
-        public ScriptType evaluate(ScriptCompileGroup group, ScriptContext context) throws Exception {
-            return ScriptDecoder.parseExpression(content.get(0), group).get(context);
+        public ScriptType evaluate(ScriptCompilationContext group, ScriptContext context) throws Exception {
+            return ScriptDecoder.parse(content.get(0), group).get(context);
         }
 
         public String getRawContent() {
@@ -245,15 +245,15 @@ public abstract class ScriptBlock extends IScript {
         }
 
         public ScriptType evaluate() throws Exception {
-            return evaluate(new ScriptCompileGroup(), new ScriptContext());
+            return evaluate(new ScriptCompilationContext(), new ScriptContext());
         }
 
 
         public IScript compile() throws Exception {
-            return compile(new ScriptCompileGroup());
+            return compile(new ScriptCompilationContext());
         }
 
-        public IScript compile(ScriptCompileGroup compileGroup) throws Exception {
+        public IScript compile(ScriptCompilationContext compileGroup) throws Exception {
             //System.out.println(content);
             return ScriptDecoder.group(null, content, compileGroup);
         }

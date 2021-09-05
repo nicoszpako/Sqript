@@ -24,10 +24,13 @@ public class ScriptTypeAccessor {
       */
     public int hash;
 
+    public ScriptTypeAccessor() {
+    }
+
     public ScriptTypeAccessor(ScriptType element, String match) {
         this.element = element;
         try {
-            this.pattern = ScriptDecoder.transformPattern(match).pattern;
+            this.pattern = Pattern.compile(ScriptDecoder.toSimpleRegex(match).replaceAll("\\{","\\\\{").replaceAll("}","\\\\}"));
             this.key = match;
             if(pattern == null)
                 throw new ScriptException.ScriptPatternError("");

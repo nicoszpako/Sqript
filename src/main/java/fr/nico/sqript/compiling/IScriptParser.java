@@ -11,6 +11,6 @@ public interface IScriptParser {
      * @param compileGroup The CompileGroup to use during parsing.
      * @return the parsed IScript.
      */
-    IScript parse(ScriptToken line, ScriptCompileGroup compileGroup);
+    IScript parse(ScriptToken line, ScriptCompilationContext compileGroup);
 
 }

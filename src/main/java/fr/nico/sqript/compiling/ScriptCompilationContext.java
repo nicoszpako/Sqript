@@ -6,16 +6,16 @@ import fr.nico.sqript.structures.ScriptTypeAccessor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScriptCompileGroup {
+public class ScriptCompilationContext {
 
     //Used to determine which accessors can be used in a context.
 
     public List<ScriptTypeAccessor> declaredVariables = new ArrayList<>();
 
-    public ScriptCompileGroup parent;
+    public ScriptCompilationContext parent;
 
-    public ScriptCompileGroup(){}
-    public ScriptCompileGroup(ScriptCompileGroup parent){
+    public ScriptCompilationContext(){}
+    public ScriptCompilationContext(ScriptCompilationContext parent){
         this.parent=parent;
     }
 

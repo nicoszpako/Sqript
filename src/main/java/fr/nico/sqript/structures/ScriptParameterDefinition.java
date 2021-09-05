@@ -20,4 +20,9 @@ public class ScriptParameterDefinition {
         this.typeClass = typeClass;
         this.n_args = n_args;
     }
+
+    @Override
+    public String toString() {
+        return typeClass.toString();
+    }
 }
