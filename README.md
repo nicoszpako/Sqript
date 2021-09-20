@@ -1,4 +1,4 @@
-![sqript logo](/src/main/resources/logo.png "sqript logo")
+![sqript logo](https://sqript.fr/img/logo.png)
 
 # Sqript
 
