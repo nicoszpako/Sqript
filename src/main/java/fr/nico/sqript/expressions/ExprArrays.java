@@ -37,7 +37,7 @@ import java.util.Random;
 public class ExprArrays extends ScriptExpression {
 
     @Override
-    public ScriptType get(ScriptContext context, ScriptType[] parameters) {
+    public ScriptType<?> get(ScriptContext context, ScriptType<?>[] parameters) {
         switch (getMatchedIndex()) {
             case 0://new array
                 TypeArray array = new TypeArray();
@@ -89,9 +89,9 @@ public class ExprArrays extends ScriptExpression {
                 Collections.shuffle(array.getObject());
                 return array;
             case 9: //element is in
-                ScriptType b = parameters[0];
+                ScriptType<?> b = parameters[0];
                 array = (TypeArray) parameters[1];
-                for (ScriptType i : array.getObject()) {
+                for (ScriptType<?> i : array.getObject()) {
                     if (b.equals(i)) return TypeBoolean.TRUE();
                 }
                 return TypeBoolean.FALSE();
@@ -105,16 +105,16 @@ public class ExprArrays extends ScriptExpression {
             case 11://contains
                 b = parameters[1];
                 array = (TypeArray) parameters[0];
-                for (ScriptType i : array.getObject()) {
+                for (ScriptType<?> i : array.getObject()) {
                     if (b.equals(i)) return TypeBoolean.TRUE();
                 }
                 return TypeBoolean.FALSE();
             case 12://sorted elements of
                 a = (IIndexedCollection) parameters[0];
-                return (ScriptType) a.sort(marks);
+                return (ScriptType<?>) a.sort(marks);
             case 13://copy of array
                 a = (IIndexedCollection) parameters[0];
-                return (ScriptType) a.copy();
+                return (ScriptType<?>) a.copy();
         }
         return null;
     }

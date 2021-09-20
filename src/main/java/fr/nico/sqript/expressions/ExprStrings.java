@@ -9,6 +9,7 @@ import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Expression(name = "Strings Expressions",
         features = {

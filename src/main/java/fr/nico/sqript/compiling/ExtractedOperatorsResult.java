@@ -11,4 +11,20 @@ public class ExtractedOperatorsResult {
         this.transformedString = transformedString;
         this.operators = operators;
     }
+
+    public String getTransformedString() {
+        return transformedString;
+    }
+
+    public void setTransformedString(String transformedString) {
+        this.transformedString = transformedString;
+    }
+
+    public ScriptOperator[] getOperators() {
+        return operators;
+    }
+
+    public void setOperators(ScriptOperator[] operators) {
+        this.operators = operators;
+    }
 }

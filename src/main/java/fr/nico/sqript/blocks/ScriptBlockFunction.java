@@ -8,9 +8,9 @@ import fr.nico.sqript.meta.Feature;
 @Block(
         feature = @Feature(name = "Function",
                 description = "Define a piece of code that can be called in order to do some action or compute a result to return.",
-                examples = "function broadcast(message): #Sends a message to all players\n" +
-                        "    for p in all players:\n" +
-                        "        send message to p",
+                examples = "function broadcast({message}): #Sends a message to all players\n" +
+                        "    for {p} in all players:\n" +
+                        "        send {message} to {p}",
                 regex = "^function .*")
 )
 public class ScriptBlockFunction extends ScriptFunctionalBlock {
@@ -23,6 +23,5 @@ public class ScriptBlockFunction extends ScriptFunctionalBlock {
     @Override
     public void init(ScriptLineBlock block) throws Exception {
         super.init(block);
-        setRoot(getMainField().compile());
     }
 }

@@ -1,23 +1,21 @@
 package fr.nico.sqript;
 
-import com.google.common.collect.Lists;
 import com.google.gson.*;
 import fr.nico.sqript.meta.*;
 import fr.nico.sqript.types.TypeArray;
+import fr.nico.sqript.types.TypeDictionary;
 import fr.nico.sqript.types.primitive.TypeNumber;
+import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.JsonUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import scala.actors.migration.pattern;
 import sun.reflect.ReflectionFactory;
 
 import java.io.*;
@@ -25,7 +23,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class SqriptUtils {
 
@@ -171,6 +168,54 @@ public class SqriptUtils {
             jsonArray.add(string);
         }
         return jsonArray;
+    }
+
+    public static TypeDictionary NBTToDictionary(NBTTagCompound tag){
+        TypeDictionary typeDictionary = new TypeDictionary();
+        for(String key : tag.getKeySet()){
+            switch(tag.getTagId(key)){
+                case Constants.NBT.TAG_INT:
+                    typeDictionary.getObject().put(new TypeString(key), new TypeNumber(tag.getInteger(key)));
+                    break;
+                case Constants.NBT.TAG_FLOAT:
+                    typeDictionary.getObject().put(new TypeString(key), new TypeNumber(tag.getFloat(key)));
+                    break;
+                case Constants.NBT.TAG_DOUBLE:
+                    typeDictionary.getObject().put(new TypeString(key), new TypeNumber(tag.getDouble(key)));
+                    break;
+                case Constants.NBT.TAG_LONG:
+                    typeDictionary.getObject().put(new TypeString(key), new TypeNumber(tag.getLong(key)));
+                    break;
+                case Constants.NBT.TAG_SHORT:
+                    typeDictionary.getObject().put(new TypeString(key), new TypeNumber(tag.getShort(key)));
+                    break;
+                case Constants.NBT.TAG_BYTE:
+                    typeDictionary.getObject().put(new TypeString(key), new TypeNumber(tag.getByte(key)));
+                    break;
+                case Constants.NBT.TAG_BYTE_ARRAY:
+                    ArrayList list = new ArrayList();
+                    for(byte b : tag.getByteArray(key)){
+                        list.add(new TypeNumber(b));
+                    }
+                    typeDictionary.getObject().put(new TypeString(key), new TypeArray(list));
+                    break;
+                case Constants.NBT.TAG_LONG_ARRAY:
+                case Constants.NBT.TAG_INT_ARRAY:
+                    list = new ArrayList();
+                    for(int b : tag.getIntArray(key)){
+                        list.add(new TypeNumber(b));
+                    }
+                    typeDictionary.getObject().put(new TypeString(key), new TypeArray(list));
+                    break;
+                case Constants.NBT.TAG_STRING:
+                    typeDictionary.getObject().put(new TypeString(key), new TypeString(tag.getString(key)));
+                    break;
+                case Constants.NBT.TAG_COMPOUND:
+                    typeDictionary.getObject().put(new TypeString(key), NBTToDictionary(tag.getCompoundTag(key)));
+                    break;
+            }
+        }
+        return typeDictionary;
     }
 
     public static <T> T rawInstantiation(Class<?> parent, Class<T> child) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {

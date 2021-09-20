@@ -36,10 +36,10 @@ public class TypeDate extends ScriptType<Long> implements IFormatable {
     }
 
     static {
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeDate.class, TypeDate.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeDate.class, TypeDate.class, TypeDate.class,
                 (a, b) -> new TypeDate(((TypeDate) a).getObject() + ((TypeDate) b).getObject()));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.SUBTRACT, TypeDate.class, TypeDate.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.SUBTRACT, TypeDate.class, TypeDate.class, TypeDate.class,
                 (a, b) -> new TypeDate(((TypeDate) a).getObject() - ((TypeDate) b).getObject()));
     }
 

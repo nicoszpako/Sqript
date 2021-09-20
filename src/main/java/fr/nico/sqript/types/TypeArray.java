@@ -11,6 +11,7 @@ import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.interfaces.IIndexedCollection;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.interfaces.ISerialisable;
+import fr.nico.sqript.types.primitive.PrimitiveType;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -27,7 +28,7 @@ import java.util.Objects;
 @Type(name = "array",
         parsableAs = {}
 )
-public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISerialisable, IIndexedCollection, ILocatable {
+public class TypeArray extends ScriptType<ArrayList<ScriptType<?>>> implements ISerialisable, IIndexedCollection, ILocatable {
 
     @Nullable
     @Override
@@ -46,7 +47,6 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISer
         }
     }
 
-
     @Override
     public String toString() {
         String s ="[";
@@ -61,13 +61,13 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISer
         super(new ArrayList<>());
     }
 
-    public TypeArray(ArrayList list){
+    public TypeArray(ArrayList<ScriptType<?>> list){
         super(list);
     }
 
 
     static {
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeArray.class, ScriptType.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeArray.class, ScriptElement.class, TypeArray.class,
                 (a,b) -> {
                     TypeArray o = (TypeArray)a;
                     o.getObject().add(b);
@@ -128,15 +128,19 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType>> implements ISer
         else return new TypeNull();
     }
 
+    public void add(ScriptType<?> type){
+        getObject().add(type);
+    }
+
     @Override
     public IIndexedCollection sort(int mode) {
-        boolean ascending = ((mode >> 0) & 1) == 1 || ((mode >> 1) & 1) == 0;
+        boolean ascending = (mode & 1) == 1 || ((mode >> 1) & 1) == 0;
         int n_mt = ascending ? 1 :-1;
         int n_lt = ascending ? -1 :1;
         TypeArray copy = (TypeArray) copy();
         Collections.sort(copy.getObject(),(o1, o2) -> {
-            IOperation lt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.LT);
-            IOperation mt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.MT);
+            IOperation lt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.LT).getOperation();
+            IOperation mt = ScriptManager.getBinaryOperation(o1.getClass(),o2.getClass(), ScriptOperator.MT).getOperation();
             if(lt != null && mt != null){
                 if((Boolean)(lt.operate(o1,o2).getObject())){
                     return n_lt;

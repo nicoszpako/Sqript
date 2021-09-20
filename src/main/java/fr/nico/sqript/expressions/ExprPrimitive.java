@@ -27,12 +27,16 @@ public class ExprPrimitive extends ScriptExpression{
 
     @Override
     public ScriptType get(ScriptContext context, ScriptType[] parameters) {
-
         return primitive;
     }
 
     @Override
     public boolean set(ScriptContext context,ScriptType to, ScriptType[] parameters) { //set "test" to "a" doesn't have any sense
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "ExprPrimitive("+primitive.getType().getSimpleName()+")"+"="+primitive;
     }
 }

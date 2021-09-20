@@ -2,7 +2,7 @@ package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.ScriptTimer;
-import fr.nico.sqript.compiling.ScriptCompileGroup;
+import fr.nico.sqript.compiling.ScriptCompilationContext;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.expressions.ScriptExpression;
@@ -35,7 +35,7 @@ public class ScriptBlockTimeLoop extends ScriptBlock {
             line.setText(line.getText().replaceAll("server",""));
 
         }
-        ScriptExpression expr = ScriptDecoder.parseExpression(line,new ScriptCompileGroup());
+        ScriptExpression expr = ScriptDecoder.parse(line,new ScriptCompilationContext());
         //System.out.println("Loading time looping block :");
         //System.out.println(expr.getClass());
         //System.out.println(expr.get(new ScriptCongetText()()).getClass());

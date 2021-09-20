@@ -43,6 +43,11 @@ public @interface Feature {
     String type() default "element";
 
     /**
+     * @return If an expression, whether is can be set to another value using the set() method.
+     */
+    boolean settable() default true;
+
+    /**
      * @return The running side of this feature.
      */
     Side side() default Side.BOTH;

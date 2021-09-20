@@ -6,6 +6,7 @@ import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.structures.TransformedPattern;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 
 public class ActionDefinition {
@@ -17,6 +18,27 @@ public class ActionDefinition {
 
     public int getPriority() {
         return priority;
+    }
+
+    public ActionDefinition(String name, Class<? extends ScriptAction> cls, int priority, @Nullable Feature... features) throws Exception {
+        this.name = name;
+        this.cls=cls;
+        this.priority=priority;
+        if(features!=null){
+            this.features = features;
+            this.transformedPatterns = new TransformedPattern[this.features.length];
+            for(int i = 0; i<this.features.length; i++){
+                try {
+                    this.transformedPatterns[i]=ScriptDecoder.transformPattern(this.features[i].pattern());
+                    //System.out.println("Set transformed patterns for "+getActionClass()+" : "+ Arrays.toString(transformedPatterns));
+                    //System.out.println("Regex for "+features[i]+" is : "+transformedPatterns[i].getPattern().pattern());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw e;
+                }
+            }
+        }
+
     }
 
     //[0] : index
@@ -41,26 +63,6 @@ public class ActionDefinition {
 
     public Class<? extends ScriptAction> cls;
 
-    public ActionDefinition(String name, Class<? extends ScriptAction> cls, int priority, @Nullable Feature... features) throws Exception {
-        this.name = name;
-        this.cls=cls;
-        this.priority=priority;
-        if(features!=null){
-            this.features = features;
-            this.transformedPatterns = new TransformedPattern[this.features.length];
-            for(int i = 0; i<this.features.length; i++){
-                try {
-                    this.transformedPatterns[i]=ScriptDecoder.transformPattern(this.features[i].pattern());
-                    //System.out.println("Regex for "+features[i]+" is : "+transformedPatterns[i].getPattern().pattern());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw e;
-                }
-            }
-        }
-
-    }
-
     public String getName() {
         return name;
     }
@@ -68,6 +70,7 @@ public class ActionDefinition {
     public void setName(String name) {
         this.name = name;
     }
+
 
 
     public Feature[] getFeatures() {

@@ -4,6 +4,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;

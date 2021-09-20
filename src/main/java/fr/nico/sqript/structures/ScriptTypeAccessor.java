@@ -3,7 +3,7 @@ package fr.nico.sqript.structures;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.events.ScriptEvent;
+import fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock;
 import fr.nico.sqript.types.ScriptType;
 
 import java.util.Objects;
@@ -16,7 +16,8 @@ public class ScriptTypeAccessor {
     public ScriptType element;
     private Pattern pattern;
     public String key;
-    Class<? extends ScriptEvent> eventType;
+    Class<? extends ScriptBlock> blockType;
+    Class returnType;
     int lineCounter;
 
     /***
@@ -24,15 +25,18 @@ public class ScriptTypeAccessor {
       */
     public int hash;
 
+    public ScriptTypeAccessor() {
+    }
+
     public ScriptTypeAccessor(ScriptType element, String match) {
         this.element = element;
         try {
-            this.pattern = ScriptDecoder.transformPattern(match).pattern;
+            this.pattern = Pattern.compile(ScriptDecoder.toSimpleRegex(match).replaceAll("\\{","\\\\{").replaceAll("}","\\\\}"));
             this.key = match;
             if(pattern == null)
                 throw new ScriptException.ScriptPatternError("");
         } catch (ScriptException.ScriptPatternError scriptPatternError) {
-            ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+eventType.getSimpleName());
+            ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+ blockType.getSimpleName());
             scriptPatternError.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,7 +56,7 @@ public class ScriptTypeAccessor {
             this.pattern = ScriptDecoder.transformPattern(match).pattern;
             this.key = match;
         } catch (ScriptException.ScriptPatternError scriptPatternError) {
-            ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+eventType.getSimpleName());
+            ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+ blockType.getSimpleName());
             scriptPatternError.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +66,7 @@ public class ScriptTypeAccessor {
 
     @Override
     public String toString() {
-        return element.toString();
+        return pattern + (element == null ? "null" : element.toString());
     }
 
     @Override
@@ -72,7 +76,7 @@ public class ScriptTypeAccessor {
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, eventType, lineCounter);
+        return Objects.hash(key, blockType, lineCounter);
     }
 
     public Pattern getPattern() {
@@ -105,5 +109,13 @@ public class ScriptTypeAccessor {
 
     public void setHash(int hash) {
         this.hash = hash;
+    }
+
+    public Class getReturnType() {
+        return returnType;
+    }
+
+    public void setReturnType(Class returnType) {
+        this.returnType = returnType;
     }
 }

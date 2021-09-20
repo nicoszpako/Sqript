@@ -10,7 +10,7 @@ public class ScriptElement<T> {
     Classe un peu inutile pour l'instant mais plus tard par la création d'interface elle deviendra intéressante
      */
 
-    /***
+    /**
      * Invoked once, when the type is registered.
      * Override this method to access this type definition and
      * define some OperationDefinition or ParseDefinition in it.
@@ -23,7 +23,7 @@ public class ScriptElement<T> {
     public ScriptElement(){}
 
     public ScriptElement(T object){
-        this.object=object;
+        setObject(object);
     }
 
     public T getObject() {

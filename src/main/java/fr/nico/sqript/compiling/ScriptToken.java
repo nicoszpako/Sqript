@@ -2,6 +2,8 @@ package fr.nico.sqript.compiling;
 
 import fr.nico.sqript.structures.ScriptInstance;
 
+import java.util.Objects;
+
 /**
  * Holds a full line or a part of a line of a script
  */
@@ -43,6 +45,19 @@ public class ScriptToken {
     @Override
     public String toString() {
         return "["+getScriptInstance().getScriptFile().getName()+" at line n°"+(lineNumber +1)+"] \""+ text+"\"";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ScriptToken that = (ScriptToken) o;
+        return lineNumber == that.lineNumber && Objects.equals(text, that.text) && Objects.equals(scriptInstance, that.scriptInstance);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(text, lineNumber, scriptInstance);
     }
 
     @Override

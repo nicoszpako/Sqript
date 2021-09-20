@@ -2,7 +2,6 @@ package fr.nico.sqript.types;
 
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 
 @Type(name = "console",

@@ -44,7 +44,7 @@ public class ActSend extends ScriptAction {
 
     @Override
     public void execute(ScriptContext context) throws ScriptException {
-
+        //System.out.println("Send paramters : "+ getParameters());
         switch (getMatchedIndex()) {
             case 0:
                 ScriptType value = getParameter(1).get(context);

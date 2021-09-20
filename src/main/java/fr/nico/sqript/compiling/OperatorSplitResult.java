@@ -1,24 +1,25 @@
 package fr.nico.sqript.compiling;
 
 
-import fr.nico.sqript.meta.Expression;
+import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.structures.ScriptOperator;
 
 public class OperatorSplitResult {
 
-    private  Token[] operands;
-    private  Integer[] operatorIndices;
+    private Token[] expressionTokens;
+    private Integer[] operatorIndices;
 
     public OperatorSplitResult(Token[] operands, Integer[] operatorIndices) {
-        this.operands = operands;
+        this.expressionTokens = operands;
         this.operatorIndices = operatorIndices;
     }
 
-    public Token[] getOperands() {
-        return operands;
+    public Token[] getExpressionTokens() {
+        return expressionTokens;
     }
 
-    public void setOperands(Token[] operands) {
-        this.operands = operands;
+    public void setExpressionTokens(Token[] expressionTokens) {
+        this.expressionTokens = expressionTokens;
     }
 
     public Integer[] getOperatorIndices() {
@@ -29,29 +30,7 @@ public class OperatorSplitResult {
         this.operatorIndices = operatorIndices;
     }
 
-    public static class Token {
 
-        EnumTokenType type;
-        String expression;
 
-        public Token(EnumTokenType type, String expression) {
-            this.type = type;
-            this.expression = expression;
-        }
 
-        @Override
-        public String toString() {
-            return "Token{" +
-                    "type=" + type +
-                    ", expression='" + expression + '\'' +
-                    '}';
-        }
-    }
-
-    public enum EnumTokenType {
-        EXPRESSION,
-        OPERATOR,
-        LEFT_PARENTHESIS,
-        RIGHT_PARENTHESIS
-    }
 }

@@ -1,10 +1,9 @@
 package fr.nico.sqript.blocks;
 
-import fr.nico.sqript.compiling.ScriptCompileGroup;
+import fr.nico.sqript.compiling.ScriptCompilationContext;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
-import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.ScriptClock;
 import fr.nico.sqript.structures.ScriptContext;
@@ -27,7 +26,8 @@ public class ScriptFunctionalBlock extends ScriptBlock {
         functionContext.setReturnValue(new ScriptTypeAccessor(null, ""));
 
         wrapParametersInContext(functionContext, parameters);
-        //System.out.println("Passed context : "+functionContext);
+        //System.out.println("Passed context : "+functionContext.printVariables());
+        //System.out.println("Root : "+getRoot().getClass().getSimpleName()+" "+getRoot().getLine()+" "+getRoot());
         //System.out.println("Script tree of wrapped is : ");
         //ScriptLoader.dispScriptTree(wrapped,0);
         ScriptClock clock = new ScriptClock(functionContext);
@@ -45,17 +45,6 @@ public class ScriptFunctionalBlock extends ScriptBlock {
         }
     }
 
-    public ScriptCompileGroup createCompileGroup() throws ScriptException.ScriptNotEnoughArgumentException {
-        ScriptCompileGroup compileGroup = new ScriptCompileGroup();
-        if (parameters.length > 0)
-            for (String s : parameters) {
-                if (!s.isEmpty())
-                    compileGroup.add(s);
-            }
-        return compileGroup;
-    }
-
-
     public String name;
 
     public String[] parameters;
@@ -63,7 +52,7 @@ public class ScriptFunctionalBlock extends ScriptBlock {
     public ScriptFunctionalBlock(ScriptToken head) throws ScriptException {
         //System.out.println("Loading function : "+head.text);
         super(head);
-        head = head.with(head.getText().replaceFirst(this.getClass().getAnnotation(Block.class).feature().name() + "\\s+", ""));
+        head = head.with(head.getText().replaceFirst(this.getClass().getAnnotation(Block.class).feature().name().toLowerCase() + "\\s+", ""));
         Pattern p = Pattern.compile("\\s*^([\\w ]*)\\((.*)\\)\\s*:");
         Matcher m = p.matcher(head.getText());
         if (m.find()) {
@@ -71,16 +60,21 @@ public class ScriptFunctionalBlock extends ScriptBlock {
             String params = m.group(2);
             if (!params.isEmpty()) {
                 parameters = params.split(",");
+                for (int i = 0; i < parameters.length; i++) {
+                    parameters[i] = parameters[i].trim();
+                }
             } else {
                 parameters = new String[0];
             }
         }
+
     }
 
     @Override
     public void init(ScriptLineBlock block) throws Exception {
         super.init(block);
-        System.out.println("Loaded function : " + name);
+        //System.out.println("Loaded function : " + name);
+        ScriptCompilationContext context = new ScriptCompilationContext();
         setRoot(getMainField().compile());
         //System.out.println(getRoot()==null);
         getScriptInstance().registerBlock(this);
