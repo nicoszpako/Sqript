@@ -216,6 +216,7 @@ public class ScriptExpressionParser implements IParser {
             List<Token> tokens = Arrays.asList(operatorSplitResult.getExpressionTokens());
             List<Node> nodes = new ArrayList<>();
             int addedOperators = 0;
+            //System.out.println("Tokens are : "+tokens);
             for (Token token : tokens) {
                 if (token.getType() == EnumTokenType.LEFT_PARENTHESIS) {
                     nodes.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
@@ -223,20 +224,29 @@ public class ScriptExpressionParser implements IParser {
                     nodes.add(new NodeParenthesis(EnumTokenType.RIGHT_PARENTHESIS));
                 } else if (token.getType() == EnumTokenType.EXPRESSION) {
                     Node node = parse(line.with(token.getExpressionString()), compilationContext, new Class[]{ScriptElement.class});
-                    if (node == null)
+                    if (node == null) {
                         return null;
+                    }
                     nodes.add(node);
                 } else if (token.getType() == EnumTokenType.OPERATOR) {
                     nodes.add(new NodeOperation(operators.get(addedOperators)));
                     addedOperators++;
                 }
             }
-            Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
-            if (validTypes != null && isTypeValid(finalTree.getReturnType(), validTypes)) {
-                return finalTree;
+            try{
+                Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
+                if (validTypes != null && isTypeValid(finalTree.getReturnType(), validTypes)) {
+                    //System.out.println("Returning compiled : "+finalTree);
+                    return finalTree;
+                }
+                //System.out.println("Type was not valid for : "+finalTree);
+            } catch (Exception e){
+                e.printStackTrace();
+                return null;
             }
+
         }
-        //System.out.println(debugOffset() + "Returning null to " + line);
+        //System.out.println("Returning null to " + line);
         return null;
     }
 

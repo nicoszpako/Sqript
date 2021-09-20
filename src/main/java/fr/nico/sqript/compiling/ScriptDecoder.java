@@ -141,6 +141,7 @@ public class ScriptDecoder {
             //Check if it is an option
             if (line.getText().startsWith("@")) {
                 if (line.getScriptInstance().getOptions().containsKey(line.getText().substring(1))) {
+                    //System.out.println("Returning option for : "+line.getText());
                     return new NodeExpression(line.getScriptInstance().getOptions().get(line.getText().substring(1)));
                 }
             }

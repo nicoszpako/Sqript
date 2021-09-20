@@ -80,16 +80,16 @@ public class ExprCompiledExpression extends ScriptExpression {
     }
 
     public static LinkedList<Node> infixToRPN(List<Node> nodes) throws ScriptException.ScriptMissingTokenException {
-        //System.out.println("Infix to RPN with : "+nodes);
+        //System.out.println("Infix to RPN with : " + nodes);
         Stack<Node> pile = new Stack<>();
         LinkedList<Node> out = new LinkedList<>();
         while (!nodes.isEmpty()) {//While there are tokens to be read
+            //System.out.println("Next : " + nodes + " pile is : " + pile);
             Node node = nodes.remove(0);
             //Operand
             if (node instanceof NodeExpression) {
                 NodeExpression nodeExpression = (NodeExpression) node;
-                int arity = nodeExpression.getArity();
-                if (arity > 0)
+                if (nodeExpression.getArity() > 0)
                     pile.add(nodeExpression);
                 else out.add(nodeExpression);
                 //System.out.println(out);
@@ -105,12 +105,14 @@ public class ExprCompiledExpression extends ScriptExpression {
                     NodeOperation operator2 = null;
                     if (!pile.empty() && pile.peek() instanceof NodeOperation) {
                         operator2 = ((NodeOperation) pile.peek());
-                        while ((!pile.empty() && pile.peek() instanceof NodeParenthesis && (((NodeParenthesis) (pile.peek())).getType() == EnumTokenType.LEFT_PARENTHESIS) && (
-                                (operator.associativity == ScriptOperator.Associativity.LEFT_TO_RIGHT
-                                        && (operator2 = ((NodeOperation) pile.peek())).getOperator().priority >= operator.priority) ||
-                                        (operator.associativity == ScriptOperator.Associativity.RIGHT_TO_LEFT
-                                                && operator.priority < operator2.getOperator().priority)))) {
+                        while ((operator.associativity == ScriptOperator.Associativity.LEFT_TO_RIGHT
+                                && (operator2.getOperator().priority >= operator.priority))
+                                || ((operator.associativity == ScriptOperator.Associativity.RIGHT_TO_LEFT
+                                && operator.priority <= operator2.getOperator().priority))) {
                             out.add(pile.pop());
+                            if (pile.peek() instanceof NodeOperation)
+                                operator2 = ((NodeOperation) pile.peek());
+                            else break;
                         }
                     }
                     //System.out.println("Before pile is : "+pile);
@@ -122,8 +124,10 @@ public class ExprCompiledExpression extends ScriptExpression {
                 NodeParenthesis nodeParenthesis = (NodeParenthesis) node;
                 if (nodeParenthesis.getType() == EnumTokenType.LEFT_PARENTHESIS) {
                     pile.push(nodeParenthesis);
+                    //System.out.println("Pushing left parenthesis : " + pile);
                 } else {
-                    while (!pile.empty() || (pile.peek() instanceof NodeParenthesis && (((NodeParenthesis) (pile.peek())).getType() == EnumTokenType.LEFT_PARENTHESIS))) {
+                    //System.out.println("Right parenthesis, pile is " + pile);
+                    while (!pile.empty() && !(pile.peek() instanceof NodeParenthesis && (((NodeParenthesis) (pile.peek())).getType() == EnumTokenType.LEFT_PARENTHESIS))) {
                         out.add(pile.pop());
                     }
                     if (pile.empty()) {
@@ -138,7 +142,7 @@ public class ExprCompiledExpression extends ScriptExpression {
         }
         //System.out.println("Emptying pile : "+pile);
         while (!pile.empty()) out.add(pile.pop());
-        //System.out.println("Returning : "+out);
+        //System.out.println("Returning : " + out);
         return out;
     }
 
@@ -185,13 +189,22 @@ public class ExprCompiledExpression extends ScriptExpression {
                 return operation.operate(o2, o1);
             }
         } else if (node instanceof NodeSwitch) {
-            if (validTypes == null)
-                return get(node.getChildren()[0], context, null);
-            else for (Node branch : node.getChildren()) {
-                if (ScriptExpressionParser.isTypeValid(branch.getReturnType(), validTypes)) {
-                    ScriptType result = get(branch, context, null);
-                    if (ScriptExpressionParser.isTypeValid(result.getClass(), validTypes))
+            if (validTypes == null) {
+                for (Node branch : node.getChildren()) {
+                    try {
+                        ScriptType result = get(branch, context, null);
                         return result;
+                    } catch (Exception ignored) {
+                    }
+                }
+                
+            } else {
+                for (Node branch : node.getChildren()) {
+                    if (ScriptExpressionParser.isTypeValid(branch.getReturnType(), validTypes)) {
+                        ScriptType result = get(branch, context, null);
+                        if (ScriptExpressionParser.isTypeValid(result.getClass(), validTypes))
+                            return result;
+                    }
                 }
             }
         }
@@ -331,6 +344,6 @@ public class ExprCompiledExpression extends ScriptExpression {
 
     @Override
     public String toString() {
-        return "C:"+ast.toString();
+        return "C:" + ast.toString();
     }
 }

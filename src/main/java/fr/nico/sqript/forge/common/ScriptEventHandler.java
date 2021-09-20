@@ -224,7 +224,7 @@ public class ScriptEventHandler {
 
     @SubscribeEvent
     public void onPlayerAttack(AttackEntityEvent event) {
-        if (event.getEntity() instanceof EntityPlayer) {
+        if (event.getEntity() instanceof EntityPlayer && event.getTarget() instanceof EntityPlayer) {
             if (ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerHit((EntityPlayer) event.getTarget(), event.getEntityPlayer()))) {
                 event.setCanceled(true);
             }

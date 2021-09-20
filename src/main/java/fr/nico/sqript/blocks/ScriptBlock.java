@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public abstract class ScriptBlock extends IScript {
 
@@ -107,7 +108,7 @@ public abstract class ScriptBlock extends IScript {
             }
             //System.out.println("this fields : "+Arrays.asList(this.getClass().getAnnotation(Block.class).fields()));
             Matcher m = getLabel.matcher(next.getText());
-            if (m.find() && Arrays.asList(this.getClass().getAnnotation(Block.class).fields()).contains(currentLabel = m.group(1))) {
+            if (m.find() && Arrays.asList(this.getClass().getAnnotation(Block.class).fields()).stream().map(a->a.name()).collect(Collectors.toList()).contains(currentLabel = m.group(1))) {
                 //Found the description of a sub-block
 
                 List<ScriptToken> content = new ArrayList<>();
