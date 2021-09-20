@@ -6,7 +6,6 @@ import fr.nico.sqript.meta.Primitive;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.interfaces.ISerialisable;
-import fr.nico.sqript.types.ScriptType;
 import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;
@@ -32,10 +31,10 @@ public class TypeString extends PrimitiveType<String> implements ISerialisable {
     }
 
     static {
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeString.class, ScriptType.class, TypeString.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeString.class, ScriptElement.class, TypeString.class,
                 (a, b) -> new TypeString((a==null ? "null" : a.getObject()) + (b==null ? "null" : b.toString())));
 
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, ScriptType.class, TypeString.class, TypeString.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, ScriptElement.class, TypeString.class, TypeString.class,
                 (a, b) -> new TypeString((a==null ? "null" : a.toString()) + (b==null ? "null" : b.getObject())));
 
         ScriptManager.registerBinaryOperation(ScriptOperator.MT, TypeString.class, TypeString.class, TypeString.class,

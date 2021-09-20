@@ -42,6 +42,14 @@ public class TransformedPattern {
         return argsCount;
     }
 
+    public Class[] getValidTypes(int parameterIndex) {
+        Class[] validTypes = new Class[parameterDefinitions[parameterIndex].length];
+        for (int i = 0; i < parameterDefinitions[parameterIndex].length; i++) {
+            validTypes[i] = parameterDefinitions[parameterIndex][i].getTypeClass();
+        }
+        return validTypes;
+    }
+
     public TransformedPattern(Pattern pattern, int marksCount, int argsCount) {
         this.pattern = pattern;
         this.marksCount = marksCount;
@@ -54,6 +62,8 @@ public class TransformedPattern {
         this.argsCount = argsCount;
         this.parameterDefinitions = parameterDefinitions;
     }
+
+
 
     public Pattern getPattern() {
         return pattern;
@@ -98,7 +108,7 @@ public class TransformedPattern {
      * @return
      */
     public String[] getAllArguments(String match){
-        List<String> r = new ArrayList<>();
+        String[] r = new String[getArgsCount()];
         Matcher m = pattern.matcher(match);
         //System.out.println("Getting all arguments for : "+match);
         if (m.find()) {
@@ -111,10 +121,10 @@ public class TransformedPattern {
                 } catch (Exception ignored) {
                     ignored.printStackTrace();
                 }
-                r.add(s);
+                r[i] = s;
             }
         }
-        return r.toArray(new String[0]);
+        return r;
     }
 
     public void setReturnType(Class<? extends ScriptElement> type) {

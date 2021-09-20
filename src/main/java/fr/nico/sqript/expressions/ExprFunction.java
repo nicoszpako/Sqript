@@ -15,11 +15,18 @@ public class ExprFunction extends ScriptExpression{
 
     @Override
     public ScriptType<?> get(ScriptContext context, ScriptType[] parameters) throws ScriptException {
+
         return function.get(context,parameters);
     }
 
     @Override
     public boolean set(ScriptContext context,ScriptType to, ScriptType[] parameters) {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "ExprFunction:" +function.name+" ";
+
     }
 }

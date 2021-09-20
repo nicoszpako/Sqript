@@ -26,14 +26,15 @@ import java.util.Objects;
 @Expression(name = "Items Expressions",
         features = {
             @Feature(name = "Item NBT tag", description = "Returns the NBT tag of the given item.", examples = "item's nbt", pattern = "{item}'s nbt [tag]", type = "dictionary"),
-            @Feature(name = "Item", description = "Returns the item associated to the given resource.", examples = "minecraft:stick", pattern = "{resource} [with data {string}]", type = "itemdata"),
-            @Feature(name = "Item stack", description = "Returns a stack of the given amount of the given item.", examples = "5 of minecraft:stick", pattern = "[(a|{+number})] [of] {itemdata} [with nbt {string}] [with metadata {number}]", type = "item")
+            @Feature(name = "Item", description = "Returns the item associated to the given resource.", examples = "minecraft:stick", pattern = "{resource} [with data {string}]", type = "itemdata", settable = false),
+            @Feature(name = "Item stack", description = "Returns a stack of the given amount of the given item.", examples = "5 of minecraft:stick", pattern = "[(a|{+number})] [of] {itemdata} [with nbt {string}] [with metadata {number}]", type = "item", settable = false)
         }
 )
 public class ExprItems extends ScriptExpression {
 
     @Override
     public ScriptType get(ScriptContext context, ScriptType[] parameters) {
+        //System.out.println(Arrays.toString(parameters));
         switch(getMatchedName()){
             case "Item NBT tag":
                 ItemStack stack = (ItemStack) parameters[0].getObject();
@@ -44,7 +45,7 @@ public class ExprItems extends ScriptExpression {
                 dictionary = SqriptUtils.NBTToDictionary(tagCompound);
                 return dictionary;
             case "Item":
-                ResourceLocation resource = (ResourceLocation) parameters[1].getObject();
+                ResourceLocation resource = (ResourceLocation) parameters[0].getObject();
                 Item i = ForgeRegistries.ITEMS.getValue(resource);
                 return new TypeItemData(i);
             case "Item stack":
@@ -70,12 +71,6 @@ public class ExprItems extends ScriptExpression {
 
     @Override
     public boolean validate(String[] parameters, ScriptToken line) {
-        System.out.println("Validating " + getMatchedName() + " for : "+ Arrays.toString(parameters));
-        switch(getMatchedName()){
-            case "Item":
-                Item i = ForgeRegistries.ITEMS.getValue(new ResourceLocation(parameters[1]));
-                return i != null;
-        }
         return true;
     }
 

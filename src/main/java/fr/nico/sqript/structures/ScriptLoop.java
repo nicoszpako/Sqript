@@ -170,9 +170,11 @@ public class ScriptLoop extends ScriptWrapper {
             Pattern p = Pattern.compile("\\s*for (\\{.*}) in\\s+(.*):\\s*$");
             Matcher m = p.matcher(line.getText());
             if (m.matches()) {
+                //System.out.println("Building for loop");
                 varName = m.group(1);
                 String array = m.group(2);
                 ScriptExpression scriptExpression = ScriptDecoder.parse(line.with(array), compileGroup);
+                //System.out.println("Parsed : "+scriptExpression);
                 Class<? extends ScriptElement> type;
 
                 if (scriptExpression == null)
@@ -188,6 +190,7 @@ public class ScriptLoop extends ScriptWrapper {
                 }
                 this.varHash = varName.hashCode();
                 //System.out.println("This.varHash : " + varHash);
+
                 this.array = scriptExpression;
                 this.setLine(line);
                 ScriptTypeAccessor indexAccessor = new ScriptTypeAccessor();

@@ -23,7 +23,6 @@ public class ExprStrings extends ScriptExpression {
 
     @Override
     public ScriptType get(ScriptContext context, ScriptType[] parameters) {
-        System.out.println(Arrays.toString(parameters));
         switch(getMatchedIndex()){
             case 0:
                 TypeString string = (TypeString) parameters[0];

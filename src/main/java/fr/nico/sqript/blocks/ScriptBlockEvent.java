@@ -35,7 +35,7 @@ public class ScriptBlockEvent extends ScriptBlock {
 
     public ScriptBlockEvent(ScriptToken head) throws ScriptException {
         super(head);
-        getHead().setText(head.getText().trim().replaceFirst("(^|\\s+)on\\s+", "")); //Extracting the event parameters
+        getHead().setText(head.getText().trim().replaceFirst("(^|\\s+)(on|when)\\s+", "")); //Extracting the event parameters
         getHead().setText(head.getText().substring(0,head.getText().length()-1)); //Removing the last ":"
     }
 

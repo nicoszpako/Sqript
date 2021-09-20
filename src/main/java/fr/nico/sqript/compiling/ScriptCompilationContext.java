@@ -4,6 +4,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ScriptCompilationContext {
@@ -20,22 +21,23 @@ public class ScriptCompilationContext {
     }
 
     //Using integer to be able to return "null" reference if variable wasn't found
-    public Integer getHashFor(String parameter){
+    public ScriptTypeAccessor getAccessorFor(String parameter){
         //System.out.println("Getting hash for : "+parameter);
         for(ScriptTypeAccessor s : declaredVariables){
             //System.out.println("Comparing "+parameter +" with "+s.key+" with pattern : "+s.getPattern().pattern());
             if(s.getPattern().matcher(parameter).matches()){
                 //System.out.println("Matched ! Returning "+s.hash+ " while using + "+s.key+" : "+s.getPattern().pattern().hashCode());
-                return s.hash;//TODO Dynamic type matching
+                return s;//TODO Dynamic type matching
             }
         }
         if(parent != null)
-            return parent.getHashFor(parameter);
+            return parent.getAccessorFor(parameter);
         return null;
     }
 
-    public void add(String variable){
+    public void add(String variable, Class returnType){
         ScriptTypeAccessor sa = new ScriptTypeAccessor(null,variable);
+        sa.setReturnType(returnType);
         declaredVariables.add(sa);
     }
 
@@ -54,6 +56,6 @@ public class ScriptCompilationContext {
 
     public void addArray(List<Feature> asList) {
         for(Feature s : asList)
-            add(s.pattern());
+            add(s.pattern(), ScriptDecoder.parseType(s.type()));
     }
 }

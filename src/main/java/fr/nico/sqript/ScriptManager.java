@@ -81,14 +81,14 @@ public class ScriptManager {
     }
 
     public static OperatorDefinition getBinaryOperation(Class<? extends ScriptType> a, Class<? extends ScriptType> b, ScriptOperator o) {
-        if (binaryOperations.get(o).get(ScriptType.class) != null) {
+        if (binaryOperations.get(o).get(ScriptElement.class) != null) {
             final OperatorDefinition op;
-            if ((op = binaryOperations.get(o).get(ScriptType.class).get(b)) != null)
+            if ((op = binaryOperations.get(o).get(ScriptElement.class).get(b)) != null)
                 return op;
         }
         if (binaryOperations.get(o).get(a) != null) {
             final OperatorDefinition op;
-            if ((op = binaryOperations.get(o).get(a).get(ScriptType.class)) != null)
+            if ((op = binaryOperations.get(o).get(a).get(ScriptElement.class)) != null)
                 return op;
         }
         if (binaryOperations.get(o).get(a) != null) {
@@ -120,6 +120,14 @@ public class ScriptManager {
         for(ActionDefinition actionDefinition : actions){
             if(actionDefinition.getActionClass() == cls)
                 return actionDefinition;
+        }
+        return null;
+    }
+
+    public static ExpressionDefinition getDefinitionFromExpression(Class<? extends ScriptExpression> cls){
+        for(ExpressionDefinition expressionDefinition : expressions){
+            if(expressionDefinition.getExpressionClass() == cls)
+                return expressionDefinition;
         }
         return null;
     }

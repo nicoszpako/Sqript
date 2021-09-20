@@ -36,14 +36,8 @@ public class ActPlayer extends ScriptAction {
                 player.setPositionAndUpdate((double)pos.get(0), (double)pos.get(1),(double) pos.get(2));
                 return;
             case 1:
-                ScriptType param = getParameter(2).get(context);
-                ItemStack item = null;
-                if (param instanceof TypeItem) {
-                    item = ((TypeItem) (param)).getObject();
-                }
-                System.out.println("Item : "+item);
-                if(item==null)
-                    return;
+                ScriptType param = getParameter(1).get(context);
+                ItemStack item = (ItemStack) param.getObject();
                 player = (EntityPlayer) getParameter(2).get(context).getObject();
                 player.addItemStackToInventory(item);
                 break;

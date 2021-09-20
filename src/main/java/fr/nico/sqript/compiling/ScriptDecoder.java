@@ -10,12 +10,12 @@ import fr.nico.sqript.blocks.ScriptFunctionalBlock;
 import fr.nico.sqript.compiling.parsers.ScriptExpressionParser;
 import fr.nico.sqript.function.ScriptNativeFunction;
 import fr.nico.sqript.structures.*;
-import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeFunction;
 import fr.nico.sqript.types.primitive.PrimitiveType;
 import fr.nico.sqript.expressions.*;
 import fr.nico.sqript.meta.*;
 import fr.nico.sqript.types.primitive.TypeString;
+import org.apache.logging.log4j.core.script.Script;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
@@ -41,50 +41,48 @@ public class ScriptDecoder {
     static Pattern pattern_capture_quotes = Pattern.compile("(" + CAPTURE_BETWEEN_QUOTES + ")");
     static Pattern pattern_variable = Pattern.compile("^(?:\\$)?\\{(.*)}$");
     static Pattern pattern_compiled_string = Pattern.compile("@\\{S(\\d*)}");
+    static Pattern pattern_percent = Pattern.compile("(?<!~)%");
     static Pattern pattern_L = Pattern.compile("(?<!\\\\)(L\\{\\d+})");
+
+
 
     public static void init() {
 
-        parsers.add((token, group) -> {
-            //Check if it is a variable
-            if (checkIfVariable(token)) {
-                ScriptExpression expression;
-                if (token.getText().contains("%"))
-                    expression = compileString(token, group).getExpression();
-                else expression = new ExprPrimitive(new TypeString(token.getText()));
-                ExprReference r = new ExprReference(expression);
-                r.setLine(token);
-                return new ExpressionTree(r);
-            }
-            return null;
-        });
-
-
-        parsers.add((token, group) -> {
+        parsers.add((token, group, type) -> {
             //Check if it is a function
             ExprNativeFunction f;
             Matcher m = pattern_function.matcher(token.getText());
             if (m.find()) {
-                //System.out.println("Found for a function : "+m.group(1)+" with "+m.group(2)+" for "+parameter);
+                //System.out.println("Found for a function : "+m.group(1)+" with "+m.group(2)+" for "+token);
                 //Priority to not native functions
                 ScriptFunctionalBlock sf;
+                NodeExpression functionNode = null;
                 if ((sf = token.getScriptInstance().getFunction(m.group(1))) != null) {
-                    return new ExpressionTree(new ExprFunction(sf));
+                    functionNode =  new NodeExpression(new ExprFunction(sf));
                 }
                 if ((f = parseNativeFunction(token.with(m.group(1)))) != null) {
-                    return new ExpressionTree(f);
+                    functionNode = new NodeExpression(f);
+                }
+
+                if(functionNode != null){
+                    //System.out.println("Splitting "+m.group(2));
+                    for(String s : splitAtComa(m.group(2))){
+                        //System.out.println("Adding function parameter : "+s);
+                        functionNode.addChild(parseExpressionTree(token.with(s), group, new Class[]{ScriptElement.class}));
+                    }
+                    return functionNode;
                 }
             }
             return null;
         });
 
-        parsers.add((line, group) -> {
+        parsers.add((line, group, type) -> {
             //Check for replaced string
             Matcher m = pattern_capture_quotes.matcher(line.getText());
             if (m.matches()) {
-                System.out.println("It matches");
-                if (!m.group(1).contains("(?<!~)%"))
-                    return new ExpressionTree(new ExprPrimitive(new TypeString(m.group(2))));
+                Matcher p = pattern_percent.matcher(m.group(1));
+                if (!p.find())
+                    return new NodeExpression(new ExprPrimitive(new TypeString(m.group(2))));
                 else {
                     return compileString(line.with(m.group(2)), group);
                 }
@@ -93,37 +91,38 @@ public class ScriptDecoder {
         });
 
 
-        parsers.add((line, group) -> {
+        parsers.add((line, group, type) -> {
             //Check if it is a primitive
             PrimitiveType primitive = parsePrimitive(line);
             //System.out.println("Primitive is null : "+(primitive==null));
             if (primitive != null) {
                 //System.out.println("Found a primitive ! It's a : "+primitive.getClass());
-                return new ExpressionTree(new ExprPrimitive(primitive));
+                return new NodeExpression(new ExprPrimitive(primitive));
             }
             return null;
         });
 
-        parsers.add((line, group) -> {
+        parsers.add((line, compilationContext, type) -> {
             //Check if it is a reference to an accessor or an other element that can be parsed
-            Integer h = group.getHashFor(line.getText());
+            ScriptTypeAccessor h = compilationContext.getAccessorFor(line.getText());
             if (h != null) {
-                Class<? extends ScriptElement<?>> returnType = parseType("element");
+                Class returnType = h.getReturnType();
                 if (returnType == null)
                     throw new ScriptException.ScriptUndefinedReferenceException(line);
                 else {
-                    //System.out.println("Returning reference for : "+parameter);
+                    //System.out.println("Returning reference for : "+line);
                     ExprReference s = new ExprReference(new ExprPrimitive(new TypeString(line.getText())));
                     s.setLine((ScriptToken) line.clone());
-                    s.setVarHash(h);
-                    return new ExpressionTree(s);
+                    s.setVarHash(h.getHash());
+                    s.setReturnType(returnType);
+                    return new NodeExpression(s);
                 }
             }
             return null;
         });
 
 
-        parsers.add((line, group) -> {
+        parsers.add((line, group, type) -> {
             //Check if it is a not-native function reference
             //System.out.println("Checking if it's a function");
             if (line.getScriptInstance() != null)
@@ -132,17 +131,17 @@ public class ScriptDecoder {
                     ScriptBlockFunction function = (ScriptBlockFunction) fc;
                     if (function.name.equals(line.getText())) {
                         //System.out.println("Returning function : "+function);
-                        return new ExpressionTree(new ExprResult(new TypeFunction(function)));
+                        return new NodeExpression(new ExprResult(new TypeFunction(function)));
                     }
                 }
             return null;
         });
 
-        parsers.add((line, group) -> {
+        parsers.add((line, group, type) -> {
             //Check if it is an option
             if (line.getText().startsWith("@")) {
                 if (line.getScriptInstance().getOptions().containsKey(line.getText().substring(1))) {
-                    return new ExpressionTree(line.getScriptInstance().getOptions().get(line.getText().substring(1)));
+                    return new NodeExpression(line.getScriptInstance().getOptions().get(line.getText().substring(1)));
                 }
             }
             return null;
@@ -385,15 +384,30 @@ public class ScriptDecoder {
         return new ExtractedOperatorsResult(expression, operators.toArray(new ScriptOperator[0]));
     }
 
-    public static ExprCompiledExpression parse(ScriptToken expressionToken, ScriptCompilationContext compilationContext) throws ScriptException {
-        ExprCompiledExpression compiledExpression = new ExprCompiledExpression(parseExpressionTree(expressionToken, compilationContext));
-        return compiledExpression;
+    public static ScriptExpression parse(ScriptToken expressionToken, ScriptCompilationContext compilationContext) throws ScriptException {
+        return parse(expressionToken, compilationContext, new Class[]{ScriptElement.class});
     }
 
-    public static ExpressionTree parseExpressionTree(ScriptToken scriptToken, ScriptCompilationContext compilationContext) throws ScriptException {
-        ScriptExpressionParser parser = new ScriptExpressionParser();
-        return parser.parse(scriptToken, compilationContext);
+    public static ScriptExpression parse(ScriptToken expressionToken, ScriptCompilationContext compilationContext, Class[] requiredType) throws ScriptException {
+        Node node = parseExpressionTree(expressionToken, compilationContext, requiredType);
+        if(node != null){
+            if(node.getChildren() == null || node.getChildren().length == 0){
+                return ((NodeExpression)node).getExpression();
+            }
+            ExprCompiledExpression compiledExpression = new ExprCompiledExpression(node);
+            return compiledExpression;
+        }else{
+            throw new ScriptException.ScriptUnknownExpressionException(expressionToken);
+        }
     }
+
+
+    public static Node parseExpressionTree(ScriptToken scriptToken, ScriptCompilationContext compilationContext, Class[] requiredType) throws ScriptException {
+        ScriptExpressionParser parser = new ScriptExpressionParser();
+        scriptToken.trim();
+        return parser.parse(scriptToken, compilationContext, requiredType);
+    }
+
 
     /**
      * Splits a string at each coma, according to the parentheses.
@@ -501,7 +515,7 @@ public class ScriptDecoder {
      * @param token The token to check.
      * @return true if the given token represents a variable.
      */
-    private static boolean checkIfVariable(ScriptToken token) {
+    public static boolean checkIfVariable(ScriptToken token) {
         int currentCharIndex = 0;
         int parenthesesDeepness = 0;
         while (currentCharIndex < token.getText().length()) {
@@ -528,12 +542,12 @@ public class ScriptDecoder {
      * @return A ParseResult.
      * @throws ScriptException if the line misses parentheses or if a parsing error occurred.
      */
-    private static ExpressionTree compileString(ScriptToken line, ScriptCompilationContext compileGroup) throws ScriptException {
+    public static Node compileString(ScriptToken line, ScriptCompilationContext compileGroup) throws ScriptException {
         String string = line.getText();
         int c = 0;
-        //System.out.println("Compiling string : "+line);
         StringBuilder finalString = new StringBuilder();
-        List<ExpressionTree> nodes = new ArrayList<>();
+        List<Node> nodes = new ArrayList<>();
+        //System.out.println("Compiling : "+string);
         while (c < string.length()) {
             if (string.charAt(c) == '%') {
                 int start = c;
@@ -544,25 +558,30 @@ public class ScriptDecoder {
                 printStringWithCharIndicator(string, c);
                 //System.out.println("Start : "+start+" End : "+c +" '"+string.substring(start+1,c)+"'");
                 if (finalString.length() > 0) {
-                    nodes.add(new ExpressionTree(ScriptOperator.ADD));
+                    nodes.add(new NodeOperation(ScriptOperator.ADD));
                 }
                 //System.out.println("Finalstring : "+finalString.toString());
-                nodes.add(new ExpressionTree(new ExprPrimitive(new TypeString(string.substring(0, start)))));
-                nodes.add(new ExpressionTree(ScriptOperator.ADD));
-                nodes.add(parseExpressionTree(line.with(string.substring(start + 1, c)), compileGroup));
+                nodes.add(new NodeExpression(new ExprPrimitive(new TypeString(string.substring(0, start)))));
+                nodes.add(new NodeOperation(ScriptOperator.ADD));
+                nodes.add(parseExpressionTree(line.with(string.substring(start + 1, c)), compileGroup, new Class[]{ScriptElement.class}));
                 if (c + 1 > string.length())
                     throw new ScriptException.ScriptMissingClosingTokenException(line);
                 string = string.substring(c + 1);
-                c = 0;
                 //System.out.println("New string : "+string);
             }
             c++;
         }
         if (nodes.size() > 1 && !string.isEmpty()) {
-            nodes.add(new ExpressionTree(ScriptOperator.ADD));
+            nodes.add(new NodeOperation(ScriptOperator.ADD));
         }
-        nodes.add(new ExpressionTree(new ExprPrimitive(new TypeString(string))));
-        return ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
+        ExprPrimitive reference = new ExprPrimitive(new TypeString(string));
+        reference.setLine(line);
+        nodes.add(new NodeExpression(reference));
+        //System.out.println("Nodes : "+nodes);
+        //System.out.println("RPN : "+ExprCompiledExpression.infixToRPN(new ArrayList<>(nodes)));
+        Node result = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
+        //System.out.println("Result "+result);
+        return result;
     }
 
 
@@ -575,7 +594,7 @@ public class ScriptDecoder {
      */
     public static OperatorSplitResult splitAtOperators(String transformedString) {
         //System.out.println("Splitting : "+transformedString);
-        List<OperatorSplitResult.Token> tokens = new ArrayList<>();
+        List<Token> tokens = new ArrayList<>();
         List<Integer> operatorsIndices = new ArrayList<>();
         int c = 0;
         StringBuilder current = new StringBuilder();
@@ -584,19 +603,19 @@ public class ScriptDecoder {
                 String r = current.toString();
                 //System.out.println("1 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
                 if (!r.isEmpty()) {
-                    tokens.add(new OperatorSplitResult.Token(EnumTokenType.EXPRESSION, r)); //We add the current built word
+                    tokens.add(new Token(EnumTokenType.EXPRESSION, r)); //We add the current built word
                 }
                 current = new StringBuilder(); //We start a new word
-                tokens.add(new OperatorSplitResult.Token(EnumTokenType.RIGHT_PARENTHESIS, ""));
+                tokens.add(new Token(EnumTokenType.RIGHT_PARENTHESIS, ""));
                 c++;
             } else if (transformedString.charAt(c) == '(') {
-                tokens.add(new OperatorSplitResult.Token(EnumTokenType.LEFT_PARENTHESIS, ""));
+                tokens.add(new Token(EnumTokenType.LEFT_PARENTHESIS, ""));
                 c++;
             } else if (transformedString.charAt(c) == '#' && c + 1 < transformedString.length() && transformedString.charAt(c + 1) == '{' && (c == 0 || transformedString.charAt(c - 1) != '\\')) {
                 String r = current.toString();
                 //System.out.println("1 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
                 if (!r.isEmpty()) {
-                    tokens.add(new OperatorSplitResult.Token(EnumTokenType.EXPRESSION, r)); //We add the current built word
+                    tokens.add(new Token(EnumTokenType.EXPRESSION, r)); //We add the current built word
                 }
                 current = new StringBuilder(); //We start a new word
                 c++; //First {
@@ -610,7 +629,7 @@ public class ScriptDecoder {
                     c++;
                 }
 
-                tokens.add(new OperatorSplitResult.Token(ScriptManager.operators.get(Integer.parseInt(number.toString())))); //We add the current built word
+                tokens.add(new Token(ScriptManager.operators.get(Integer.parseInt(number.toString())))); //We add the current built word
                 operatorsIndices.add(Integer.parseInt(number.toString()));
                 c++; //Last }
             } else {
@@ -621,9 +640,9 @@ public class ScriptDecoder {
         }
         String r = current.toString();
         if (!r.isEmpty())
-            tokens.add(new OperatorSplitResult.Token(EnumTokenType.EXPRESSION, r)); //We add the current built word
+            tokens.add(new Token(EnumTokenType.EXPRESSION, r)); //We add the current built word
         //System.out.println("Operator split : "+tokens);
-        return new OperatorSplitResult(tokens.toArray(new OperatorSplitResult.Token[0]), operatorsIndices.toArray(new Integer[0]));
+        return new OperatorSplitResult(tokens.toArray(new Token[0]), operatorsIndices.toArray(new Integer[0]));
     }
 
 
@@ -654,12 +673,12 @@ public class ScriptDecoder {
      */
     public static ScriptAction parseAction(ScriptToken line, ScriptCompilationContext compileGroup) throws Exception {
         line = line.with(line.getText().replaceFirst("\\s*", ""));
-        System.out.println("Getting action for : "+line.getText());
+        //System.out.println("Parsing action for : "+line.getText());
         //Removing strings from the line in order to avoid interpretation issues
         String[] strings = extractStrings(line.getText());
         String lineWithoutStrings = removeStrings(line.getText(), strings);
         for (ActionDefinition actionDefinition : ScriptManager.actions) {
-            System.out.println("Checking for action : "+actionDefinition.getActionClass().getSimpleName());
+            //System.out.println("Checking for action : "+actionDefinition.getActionClass().getSimpleName());
             int[] indexAndMarks = actionDefinition.getMatchedPatternIndexAndMarks(lineWithoutStrings);
             if (indexAndMarks.length > 0) {
                 int index = indexAndMarks[0];
@@ -675,8 +694,7 @@ public class ScriptDecoder {
                 return action;
             }
         }
-        System.out.println("Without strings : "+lineWithoutStrings);
-        ScriptExpression s = parse(line.with(lineWithoutStrings), compileGroup);
+        ScriptExpression s = parse(line.with(ScriptDecoder.replaceStrings(lineWithoutStrings, strings)), compileGroup);
         if (s != null)
             return new ActSimpleExpression(s);
         return null;
@@ -940,7 +958,7 @@ public class ScriptDecoder {
         //System.out.println("Pre final processing : "+pattern);
         //pattern = pattern.replaceAll(" \\[","[ ");
         pattern = toSimpleRegex(pattern);
-        System.out.println("Basic translation : "+pattern);
+        //System.out.println("Basic translation : "+pattern);
 
         //End of basic translation to regex
 
@@ -952,7 +970,7 @@ public class ScriptDecoder {
         Matcher m = p.matcher(pattern);
         m:
         while (m.find()) {
-            System.out.println("Found group 1 as : " + m.group(1));
+            //System.out.println("Found group 1 as : " + m.group(1));
             String g = m.group(1);
             String t = g;
             String exp_capture = CAPTURE_EXPRESSION_GREEDY;
@@ -971,7 +989,7 @@ public class ScriptDecoder {
             //System.out.println("Splitting : "+t);
             String[] subTypes = t.split("\\|");
             l:for (int j = 0; j < subTypes.length; j++){
-                System.out.println("Now : "+pattern);
+                //System.out.println("Now : "+pattern);
                 for (TypeDefinition typeDefinition : ScriptManager.types.values()) {
                     if (typeDefinition.getName().equals(subTypes[j])) {
                         if(j==0)
@@ -983,7 +1001,7 @@ public class ScriptDecoder {
                 for (TypeDefinition primitiveDefinition : ScriptManager.primitives.values()) {
                     if (primitiveDefinition.getName().equals(subTypes[j])) {
                         if(j==0)
-                            pattern = pattern.replaceFirst("\\{" + Pattern.quote(g) + "}", "(?<a" + argCount + ">" + primitiveDefinition.transformedPattern.getPattern().pattern() + ")");
+                            pattern = pattern.replaceFirst("\\{" + Pattern.quote(g) + "}", "(?<a" + argCount + ">" + exp_capture + ")");
                         parameterDefinitions.add(new ScriptParameterDefinition(primitiveDefinition.getTypeClass(), n_args));
                         continue l;
                     }
@@ -991,7 +1009,7 @@ public class ScriptDecoder {
                 throw new Exception(t + " type is either not registered or not recognized in "+basePattern);
             }
             argCount++;
-            System.out.println("argCount = "+argCount);
+            //System.out.println("argCount = "+argCount);
             paramTypes.add(parameterDefinitions.toArray(new ScriptParameterDefinition[0]));
         }
         pattern = "^\\s*" + pattern + "$";//End of parsing;

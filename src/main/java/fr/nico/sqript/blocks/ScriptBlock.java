@@ -254,7 +254,7 @@ public abstract class ScriptBlock extends IScript {
         }
 
         public IScript compile(ScriptCompilationContext compileGroup) throws Exception {
-            //System.out.println(content);
+            //System.out.println("Compiling content : "+content);
             return ScriptDecoder.group(null, content, compileGroup);
         }
     }

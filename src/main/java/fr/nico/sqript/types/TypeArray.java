@@ -67,7 +67,7 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType<?>>> implements I
 
 
     static {
-        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeArray.class, ScriptType.class, TypeArray.class,
+        ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeArray.class, ScriptElement.class, TypeArray.class,
                 (a,b) -> {
                     TypeArray o = (TypeArray)a;
                     o.getObject().add(b);

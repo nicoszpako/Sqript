@@ -29,7 +29,11 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Block(
         feature = @Feature(name = "Command",
@@ -53,20 +57,22 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
 
     public ScriptBlockCommand(ScriptToken head) {
+        //System.out.println("Loading block command:"+head);
         final String def = ScriptDecoder.splitAtDoubleDot(head.getText().replaceFirst("command\\s+/", ""))[0];
-        final String[] args = def.split(" ");
+        Matcher m = Pattern.compile("<(.*?)>").matcher(def);
         final List<ScriptParameterDefinition[]> parameterDefinitions = new ArrayList<>();
-        for (int i = 1; i < args.length; i++) {
+        while (m.find()) {
             try {
-                parameterDefinitions.add(ScriptDecoder.transformPattern(args[i]).getTypes()[0]);
+                //System.out.println("Adding argument : "+m.group(1));
+                Collections.addAll(parameterDefinitions, Arrays.stream(m.group(1).split("\\|")).map(ScriptDecoder::parseType).map(ScriptParameterDefinition::new).toArray(ScriptParameterDefinition[]::new));
+                //System.out.println("Now : "+parameterDefinitions);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        this.name = args[0];
+        this.name = def.split("<(.*?)>")[0].trim();
         this.argumentsDefinitions = parameterDefinitions.toArray(new ScriptParameterDefinition[0][0]);
     }
-
 
     @Override
     protected void load() throws Exception {
@@ -77,9 +83,9 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         ScriptCompilationContext compileGroup = new ScriptCompilationContext();
         //Adding the "arg" expression to the compile group to prevent false-positive errors
         for (int j = 0; j < argumentsDefinitions.length; j++) {
-            compileGroup.add("arg[ument] " + (j + 1));
+            compileGroup.add("arg[ument] " + (j + 1), ScriptElement.class);
         }
-        compileGroup.add("(sender|player|console|server)");
+        compileGroup.add("(sender|player|console|server)", ScriptElement.class);
 
 
         this.setRoot(getMainField().compile(compileGroup));
@@ -203,7 +209,6 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         //System.out.println("ICOMMANDSENDER NULL : "+(iCommandSender==null));
         if(iCommandSender instanceof EntityPlayer){
             c.put(new ScriptTypeAccessor(new TypePlayer((EntityPlayer) iCommandSender), "(sender|player)","(sender|player|console|server)".hashCode()));
-
         }else if(iCommandSender instanceof MinecraftServer){
             c.put(new ScriptTypeAccessor(new TypeConsole((MinecraftServer) iCommandSender), "(sender|console|server)","(sender|player|console|server)".hashCode()));
         }

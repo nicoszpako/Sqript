@@ -16,7 +16,7 @@ import fr.nico.sqript.types.ScriptType;
  */
 public abstract class ScriptExpression {
 
-    private Class<? extends ScriptElement> returnType;
+    private Class<? extends ScriptElement> returnType = ScriptElement.class;
 
     /**
      * Default implementation of expressions returns null, because return type is get with patterns
@@ -52,6 +52,8 @@ public abstract class ScriptExpression {
     public <T> T getParameterOrDefault(ScriptType<T> parameter, T defaultValue){
         return parameter == null ? defaultValue : parameter.getObject();
     }
+
+
 
     public int getMarks() {
         return marks;

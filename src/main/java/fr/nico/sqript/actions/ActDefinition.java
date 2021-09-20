@@ -2,10 +2,9 @@ package fr.nico.sqript.actions;
 
 import com.google.common.collect.Lists;
 import fr.nico.sqript.ScriptManager;
-import fr.nico.sqript.compiling.ScriptCompilationContext;
-import fr.nico.sqript.compiling.ScriptDecoder;
-import fr.nico.sqript.compiling.ScriptException;
-import fr.nico.sqript.compiling.ScriptToken;
+import fr.nico.sqript.compiling.*;
+import fr.nico.sqript.expressions.ExprCompiledExpression;
+import fr.nico.sqript.expressions.ExprReference;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.meta.Feature;
@@ -13,6 +12,8 @@ import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.ScriptType;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Action(name = "Simple Operation Actions",
@@ -31,20 +32,20 @@ public class ActDefinition extends ScriptAction {
         final ScriptType<?> a = first.get(context);
         final ScriptType<?> b = second.get(context);
         //System.out.println("Executing line : "+getLine()+" with index:  "+getMatchedIndex());
-        switch (getMatchedIndex()){
+        switch (getMatchedIndex()) {
             case 0:
-                if(!second.set(context,ScriptManager.getBinaryOperation(b.getClass(),a.getClass(), ScriptOperator.ADD).getOperation().operate(b,a))){
+                if (!second.set(context, ScriptManager.getBinaryOperation(b.getClass(), a.getClass(), ScriptOperator.ADD).getOperation().operate(b, a))) {
                     throw new ScriptException.ScriptNonSettableException(getLine(), first);
                 }
                 break;
             case 1:
-                if(!second.set(context,ScriptManager.getBinaryOperation(b.getClass(),a.getClass(), ScriptOperator.SUBTRACT).getOperation().operate(b,a))){
+                if (!second.set(context, ScriptManager.getBinaryOperation(b.getClass(), a.getClass(), ScriptOperator.SUBTRACT).getOperation().operate(b, a))) {
                     throw new ScriptException.ScriptNonSettableException(getLine(), first);
                 }
                 break;
             case 2:
-                if(!first.set(context,b)){
-                    throw new ScriptException.ScriptNonSettableException(getLine(),first);
+                if (!first.set(context, b)) {
+                    throw new ScriptException.ScriptNonSettableException(getLine(), first);
                 }
                 break;
         }
@@ -57,15 +58,32 @@ public class ActDefinition extends ScriptAction {
         //able to register the new variable in the context
         if (matchedIndex == 2) {
             //System.out.println("Set ! : "+line);
-            ScriptExpression arg = ScriptDecoder.parse(line.with(parameters.get(0)),compileGroup);
-            ScriptExpression to = ScriptDecoder.parse(line.with(parameters.get(1)),compileGroup);
+
+            ScriptExpression arg = ScriptDecoder.parse(line.with(parameters.get(0)), compileGroup);
+
+            /**
+             * If a state, we only choose the expressions that can be set for performance issues.
+             */
+            if (arg instanceof ExprCompiledExpression) {
+                ExprCompiledExpression state = (ExprCompiledExpression) arg;
+                if (state.ast instanceof NodeSwitch) {
+                    ArrayList<Node> branches = new ArrayList<>(Arrays.asList(state.ast.getChildren()));
+                    //System.out.println(branches);
+                    branches.removeIf(b -> b == null || !(b instanceof NodeExpression) || ((NodeExpression) b).getExpression()==null  || (ScriptManager.getDefinitionFromExpression(((NodeExpression) b).getExpression().getClass()) != null && !ScriptManager.getDefinitionFromExpression(((NodeExpression) b).getExpression().getClass()).getFeatures()[((NodeExpression) b).getExpression().getMatchedIndex()].settable()));
+                    if (branches.size() == 1)
+                        arg = new ExprCompiledExpression(branches.get(0));
+                    else state.ast.setChildren(branches.toArray(new Node[0]));
+                }
+            }
+
+            ScriptExpression to = ScriptDecoder.parse(line.with(parameters.get(1)), compileGroup);
             if (to == null)
                 throw new ScriptException.ScriptUnknownExpressionException(line.with(parameters.get(1)));
             this.setParameters(Lists.newArrayList(arg, to));
             this.setMatchedIndex(matchedIndex);
             this.setMarks(marks);
         } else {
-            super.build(line,compileGroup, parameters, matchedIndex, marks);
+            super.build(line, compileGroup, parameters, matchedIndex, marks);
         }
 
     }

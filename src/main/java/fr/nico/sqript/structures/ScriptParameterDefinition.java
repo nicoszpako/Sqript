@@ -21,6 +21,10 @@ public class ScriptParameterDefinition {
         this.n_args = n_args;
     }
 
+    public ScriptParameterDefinition(Class<? extends ScriptElement<?>> typeClass) {
+        this(typeClass,false);
+    }
+
     @Override
     public String toString() {
         return typeClass.toString();

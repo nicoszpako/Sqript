@@ -37,6 +37,6 @@ public class ExprPrimitive extends ScriptExpression{
 
     @Override
     public String toString() {
-        return "ExprPrimitive="+primitive;
+        return "ExprPrimitive("+primitive.getType().getSimpleName()+")"+"="+primitive;
     }
 }
