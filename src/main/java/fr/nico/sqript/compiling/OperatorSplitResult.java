@@ -1,24 +1,21 @@
 package fr.nico.sqript.compiling;
 
 
-import fr.nico.sqript.expressions.ScriptExpression;
-import fr.nico.sqript.structures.ScriptOperator;
-
 public class OperatorSplitResult {
 
-    private Token[] expressionTokens;
+    private ExpressionToken[] expressionTokens;
     private Integer[] operatorIndices;
 
-    public OperatorSplitResult(Token[] operands, Integer[] operatorIndices) {
+    public OperatorSplitResult(ExpressionToken[] operands, Integer[] operatorIndices) {
         this.expressionTokens = operands;
         this.operatorIndices = operatorIndices;
     }
 
-    public Token[] getExpressionTokens() {
+    public ExpressionToken[] getExpressionTokens() {
         return expressionTokens;
     }
 
-    public void setExpressionTokens(Token[] expressionTokens) {
+    public void setExpressionTokens(ExpressionToken[] expressionTokens) {
         this.expressionTokens = expressionTokens;
     }
 

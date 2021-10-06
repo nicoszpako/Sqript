@@ -88,13 +88,6 @@ public class EvtBlock {
         }
 
         @Override
-        public boolean validate(ScriptType[] parameters, int marks) {
-            if(parameters[0] == null)
-                return false;
-            return super.validate(parameters, marks);
-        }
-
-        @Override
         public boolean check(ScriptType[] parameters, int marks) {
             Object registryName = null;
             if(parameters[0] != null)

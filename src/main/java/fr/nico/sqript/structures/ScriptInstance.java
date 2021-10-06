@@ -5,6 +5,9 @@ import fr.nico.sqript.blocks.ScriptBlock;
 import fr.nico.sqript.blocks.ScriptFunctionalBlock;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.blocks.ScriptBlockEvent;
+import fr.nico.sqript.events.EvtBlock;
+import fr.nico.sqript.events.EvtOnScriptLoad;
+import fr.nico.sqript.events.EvtPlayer;
 import fr.nico.sqript.events.ScriptEvent;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.types.primitive.TypeBoolean;
@@ -42,6 +45,8 @@ public class ScriptInstance {
         //System.out.println("Calling event : "+event.getClass());
         try {
             ScriptContext returnContext = callEventAndGetContext(context, event);
+            if(event.getClass() == EvtBlock.EvtOnBlockClick.class)
+                //System.out.println("Return context after call : "+returnContext.getReturnValue());
             return (boolean) returnContext.getReturnValue().element.getObject();
         } catch (Exception e) {
             ScriptManager.log.error("Error while calling event : " + event.getClass().getSimpleName());

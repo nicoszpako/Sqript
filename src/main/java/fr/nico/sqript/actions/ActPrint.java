@@ -11,7 +11,6 @@ import fr.nico.sqript.expressions.ScriptExpression;
         features = @Feature(name = "Print", description = "Prints something in the console.", examples = "print \"Hello world !\"", pattern = "print {element}")
 )
 public class ActPrint extends ScriptAction {
-
     @Override
     public void execute(ScriptContext context) throws ScriptException {
         switch (getMatchedIndex()){
@@ -20,6 +19,5 @@ public class ActPrint extends ScriptAction {
                 ScriptManager.log.info(getLine().getScriptInstance().getName()+" : "+firstParameter.get(context));
                 break;
         }
-
     }
 }

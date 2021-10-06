@@ -68,8 +68,8 @@ public class ActDefinition extends ScriptAction {
                 ExprCompiledExpression state = (ExprCompiledExpression) arg;
                 if (state.ast instanceof NodeSwitch) {
                     ArrayList<Node> branches = new ArrayList<>(Arrays.asList(state.ast.getChildren()));
-                    //System.out.println(branches);
-                    branches.removeIf(b -> b == null || !(b instanceof NodeExpression) || ((NodeExpression) b).getExpression()==null  || (ScriptManager.getDefinitionFromExpression(((NodeExpression) b).getExpression().getClass()) != null && !ScriptManager.getDefinitionFromExpression(((NodeExpression) b).getExpression().getClass()).getFeatures()[((NodeExpression) b).getExpression().getMatchedIndex()].settable()));
+                    branches.removeIf(b -> !(b instanceof NodeExpression) || ((NodeExpression) b).getExpression() == null);
+                    branches.removeIf(b -> ScriptManager.getDefinitionFromExpression(((NodeExpression) b).getExpression().getClass()) != null && !ScriptManager.getDefinitionFromExpression(((NodeExpression) b).getExpression().getClass()).getFeatures()[((NodeExpression) b).getExpression().getMatchedIndex()].settable());
                     if (branches.size() == 1)
                         arg = new ExprCompiledExpression(branches.get(0));
                     else state.ast.setChildren(branches.toArray(new Node[0]));

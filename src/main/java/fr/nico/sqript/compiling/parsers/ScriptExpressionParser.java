@@ -10,18 +10,15 @@ import fr.nico.sqript.meta.ExpressionDefinition;
 import fr.nico.sqript.meta.MatchResult;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
-import fr.nico.sqript.structures.ScriptParameterDefinition;
 import fr.nico.sqript.structures.TransformedPattern;
 import fr.nico.sqript.types.primitive.TypeString;
-import scala.actors.migration.pattern;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class ScriptExpressionParser implements IParser {
+public class ScriptExpressionParser implements INodeParser {
 
 
     @Override
@@ -38,7 +35,7 @@ public class ScriptExpressionParser implements IParser {
         /*
          * We check if this line can be parsed by a simple parser.
          */
-        for (IParser parser : ScriptDecoder.parsers) {
+        for (INodeParser parser : ScriptDecoder.parsers) {
             Node node;
             if ((node = parser.parse(line, compilationContext, validTypes)) != null) {
                 //System.out.println("Parsed : " + node);
@@ -74,11 +71,11 @@ public class ScriptExpressionParser implements IParser {
                             if (matchResult.getMatchedIndex() == parent.getMatchedIndex()
                                     && expressionDefinition.getExpressionClass() == parent.getClass()
                                     && line.equals(parent.getLine())) {
-                                //System.out.println(debugOffset() + "Not valid because identical to parent for " + expressionString);
+                                //System.out.println("Not valid because identical to parent for " + expressionString);
 
                             }
                             if (validTypes != null && !isTypeValid(expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType(), validTypes)) {
-                                //System.out.println(debugOffset() + "Not valid because bad return type for " + expressionString + " as a " + Arrays.toString(validTypes) + " not assignable from " + expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType());
+                                //System.out.println("Not valid because bad return type for " + expressionString + " as a " + Arrays.toString(validTypes) + " not assignable from " + expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType());
                                 continue;
                             }
 
@@ -88,9 +85,10 @@ public class ScriptExpressionParser implements IParser {
                             ScriptExpression expression = expressionDefinition.instanciate((ScriptToken) line.clone(), matchResult.getMatchedIndex(), matchResult.getMarks());
 
                             TransformedPattern transformedPattern = expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()];
-                            //System.out.println("Next found expression is : " + expression.toString());
 
                             String[] arguments = transformedPattern.getAllArguments(expressionString);
+                            //System.out.println("Next found expression is : " + expression.toString() + " with arguments " + Arrays.toString(arguments));
+
                             //System.out.println("Expression sub arguments are : " + Arrays.toString(arguments));
 
                             /*
@@ -107,6 +105,8 @@ public class ScriptExpressionParser implements IParser {
                                 for (String argument : arguments) {
                                     if (argument != null)
                                         if (isComaSeparated(argument)) {
+                                            //System.out.println("Is coma separated : " + argument);
+                                            //System.out.println("Split is : " + Arrays.asList(ScriptDecoder.splitAtComa(argument)));
                                             parameters.addAll(Arrays.asList(ScriptDecoder.splitAtComa(argument)));
                                         } else {
                                             parameters.add(argument);
@@ -123,13 +123,20 @@ public class ScriptExpressionParser implements IParser {
                                     if (parameter != null) {
                                         if (!parameter.isEmpty()) {
                                             //System.out.println(debugOffset()+" Parsing subargument : "+parameter);
-                                            Class[] validParameterTypes = new Class[expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getTypes()[parameterIndex].length];
-                                            for (int i = 0; i < expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getTypes()[parameterIndex].length; i++) {
-                                                validParameterTypes[i] = expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getTypes()[parameterIndex][i].getTypeClass();
+                                            int index = Math.min(parameterIndex, expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()]
+                                                    .getTypes().length - 1);
+                                            Class[] validParameterTypes = new Class[expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()]
+                                                    .getTypes()[index].length];
+                                            for (int i = 0; i < expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getTypes()[index].length; i++) {
+                                                validParameterTypes[i] = expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getTypes()[index][i].getTypeClass();
                                             }
+                                            //System.out.println("Sub parsing : " + line.with(parameter));
                                             subExpressions[parameterIndex] = parse(line.with(parameter), compilationContext, expression, validParameterTypes);
-                                            if (subExpressions[parameterIndex] == null)
+                                            //System.out.println("Parsed : " + subExpressions[parameterIndex]);
+                                            if (subExpressions[parameterIndex] == null) {
+                                                //System.out.println("Null non-optional sub-argument : skipping");
                                                 continue matchLoop;
+                                            }
                                         } else {
                                             subExpressions[parameterIndex] = null;
                                         }
@@ -154,8 +161,8 @@ public class ScriptExpressionParser implements IParser {
                                 }
                             }
                             */
-                                //System.out.println("Adding to switch : " + expression + " with " + Arrays.toString(subExpressions));
                                 nodeExpression.setChildren(subExpressions);
+                                //System.out.println("Adding to switch : " + nodeExpression);
                                 validTrees.add(nodeExpression);
                             } else {
                                 //System.out.println(debugOffset() + "Not valid because not validated by expression.");
@@ -171,15 +178,13 @@ public class ScriptExpressionParser implements IParser {
 
         if (ScriptDecoder.checkIfVariable(line)) {
             //System.out.println("It's a variable : "+token);
-            Node expression;
-            if (line.getText().contains("%"))
-                expression = ScriptDecoder.compileString(line, compilationContext);
-            else {
-                ExprReference reference = new ExprReference(new ExprPrimitive(new TypeString(line.getText())));
-                reference.setLine(line);
-                expression = new NodeExpression(reference);
-            }
-            validTrees.add(0, expression);
+            ScriptExpression expression = new ExprPrimitive(new TypeString(line.getText()));
+            if (line.getText().contains("<"))
+                expression = ScriptDecoder.compileVariableName(line, compilationContext);
+            ExprReference reference = new ExprReference(expression);
+            reference.setLine(line);
+            Node nodeExpression = new NodeExpression(reference);
+            validTrees.add(0, nodeExpression);
         }
 
         if (!validTrees.isEmpty()) {
@@ -200,7 +205,7 @@ public class ScriptExpressionParser implements IParser {
          * /!\ In this case, we place Nodes in a list as if they were in an infixed notation, and then we later transform this with infixToRPN, and then with rpnToAST.
          */
         if (ScriptDecoder.containsOperator(expressionString)) {
-            //System.out.println(debugOffset() + "Parsing as algebraic expression : " + expressionString);
+            //System.out.println("Parsing as algebraic expression : " + expressionString);
             /*
              * We parse the operators in the string.
              */
@@ -213,37 +218,44 @@ public class ScriptExpressionParser implements IParser {
              * Now we extract each operand from the string, split at each operator.
              */
             OperatorSplitResult operatorSplitResult = ScriptDecoder.splitAtOperators(operatorsBuildString);
-            List<Token> tokens = Arrays.asList(operatorSplitResult.getExpressionTokens());
+            List<ExpressionToken> tokens = Arrays.asList(operatorSplitResult.getExpressionTokens());
             List<Node> nodes = new ArrayList<>();
             int addedOperators = 0;
             //System.out.println("Tokens are : "+tokens);
-            for (Token token : tokens) {
-                if (token.getType() == EnumTokenType.LEFT_PARENTHESIS) {
-                    nodes.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
-                } else if (token.getType() == EnumTokenType.RIGHT_PARENTHESIS) {
-                    nodes.add(new NodeParenthesis(EnumTokenType.RIGHT_PARENTHESIS));
-                } else if (token.getType() == EnumTokenType.EXPRESSION) {
-                    Node node = parse(line.with(token.getExpressionString()), compilationContext, new Class[]{ScriptElement.class});
-                    if (node == null) {
-                        return null;
+            if(tokens.size() > 1) {
+                for (ExpressionToken token : tokens) {
+                    if (token.getType() == EnumTokenType.LEFT_PARENTHESIS) {
+                        nodes.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
+                    } else if (token.getType() == EnumTokenType.RIGHT_PARENTHESIS) {
+                        nodes.add(new NodeParenthesis(EnumTokenType.RIGHT_PARENTHESIS));
+                    } else if (token.getType() == EnumTokenType.EXPRESSION) {
+                        Node node = parse(line.with(token.getExpressionString()), compilationContext, new Class[]{ScriptElement.class});
+                        if (node == null) {
+                            return null;
+                        }
+                        nodes.add(node);
+                    } else if (token.getType() == EnumTokenType.OPERATOR) {
+                        nodes.add(new NodeOperation(operators.get(addedOperators)));
+                        addedOperators++;
                     }
-                    nodes.add(node);
-                } else if (token.getType() == EnumTokenType.OPERATOR) {
-                    nodes.add(new NodeOperation(operators.get(addedOperators)));
-                    addedOperators++;
                 }
             }
-            try{
-                Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
-                if (validTypes != null && isTypeValid(finalTree.getReturnType(), validTypes)) {
-                    //System.out.println("Returning compiled : "+finalTree);
-                    return finalTree;
-                }
-                //System.out.println("Type was not valid for : "+finalTree);
-            } catch (Exception e){
-                e.printStackTrace();
+            if(nodes.isEmpty())
                 return null;
+            else{
+                try {
+                    Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
+                    if (validTypes != null && isTypeValid(finalTree.getReturnType(), validTypes)) {
+                        //System.out.println("Returning compiled : " + finalTree);
+                        return finalTree;
+                    }
+                    //System.out.println("Type was not valid for : " + finalTree);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
+
 
         }
         //System.out.println("Returning null to " + line);

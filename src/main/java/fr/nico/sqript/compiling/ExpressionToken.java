@@ -2,18 +2,18 @@ package fr.nico.sqript.compiling;
 
 import fr.nico.sqript.structures.ScriptOperator;
 
-public class Token {
+public class ExpressionToken {
 
     private final EnumTokenType type;
     private final String expressionString;
     private ScriptOperator operator;
 
-    public Token(EnumTokenType type, String expression) {
+    public ExpressionToken(EnumTokenType type, String expression) {
         this.type = type;
         this.expressionString = expression;
     }
 
-    public Token(ScriptOperator operator) {
+    public ExpressionToken(ScriptOperator operator) {
         this.operator = operator;
         this.type = EnumTokenType.OPERATOR;
         this.expressionString = null;

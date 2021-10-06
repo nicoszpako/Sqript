@@ -380,6 +380,7 @@ public class ScriptManager {
                 if (RELOADING)
                     return false;
                 if (script.callEvent(context, event)) {
+                    //System.out.println("Returning true");
                     return true;
                 }
             }

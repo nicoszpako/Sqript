@@ -53,6 +53,7 @@ public class ExprPlayers extends ScriptExpression {
                 TypeString s = (TypeString) parameters[0];
                 return new TypePlayer(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(s.getObject()));
             case 2:
+                //System.out.println(parameters[0]);
                 EntityPlayer player = (EntityPlayer) parameters[0].getObject();
                 return new TypeString(player.getName());
             case 3:

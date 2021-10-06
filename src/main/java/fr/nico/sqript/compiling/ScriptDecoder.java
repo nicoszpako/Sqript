@@ -15,7 +15,6 @@ import fr.nico.sqript.types.primitive.PrimitiveType;
 import fr.nico.sqript.expressions.*;
 import fr.nico.sqript.meta.*;
 import fr.nico.sqript.types.primitive.TypeString;
-import org.apache.logging.log4j.core.script.Script;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
@@ -30,12 +29,12 @@ public class ScriptDecoder {
     public static final String CAPTURE_INTEGER = "(?:\\s*[0-9]+)";
     public static final String CAPTURE_BOOLEAN = "(?:([Tt]rue|[Ff]alse))";
     public static final String CAPTURE_NUMBER = "(?:\\s*[0-9ABCDEFabcdef]*(?:\\.[0-9]*+)?)";
-    public static final String CAPTURE_EXPRESSION_LAZY = "(?:.*?)";
-    public static final String CAPTURE_EXPRESSION_GREEDY = "(?:.*)";
+    public static final String CAPTURE_EXPRESSION_LAZY = "(?:.+?)";
+    public static final String CAPTURE_EXPRESSION_GREEDY = "(?:.+)";
 
     public static List<String> operators_list = new LinkedList<>();
     public static List<Pattern> operators_pattern = new LinkedList<>();
-    public static List<IParser> parsers = new ArrayList<>();
+    public static List<INodeParser> parsers = new ArrayList<>();
     static Pattern pattern_function = Pattern.compile("^\\s*(\\w*)\\((.*)\\)\\s*$");
     static Pattern pattern_removed_string = Pattern.compile("\\{S(\\d*)}");
     static Pattern pattern_capture_quotes = Pattern.compile("(" + CAPTURE_BETWEEN_QUOTES + ")");
@@ -252,11 +251,9 @@ public class ScriptDecoder {
         //System.out.println("Extracting strings for : "+parameter);
 
         Matcher m = pattern_capture_quotes.matcher(parameter);
-        int i = 0;
         while (m.find()) {
             String f = m.group(2);
             result.add(f);
-            i++;
         }
         //System.out.println("Returning : "+ Arrays.toString(result.toArray(new String[0])));
         return result.toArray(new String[0]);
@@ -502,13 +499,6 @@ public class ScriptDecoder {
         return parts.toArray(new String[0]);
     }
 
-    public static boolean isLastParameterAtTheEndOfLine(String[] parameters, String line) {
-        if (line != null)
-            if (parameters.length > 0 && parameters[parameters.length - 1] != null)
-                return line.lastIndexOf(parameters[parameters.length - 1]) + parameters[parameters.length - 1].length() == line.length();
-        return false;
-    }
-
     /**
      * Checks if a token represents a variable.
      * Example : ${variable} -> true
@@ -556,7 +546,6 @@ public class ScriptDecoder {
                 while (c < string.length() && string.charAt(c) != '%') {
                     c++;
                 }
-                printStringWithCharIndicator(string, c);
                 //System.out.println("Start : "+start+" End : "+c +" '"+string.substring(start+1,c)+"'");
                 if (finalString.length() > 0) {
                     nodes.add(new NodeOperation(ScriptOperator.ADD));
@@ -585,6 +574,54 @@ public class ScriptDecoder {
         return result;
     }
 
+    /**
+     * Compiles a variable name into an expression.
+     * Example : "{<player's name>.test}" -> ExprPlayers + ExprPrimitive(".test")
+     * @param line The line to compile
+     * @param compileGroup A ScriptCompileGroup holding information of the compilation context.
+     * @return A ParseResult.
+     * @throws ScriptException if the line misses parentheses or if a parsing error occurred.
+     */
+    public static ScriptExpression compileVariableName(ScriptToken line, ScriptCompilationContext compileGroup) throws ScriptException {
+        String string = line.getText();
+        int c = 0;
+        StringBuilder finalString = new StringBuilder();
+        List<Node> nodes = new ArrayList<>();
+        //System.out.println("Compiling : "+string);
+        while (c < string.length()) {
+            if (string.charAt(c) == '<') {
+                int start = c;
+                c++;
+                while (c < string.length() && string.charAt(c) != '>') {
+                    c++;
+                }
+                //System.out.println("Start : "+start+" End : "+c +" '"+string.substring(start+1,c)+"'");
+                if (finalString.length() > 0) {
+                    nodes.add(new NodeOperation(ScriptOperator.ADD));
+                }
+                //System.out.println("Finalstring : "+finalString.toString());
+                nodes.add(new NodeExpression(new ExprPrimitive(new TypeString(string.substring(0, start)))));
+                nodes.add(new NodeOperation(ScriptOperator.ADD));
+                nodes.addAll(ExprCompiledExpression.astToInfix(parseExpressionTree(line.with(string.substring(start + 1, c)), compileGroup, new Class[]{ScriptElement.class})));
+                if (c + 1 > string.length())
+                    throw new ScriptException.ScriptMissingClosingTokenException(line);
+                string = string.substring(c + 1);
+                //System.out.println("New string : "+string);
+            }
+            c++;
+        }
+        if (nodes.size() > 1 && !string.isEmpty()) {
+            nodes.add(new NodeOperation(ScriptOperator.ADD));
+        }
+        ExprPrimitive reference = new ExprPrimitive(new TypeString(string));
+        reference.setLine(line);
+        nodes.add(new NodeExpression(reference));
+        //System.out.println("Nodes : "+nodes);
+        //System.out.println("AST : "+ExprCompiledExpression.rpnToAST((ExprCompiledExpression.infixToRPN(new ArrayList<>(nodes)))));
+        Node result = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
+        //System.out.println("Result "+result);
+        return new ExprCompiledExpression(result);
+    }
 
     /**
      * Splits a transformed string at each operator.
@@ -595,7 +632,7 @@ public class ScriptDecoder {
      */
     public static OperatorSplitResult splitAtOperators(String transformedString) {
         //System.out.println("Splitting : "+transformedString);
-        List<Token> tokens = new ArrayList<>();
+        List<ExpressionToken> tokens = new ArrayList<>();
         List<Integer> operatorsIndices = new ArrayList<>();
         int c = 0;
         StringBuilder current = new StringBuilder();
@@ -604,19 +641,19 @@ public class ScriptDecoder {
                 String r = current.toString();
                 //System.out.println("1 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
                 if (!r.isEmpty()) {
-                    tokens.add(new Token(EnumTokenType.EXPRESSION, r)); //We add the current built word
+                    tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, r)); //We add the current built word
                 }
                 current = new StringBuilder(); //We start a new word
-                tokens.add(new Token(EnumTokenType.RIGHT_PARENTHESIS, ""));
+                tokens.add(new ExpressionToken(EnumTokenType.RIGHT_PARENTHESIS, ""));
                 c++;
             } else if (transformedString.charAt(c) == '(') {
-                tokens.add(new Token(EnumTokenType.LEFT_PARENTHESIS, ""));
+                tokens.add(new ExpressionToken(EnumTokenType.LEFT_PARENTHESIS, ""));
                 c++;
             } else if (transformedString.charAt(c) == '#' && c + 1 < transformedString.length() && transformedString.charAt(c + 1) == '{' && (c == 0 || transformedString.charAt(c - 1) != '\\')) {
                 String r = current.toString();
                 //System.out.println("1 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
                 if (!r.isEmpty()) {
-                    tokens.add(new Token(EnumTokenType.EXPRESSION, r)); //We add the current built word
+                    tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, r)); //We add the current built word
                 }
                 current = new StringBuilder(); //We start a new word
                 c++; //First {
@@ -630,7 +667,7 @@ public class ScriptDecoder {
                     c++;
                 }
 
-                tokens.add(new Token(ScriptManager.operators.get(Integer.parseInt(number.toString())))); //We add the current built word
+                tokens.add(new ExpressionToken(ScriptManager.operators.get(Integer.parseInt(number.toString())))); //We add the current built word
                 operatorsIndices.add(Integer.parseInt(number.toString()));
                 c++; //Last }
             } else {
@@ -641,9 +678,9 @@ public class ScriptDecoder {
         }
         String r = current.toString();
         if (!r.isEmpty())
-            tokens.add(new Token(EnumTokenType.EXPRESSION, r)); //We add the current built word
+            tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, r)); //We add the current built word
         //System.out.println("Operator split : "+tokens);
-        return new OperatorSplitResult(tokens.toArray(new Token[0]), operatorsIndices.toArray(new Integer[0]));
+        return new OperatorSplitResult(tokens.toArray(new ExpressionToken[0]), operatorsIndices.toArray(new Integer[0]));
     }
 
 

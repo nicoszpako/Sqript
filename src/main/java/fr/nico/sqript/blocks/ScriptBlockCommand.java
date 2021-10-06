@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,6 +58,58 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
 
     public ScriptBlockCommand(ScriptToken head) {
+        Feature[] features = new Feature[]{new Feature(){
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return null;
+            }
+
+            @Override
+            public String name() {
+                return null;
+            }
+
+            @Override
+            public String description() {
+                return null;
+            }
+
+            @Override
+            public String[] examples() {
+                return new String[0];
+            }
+
+            @Override
+            public String pattern() {
+                return null;
+            }
+
+            @Override
+            public String regex() {
+                return null;
+            }
+
+            @Override
+            public String type() {
+                return null;
+            }
+
+            @Override
+            public boolean settable() {
+                return false;
+            }
+
+            @Override
+            public fr.nico.sqript.structures.Side side() {
+                return null;
+            }
+
+            @Override
+            public int priority() {
+                return 0;
+            }
+        }};
+
         //System.out.println("Loading block command:"+head);
         final String def = ScriptDecoder.splitAtDoubleDot(head.getText().replaceFirst("command\\s+/", ""))[0];
         Matcher m = Pattern.compile("<(.*?)>").matcher(def);

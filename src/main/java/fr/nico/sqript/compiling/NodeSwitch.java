@@ -2,7 +2,7 @@ package fr.nico.sqript.compiling;
 
 import fr.nico.sqript.structures.ScriptElement;
 
-public class NodeSwitch extends Node{
+public class NodeSwitch extends Node {
 
     public NodeSwitch(Node[] children) {
         super(children);

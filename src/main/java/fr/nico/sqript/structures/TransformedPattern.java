@@ -43,6 +43,7 @@ public class TransformedPattern {
     }
 
     public Class[] getValidTypes(int parameterIndex) {
+        parameterIndex = Math.min(parameterIndex, parameterDefinitions.length - 1);
         Class[] validTypes = new Class[parameterDefinitions[parameterIndex].length];
         for (int i = 0; i < parameterDefinitions[parameterIndex].length; i++) {
             validTypes[i] = parameterDefinitions[parameterIndex][i].getTypeClass();
@@ -110,7 +111,7 @@ public class TransformedPattern {
     public String[] getAllArguments(String match){
         String[] r = new String[getArgsCount()];
         Matcher m = pattern.matcher(match);
-        //System.out.println("Getting all arguments for : "+match);
+        //System.out.println("Getting all arguments for : "+match+" as "+pattern.pattern());
         if (m.find()) {
             //System.out.println("Found");
             for (int i = 0; i < argsCount; i++) {

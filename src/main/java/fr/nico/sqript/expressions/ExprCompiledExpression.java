@@ -28,7 +28,6 @@ public class ExprCompiledExpression extends ScriptExpression {
     public static List<Node> astToRPN(Node tree) {
         //System.out.println("Parsing astToRPN : "+tree.toString());
         ArrayList<Node> out = new ArrayList<>();
-
         if (tree.getChildren() != null) {
             for (Node child : tree.getChildren()) {
                 if (child != null)
@@ -43,24 +42,51 @@ public class ExprCompiledExpression extends ScriptExpression {
         return out;
     }
 
+    public static List<Node> astToInfix(Node tree) {
+        //System.out.println("Parsing astToRPN : "+tree.toString());
+        ArrayList<Node> out = new ArrayList<>();
+        if (tree instanceof NodeExpression || tree instanceof NodeOperation || tree instanceof NodeSwitch) {
+            out.add(tree);
+        }
+        if (tree.getChildren() != null) {
+            out.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
+            for (Node child : tree.getChildren()) {
+                if (child != null) {
+                    out.addAll(astToInfix(child));
+                } else {
+                    out.add(null);
+                }
+            }
+            out.add(new NodeParenthesis(EnumTokenType.RIGHT_PARENTHESIS));
+            tree.setChildren(new Node[tree.getChildren().length]);
+        }
+
+        return out;
+    }
+
     public static Node rpnToAST(List<Node> nodes) {
         Stack<Node> treeStack = new Stack<>();
         //System.out.println("RPN to AST from rpn : " + nodes);
         while (!nodes.isEmpty()) {//While there are tokens to be read
             Node node = nodes.remove(0);
-            if (node instanceof NodeExpression) {
-                NodeExpression nodeExpression = (NodeExpression) node;
-                //System.out.println(nodeExpression+" arity is "+nodeExpression.getArity());
-                if (nodeExpression.getArity() > 0) {
-                    Node merged = new NodeExpression(nodeExpression.getExpression());
-                    for (int i = 0; i < nodeExpression.getArity(); i++) {
-                        if (!treeStack.empty())
-                            merged.addChild(treeStack.pop());
-                        else merged.addChild(null);
-                    }
-                    treeStack.push(merged);
-                } else
-                    treeStack.push(nodeExpression);
+            if (node instanceof NodeExpression || node instanceof NodeSwitch) {
+                if(node instanceof NodeSwitch){
+                    treeStack.push(node);
+                }else{
+                    NodeExpression nodeExpression = (NodeExpression) node;
+                    //System.out.println(nodeExpression+" arity is "+nodeExpression.getArity());
+                    if (nodeExpression.getArity() > 0) {
+                        Node merged = new NodeExpression(nodeExpression.getExpression());
+                        for (int i = 0; i < nodeExpression.getArity(); i++) {
+                            if (!treeStack.empty())
+                                merged.addChild(treeStack.pop());
+                            else merged.addChild(null);
+                        }
+                        treeStack.push(merged);
+                    } else
+                        treeStack.push(nodeExpression);
+                }
+
             } else if (node instanceof NodeOperation) {//Operator
                 NodeOperation nodeOperation = (NodeOperation) node;
                 ScriptOperator operator = nodeOperation.getOperator();
@@ -92,7 +118,10 @@ public class ExprCompiledExpression extends ScriptExpression {
                 if (nodeExpression.getArity() > 0)
                     pile.add(nodeExpression);
                 else out.add(nodeExpression);
-                //System.out.println(out);
+                //System.out.println("Out : " + out);
+            }else if (node instanceof NodeSwitch) {
+                out.add(node);
+                //System.out.println("Out : " + out);
             } else if (node instanceof NodeOperation) {
                 NodeOperation nodeOperation = (NodeOperation) node;
                 nodeOperation.setChildren(null);
@@ -110,14 +139,14 @@ public class ExprCompiledExpression extends ScriptExpression {
                                 || ((operator.associativity == ScriptOperator.Associativity.RIGHT_TO_LEFT
                                 && operator.priority <= operator2.getOperator().priority))) {
                             out.add(pile.pop());
-                            if (pile.peek() instanceof NodeOperation)
+                            if (!pile.empty() && pile.peek() instanceof NodeOperation)
                                 operator2 = ((NodeOperation) pile.peek());
                             else break;
                         }
                     }
                     //System.out.println("Before pile is : "+pile);
                     pile.push(nodeOperation);
-                    //System.out.println("Pushing on pile : "+operator+" = "+pile+" ("+pile.size()+")");
+                    //System.out.println("Pushing on pile : "+operator+" => "+pile+" ("+pile.size()+")");
                 }
                 //System.out.println(out);
             } else if (node instanceof NodeParenthesis) {
