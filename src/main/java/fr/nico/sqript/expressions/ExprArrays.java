@@ -90,25 +90,41 @@ public class ExprArrays extends ScriptExpression {
                 return array;
             case 9: //element is in
                 ScriptType<?> b = parameters[0];
-                array = (TypeArray) parameters[1];
-                for (ScriptType<?> i : array.getObject()) {
-                    if (b.equals(i)) return TypeBoolean.TRUE();
+                if (parameters[1] instanceof TypeArray) {
+                    array = (TypeArray) parameters[1];
+                    for (ScriptType<?> i : array.getObject()) {
+                        if (b.equals(i)) return TypeBoolean.TRUE();
+                    }
+                    return TypeBoolean.FALSE();
+                } else if (parameters[1] instanceof TypeDictionary) {
+                    TypeDictionary d = (TypeDictionary) parameters[1];
+                    return new TypeBoolean(d.getObject().containsKey(b));
                 }
-                return TypeBoolean.FALSE();
             case 10: //element is not in
                 b = parameters[0];
-                array = (TypeArray) parameters[1];
-                for (ScriptType i : array.getObject()) {
-                    if (b.equals(i)) return TypeBoolean.FALSE();
+                if (parameters[1] instanceof TypeArray) {
+                    array = (TypeArray) parameters[1];
+                    for (ScriptType i : array.getObject()) {
+                        if (b.equals(i)) return TypeBoolean.FALSE();
+                    }
+                    return TypeBoolean.TRUE();
+                } else if (parameters[1] instanceof TypeDictionary) {
+                    TypeDictionary d = (TypeDictionary) parameters[1];
+                    System.out.println(d.getObject().containsKey(b));
+                    return new TypeBoolean(d.getObject().containsKey(b));
                 }
-                return TypeBoolean.TRUE();
             case 11://contains
                 b = parameters[1];
-                array = (TypeArray) parameters[0];
-                for (ScriptType<?> i : array.getObject()) {
-                    if (b.equals(i)) return TypeBoolean.TRUE();
+                if (parameters[1] instanceof TypeArray) {
+                    array = (TypeArray) parameters[0];
+                    for (ScriptType<?> i : array.getObject()) {
+                        if (b.equals(i)) return TypeBoolean.TRUE();
+                    }
+                    return TypeBoolean.FALSE();
+                } else if (parameters[0] instanceof TypeDictionary) {
+                    TypeDictionary d = (TypeDictionary) parameters[0];
+                    return new TypeBoolean(d.getObject().containsValue(b));
                 }
-                return TypeBoolean.FALSE();
             case 12://sorted elements of
                 a = (IIndexedCollection) parameters[0];
                 return (ScriptType<?>) a.sort(marks);

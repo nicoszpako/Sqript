@@ -1,9 +1,11 @@
 package fr.nico.sqript.events;
 
+import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeBlock;
 import fr.nico.sqript.types.TypePlayer;
 import fr.nico.sqript.types.primitive.TypeResource;
@@ -71,6 +73,7 @@ public class EvtBlock {
             accessors = {
                     @Feature(name = "Player", description = "The player that clicked the block.", pattern = "player", type = "player"),
                     @Feature(name = "Clicked block", description = "The clicked block.", pattern = "(clicked block|click-block)", type = "block"),
+                    @Feature(name = "Position block", description = "The position of block.", pattern = "(clicked pos[ition]|click-pos[ition])", type = "array"),
             }
 
     )
@@ -81,7 +84,7 @@ public class EvtBlock {
         public int clickType = 1; //1 = right, 0 = left
 
         public EvtOnBlockClick(EntityPlayer player, TypeBlock clicked, EnumHand hand, int clickType, BlockPos pos) {
-            super(new ScriptTypeAccessor(new TypePlayer(player), "player"), new ScriptTypeAccessor(clicked, "(clicked block|click-block)"));
+            super(new ScriptTypeAccessor(new TypePlayer(player), "player"), new ScriptTypeAccessor(clicked, "(clicked block|click-block)"), new ScriptTypeAccessor(new TypeArray(SqriptUtils.locactionToArray(pos.getX(), pos.getY(), pos.getZ())), "(clicked pos[ition]|click-pos[ition])"));
             this.clickedBlock = clicked;
             this.hand = hand;
             this.clickType = clickType;
