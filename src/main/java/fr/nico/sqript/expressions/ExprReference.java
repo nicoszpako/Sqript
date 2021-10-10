@@ -31,6 +31,10 @@ public class ExprReference extends ScriptExpression {
         this.scriptExpression = scriptExpression;
     }
 
+    public ExprReference(int varHash) {
+        this.varHash = varHash;
+    }
+
     @Override
     public ScriptType get(ScriptContext context, ScriptType[] parameters) throws ScriptException {
         int varHash;

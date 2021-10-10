@@ -44,8 +44,7 @@ public class ScriptExpressionParser implements INodeParser {
                     //System.out.println("Types are not valid : " + node.getReturnType() + " " + Arrays.toString(validTypes));
                     continue;
                 }
-                //System.out.println("Returning valid parsed");
-                //System.out.println(debugOffset() +"Returning : "+node);
+                //System.out.println("Returning valid parturning : "+node);
                 return node;
             }
         }
@@ -193,9 +192,11 @@ public class ScriptExpressionParser implements INodeParser {
                 //System.out.println(debugOffset()+"Returning : "+validTrees.get(0));
                 return validTrees.get(0);
             } else {
-                Node result = new NodeSwitch(validTrees.toArray(new Node[0]));
+                if(validTypes.length == 1 && validTypes[0] == ScriptElement.class)
+                    return validTrees.get(0);
+
                 //System.out.println(debugOffset()+"Returning : "+result);
-                return result;
+                return new NodeSwitch(validTrees.toArray(new Node[0]));
             }
         }
 
@@ -245,7 +246,10 @@ public class ScriptExpressionParser implements INodeParser {
                 return null;
             else{
                 try {
+                    //System.out.println("Nodes are : "+nodes);
+                    //System.out.println();
                     Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
+                    //System.out.println("Final tree : "+finalTree);
                     if (validTypes != null && isTypeValid(finalTree.getReturnType(), validTypes)) {
                         //System.out.println("Returning compiled : " + finalTree);
                         return finalTree;

@@ -34,6 +34,7 @@ public class NodeOperation extends Node {
 
     @Override
     public Class<? extends ScriptElement> getReturnType() {
+        //System.out.println("Getting type for : "+toString());
         if(getChildren().length == 1){
             return ScriptManager.getUnaryOperation(getChildren()[0].getReturnType(), operator).getReturnType();
         }else if(getChildren().length == 2){

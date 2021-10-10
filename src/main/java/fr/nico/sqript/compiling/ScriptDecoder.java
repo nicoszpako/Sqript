@@ -110,7 +110,7 @@ public class ScriptDecoder {
                     throw new ScriptException.ScriptUndefinedReferenceException(line);
                 else {
                     //System.out.println("Returning reference for : "+line);
-                    ExprReference s = new ExprReference(new ExprPrimitive(new TypeString(line.getText())));
+                    ExprReference s = new ExprReference(h.getHash());
                     s.setLine((ScriptToken) line.clone());
                     s.setVarHash(h.getHash());
                     s.setReturnType(returnType);
@@ -373,9 +373,9 @@ public class ScriptDecoder {
         //Replacing text between []'s
         //System.out.println("Not replaced : "+expression);
         //System.out.println("Pattern : "+pattern_L.pattern());
-        m = pattern_L.matcher(expression);
+
         //System.out.println("Saved are : "+saved);
-        while (m.find()) {
+        while ((m = pattern_L.matcher(expression)).find()) {
             //System.out.println("Found a group : "+m.group());
             expression = expression.replaceFirst(Pattern.quote(m.group()), saved.get(Integer.parseInt(m.group(2))));
             //System.out.println("Transformed is : "+expression);
@@ -467,6 +467,7 @@ public class ScriptDecoder {
         int c = 0;
         boolean flat = false;
         int p = 0;
+        //System.out.println("String char 0 : "+string.charAt(0));
         if (string == null || string.isEmpty() || string.charAt(0) != '(')
             return string;
         while (c < string.length()) {
@@ -540,7 +541,7 @@ public class ScriptDecoder {
         int c = 0;
         StringBuilder finalString = new StringBuilder();
         List<Node> nodes = new ArrayList<>();
-        //System.out.println("Compiling : "+string);
+        //System.out.println("Compiling string : "+string);
         while (c < string.length()) {
             if (string.charAt(c) == '%') {
                 int start = c;
@@ -640,6 +641,24 @@ public class ScriptDecoder {
         int c = 0;
         StringBuilder current = new StringBuilder();
         while (c < transformedString.length()) {
+            if (transformedString.charAt(c) == '"'){
+                c++;
+                StringBuilder special = new StringBuilder("\"");
+                while (transformedString.charAt(c) != '"'){
+                    special.append(transformedString.charAt(c));
+                    c++;
+                }
+                special.append("\"");
+                String r = current.toString();
+                if (!r.isEmpty()) {
+                    tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, r)); //We add the current built word
+                }
+                current = new StringBuilder(); //We start a new word
+                tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, special.toString())); //We add the current built word
+                c++;
+                if(c>=transformedString.length())
+                    break;
+            }
             if (transformedString.charAt(c) == ')') {
                 String r = current.toString();
                 //System.out.println("1 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
@@ -650,11 +669,16 @@ public class ScriptDecoder {
                 tokens.add(new ExpressionToken(EnumTokenType.RIGHT_PARENTHESIS, ""));
                 c++;
             } else if (transformedString.charAt(c) == '(') {
+                //System.out.println("2 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
+                String r = current.toString();
+                if (!r.isEmpty()) {
+                    tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, r)); //We add the current built word
+                }
+                current = new StringBuilder(); //We start a new word
                 tokens.add(new ExpressionToken(EnumTokenType.LEFT_PARENTHESIS, ""));
                 c++;
             } else if (transformedString.charAt(c) == '#' && c + 1 < transformedString.length() && transformedString.charAt(c + 1) == '{' && (c == 0 || transformedString.charAt(c - 1) != '\\')) {
                 String r = current.toString();
-                //System.out.println("1 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
                 if (!r.isEmpty()) {
                     tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, r)); //We add the current built word
                 }
@@ -662,7 +686,7 @@ public class ScriptDecoder {
                 c++; //First {
                 c++; //First number
                 StringBuilder number = new StringBuilder();
-                //System.out.println("2 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
+                //System.out.println("3 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
 
                 while (transformedString.charAt(c) >= '0' && transformedString.charAt(c) <= '9') {
                     //System.out.println("Added : "+transformedString.charAt(c));
@@ -674,6 +698,7 @@ public class ScriptDecoder {
                 c++; //Last }
             } else {
                 current.append(transformedString.charAt(c));
+                //System.out.println("c : "+c+" : "+transformedString.charAt(c));
                 c++;
             }
 
@@ -727,7 +752,7 @@ public class ScriptDecoder {
                 //System.out.println("AA:"+infos.transformedPatterns[index].regex+" -- "+line.text);
                 String lineWithStrings = ScriptDecoder.replaceStrings(lineWithoutStrings, strings);
                 List<String> parameters = new ArrayList<>(Arrays.asList(actionDefinition.transformedPatterns[index].getAllArguments(lineWithStrings)));
-                //System.out.println("Parameters size : "+parameters.size());
+                //System.out.println("Parameters size : "+parameters.size()+" "+parameters);
 
                 ScriptAction action = actionDefinition.getActionClass().getConstructor().newInstance();
                 action.build(line.with(lineWithStrings), compileGroup, parameters, index, marks);

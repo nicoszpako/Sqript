@@ -37,6 +37,13 @@ public class NodeExpression extends Node {
 
     @Override
     public Class getReturnType() {
+        //System.out.println("Returning type : "+expression.getReturnType()+" for "+expression.toString());
         return expression.getReturnType();
+    }
+
+    public boolean childrenAreNull() {
+        for(Node n : getChildren())
+            if (n == null) return true;
+        return false;
     }
 }

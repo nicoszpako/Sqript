@@ -107,7 +107,7 @@ public abstract class ScriptAction extends IScript {
             //System.out.println(matchedIndex+" "+ i+" "+Arrays.toString(actionDefinition.transformedPatterns));
             //
             //System.out.println("Compile group : "+compileGroup.declaredVariables);
-            ScriptExpression e = ScriptDecoder.parse(line.with(parameter),compileGroup, actionDefinition.transformedPatterns[i].getValidTypes(i));
+            ScriptExpression e = ScriptDecoder.parse(line.with(parameter),compileGroup, actionDefinition.transformedPatterns[matchedIndex].getValidTypes(i));
             if (e != null)
                 expressions.add(e);
             else {
