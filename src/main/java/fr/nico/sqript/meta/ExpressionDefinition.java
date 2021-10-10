@@ -52,9 +52,9 @@ public class ExpressionDefinition {
         for (int i = 0; i < transformedPatterns.length; i++) {
             TransformedPattern pattern = transformedPatterns[i];
             Matcher m = pattern.getPattern().matcher(line);
+            //System.out.println("Does "+line+" matches "+pattern.getPattern().pattern());
             if (m.matches()) {
                 //System.out.println(m.matches()+ " for pattern "+pattern.getPattern().pattern()+" matching "+line);
-                //System.out.println(getExpressionClass()+" "+i+" possibleTypes : "+possibleTypes+" returnType: "+pattern.getReturnType());
                 for (String argument : pattern.getAllArguments(line)) {
                     if (!ScriptDecoder.isParenthesageGood(argument))
                         continue t;

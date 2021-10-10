@@ -7,6 +7,7 @@ import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeNull;
 
 public class ExprReference extends ScriptExpression {
 
@@ -43,7 +44,9 @@ public class ExprReference extends ScriptExpression {
             varHash = var.hashCode();
             if (varHash == 0)
                 varHash = context.getHash(line.getText());
-            return context.getVariable(varHash);
+            if(context.getAccessor(varHash) != null)
+                return context.getVariable(varHash);
+            else return new TypeNull();
         } else {
             //System.out.println("Getting reference for : "+line.getText()+", its null ? : "+(context.getVariable(this.varHash)==null));
             //System.out.println("varHash : "+this.varHash);
@@ -65,8 +68,14 @@ public class ExprReference extends ScriptExpression {
             if (varHash == 0)
                 varHash = context.getHash(line.getText());
             ScriptTypeAccessor typeAccessor = context.getAccessor(varHash);
-            typeAccessor.setElement(to);
-            //System.out.println("Setting  var hash for : "+var+" : "+var.hashCode());
+            if(typeAccessor != null)
+                typeAccessor.setElement(to);
+            else{
+                typeAccessor = new ScriptTypeAccessor(to,varHash);
+                typeAccessor.setKey(var);
+                context.put(typeAccessor);
+            }
+            //System.out.println("Setting var hash for : "+var+" : "+var.hashCode()+" ("+(typeAccessor == null)+")");
             //System.out.println("Context vars are : "+context.printVariables());
         } else {
             //System.out.println("Setting reference for : "+line.text+", its null ? : "+(context.get(varHash)==null));
@@ -74,7 +83,13 @@ public class ExprReference extends ScriptExpression {
             //System.out.println("Context vars are : "+context.printVariables());
             //System.out.println("Result is null : "+(context.get(this.varHash)==null));
             ScriptTypeAccessor typeAccessor = context.getAccessor(varHash);
-            typeAccessor.setElement(to);
+            if(typeAccessor != null)
+                typeAccessor.setElement(to);
+            else{
+                typeAccessor = new ScriptTypeAccessor(to,varHash);
+                typeAccessor.setKey(line.getText());
+                context.put(typeAccessor);
+            }
         }
 
         return true;

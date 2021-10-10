@@ -41,7 +41,7 @@ public class ScriptDecoder {
     static Pattern pattern_variable = Pattern.compile("^(?:\\$)?\\{(.*)}$");
     static Pattern pattern_compiled_string = Pattern.compile("@\\{S(\\d*)}");
     static Pattern pattern_percent = Pattern.compile("(?<!~)%");
-    static Pattern pattern_L = Pattern.compile("(?<!\\\\)(L\\{\\d+})");
+    static Pattern pattern_L = Pattern.compile("(?<!\\\\)(L\\{(\\d+)})");
 
 
 
@@ -279,7 +279,7 @@ public class ScriptDecoder {
     }
 
     public static String save(String expression, String start_c, String end_c, List<String> saved) {
-
+        //System.out.println("Saving : "+expression);
         //Removing variables
         int l = 0;
         int depth = 0;
@@ -301,6 +301,7 @@ public class ScriptDecoder {
                     String m = expression.substring(start, l + 1);
                     String n = "L{" + saved.size() + "}";
                     expression = a + n + b;
+                    //System.out.println("j:"+expression);
                     l += n.length() - m.length();
                     start_char_index = -1;
                     saved.add(m);
@@ -324,6 +325,7 @@ public class ScriptDecoder {
         while (m.find()) {
             String f = m.group(1);
             expression = expression.replaceFirst(Pattern.quote(f), "L{" + saved.size() + "}");
+            //System.out.println("n:"+expression);
             saved.add(f);
         }
         //System.out.println("b : " + expression);
@@ -361,7 +363,7 @@ public class ScriptDecoder {
                     //System.out.println(Pattern.quote(operator.symbol) + " expression: " + expression);
                     //System.out.println(operators.size());
                     operators.add(operator);
-                    //System.out.println(expression);
+                    //System.out.println("e:"+expression);
 
                 }
             }
@@ -372,11 +374,11 @@ public class ScriptDecoder {
         //System.out.println("Not replaced : "+expression);
         //System.out.println("Pattern : "+pattern_L.pattern());
         m = pattern_L.matcher(expression);
-        int i = 0;
+        //System.out.println("Saved are : "+saved);
         while (m.find()) {
             //System.out.println("Found a group : "+m.group());
-            expression = expression.replaceFirst(Pattern.quote(m.group()), saved.get(i));
-            i++;
+            expression = expression.replaceFirst(Pattern.quote(m.group()), saved.get(Integer.parseInt(m.group(2))));
+            //System.out.println("Transformed is : "+expression);
         }
         //System.out.println("Built : " + expression);
         return new ExtractedOperatorsResult(expression, operators.toArray(new ScriptOperator[0]));
@@ -601,8 +603,10 @@ public class ScriptDecoder {
                 }
                 //System.out.println("Finalstring : "+finalString.toString());
                 nodes.add(new NodeExpression(new ExprPrimitive(new TypeString(string.substring(0, start)))));
+
                 nodes.add(new NodeOperation(ScriptOperator.ADD));
                 nodes.addAll(ExprCompiledExpression.astToInfix(parseExpressionTree(line.with(string.substring(start + 1, c)), compileGroup, new Class[]{ScriptElement.class})));
+
                 if (c + 1 > string.length())
                     throw new ScriptException.ScriptMissingClosingTokenException(line);
                 string = string.substring(c + 1);
@@ -617,7 +621,7 @@ public class ScriptDecoder {
         reference.setLine(line);
         nodes.add(new NodeExpression(reference));
         //System.out.println("Nodes : "+nodes);
-        //System.out.println("AST : "+ExprCompiledExpression.rpnToAST((ExprCompiledExpression.infixToRPN(new ArrayList<>(nodes)))));
+        //System.out.println("Infox : "+((ExprCompiledExpression.infixToRPN(new ArrayList<>(nodes)))));
         Node result = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
         //System.out.println("Result "+result);
         return new ExprCompiledExpression(result);
@@ -630,10 +634,9 @@ public class ScriptDecoder {
      * @param transformedString The transformed string to split.
      * @return An OperatorSplitResult holding an array of operands, and an array of operators indices.
      */
-    public static OperatorSplitResult splitAtOperators(String transformedString) {
+    public static ExpressionToken[] splitAtOperators(String transformedString) {
         //System.out.println("Splitting : "+transformedString);
         List<ExpressionToken> tokens = new ArrayList<>();
-        List<Integer> operatorsIndices = new ArrayList<>();
         int c = 0;
         StringBuilder current = new StringBuilder();
         while (c < transformedString.length()) {
@@ -668,7 +671,6 @@ public class ScriptDecoder {
                 }
 
                 tokens.add(new ExpressionToken(ScriptManager.operators.get(Integer.parseInt(number.toString())))); //We add the current built word
-                operatorsIndices.add(Integer.parseInt(number.toString()));
                 c++; //Last }
             } else {
                 current.append(transformedString.charAt(c));
@@ -680,7 +682,7 @@ public class ScriptDecoder {
         if (!r.isEmpty())
             tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, r)); //We add the current built word
         //System.out.println("Operator split : "+tokens);
-        return new OperatorSplitResult(tokens.toArray(new ExpressionToken[0]), operatorsIndices.toArray(new Integer[0]));
+        return tokens.toArray(new ExpressionToken[0]);
     }
 
 

@@ -28,7 +28,7 @@ public class ExprCompiledExpression extends ScriptExpression {
     public static List<Node> astToRPN(Node tree) {
         //System.out.println("Parsing astToRPN : "+tree.toString());
         ArrayList<Node> out = new ArrayList<>();
-        if (tree.getChildren() != null) {
+        if (tree.getChildren() != null && !(tree instanceof NodeSwitch)) {
             for (Node child : tree.getChildren()) {
                 if (child != null)
                     out.addAll(0, astToRPN(child));
@@ -48,7 +48,7 @@ public class ExprCompiledExpression extends ScriptExpression {
         if (tree instanceof NodeExpression || tree instanceof NodeOperation || tree instanceof NodeSwitch) {
             out.add(tree);
         }
-        if (tree.getChildren() != null) {
+        if (tree.getChildren() != null && !(tree instanceof NodeSwitch)) {
             out.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
             for (Node child : tree.getChildren()) {
                 if (child != null) {
@@ -94,7 +94,7 @@ public class ExprCompiledExpression extends ScriptExpression {
                 //System.out.println("treeStack:" + treeStack);
                 for (int i = 0; i < (operator.unary ? 1 : 2); i++) {
                     if (!treeStack.empty())
-                        merged.addChild(treeStack.pop());
+                        merged.addChild(treeStack.remove(0));
                     else
                         merged.addChild(null);
                 }
@@ -215,7 +215,7 @@ public class ExprCompiledExpression extends ScriptExpression {
                 if (operation == null) {
                     throw new ScriptException.ScriptOperationNotSupportedException(getLine(), o, c1, c2);
                 }
-                return operation.operate(o2, o1);
+                return operation.operate(o1, o2);
             }
         } else if (node instanceof NodeSwitch) {
             if (validTypes == null) {

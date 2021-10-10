@@ -34,7 +34,7 @@ public class ExprTypes extends ScriptExpression{
             case 2:
                 return new TypeBoolean(!(parameters[0] instanceof TypeNull) && parameters[0].getObject()!=null) ;
             case 3:
-                return new TypeBoolean((parameters[0] instanceof TypeNull) || parameters[0].getObject()==null );
+                return new TypeBoolean((parameters[0] instanceof TypeNull) || parameters[0].getObject()==null);
             case 4:
                 return new TypeBoolean(!parameters[0].equals(parameters[1]));
             case 5:
