@@ -19,7 +19,7 @@ import java.util.List;
 @Action(name = "Simple Operation Actions",
         features = {
                 @Feature(name = "Add an element to another", description = "Adds an element to another elements if the + operation can be applied on it.", examples = {"add \"d\" to [\"a\",\"b\",\"c\"]", "add 1 to {counter}"}, pattern = "add {element} to {element}"),
-                @Feature(name = "Remove an element from another", description = "Removes an element from another element if the - operation can be applied on it.", examples = {"remove \"c\" from [\"a\",\"b\",\"c\"]", "remove 1 from player's health"}, pattern = "remove {element} to {element}"),
+                @Feature(name = "Remove an element from another", description = "Removes an element from another element if the - operation can be applied on it.", examples = {"remove \"c\" from [\"a\",\"b\",\"c\"]", "remove 1 from player's health"}, pattern = "remove {element} from {element}"),
                 @Feature(name = "Set an element to another", description = "Defines the value of an element.", examples = {"set player's health to 20", "set {variable} to 8"}, pattern = "set {element} to {element}")
         }
 )
