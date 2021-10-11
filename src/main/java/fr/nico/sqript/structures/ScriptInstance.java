@@ -45,8 +45,6 @@ public class ScriptInstance {
         //System.out.println("Calling event : "+event.getClass());
         try {
             ScriptContext returnContext = callEventAndGetContext(context, event);
-            if(event.getClass() == EvtBlock.EvtOnBlockClick.class)
-                //System.out.println("Return context after call : "+returnContext.getReturnValue());
             return (boolean) returnContext.getReturnValue().element.getObject();
         } catch (Exception e) {
             ScriptManager.log.error("Error while calling event : " + event.getClass().getSimpleName());
@@ -91,9 +89,7 @@ public class ScriptInstance {
                 ScriptClock clock = new ScriptClock(context);
                 context.wrap(event.getAccessors());
                 clock.start(t);
-
                 ////System.out.println("Finished ! It took : " + (System.currentTimeMillis() - t1) + " ms");
-                return context;
             }
         }
         return context;

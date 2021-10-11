@@ -372,6 +372,7 @@ public class ScriptManager {
         EventDefinition eventDefinition = null;
         if(optional.isPresent())
             eventDefinition = optional.get();
+        boolean result = false;
         if( eventDefinition!=null && eventDefinition.getFeature().side().isStrictlyValid()) {
             ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
             if(RELOADING)
@@ -381,11 +382,11 @@ public class ScriptManager {
                     return false;
                 if (script.callEvent(context, event)) {
                     //System.out.println("Returning true");
-                    return true;
+                    result = true;
                 }
             }
         }
-        return false;
+        return result;
     }
 
     @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)

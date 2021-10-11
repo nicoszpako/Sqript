@@ -134,11 +134,9 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : primitives) {
             try {
-                if (!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder) c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
-                    Class toRegister = Class.forName(c.getClassName());
-                    Primitive e = (Primitive) toRegister.getAnnotation(Primitive.class);
-                    ScriptManager.registerPrimitive(toRegister, e.name(), e.pattern());
-                }
+                Class toRegister = Class.forName(c.getClassName());
+                Primitive e = (Primitive) toRegister.getAnnotation(Primitive.class);
+                ScriptManager.registerPrimitive(toRegister, e.name(), e.pattern());
             } catch (Exception e) {
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();
             }
@@ -147,11 +145,9 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : types) {
             try {
-                if (!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder) c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
-                    Class toRegister = Class.forName(c.getClassName());
-                    Type e = (Type) toRegister.getAnnotation(Type.class);
-                    ScriptManager.registerType(toRegister, e.name());
-                }
+                Class toRegister = Class.forName(c.getClassName());
+                Type e = (Type) toRegister.getAnnotation(Type.class);
+                ScriptManager.registerType(toRegister, e.name());
             } catch (Exception e) {
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();
             }
@@ -160,11 +156,9 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : expressions) {
             try {
-                if (!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder) c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
-                    Class toRegister = Class.forName(c.getClassName());
-                    Expression e = (Expression) toRegister.getAnnotation(Expression.class);
-                    ScriptManager.registerExpression(toRegister, e.name(), e.priority(), e.features());
-                }
+                Class toRegister = Class.forName(c.getClassName());
+                Expression e = (Expression) toRegister.getAnnotation(Expression.class);
+                ScriptManager.registerExpression(toRegister, e.name(), e.priority(), e.features());
             } catch (Exception e) {
                 ScriptManager.log.error("Error trying to load ScriptExpression : " + c.getClassName());
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();
@@ -174,11 +168,9 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : loops) {
             try {
-                if (!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder) c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
-                    Class toRegister = Class.forName(c.getClassName());
-                    Loop e = (Loop) toRegister.getAnnotation(Loop.class);
-                    ScriptManager.registerLoop(toRegister, e.name(), e.pattern(), e.side(), e.priority());
-                }
+                Class toRegister = Class.forName(c.getClassName());
+                Loop e = (Loop) toRegister.getAnnotation(Loop.class);
+                ScriptManager.registerLoop(toRegister, e.name(), e.pattern(), e.side(), e.priority());
             } catch (Exception e) {
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();
             }
@@ -187,11 +179,9 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : functions) {
             try {
-                if (!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder) c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
-                    Class toRegister = Class.forName(c.getClassName());
-                    Native e = (Native) toRegister.getAnnotation(Native.class);
-                    ScriptManager.registerNativeFunction(toRegister, e.name(), e.definitions(), e.description(), e.examples());
-                }
+                Class toRegister = Class.forName(c.getClassName());
+                Native e = (Native) toRegister.getAnnotation(Native.class);
+                ScriptManager.registerNativeFunction(toRegister, e.name(), e.definitions(), e.description(), e.examples());
             } catch (Exception e) {
                 ScriptManager.log.error("Error trying to load ScriptFunction : " + c.getClassName());
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();
@@ -213,11 +203,9 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : actions) {
             try {
-                if (!c.getAnnotationInfo().containsKey("side") || fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder) c.getAnnotationInfo().get("side")).getValue()).isStrictlyValid()) {
-                    Class toRegister = Class.forName(c.getClassName());
-                    Action e = (Action) toRegister.getAnnotation(Action.class);
-                    ScriptManager.registerAction(toRegister, e.name(), e.priority(), e.features());
-                }
+                Class toRegister = Class.forName(c.getClassName());
+                Action e = (Action) toRegister.getAnnotation(Action.class);
+                ScriptManager.registerAction(toRegister, e.name(), e.priority(), e.features());
             } catch (Exception e) {
                 ScriptManager.log.error("Error trying to load ScriptAction : " + c.getClassName());
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();
@@ -289,12 +277,12 @@ public class SqriptForge {
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent event){
+    public void init(FMLInitializationEvent event) {
         ScriptManager.callEvent(new EvtFML.EvtOnInit());
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event){
+    public void postInit(FMLPostInitializationEvent event) {
         ScriptManager.callEvent(new EvtFML.EvtOnPostInit());
     }
 
