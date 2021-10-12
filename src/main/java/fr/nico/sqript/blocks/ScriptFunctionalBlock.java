@@ -9,6 +9,7 @@ import fr.nico.sqript.structures.ScriptClock;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +22,7 @@ public class ScriptFunctionalBlock extends ScriptBlock {
      * Execute the IScript associated to the function and return the value
      */
     public ScriptType get(ScriptContext context, ScriptType<?>[] parameters) throws ScriptException {
-        //System.out.println("Launching function "+name+" with parameters : "+ Arrays.toString(parameters));
+        System.out.println("Launching function "+name+" with parameters : "+ Arrays.toString(parameters));
         ScriptContext functionContext = new ScriptContext(context);
         functionContext.setReturnValue(new ScriptTypeAccessor(null, ""));
 
@@ -50,8 +51,8 @@ public class ScriptFunctionalBlock extends ScriptBlock {
     public String[] parameters;
 
     public ScriptFunctionalBlock(ScriptToken head) throws ScriptException {
-        //System.out.println("Loading function : "+head.text);
         super(head);
+        System.out.println("Loading function : "+head);
         head = head.with(head.getText().replaceFirst(this.getClass().getAnnotation(Block.class).feature().name().toLowerCase() + "\\s+", ""));
         Pattern p = Pattern.compile("\\s*^([\\w ]*)\\((.*)\\)\\s*:");
         Matcher m = p.matcher(head.getText());
@@ -72,11 +73,11 @@ public class ScriptFunctionalBlock extends ScriptBlock {
 
     @Override
     public void init(ScriptLineBlock block) throws Exception {
-        super.init(block);
-        //System.out.println("Loaded function : " + name);
-        ScriptCompilationContext context = new ScriptCompilationContext();
-        setRoot(getMainField().compile());
-        //System.out.println(getRoot()==null);
+        groupFields(block.getContent());
         getScriptInstance().registerBlock(this);
+        System.out.println("Loaded function : " + name);
+        setRoot(getMainField().compile());
+        load();
+        //System.out.println(getRoot()==null);
     }
 }

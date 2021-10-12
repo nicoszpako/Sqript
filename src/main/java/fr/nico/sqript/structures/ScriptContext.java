@@ -179,9 +179,10 @@ public class ScriptContext {
      * @return the instance of this ScriptContext once the array is wrapped.
      */
     public ScriptContext wrap(ScriptTypeAccessor... accessors) {
-        for (ScriptTypeAccessor accessor : accessors) {
-            variables.put(accessor.hash, accessor);
-        }
+        if(accessors!=null)
+            for (ScriptTypeAccessor accessor : accessors) {
+                variables.put(accessor.hash, accessor);
+            }
         return this;
     }
 

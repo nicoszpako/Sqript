@@ -6,6 +6,8 @@ import fr.nico.sqript.blocks.ScriptBlockPacket;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.ScriptTypeAccessor;
+import fr.nico.sqript.types.TypePlayer;
 import fr.nico.sqript.types.interfaces.ISerialisable;
 import fr.nico.sqript.types.ScriptType;
 import io.netty.buffer.ByteBuf;
@@ -101,6 +103,7 @@ public class ScriptMessage implements IMessage {
                 if(ctx.side == Side.CLIENT){ //Obviously always client-side, but we never know
                     m.getClient().execute(context);
                 }else {
+                    context.put(new ScriptTypeAccessor(new TypePlayer(ctx.getServerHandler().player),"(player|sender)"));
                     m.getServer().execute(context);
                 }
             } catch (ScriptException e) {

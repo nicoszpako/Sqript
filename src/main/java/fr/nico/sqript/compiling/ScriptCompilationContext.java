@@ -15,6 +15,10 @@ public class ScriptCompilationContext {
 
     public ScriptCompilationContext parent;
 
+    public ScriptCompilationContext(ScriptTypeAccessor... declaredVariables){
+        this.declaredVariables.addAll(Arrays.asList(declaredVariables));
+    }
+
     public ScriptCompilationContext(){}
     public ScriptCompilationContext(ScriptCompilationContext parent){
         this.parent=parent;

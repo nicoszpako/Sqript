@@ -20,8 +20,4 @@ public class ScriptBlockFunction extends ScriptFunctionalBlock {
         super(head);
     }
 
-    @Override
-    public void init(ScriptLineBlock block) throws Exception {
-        super.init(block);
-    }
 }

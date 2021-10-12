@@ -113,13 +113,13 @@ public class ScriptLoader
         if(block.isEmpty())
             return;
         ScriptToken head = block.remove(0);
+        System.out.println("Loading block : "+head+" "+block);
         if(!block.isEmpty()){
             BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
             if(blockDefinition==null)
                 throw new ScriptException.ScriptUnknownTokenException(head);
             if(blockDefinition.getFeature().side().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())){
                 Class scriptBlockClass = blockDefinition.getBlockClass();
-                //^2
                 ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptToken.class).newInstance(head);
                 scriptBlock.setLine(head);
                 scriptBlock.setScriptInstance(instance);
