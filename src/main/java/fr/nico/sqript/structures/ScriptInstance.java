@@ -67,13 +67,13 @@ public class ScriptInstance {
     }
 
     public ScriptFunctionalBlock getFunction(String name) {
-        System.out.println("Getting function for : "+name);
+        //System.out.println("Getting function for : "+name);
         for (ScriptBlock f : blocks) {
             if (f instanceof ScriptFunctionalBlock) {
-                System.out.println("- "+((ScriptFunctionalBlock) f).name +  " " +f.getHead()+" "+f);
+                //System.out.println("- "+((ScriptFunctionalBlock) f).name +  " " +f.getHead()+" "+f);
                 ScriptFunctionalBlock function = (ScriptFunctionalBlock) f;
                 if (function.name.equals(name)) {
-                    System.out.println("Returning "+function);
+                    //System.out.println("Returning "+function);
                     return function;
                 }
             }

@@ -113,7 +113,7 @@ public class ScriptLoader
         if(block.isEmpty())
             return;
         ScriptToken head = block.remove(0);
-        System.out.println("Loading block : "+head+" "+block);
+        //System.out.println("Loading block : "+head+" "+block);
         if(!block.isEmpty()){
             BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
             if(blockDefinition==null)
