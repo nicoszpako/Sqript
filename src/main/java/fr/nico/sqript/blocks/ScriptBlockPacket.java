@@ -1,5 +1,6 @@
 package fr.nico.sqript.blocks;
 
+import fr.nico.sqript.compiling.ScriptCompilationContext;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
@@ -9,6 +10,7 @@ import fr.nico.sqript.network.ScriptNetworkManager;
 import fr.nico.sqript.structures.*;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeMessagePrototype;
+import fr.nico.sqript.types.TypePlayer;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 
@@ -44,7 +46,6 @@ public class ScriptBlockPacket extends ScriptFunctionalBlock {
         return server;
     }
 
-    @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
     @Override
     public ScriptType get(ScriptContext context, ScriptType<?>[] parameters) throws ScriptException {
         return new TypeMessagePrototype(new ScriptMessage(this.name, parameters));
@@ -56,17 +57,20 @@ public class ScriptBlockPacket extends ScriptFunctionalBlock {
 
     @Override
     protected void load() throws Exception {
+        //On enregistre le message fraîchement créé, pour qu'il soit reconnu par le reste du script.
+        ScriptNetworkManager.registerMessage(this);
 
         //Compilation des fields "client" et "server"
         if(fieldDefined("client")){
             client = getSubBlock("client").compile();
         }
         if(fieldDefined("server")){
-            server = getSubBlock("server").compile();
+            ScriptCompilationContext compilationContext = new ScriptCompilationContext();
+            compilationContext.add("(player|sender)", TypePlayer.class);
+            server = getSubBlock("server").compile(compilationContext);
         }
 
-        //On enregistre le message fraîchement créé, pour qu'il soit reconnu par le reste du script.
-        ScriptNetworkManager.registerMessage(this);
+
     }
 
 }

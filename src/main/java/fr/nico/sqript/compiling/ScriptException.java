@@ -3,6 +3,7 @@ package fr.nico.sqript.compiling;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.ScriptType;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -429,6 +430,21 @@ public class ScriptException extends Exception {
         @Override
         public String getMessage() {
             return line + " Operation : '" + o + "' with " + (b != null ? b.getSimpleName() : "null") + " is not supported by " + (a != null ? a.getSimpleName() : "null");
+        }
+    }
+
+    public static class ScriptBadSideException extends ScriptException {
+
+        Side side;
+
+        public ScriptBadSideException(ScriptToken line, Side side) {
+            super(line);
+            this.side = side;
+        }
+
+        @Override
+        public String getMessage() {
+            return "Bad execution side : "+side+" at "+line;
         }
     }
 }

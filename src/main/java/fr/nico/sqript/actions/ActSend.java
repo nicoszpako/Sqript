@@ -48,6 +48,8 @@ public class ActSend extends ScriptAction {
         switch (getMatchedIndex()) {
             case 0:
                 ScriptType value = getParameter(1).get(context);
+                if(FMLCommonHandler.instance().getSide().isServer())
+                    throw new ScriptException.ScriptBadSideException(this.getLine(), FMLCommonHandler.instance().getSide());
                 if (value instanceof TypeMessagePrototype) {
                     ScriptMessage msg = (ScriptMessage) value.getObject();
                     SqriptForge.channel.sendToServer(msg);

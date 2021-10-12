@@ -5,6 +5,7 @@ import fr.nico.sqript.network.ScriptNetworkManager;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeNull;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeString;
 
@@ -26,7 +27,10 @@ public class ExprNetwork extends ScriptExpression {
             case 1:
                 key = (TypeString) parameters[0];
                 //System.out.println("Keys : "+ Arrays.toString(ScriptNetworkManager.syncValue.keySet().toArray(new String[0])));
-                return ScriptNetworkManager.get(key.getObject());
+                ScriptType result;
+                if((result = ScriptNetworkManager.get(key.getObject()))!=null)
+                    return result;
+                else return new TypeNull();
         }
         return null;
     }

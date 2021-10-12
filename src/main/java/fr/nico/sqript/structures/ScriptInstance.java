@@ -45,8 +45,6 @@ public class ScriptInstance {
         //System.out.println("Calling event : "+event.getClass());
         try {
             ScriptContext returnContext = callEventAndGetContext(context, event);
-            if(event.getClass() == EvtBlock.EvtOnBlockClick.class)
-                //System.out.println("Return context after call : "+returnContext.getReturnValue());
             return (boolean) returnContext.getReturnValue().element.getObject();
         } catch (Exception e) {
             ScriptManager.log.error("Error while calling event : " + event.getClass().getSimpleName());
@@ -69,11 +67,15 @@ public class ScriptInstance {
     }
 
     public ScriptFunctionalBlock getFunction(String name) {
+        //System.out.println("Getting function for : "+name);
         for (ScriptBlock f : blocks) {
             if (f instanceof ScriptFunctionalBlock) {
+                //System.out.println("- "+((ScriptFunctionalBlock) f).name +  " " +f.getHead()+" "+f);
                 ScriptFunctionalBlock function = (ScriptFunctionalBlock) f;
-                if (function.name.equals(name))
+                if (function.name.equals(name)) {
+                    //System.out.println("Returning "+function);
                     return function;
+                }
             }
         }
         return null;
@@ -91,9 +93,7 @@ public class ScriptInstance {
                 ScriptClock clock = new ScriptClock(context);
                 context.wrap(event.getAccessors());
                 clock.start(t);
-
                 ////System.out.println("Finished ! It took : " + (System.currentTimeMillis() - t1) + " ms");
-                return context;
             }
         }
         return context;
