@@ -63,8 +63,9 @@ public class ExprReference extends ScriptExpression {
 
     @Override
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) throws ScriptException {
-        if (global)
+        if (global) {
             context = ScriptManager.GLOBAL_CONTEXT;
+        }
         if (scriptExpression != null) {
             String var = scriptExpression.get(context).getObject().toString();
 

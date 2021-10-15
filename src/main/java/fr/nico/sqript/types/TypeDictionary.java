@@ -12,6 +12,7 @@ import fr.nico.sqript.types.interfaces.ISerialisable;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -48,9 +49,10 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[");
-        for(ScriptType a : getObject().keySet()){
-            s.append("(").append(a.toString()).append(";").append(getObject().get(a).toString()).append("), ");
-        };
+        if(getObject() != null)
+            for(ScriptType a : getObject().keySet()){
+                s.append("(").append(a.toString()).append(";").append(getObject().get(a).toString()).append("), ");
+            };
         s = new StringBuilder(replaceLast(s.toString(), ", ", ""));//Removing last comma
         return s+"]";
     }
@@ -82,6 +84,8 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
     @Override
     public NBTTagCompound write(NBTTagCompound compound) {
         NBTTagList list = new NBTTagList();
+        if(getObject() == null)
+            setObject(new HashMap<>());
         for(ScriptType t : getObject().keySet()){
             if(t instanceof ISerialisable){
                 ISerialisable i = (ISerialisable) t;
@@ -111,19 +115,24 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
 
     @Override
     public void read(NBTTagCompound compound) {
-        NBTTagList list = compound.getTagList("list",9);
-        l:for (Iterator<NBTBase> it = list.iterator(); it.hasNext(); ) {
-            NBTTagCompound nbt = (NBTTagCompound) it.next();
+        //System.out.println("Reading : "+compound+" getObject is : "+(getObject() == null));
+        NBTTagList list = compound.getTagList("list", Constants.NBT.TAG_COMPOUND);
+        //System.out.println("List is : "+list);
+        if(getObject() == null)
+            setObject(new HashMap<>());
+        for (NBTBase nbtBase : list) {
+            //System.out.println("Adding : "+nbtBase);
+            NBTTagCompound nbt = (NBTTagCompound) nbtBase;
             NBTTagCompound key = nbt.getCompoundTag("key");
             NBTTagCompound value = nbt.getCompoundTag("value");
             try {
-                ScriptType skey = ScriptDataManager.instanciateWithData(key.getString("type"),key.getCompoundTag("value"));
-                ScriptType svalue = ScriptDataManager.instanciateWithData(value.getString("type"),value.getCompoundTag("value"));
-                getObject().put(skey,svalue);
+                ScriptType skey = ScriptDataManager.instanciateWithData(key.getString("type"), key.getCompoundTag("value"));
+                ScriptType svalue = ScriptDataManager.instanciateWithData(value.getString("type"), value.getCompoundTag("value"));
+                getObject().put(skey, svalue);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+            //System.out.println("Map is now : "+ getObject());
         }
     }
 
