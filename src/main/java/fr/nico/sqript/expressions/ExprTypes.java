@@ -8,6 +8,8 @@ import fr.nico.sqript.types.TypeNull;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeString;
 
+import java.util.Objects;
+
 @Expression(name = "Types Expressions",
         features = {
             @Feature(name = "Type of element", description = "Returns the type of an element.", examples = "type of {my_variable}", pattern = "type of {element}", type = "string"),
@@ -32,13 +34,13 @@ public class ExprTypes extends ScriptExpression{
                 TypeString parameter_string = (TypeString) parameters[1];
                 return (ScriptType) parameter_element.parse(parameter_string.getObject());
             case 2:
-                return new TypeBoolean(!(parameters[0] instanceof TypeNull) && parameters[0].getObject()!=null) ;
+                return new TypeBoolean(parameters[0] != null && parameters[0].getObject()!=null && !(parameters[0] instanceof TypeNull)) ;
             case 3:
-                return new TypeBoolean((parameters[0] instanceof TypeNull) || parameters[0].getObject()==null);
+                return new TypeBoolean(parameters[0] == null || parameters[0].getObject()==null || (parameters[0] instanceof TypeNull));
             case 4:
-                return new TypeBoolean(!parameters[0].equals(parameters[1]));
+                return new TypeBoolean(!Objects.equals(parameters[0],parameters[1]));
             case 5:
-                return new TypeBoolean(parameters[0].equals(parameters[1]));
+                return new TypeBoolean(Objects.equals(parameters[0],parameters[1]));
         }
         return null;
     }
