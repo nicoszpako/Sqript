@@ -72,7 +72,7 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType<?>>> implements I
                     TypeArray o = (TypeArray)a;
                     o.getObject().add(b);
                     return o;
-                });
+                },2);
     }
 
     @Override

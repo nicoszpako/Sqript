@@ -38,10 +38,13 @@ public class NodeOperation extends Node {
         if(getChildren().length == 1){
             return ScriptManager.getUnaryOperation(getChildren()[0].getReturnType(), operator).getReturnType();
         }else if(getChildren().length == 2){
-            //System.out.println(getChildren()[0] == null);
-            //System.out.println(getChildren()[1] == null);
+            //System.out.println((getChildren()[0] == null) +" "+getChildren()[0].getReturnType());
+            //System.out.println((getChildren()[1] == null) +" "+getChildren()[1].getReturnType());
+            //System.out.println("Operation : "+(ScriptManager.getBinaryOperation(getChildren()[0].getReturnType(), getChildren()[1].getReturnType(), operator)==null));
             //System.out.println("Children : "+ Arrays.toString(getChildren()));
-            return ScriptManager.getBinaryOperation(getChildren()[0].getReturnType(), getChildren()[1].getReturnType(), operator).getReturnType();
+            if(ScriptManager.getBinaryOperation(getChildren()[0].getReturnType(), getChildren()[1].getReturnType(), operator) != null)
+                return ScriptManager.getBinaryOperation(getChildren()[0].getReturnType(), getChildren()[1].getReturnType(), operator).getReturnType();
+            else return ScriptElement.class;
         }
         return null;
     }

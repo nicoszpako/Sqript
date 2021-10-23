@@ -122,6 +122,8 @@ public class ScriptExpressionParser implements INodeParser {
                                 for (String parameter : parameters) {
                                     if (parameter != null) {
                                         if (!parameter.isEmpty()) {
+                                            if(!ScriptDecoder.isParenthesageGood(parameter))
+                                                continue matchLoop;
                                             //System.out.println(debugOffset()+" Parsing subargument : "+parameter);
                                             int index = Math.min(parameterIndex, expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()]
                                                     .getTypes().length - 1);
@@ -187,21 +189,6 @@ public class ScriptExpressionParser implements INodeParser {
             validTrees.add(0, nodeExpression);
         }
 
-        if (!validTrees.isEmpty()) {
-            if (validTrees.size() == 1) {
-                //System.out.println(debugOffset()+"Returning : "+validTrees.get(0));
-                return validTrees.get(0);
-            } else {
-                if(validTypes.length == 1 && validTypes[0] == ScriptElement.class)
-                    return validTrees.get(0);
-
-                //System.out.println(debugOffset()+"Returning : "+result);
-                return new NodeSwitch(validTrees.toArray(new Node[0]));
-            }
-        }
-
-
-
         /*
          * We check if the expression contains operators, if so we split at each operator, and we return an ExprAlgebraicEvaluation expression.
          * /!\ In this case, we place Nodes in a list as if they were in an infixed notation, and then we later transform this with infixToRPN, and then with rpnToAST.
@@ -264,6 +251,18 @@ public class ScriptExpressionParser implements INodeParser {
 
         }
         //System.out.println("Returning null to " + line);
+        if (!validTrees.isEmpty()) {
+            if (validTrees.size() == 1) {
+                //System.out.println(debugOffset()+"Returning : "+validTrees.get(0));
+                return validTrees.get(0);
+            } else {
+                if(validTypes.length == 1 && validTypes[0] == ScriptElement.class)
+                    return validTrees.get(0);
+
+                //System.out.println(debugOffset()+"Returning : "+result);
+                return new NodeSwitch(validTrees.toArray(new Node[0]));
+            }
+        }
         return null;
     }
 

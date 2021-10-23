@@ -20,6 +20,11 @@ public class ScriptToken {
     private final int lineNumber;
 
     /**
+     * The initial tab level of this token.
+     */
+    private final int tabLevel;
+
+    /**
      * The ScriptInstance containing this ScriptToken.
      */
     private final ScriptInstance scriptInstance;
@@ -38,8 +43,13 @@ public class ScriptToken {
 
     public ScriptToken(String text, int number, ScriptInstance scriptInstance) {
         this.text = text;
+        this.tabLevel = ScriptDecoder.getTabLevel(text);
         this.lineNumber = number;
         this.scriptInstance = scriptInstance;
+    }
+
+    public int getTabLevel() {
+        return tabLevel;
     }
 
     @Override

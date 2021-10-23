@@ -72,13 +72,13 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
                     TypeArray p = (TypeArray)b;
                     o.getObject().put(p.getObject().get(0),p.getObject().get(1));
                     return o;
-                });
+                },2);
         ScriptManager.registerBinaryOperation(ScriptOperator.SUBTRACT, TypeDictionary.class, ScriptElement.class, TypeDictionary.class,
                 (a,b) -> {
                         TypeDictionary o = (TypeDictionary)a;
                         o.getObject().remove(b);
                         return o;
-                });
+                },2);
     }
 
     @Override

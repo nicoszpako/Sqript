@@ -17,6 +17,7 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.PrimitiveType;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.meta.*;
+import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -67,36 +68,65 @@ public class ScriptManager {
     public static HashMap<ScriptOperator, HashMap<Class, OperatorDefinition>> unaryOperations = new HashMap<>();
     public static List<ScriptOperator> operators = new ArrayList<>();
 
+    //Type parsers
+    public static HashMap<Class, HashMap<Class, TypeParserDefinition>> typeParsers = new HashMap<>();
+
     public static boolean RELOADING = false;
 
     public static void registerBinaryOperation(ScriptOperator o, Class a, Class b, Class<? extends ScriptElement<?>> returnType, IOperation operation) {
+        registerBinaryOperation(o,a,b,returnType,operation,0);
+    }
+
+    public static void registerBinaryOperation(ScriptOperator o, Class a, Class b, Class<? extends ScriptElement<?>> returnType, IOperation operation, int priority) {
         binaryOperations.computeIfAbsent(o, k -> new HashMap<>());
         binaryOperations.get(o).computeIfAbsent(a, k -> new HashMap<>());
-        binaryOperations.get(o).get(a).put(b, new OperatorDefinition(operation, returnType));
+        binaryOperations.get(o).get(a).put(b, new OperatorDefinition(operation, returnType, priority));
+    }
+
+    public static void registerTypeParser(Class from, Class to, ITypeParser parser, int priority) {
+        typeParsers.computeIfAbsent(from, k -> new HashMap<>());
+        typeParsers.get(from).put(to, new TypeParserDefinition(priority, parser));
     }
 
     public static void registerUnaryOperation(ScriptOperator o, Class<? extends ScriptElement<?>> a, Class<? extends ScriptElement<?>> returnType, IOperation operation) {
         unaryOperations.computeIfAbsent(o, k -> new HashMap<>());
-        unaryOperations.get(o).put(a, new OperatorDefinition(operation, returnType));
+        unaryOperations.get(o).put(a, new OperatorDefinition(operation, returnType,0));
+    }
+
+    public static ScriptType parse(ScriptType from, Class toType){
+        if(toType == TypeString.class)
+            return new TypeString(from.toString());
+        else{
+            TypeParserDefinition typeParserDefinition = typeParsers.get(from.getClass()).get(toType);
+            if(typeParserDefinition != null)
+                return typeParserDefinition.getParser().parse(from);
+            else return null;
+        }
     }
 
     public static OperatorDefinition getBinaryOperation(Class<? extends ScriptType> a, Class<? extends ScriptType> b, ScriptOperator o) {
+        //System.out.println("Getting binary operation for : "+o+" from "+a+" to "+b);
+        OperatorDefinition op = null;
         if (binaryOperations.get(o).get(ScriptElement.class) != null) {
-            final OperatorDefinition op;
-            if ((op = binaryOperations.get(o).get(ScriptElement.class).get(b)) != null)
-                return op;
+            final OperatorDefinition def = binaryOperations.get(o).get(ScriptElement.class).get(b);
+            if(def != null)
+                op = binaryOperations.get(o).get(a).get(b);
+            //System.out.println("3)"+op+" for "+a +" "+b);
         }
         if (binaryOperations.get(o).get(a) != null) {
-            final OperatorDefinition op;
-            if ((op = binaryOperations.get(o).get(a).get(ScriptElement.class)) != null)
-                return op;
+            op = binaryOperations.get(o).get(a).get(ScriptElement.class);
+            //System.out.println("1)"+op+" for "+a +" "+b);
         }
         if (binaryOperations.get(o).get(a) != null) {
-            final OperatorDefinition op;
-            if ((op = binaryOperations.get(o).get(a).get(b)) != null)
-                return op;
+            final OperatorDefinition def = binaryOperations.get(o).get(a).get(b);
+            if(def != null && (op == null || def.getPriority()>op.getPriority()))
+                op = binaryOperations.get(o).get(a).get(b);
+            //System.out.println("2)"+op+" for "+a +" "+b);
         }
-        return null;
+
+        //System.out.println("returning "+op+" for "+a +" "+b);
+
+        return op;
     }
 
     public static ScriptInstance getScriptFromName(String name){
