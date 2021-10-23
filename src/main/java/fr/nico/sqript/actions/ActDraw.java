@@ -63,7 +63,6 @@ import java.util.stream.Collectors;
             @Feature(name = "Push canvas matrix",description = "Pushes a new matrix onto the matrix pile. Allows to \"save the current\" matrix configuration.", examples = "push canvas matrix",pattern = "push canvas matrix", side = Side.CLIENT),
             @Feature(name = "Pop canvas matrix",description = "Pops the top matrix from the matrix pile. Allows to \"come back to the previous\" matrix configuration.", examples = "pop canvas matrix",pattern = "pop canvas matrix", side = Side.CLIENT),
             @Feature(name = "Draw circle",description = "Draws a circle of given radius at given position on the screen.", examples = "draw circle at [10,10] with radius 6 and with color 0",pattern = "draw circle at {location} with radius {number} [and] with color {number}", side = Side.CLIENT),
-
         }
 )
 public class ActDraw extends ScriptAction {
@@ -78,7 +77,6 @@ public class ActDraw extends ScriptAction {
     @Override
     public void execute(ScriptContext context) throws ScriptException {
         switch (getMatchedIndex()){
-
             case 0:
                 ArrayList<String> list = new ArrayList<>();
                 //System.out.println("A:"+getParameter(1).getClass());

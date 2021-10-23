@@ -148,6 +148,12 @@ public class ScriptEventHandler {
         ScriptManager.callEvent(new EvtPlayer.EvtOnKeyInputEvent());
     }
 
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onMouseInput(InputEvent.MouseInputEvent event) {
+        ScriptManager.callEvent(new EvtPlayer.EvtOnMouseInputEvent());
+    }
+
     @SubscribeEvent
     public void onBlockRightClick(PlayerInteractEvent.RightClickBlock event) {
         if (event.getEntity() instanceof EntityPlayer) {

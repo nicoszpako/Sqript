@@ -4,6 +4,7 @@ import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.ScriptTimer;
 import fr.nico.sqript.compiling.ScriptCompilationContext;
 import fr.nico.sqript.compiling.ScriptDecoder;
+import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Block;
@@ -20,13 +21,9 @@ import fr.nico.sqript.structures.ScriptContext;
 public class ScriptBlockTimeLoop extends ScriptBlock {
 
     public long delay;
-
+    private final ScriptToken head;
     public ScriptBlockTimeLoop(ScriptToken head) {
-        try{
-            this.delay = getDelay(head);
-        }catch(Exception e){
-            if(ScriptManager.FULL_DEBUG)e.printStackTrace();
-        }
+        this.head = head;
     }
 
     public long getDelay(ScriptToken line) throws Exception {
@@ -45,6 +42,7 @@ public class ScriptBlockTimeLoop extends ScriptBlock {
 
     @Override
     public void init(ScriptLineBlock scriptLineBlock) throws Exception {
+        this.delay = getDelay(head);
         setRoot(scriptLineBlock.compile());
         //System.out.println("Putting in loop with delay : "+delay);
         ScriptTimer.loopIScript(this,delay);

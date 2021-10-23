@@ -2,6 +2,7 @@ package fr.nico.sqript.events;
 
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
+import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.types.TypeArray;
@@ -384,15 +385,29 @@ public class EvtPlayer {
             feature = @Feature(name = "Key input",
                     description = "Event that is fired whenever a registered key input is triggered.",
                     examples = "on key input:",
-                    pattern = "key input"),
+                    pattern = "key input",
+                    side = Side.CLIENT),
             accessors = {}
     )
     public static class EvtOnKeyInputEvent extends ScriptEvent {
-
         public EvtOnKeyInputEvent() {
-            super();
+            super(new ScriptTypeAccessor());
         }
+    }
 
+    @Cancelable
+    @Event(
+            feature = @Feature(name = "Mouse input",
+                    description = "Event that is fired whenever a mouse input is triggered.",
+                    examples = "on mouse input:",
+                    pattern = "mouse input",
+                    side = Side.CLIENT),
+            accessors = {}
+    )
+    public static class EvtOnMouseInputEvent extends ScriptEvent {
+        public EvtOnMouseInputEvent() {
+            super(new ScriptTypeAccessor());
+        }
     }
 
     @Event(
