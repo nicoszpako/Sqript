@@ -211,7 +211,7 @@ public class ExprCompiledExpression extends ScriptExpression {
             } else {
                 final Class<? extends ScriptType> c1 = o1 == null ? null : o1.getClass();
                 final Class<? extends ScriptType> c2 = o2 == null ? null : o2.getClass();
-                IOperation operation = ScriptManager.getBinaryOperation(c2, c1, o).getOperation();
+                IOperation operation = ScriptManager.getBinaryOperation(c1, c2, o).getOperation();
                 if (operation == null) {
                     throw new ScriptException.ScriptOperationNotSupportedException(getLine(), o, c1, c2);
                 }

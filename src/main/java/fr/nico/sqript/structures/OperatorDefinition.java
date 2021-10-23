@@ -5,10 +5,16 @@ public class OperatorDefinition {
 
     private final IOperation operation;
     private final Class<? extends ScriptElement<?>> returnType;
+    private final int priority;
 
-    public OperatorDefinition(IOperation operation, Class<? extends ScriptElement<?>> returnType) {
+    public OperatorDefinition(IOperation operation, Class<? extends ScriptElement<?>> returnType, int priority) {
         this.operation = operation;
         this.returnType = returnType;
+        this.priority = priority;
+    }
+
+    public int getPriority() {
+        return priority;
     }
 
     public IOperation getOperation() {
@@ -19,4 +25,12 @@ public class OperatorDefinition {
         return returnType;
     }
 
+    @Override
+    public String toString() {
+        return "OperatorDefinition{" +
+                "operation=" + operation +
+                ", returnType=" + returnType +
+                ", priority=" + priority +
+                '}';
+    }
 }
