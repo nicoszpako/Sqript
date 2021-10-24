@@ -17,6 +17,7 @@ import fr.nico.sqript.meta.*;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.DefaultStateMapper;
 import net.minecraft.item.Item;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -51,7 +52,7 @@ public class SqriptForge {
 
     public static ArrayList<ScriptBlock> blocks = new ArrayList<>();
 
-
+    public static ArrayList<SoundEvent> soundEvents = new ArrayList<>();
     public static ArrayList<ScriptItem> scriptItems = new ArrayList<>();
     public static ArrayList<Item> items = new ArrayList<>();
 
@@ -303,7 +304,15 @@ public class SqriptForge {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<net.minecraft.block.Block> event) {
         for (net.minecraft.block.Block e : blocks) {
-            //System.out.println("Registering : "+e.getRegistryName());
+            System.out.println("Registering : "+e.getRegistryName());
+            event.getRegistry().register(e);
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
+        for (SoundEvent e : soundEvents) {
+            System.out.println("Registering sound in handler : "+e.getRegistryName());
             event.getRegistry().register(e);
         }
     }

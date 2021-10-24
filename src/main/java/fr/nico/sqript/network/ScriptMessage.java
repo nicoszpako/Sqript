@@ -100,7 +100,9 @@ public class ScriptMessage implements IMessage {
                 e.printStackTrace();
             }
             try {
-                if(ctx.side == Side.CLIENT){ //Obviously always client-side, but we never know
+                if(ctx.side == Side.CLIENT){
+                    System.out.println("Executing client for  "+m.name);
+                    System.out.println("Content is : "+m.getClient().getLine());
                     m.getClient().execute(context);
                 }else {
                     context.put(new ScriptTypeAccessor(new TypePlayer(ctx.getServerHandler().player),"(player|sender)"));

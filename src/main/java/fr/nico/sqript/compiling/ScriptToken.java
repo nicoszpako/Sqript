@@ -22,7 +22,7 @@ public class ScriptToken {
     /**
      * The initial tab level of this token.
      */
-    private final int tabLevel;
+    private int tabLevel;
 
     /**
      * The ScriptInstance containing this ScriptToken.
@@ -76,12 +76,18 @@ public class ScriptToken {
     }
 
     public ScriptToken with(String parameter) {
-        return new ScriptToken(parameter, lineNumber, scriptInstance);
+        ScriptToken token =  new ScriptToken(parameter, lineNumber, scriptInstance);
+        token.setTabLevel(this.getTabLevel());
+        return token;
     }
 
     public ScriptToken withString(String[] strings){
         text = ScriptDecoder.replaceStrings(text,strings);
         return this;
+    }
+
+    public void setTabLevel(int tabLevel) {
+        this.tabLevel = tabLevel;
     }
 
     public void trim() {

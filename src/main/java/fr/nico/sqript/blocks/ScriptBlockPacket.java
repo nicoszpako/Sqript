@@ -1,7 +1,10 @@
 package fr.nico.sqript.blocks;
 
+import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.compiling.ScriptCompilationContext;
 import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.compiling.ScriptLoader;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.meta.Feature;
@@ -12,6 +15,8 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeMessagePrototype;
 import fr.nico.sqript.types.TypePlayer;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Arrays;
 
 
 @Block(
@@ -53,6 +58,22 @@ public class ScriptBlockPacket extends ScriptFunctionalBlock {
 
     public ScriptBlockPacket(ScriptToken head) throws ScriptException {
         super(head);
+    }
+
+    @Override
+    public void displayTree(int i) {
+        String tab = "";
+        for (int j = 0; j < i; j++) tab += "|    ";
+        ScriptManager.log.info(tab+""+name+" "+ Arrays.toString(parameters));
+        tab += "|    ";
+        if (client != null) {
+            ScriptManager.log.info(tab+"client :");
+            ScriptLoader.dispScriptTree(client, i + 2);
+        }
+        if (server != null) {
+            ScriptManager.log.info(tab + "server :");
+            ScriptLoader.dispScriptTree(server,i + 2);
+        }
     }
 
     @Override

@@ -17,8 +17,7 @@ import java.util.List;
 /**
  * Chargement du script. Converti un ensemble de lignes en un ensemble de blocs (et sous-blocs) pouvant être exécutés selon un ScriptContext donné (lors du runtime).
  */
-public class ScriptLoader
-{
+public class ScriptLoader {
     public File file;
     public String name;
 
@@ -31,19 +30,19 @@ public class ScriptLoader
     public static void dispScriptTree(IScript s, int i) {
         String tab = "";
         for (int j = 0; j < i; j++) tab += "|    ";
-        ScriptManager.log.info(tab + (s.parent != null ? s.parent.getClass().getSimpleName() + " >> " : "") + s.getClass().getSimpleName() + (s instanceof ScriptAction ? (s.toString().isEmpty() ? "("+((ScriptAction)s).getParameters() +")": s.toString()) : "") + " -> " + ((s.next != null ? s.next.getClass().getSimpleName(): "[null]")));
+        ScriptManager.log.info(tab + (s.parent != null ? s.parent.getClass().getSimpleName() + " >> " : "") + s.getClass().getSimpleName() + (s instanceof ScriptAction ? (s.toString().isEmpty() ? " <" + ((ScriptAction) s).getMatchedName() + "> " + "(" + ((ScriptAction) s).getParameters() + ")" : s.toString()) : "") + " -> " + ((s.next != null ? s.next.getClass().getSimpleName() : "[null]")));
         if (s instanceof ScriptLoop) {
             ScriptLoop sl = (ScriptLoop) s;
             if (sl.getWrapped() != null)
                 dispScriptTree(sl.getWrapped(), i + 1);
             else
                 //System.out.println(tab + " No wrapped IScript's !");
-            if (sl instanceof ScriptLoop.ScriptLoopIF) {
-                ScriptLoop.ScriptLoopIF si = (ScriptLoop.ScriptLoopIF) sl;
-                if (si.elseContainer != null) dispScriptTree(si.elseContainer, i);
-            }
+                if (sl instanceof ScriptLoop.ScriptLoopIF) {
+                    ScriptLoop.ScriptLoopIF si = (ScriptLoop.ScriptLoopIF) sl;
+                    if (si.elseContainer != null) dispScriptTree(si.elseContainer, i);
+                }
         } else if (s instanceof ScriptBlock) {
-            dispScriptTree(((ScriptBlock) s).getRoot(), i + 1);
+            ((ScriptBlock) (s)).displayTree(i + 1);
         }
         if (s.next != null)
             dispScriptTree(s.next, i);
@@ -63,18 +62,18 @@ public class ScriptLoader
     public ScriptInstance loadScript() throws ScriptException.ScriptExceptionList {
         ScriptException.ScriptExceptionList exceptionList = new ScriptException.ScriptExceptionList();
         ScriptManager.log.info("Loading : " + file.getName());
-        ScriptInstance instance = new ScriptInstance(name,file);
+        ScriptInstance instance = new ScriptInstance(name, file);
         long c = System.currentTimeMillis();
         List<ScriptToken> lines = null;
         try {
-            lines = stringToLines(file,instance);
+            lines = stringToLines(file, instance);
         } catch (IOException e) {
             exceptionList.exceptionList.add(e);
         }
         List<ScriptToken> block = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
             ScriptToken line = lines.get(i);
-            if(line.getText().matches("\\s*") || line.getText().matches("\\s*#.*"))
+            if (line.getText().matches("\\s*") || line.getText().matches("\\s*#.*"))
                 continue;
 
             //Else, we add the line to the actual block
@@ -88,7 +87,7 @@ public class ScriptLoader
                 //System.out.println("Processing block : "+line+" with size : "+block.size());
                 //The block is ended, we process it
                 try {
-                    loadBlock(block,instance);
+                    loadBlock(block, instance);
                 } catch (Exception e) {
                     exceptionList.exceptionList.add(e);
                 }
@@ -98,38 +97,37 @@ public class ScriptLoader
 
         }
         try {
-            loadBlock(block,instance);
+            loadBlock(block, instance);
         } catch (Exception e) {
             exceptionList.exceptionList.add(e);
         }
-        if(!exceptionList.exceptionList.isEmpty())
+        if (!exceptionList.exceptionList.isEmpty())
             throw exceptionList;
 
         ScriptManager.log.info("Finished loading " + file.getName() + ", it took : " + (System.currentTimeMillis() - c) + " ms");
         return instance;
     }
 
-    public void loadBlock(List<ScriptToken> block, ScriptInstance instance ) throws Exception {
-        if(block.isEmpty())
+    public void loadBlock(List<ScriptToken> block, ScriptInstance instance) throws Exception {
+        if (block.isEmpty())
             return;
         ScriptToken head = block.remove(0);
         //System.out.println("Loading block : "+head+" "+block);
-        if(!block.isEmpty()){
+        if (!block.isEmpty()) {
             BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
-            if(blockDefinition==null)
+            if (blockDefinition == null)
                 throw new ScriptException.ScriptUnknownTokenException(head);
-            if(blockDefinition.getFeature().side().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())){
+            if (blockDefinition.getFeature().side().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())) {
                 Class scriptBlockClass = blockDefinition.getBlockClass();
                 ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptToken.class).newInstance(head);
                 scriptBlock.setLine(head);
                 scriptBlock.setScriptInstance(instance);
-                scriptBlock.init(new ScriptBlock.ScriptLineBlock("main",block));
+                scriptBlock.init(new ScriptBlock.ScriptLineBlock("main", block));
 
             }
         }
 
     }
-    
 
 
 }

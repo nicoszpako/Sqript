@@ -49,5 +49,10 @@ public class ScriptNetworkManager {
         SqriptForge.channel.sendToAll(new ScriptSyncDataMessage(as,element));
     }
 
+    public static void clear(){
+        messageList.clear();
+        syncValue.clear();
+    }
+
 
 }

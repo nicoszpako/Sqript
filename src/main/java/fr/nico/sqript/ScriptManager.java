@@ -1,16 +1,16 @@
 package fr.nico.sqript;
 
+import com.google.gson.*;
 import fr.nico.sqript.actions.ScriptAction;
-import fr.nico.sqript.blocks.ScriptBlock;
-import fr.nico.sqript.blocks.ScriptBlockCommand;
+import fr.nico.sqript.blocks.*;
 import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.events.EvtOnScriptLoad;
 import fr.nico.sqript.events.ScriptEvent;
-import fr.nico.sqript.blocks.ScriptBlockEvent;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.forge.common.ScriptResourceLoader;
 import fr.nico.sqript.forge.SqriptForge;
 import fr.nico.sqript.function.ScriptNativeFunction;
+import fr.nico.sqript.network.ScriptNetworkManager;
 import fr.nico.sqript.structures.*;
 import fr.nico.sqript.structures.IOperation;
 import fr.nico.sqript.types.ScriptType;
@@ -19,6 +19,8 @@ import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.meta.*;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -26,8 +28,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -328,11 +332,20 @@ public class ScriptManager {
 
     private static void loadFolder(File folder) throws Throwable {
         ScriptException.ScriptExceptionList list = new ScriptException.ScriptExceptionList();
+        if(FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
+            ScriptManager.loadResources();
         for(File f : folder.listFiles()) {
             if(f.isDirectory()){
                 loadFolder(f);
-                if(FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
-                    ScriptManager.loadResources(f);
+                if(f.getName().equalsIgnoreCase("sounds")){
+                    for (File file : f.listFiles()) {
+                        log.info("Registering sound : "+folder.getName()+":"+file.getName().split("\\.")[0]);
+                        addSoundToJsonFile(new File(folder, "sounds.json"), folder.getName(), file.getName().split("\\.")[0]);
+                        SoundEvent event = new SoundEvent(new ResourceLocation(folder.getName()+":"+file.getName().split("\\.")[0]));
+                        event.setRegistryName(folder.getName()+":"+file.getName().split("\\.")[0]);
+                        SqriptForge.soundEvents.add(event);
+                    }
+                }
             }
             else if (f.toPath().toString().endsWith(".sq")) {
                 ScriptLoader loader = new ScriptLoader(f);
@@ -354,17 +367,48 @@ public class ScriptManager {
         }
     }
 
+    private static void addSoundToJsonFile(File file, String domain, String name) throws IOException {
+        if(!file.exists())
+            file.createNewFile();
+
+        //Parsing file and adding new json object
+        JsonParser parser = new JsonParser();
+        JsonObject obj = new JsonObject();
+
+        try {
+            obj = parser.parse(Files.newBufferedReader(file.toPath())).getAsJsonObject();
+        } catch (Exception ignored){}
+
+        JsonObject newSound = new JsonObject();
+        newSound.add("category", new JsonPrimitive("master"));
+        newSound.add("subtitle", new JsonPrimitive("subtitle."+name));
+        JsonArray sounds = new JsonArray();
+        sounds.add(domain+":"+name);
+        newSound.add("sounds",sounds);
+        obj.add(name,newSound);
+
+        //Creating as instance of gson
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        //Writing the new content to the file
+        new PrintWriter(file).close();
+        PrintWriter printWriter = new PrintWriter(file);
+        printWriter.println(gson.toJson(obj));
+        printWriter.close();
+    }
+
     public static void loadScripts(File mainFolder) throws Throwable {
 
         loadFolder(mainFolder);
 
         if(FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
-            loadResources(mainFolder);
+            loadResources();
 
         if(FULL_DEBUG)
             for(ScriptInstance instance : scripts){
                 List<ScriptBlock> list =  instance.getBlocksOfClass(ScriptBlockEvent.class);
                 list.addAll(instance.getBlocksOfClass(ScriptBlockCommand.class));
+                list.addAll(instance.getBlocksOfClass(ScriptBlockPacket.class));
                 //System.out.println("# Of blocks : "+instance.getBlocks().size());
                 for (ScriptBlock s : list)  {
                     //System.out.println("Displaying : "+s.getHead());
@@ -376,7 +420,7 @@ public class ScriptManager {
     }
 
     @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
-    public static void loadResources(File mainFolder) throws IllegalAccessException {
+    public static void loadResources() throws IllegalAccessException {
         //System.out.println("Adding "+mainFolder+" to loaded resources.");
         ScriptResourceLoader resourceLoader = new ScriptResourceLoader();
         Field defaultResourcePacksField = ObfuscationReflectionHelper.findField(Minecraft.getMinecraft().getClass(),"field_110449_ao");
@@ -438,6 +482,7 @@ public class ScriptManager {
         RELOADING = true;
 
         scripts.clear();
+        ScriptNetworkManager.clear();
 
         if(FMLCommonHandler.instance().getEffectiveSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
             clearClientCommands();

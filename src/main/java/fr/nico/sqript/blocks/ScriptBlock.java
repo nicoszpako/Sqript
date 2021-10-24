@@ -186,6 +186,10 @@ public abstract class ScriptBlock extends IScript {
         this.side = side;
     }
 
+    public void displayTree(int i) {
+        ScriptLoader.dispScriptTree(getRoot(),i);
+    }
+
     public static class ScriptLineBlock {
 
         private final List<ScriptLineBlock> subBlocks = new ArrayList<>();
