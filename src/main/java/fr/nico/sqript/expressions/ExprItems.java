@@ -8,10 +8,14 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.types.primitive.TypeResource;
+import fr.nico.sqript.types.primitive.TypeString;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
@@ -25,9 +29,9 @@ import java.util.Objects;
 
 @Expression(name = "Items Expressions",
         features = {
-            @Feature(name = "Item NBT tag", description = "Returns the NBT tag of the given item.", examples = "item's nbt", pattern = "{item}'s nbt [tag]", type = "dictionary"),
+            @Feature(name = "Item NBT tag", description = "Returns the NBT tag of the given item.", examples = "item's nbt", pattern = "{item}'s nbt [tag]", type = "nbttagcompound"),
             @Feature(name = "Item", description = "Returns the item associated to the given resource.", examples = "minecraft:stick", pattern = "{resource} [with data {string}]", type = "itemdata", settable = false),
-            @Feature(name = "Item stack", description = "Returns a stack of the given amount of the given item.", examples = "5 of minecraft:stick", pattern = "[(a|{+number})] [of] {itemdata} [with nbt {string}] [with metadata {number}]", type = "item", settable = false)
+            @Feature(name = "Item stack", description = "Returns a stack of the given amount of the given item.", examples = "5 of minecraft:stick", pattern = "[(a|{+number})] [of] {itemdata} [with nbt {string|nbttagcompound}] [with metadata {number}]", type = "item", settable = false)
         }, priority = -2
 )
 public class ExprItems extends ScriptExpression {
@@ -38,12 +42,10 @@ public class ExprItems extends ScriptExpression {
         switch(getMatchedName()){
             case "Item NBT tag":
                 ItemStack stack = (ItemStack) parameters[0].getObject();
-                TypeDictionary dictionary;
                 NBTTagCompound tagCompound = new NBTTagCompound();
                 if(stack.hasTagCompound())
                     tagCompound = stack.getTagCompound();
-                dictionary = SqriptUtils.NBTToDictionary(tagCompound);
-                return dictionary;
+                return new TypeNBTTagCompound(tagCompound);
             case "Item":
                 ResourceLocation resource = (ResourceLocation) parameters[0].getObject();
                 Item i = ForgeRegistries.ITEMS.getValue(resource);
@@ -51,20 +53,20 @@ public class ExprItems extends ScriptExpression {
             case "Item stack":
                 int amount = getParameterOrDefault(parameters[0], 1d).intValue();
                 Item item = (Item) parameters[1].getObject();
-                String data = getParameterOrDefault(parameters[2],"");
-                NBTTagCompound tag = new NBTTagCompound();
-                if(!data.isEmpty()){
-                    InputStream targetStream = new ByteArrayInputStream(data.getBytes());
-                    try {
-                        tag = CompressedStreamTools.read(new DataInputStream(targetStream));
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                ItemStack itemStack = new ItemStack(item, amount);
+                if(parameters[2] != null) {
+                    if(parameters[2] instanceof TypeString) {
+                        String data = (String) parameters[2].getObject();
+                        try {
+                            itemStack.setTagCompound(JsonToNBT.getTagFromJson(data));
+                        } catch (NBTException e) {
+                            e.printStackTrace();
+                        }
+                    } else if(parameters[2] instanceof TypeNBTTagCompound) {
+                        itemStack.setTagCompound((NBTTagCompound) parameters[2].getObject());
                     }
                 }
-                ItemStack itemStack = new ItemStack(item,amount);
-                itemStack.setTagCompound(tag);
                 return new TypeItem(itemStack);
-
         }
         return null;
     }
@@ -76,6 +78,16 @@ public class ExprItems extends ScriptExpression {
 
     @Override
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) {
+        switch (getMatchedIndex()) {
+            case 0:
+                if(to instanceof TypeNBTTagCompound){
+                    ItemStack stack = (ItemStack) parameters[0].getObject();
+                    stack.setTagCompound((NBTTagCompound) to.getObject());
+                } else {
+                    ScriptManager.log.error("You can only set a NBTTagCompound in parameter");
+                }
+                return true;
+        }
         return false;
     }
 }
