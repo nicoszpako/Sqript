@@ -151,19 +151,15 @@ public class ScriptEventHandler {
 
     @SubscribeEvent
     public void onBlockRightClick(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getEntity() instanceof EntityPlayer) {
-            if (ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer) event.getEntity(), new TypeBlock(event.getEntityPlayer().getEntityWorld().getBlockState(new BlockPos(event.getPos()))), event.getHand(), 1, event.getPos()))) {
-                event.setCanceled(true);
-            }
+        if (ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer) event.getEntity(), new TypeBlock(event.getEntityPlayer().getEntityWorld().getBlockState(new BlockPos(event.getPos()))), event.getHand(), 1, event.getPos()))) {
+            event.setCanceled(true);
         }
     }
 
     @SubscribeEvent
     public void onBlockPlace(PlayerInteractEvent.LeftClickBlock event) {
-        if (event.getEntity() instanceof EntityPlayer) {
-            if (ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer) event.getEntity(), new TypeBlock(Block.getBlockFromItem(event.getItemStack().getItem()).getDefaultState(), event.getPos(), event.getWorld()), event.getHand(), 0, event.getPos()))) {
-                event.setCanceled(true);
-            }
+        if (ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer) event.getEntity(), new TypeBlock(Block.getBlockFromItem(event.getItemStack().getItem()).getDefaultState(), event.getPos(), event.getWorld()), event.getHand(), 0, event.getPos()))) {
+            event.setCanceled(true);
         }
     }
 

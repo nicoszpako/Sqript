@@ -24,12 +24,12 @@ public class ExprGui extends ScriptExpression {
         ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
         switch (getMatchedIndex()) {
             case 0:
-                return new TypeNumber(resolution.getScaledWidth_double() * resolution.getScaleFactor());
+                return new TypeNumber(resolution.getScaledWidth_double());
             case 1:
-                return new TypeNumber(resolution.getScaledHeight_double() * resolution.getScaleFactor());
+                return new TypeNumber(resolution.getScaledHeight_double());
             case 2:
                 String text = (String) parameters[0].getObject();
-                return new TypeNumber(Minecraft.getMinecraft().fontRenderer.getStringWidth(text));
+                return new TypeNumber(Minecraft.getMinecraft().fontRenderer.getStringWidth(text)/2);
             case 3:
                 return new TypeNumber(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT);
 

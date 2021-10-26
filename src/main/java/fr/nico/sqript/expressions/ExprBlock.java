@@ -1,5 +1,6 @@
 package fr.nico.sqript.expressions;
 
+import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.meta.Feature;
@@ -8,9 +9,11 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeBlock;
 
+import fr.nico.sqript.types.TypeNull;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
+import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -32,6 +35,8 @@ import java.util.ArrayList;
                 @Feature(name = "Block", description = "Returns the block associated to the given resource and metadata.", examples = "minecraft:stone with metadata 2", pattern = "{resource} with metadata {number}", type = "block"),
                 @Feature(name = "Block color", description = "Returns the color associated to the given block in a minecraft map.", examples = "color of minecraft:stone with metadata 2", pattern = "{block} color [in world {number}]", type = "number"),
                 @Feature(name = "Terrain height", description = "Efficiently returns the terrain height at the given location.", examples = "terrain height at player's location", pattern = "terrain height at {array} [in world {number}]", type = "number"),
+                @Feature(name = "Block Position", description = "Returns position of the block.", examples = "position of block player's looking at", pattern = "position of {block}", type = "array"),
+                @Feature(name = "Name Block", description = "Returns name of the block.", examples = "name of block player's looking at", pattern = "name of {block}", type = "string"),
         }
 )
 public class ExprBlock extends ScriptExpression {
@@ -97,7 +102,21 @@ public class ExprBlock extends ScriptExpression {
                 ILocatable location = (ILocatable) parameters[0];
                 Chunk chunk = world.getChunkFromBlockCoords(location.getPos());
                 return new TypeNumber(chunk.getHeight(location.getPos()));
-        }
+            case "Block Position":
+                if(parameters[0] instanceof TypeNull){
+                    return new TypeNull();
+                } else {
+                    blockstate = (TypeBlock) parameters[0];
+                    return new TypeArray(SqriptUtils.locactionToArray(blockstate.getPos()));
+                }
+            case "Name Block":
+                if(parameters[0] instanceof TypeNull){
+                    return new TypeNull();
+                } else {
+                    blockstate = (TypeBlock) parameters[0];
+                    return new TypeString(blockstate.getObject().getBlock().getLocalizedName());
+                }
+            }
         return null;
     }
 

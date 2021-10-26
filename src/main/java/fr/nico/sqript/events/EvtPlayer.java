@@ -389,9 +389,7 @@ public class EvtPlayer {
     )
     public static class EvtOnKeyInputEvent extends ScriptEvent {
 
-        public EvtOnKeyInputEvent() {
-            super();
-        }
+        public EvtOnKeyInputEvent(){}
 
     }
 

@@ -1,6 +1,7 @@
 package fr.nico.sqript;
 
 import com.google.gson.*;
+import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.*;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.types.primitive.TypeBoolean;
@@ -252,7 +253,7 @@ public class SqriptUtils {
             case Constants.NBT.TAG_SHORT:
                 return new TypeNumber(tag.getShort(key));
             case Constants.NBT.TAG_BYTE:
-                return new TypeNumber(tag.getByte(key));
+                return new TypeBoolean(tag.getByte(key) == 0 ? false : true);
             case Constants.NBT.TAG_BYTE_ARRAY:
                 ArrayList list = new ArrayList();
                 for(byte b : tag.getByteArray(key)){
@@ -269,7 +270,18 @@ public class SqriptUtils {
             case Constants.NBT.TAG_STRING:
                 return new TypeString(tag.getString(key));
             case Constants.NBT.TAG_COMPOUND:
-                return new TypeNBTTagCompound(tag.getCompoundTag(key));
+                if(tag.getCompoundTag(key).hasKey("list")){
+                    try {
+                        TypeArray typeArray = new TypeArray();
+                        typeArray.read(tag.getCompoundTag(key));
+                        return typeArray;
+                    } catch (ScriptException e) {
+                        e.printStackTrace();
+                        return new TypeNull();
+                    }
+                } else {
+                    return new TypeNBTTagCompound(tag.getCompoundTag(key));
+                }
         }
         return new TypeNull();
     }
@@ -282,7 +294,7 @@ public class SqriptUtils {
         } else if(value instanceof TypeNumber){
             tag.setDouble(key, (Double) value.getObject());
         } else if(value instanceof TypeArray){
-            ((TypeArray) value).write(tag);
+            tag.setTag(key, ((TypeArray) value).write(new NBTTagCompound()));
         }
     }
 }
