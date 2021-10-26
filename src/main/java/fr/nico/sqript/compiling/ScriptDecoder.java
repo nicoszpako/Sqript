@@ -982,6 +982,11 @@ public class ScriptDecoder {
         int i = 0;
         int markCount = 0;
 
+        int optionalDeepness = 0;
+        //Checking if greedy
+        boolean greedy = isPatternGreedy(pattern);
+        //System.out.println("Is pattern '"+pattern+"' greedy : "+greedy);
+
         //System.out.println("Processing : "+pattern);
         while (i < pattern.length()) {
             char c = pattern.charAt(i);
@@ -1079,7 +1084,46 @@ public class ScriptDecoder {
         }
         pattern = "^\\s*" + pattern + "$";//End of parsing;
         //System.out.println("Transformed : "+pattern+" with :"+markCount+" marks\n");
-        return new TransformedPattern(pattern, markCount, argCount, paramTypes.toArray(new ScriptParameterDefinition[0][0]));
+        TransformedPattern result = new TransformedPattern(pattern, markCount, argCount, paramTypes.toArray(new ScriptParameterDefinition[0][0]));
+        result.setGreedy(greedy);
+        return result;
+    }
+
+    private static boolean isPatternGreedy(String pattern) {
+        pattern = removeDelimiters('[',']',pattern);
+        pattern = pattern.trim();
+        if(pattern.isEmpty())
+            return false;
+        else{
+            pattern = removeDelimiters('{','}',pattern);
+            pattern = pattern.trim();
+            return pattern.isEmpty();
+        }
+    }
+
+    private static String removeDelimiters(char start, char end, String pattern) {
+        //System.out.println("Removing delimiters : "+start+" -> "+end+" in : "+pattern);
+        int i = 0;
+        while(i < pattern.length()){
+            char c = pattern.charAt(i);
+            if (c == start){
+                int j = i+1;
+                while(j < pattern.length()){
+                    char e = pattern.charAt(j);
+                    if(e == end){
+                        String s_start = pattern.substring(0,i);
+                        String s_end = pattern.substring(j+1);
+                        //System.out.println("Stop at : "+i+" ->"+ j +" Start : "+s_start + " End : "+s_end);
+                        pattern = s_start+s_end;
+                        break;
+                    }
+                    j++;
+                }
+            }
+            i++;
+        }
+        //System.out.println("Result : "+pattern);
+        return pattern;
     }
 
     public static TransformedPattern patternToRegex(String pattern) throws Exception {
@@ -1091,7 +1135,8 @@ public class ScriptDecoder {
 
         int markCount = 0;
         int argCount = 0;
-
+        boolean greedy = isPatternGreedy(pattern);
+        //System.out.println("Is pattern '"+pattern+"' greedy : "+greedy);
         while (i < pattern.length()) {
             char c = pattern.charAt(i);
             boolean comment = i > 0 && pattern.charAt(i - 1) == '~';
@@ -1221,7 +1266,9 @@ public class ScriptDecoder {
 
         //System.out.println("Basic translation : "+pattern);
         //System.out.println("Transformed : "+pattern+" with :"+markCount+" marks\n");
-        return new TransformedPattern(pattern, markCount, argCount, new ScriptParameterDefinition[0][0]);
+        TransformedPattern result = new TransformedPattern(pattern, markCount, argCount, new ScriptParameterDefinition[0][0]);
+        result.setGreedy(greedy);
+        return result;
     }
 
     public static boolean shouldBeLazy(String p, int s) {

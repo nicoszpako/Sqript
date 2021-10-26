@@ -64,6 +64,7 @@ public class ScriptExpressionParser implements INodeParser {
                 matchLoop:
                 for (MatchResult matchResult : matchResults) {
                     if (expressionDefinition.getFeatures()[matchResult.getMatchedIndex()].side().isEffectivelyValid()) {
+
                         /*
                          * If we are parsing the exact same line that the parent on the exact same expression, then we continue to the next expression parsing check so that we don't enter an infinite loop.
                          */
@@ -80,6 +81,17 @@ public class ScriptExpressionParser implements INodeParser {
                             }
 
                         }
+
+                        /*
+                        Handling greedy expressions as ExprItems
+                         */
+                        if (expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].isGreedy()) {
+                            //System.out.println("Checking for greedy : "+expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()]+" returning "+ expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType()+" " + "valid types are : "+Arrays.toString(validTypes));
+                            if (!isTypeStrictlyValid(expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType(), validTypes))
+                                continue;
+                        }
+
+
                         try {
 
                             ScriptExpression expression = expressionDefinition.instanciate((ScriptToken) line.clone(), matchResult.getMatchedIndex(), matchResult.getMarks());
@@ -122,7 +134,7 @@ public class ScriptExpressionParser implements INodeParser {
                                 for (String parameter : parameters) {
                                     if (parameter != null) {
                                         if (!parameter.isEmpty()) {
-                                            if(!ScriptDecoder.isParenthesageGood(parameter))
+                                            if (!ScriptDecoder.isParenthesageGood(parameter))
                                                 continue matchLoop;
                                             //System.out.println(debugOffset()+" Parsing subargument : "+parameter);
                                             int index = Math.min(parameterIndex, expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()]
@@ -188,13 +200,13 @@ public class ScriptExpressionParser implements INodeParser {
             Node nodeExpression = new NodeExpression(reference);
             validTrees.add(0, nodeExpression);
         }
-
+        //System.out.println("Valid trees for " + line + " are " + validTrees);
         if (!validTrees.isEmpty()) {
             if (validTrees.size() == 1) {
                 //System.out.println(debugOffset()+"Returning : "+validTrees.get(0));
                 return validTrees.get(0);
             } else {
-                if(validTypes.length == 1 && validTypes[0] == ScriptElement.class)
+                if (validTypes.length == 1 && validTypes[0] == ScriptElement.class)
                     return validTrees.get(0);
 
                 //System.out.println(debugOffset()+"Returning : "+result);
@@ -224,20 +236,20 @@ public class ScriptExpressionParser implements INodeParser {
             List<Node> nodes = new ArrayList<>();
             int addedOperators = 0;
             //System.out.println("Tokens are : "+tokens);
-            if(tokens.size() > 1) {
+            if (tokens.size() > 1) {
                 for (ExpressionToken token : tokens) {
                     if (token.getType() == EnumTokenType.LEFT_PARENTHESIS) {
                         nodes.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
                     } else if (token.getType() == EnumTokenType.RIGHT_PARENTHESIS) {
                         nodes.add(new NodeParenthesis(EnumTokenType.RIGHT_PARENTHESIS));
                     } else if (token.getType() == EnumTokenType.EXPRESSION) {
-                        try{
+                        try {
                             Node node = parse(line.with(token.getExpressionString().trim()), compilationContext, new Class[]{ScriptElement.class});
                             if (node == null) {
                                 return null;
                             }
                             nodes.add(node);
-                        }catch (Exception ignored){
+                        } catch (Exception ignored) {
                             return null;
                         }
 
@@ -247,9 +259,9 @@ public class ScriptExpressionParser implements INodeParser {
                     }
                 }
             }
-            if(nodes.isEmpty())
+            if (nodes.isEmpty())
                 return null;
-            else{
+            else {
                 try {
                     //System.out.println("Nodes are : "+nodes);
                     //System.out.println();
@@ -277,6 +289,15 @@ public class ScriptExpressionParser implements INodeParser {
         for (int i = 0; i < validTypes.length; i++) {
             //System.out.println("Checking if " + type + " is assignable from " + validTypes[i] + " : " + type.isAssignableFrom(validTypes[i]));
             if (validTypes[i] == ScriptElement.class || (validTypes[i] != null && type.isAssignableFrom(validTypes[i])))
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean isTypeStrictlyValid(Class type, Class[] validTypes) {
+        for (int i = 0; i < validTypes.length; i++) {
+            //System.out.println("Checking if " + type + " is assignable from " + validTypes[i] + " : " + type.isAssignableFrom(validTypes[i]));
+            if (validTypes[i] != null && type.isAssignableFrom(validTypes[i]))
                 return true;
         }
         return false;

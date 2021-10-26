@@ -20,6 +20,7 @@ public class ExpressionDefinition {
     String name;
     Feature[] features;
 
+
     public ExpressionDefinition(String name, Class<? extends ScriptExpression> cls, int priority, Feature... features) throws Exception {
         this.name = name;
         this.cls = cls;

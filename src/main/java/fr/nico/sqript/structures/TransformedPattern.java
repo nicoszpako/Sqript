@@ -16,6 +16,12 @@ public class TransformedPattern {
     int marksCount; //Number of (¦n) marks in the expression
     int argsCount; //Number of {type} arguments in the expression
 
+
+    /**
+     * Whether this pattern can match any expression. In this case it will be checked only if types are *strictly* matching.
+     */
+    boolean greedy;
+
     /**
      * The return type of this pattern.
      */
@@ -65,6 +71,13 @@ public class TransformedPattern {
     }
 
 
+    public boolean isGreedy() {
+        return greedy;
+    }
+
+    public void setGreedy(boolean greedy) {
+        this.greedy = greedy;
+    }
 
     public Pattern getPattern() {
         return pattern;
