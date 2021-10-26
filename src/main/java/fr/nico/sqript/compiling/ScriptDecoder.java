@@ -282,20 +282,20 @@ public class ScriptDecoder {
         //System.out.println("Saving : "+expression);
         //Removing variables
         int l = 0;
-        int depth = 0;
+        int[] depth = new int[start_c.length()];
         int start = 0;
         int start_char_index = -1;
         while (l < expression.length()) {
             //System.out.println("Char at : "+l+" is a "+expression.charAt(l));
-            if (start_char_index == -1 && (start_char_index = start_c.indexOf(expression.charAt(l))) != -1) {
+            if ((start_char_index = start_c.indexOf(expression.charAt(l))) != -1) {
                 //System.out.println("Char at : "+l+" is a "+expression.charAt(l)+" as a : '"+start_c.charAt(start_char_index)+"'");
-                if (depth == 0)
+                if (depth[start_char_index] == 0)
                     start = l;
-                depth++;
+                depth[start_char_index]++;
             }
-            if (start_char_index >= 0 && expression.charAt(l) == end_c.charAt(start_char_index)) {
-                depth--;
-                if (depth == 0) {
+            if ((start_char_index = end_c.indexOf(expression.charAt(l))) != -1) {
+                depth[start_char_index]--;
+                if (depth[start_char_index] == 0) {
                     String a = expression.substring(0, start);
                     String b = expression.substring(l + 1);
                     String m = expression.substring(start, l + 1);
@@ -303,12 +303,12 @@ public class ScriptDecoder {
                     expression = a + n + b;
                     //System.out.println("j:"+expression);
                     l += n.length() - m.length();
-                    start_char_index = -1;
                     saved.add(m);
                 }
             }
             l++;
         }
+        //System.out.println("Result saved : "+expression);
         return expression;
     }
 
@@ -317,7 +317,7 @@ public class ScriptDecoder {
         List<ScriptOperator> operators = new ArrayList<>();
         //System.out.println("Building operators for : " + expression);
         //Saving variables and arrays
-        expression = save(expression, "{[", "}]", saved);
+        expression = save(expression, "{[<", "}]>", saved);
 
         //System.out.println("a : " + expression);
         //Removing strings
@@ -333,8 +333,7 @@ public class ScriptDecoder {
         //Placing operators
         while (containsOperator(expression)) {
             for (ScriptOperator operator : ScriptManager.operators) {
-                //String b = "", c = "(?![^(]*\\))";
-                String b = "", c = "";
+                String b = "", c = "(?![^(]*\\))";
                 if (operator.word) {
                     b = "(" + (operator.unary ? "" : "\\)") + "\\s+|^|})";
                     //c = "\\operator\\(+" + c;
@@ -606,6 +605,7 @@ public class ScriptDecoder {
                 nodes.add(new NodeExpression(new ExprPrimitive(new TypeString(string.substring(0, start)))));
 
                 nodes.add(new NodeOperation(ScriptOperator.ADD));
+                //System.out.println("Parsing for compiling : "+line.with(string.substring(start + 1, c)));
                 nodes.addAll(ExprCompiledExpression.astToInfix(parseExpressionTree(line.with(string.substring(start + 1, c)), compileGroup, new Class[]{ScriptElement.class})));
 
                 if (c + 1 > string.length())

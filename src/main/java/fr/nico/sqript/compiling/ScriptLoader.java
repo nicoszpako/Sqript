@@ -33,12 +33,17 @@ public class ScriptLoader {
         ScriptManager.log.info(tab + (s.parent != null ? s.parent.getClass().getSimpleName() + " >> " : "") + s.getClass().getSimpleName() + (s instanceof ScriptAction ? (s.toString().isEmpty() ? " <" + ((ScriptAction) s).getMatchedName() + "> " + "(" + ((ScriptAction) s).getParameters() + ")" : s.toString()) : "") + " -> " + ((s.next != null ? s.next.getClass().getSimpleName() : "[null]")));
         if (s instanceof ScriptLoop) {
             ScriptLoop sl = (ScriptLoop) s;
+            if (sl instanceof ScriptLoop.ScriptLoopIF) {
+                ScriptLoop.ScriptLoopIF si = (ScriptLoop.ScriptLoopIF) sl;
+                ScriptManager.log.info(tab + si.condition);
+            }
             if (sl.getWrapped() != null)
                 dispScriptTree(sl.getWrapped(), i + 1);
             else
                 //System.out.println(tab + " No wrapped IScript's !");
                 if (sl instanceof ScriptLoop.ScriptLoopIF) {
                     ScriptLoop.ScriptLoopIF si = (ScriptLoop.ScriptLoopIF) sl;
+                    ScriptManager.log.info(tab+si.condition);
                     if (si.elseContainer != null) dispScriptTree(si.elseContainer, i);
                 }
         } else if (s instanceof ScriptBlock) {
@@ -123,7 +128,6 @@ public class ScriptLoader {
                 scriptBlock.setLine(head);
                 scriptBlock.setScriptInstance(instance);
                 scriptBlock.init(new ScriptBlock.ScriptLineBlock("main", block));
-
             }
         }
 

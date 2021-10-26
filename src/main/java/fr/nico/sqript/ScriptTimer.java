@@ -41,7 +41,12 @@ public class ScriptTimer {
         for (IScript script : loopingClocks.keySet()) {
             if (tick % (loopingClocks.get(script)) == 0) {
                 ScriptClock clock = new ScriptClock(new ScriptContext(ScriptManager.GLOBAL_CONTEXT));
-                clock.start(script);
+                try {
+                    clock.start(script);
+                }catch (Exception e){
+                    ScriptManager.log.error("Error while running timer loop :");
+                    e.printStackTrace();
+                }
             }
         }
     }

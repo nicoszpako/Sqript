@@ -409,6 +409,7 @@ public class ScriptManager {
                 List<ScriptBlock> list =  instance.getBlocksOfClass(ScriptBlockEvent.class);
                 list.addAll(instance.getBlocksOfClass(ScriptBlockCommand.class));
                 list.addAll(instance.getBlocksOfClass(ScriptBlockPacket.class));
+                list.addAll(instance.getBlocksOfClass(ScriptBlockTimeLoop.class));
                 //System.out.println("# Of blocks : "+instance.getBlocks().size());
                 for (ScriptBlock s : list)  {
                     //System.out.println("Displaying : "+s.getHead());

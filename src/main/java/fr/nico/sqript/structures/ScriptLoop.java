@@ -226,8 +226,7 @@ public class ScriptLoop extends ScriptWrapper {
             //System.out.println("This.varHash : "+varHash);
             //System.out.println("typeArray is null : " + (typeArray == null) + " " + array.getClass() + " " + array.getMatchedIndex());
             if (index.getObject() < typeArray.getObject().size() && !broken) {
-                //System.out.println("Added variable "+sa+", now it contains : "+context.printVariables());
-                //System.out.println("Executing : "+((ScriptContainer)(wrapped)).subScripts.get(0).getClass().getSimpleName());
+                //System.out.println("Added variable "+varName+", now it contains : "+context.printVariables());
                 ScriptTypeAccessor sa = new ScriptTypeAccessor((ScriptType<?>) typeArray.getObject().get(index.getObject().intValue()), varHash);
                 context.put(sa);
                 return getWrapped();

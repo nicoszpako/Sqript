@@ -26,6 +26,14 @@ public class ScriptBlockTimeLoop extends ScriptBlock {
         this.head = head;
     }
 
+    @Override
+    public void displayTree(int i) {
+        String tab = "";
+        for (int j = 0; j < i; j++) tab += "|    ";
+        ScriptManager.log.info(tab+"ScriptBlockTimeLoop : "+delay +" ms :");
+        super.displayTree(i+1);
+    }
+
     public long getDelay(ScriptToken line) throws Exception {
         line.setText(line.getText().replaceAll("every\\s+", "").replaceAll(":", ""));
         if(line.getText().endsWith("server")){
@@ -46,6 +54,7 @@ public class ScriptBlockTimeLoop extends ScriptBlock {
         setRoot(scriptLineBlock.compile());
         //System.out.println("Putting in loop with delay : "+delay);
         ScriptTimer.loopIScript(this,delay);
+        getScriptInstance().registerBlock(this);
     }
 
 }

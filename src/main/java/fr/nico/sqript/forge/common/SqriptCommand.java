@@ -39,19 +39,19 @@ public class SqriptCommand extends CommandBase {
                     SqriptForge.channel.sendToAll(new ScriptReloadMessage());
                 }
                 long t = System.currentTimeMillis();
-                SqriptUtils.sendMessage("Reloading all scripts",sender);
+                SqriptUtils.sendMessage("Reloading all scripts on server side.",sender);
                 try{
                     ScriptManager.reload();
                 }catch(Throwable e){
                     if (e instanceof ScriptException.ScriptExceptionList) {
-                        SqriptUtils.sendError("\247cError while reloading the scripts : ",sender);
+                        SqriptUtils.sendError("\247cError while reloading the scripts on server side: ",sender);
                         for(Throwable ex : ((ScriptException.ScriptExceptionList) e).exceptionList){
                             SqriptUtils.sendError("\247c"+ex.getLocalizedMessage()+" (\2478"+ex.getStackTrace()[0]+"\247c)",sender);
                             ex.printStackTrace();
                         }
                     }
                     else{
-                        SqriptUtils.sendError("\247cError while reloading scripts, see stacktrace for more information.",sender);
+                        SqriptUtils.sendError("\247cError while reloading scripts on server side, see stacktrace for more information.",sender);
                         SqriptUtils.sendError("\247c"+e.getLocalizedMessage(),sender);
                         e.printStackTrace();
                     }
@@ -62,7 +62,7 @@ public class SqriptCommand extends CommandBase {
             else if(args[0].equalsIgnoreCase("generateDoc")){
                 try {
                     SqriptUtils.generateDoc();
-                    SqriptUtils.sendMessage("Generated documentation at scripts/doc.md",sender);
+                    SqriptUtils.sendMessage("Generated documentation at scripts/doc.json.",sender);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -189,6 +189,19 @@ public class ScriptExpressionParser implements INodeParser {
             validTrees.add(0, nodeExpression);
         }
 
+        if (!validTrees.isEmpty()) {
+            if (validTrees.size() == 1) {
+                //System.out.println(debugOffset()+"Returning : "+validTrees.get(0));
+                return validTrees.get(0);
+            } else {
+                if(validTypes.length == 1 && validTypes[0] == ScriptElement.class)
+                    return validTrees.get(0);
+
+                //System.out.println(debugOffset()+"Returning : "+result);
+                return new NodeSwitch(validTrees.toArray(new Node[0]));
+            }
+        }
+
         /*
          * We check if the expression contains operators, if so we split at each operator, and we return an ExprAlgebraicEvaluation expression.
          * /!\ In this case, we place Nodes in a list as if they were in an infixed notation, and then we later transform this with infixToRPN, and then with rpnToAST.
@@ -218,11 +231,16 @@ public class ScriptExpressionParser implements INodeParser {
                     } else if (token.getType() == EnumTokenType.RIGHT_PARENTHESIS) {
                         nodes.add(new NodeParenthesis(EnumTokenType.RIGHT_PARENTHESIS));
                     } else if (token.getType() == EnumTokenType.EXPRESSION) {
-                        Node node = parse(line.with(token.getExpressionString().trim()), compilationContext, new Class[]{ScriptElement.class});
-                        if (node == null) {
+                        try{
+                            Node node = parse(line.with(token.getExpressionString().trim()), compilationContext, new Class[]{ScriptElement.class});
+                            if (node == null) {
+                                return null;
+                            }
+                            nodes.add(node);
+                        }catch (Exception ignored){
                             return null;
                         }
-                        nodes.add(node);
+
                     } else if (token.getType() == EnumTokenType.OPERATOR) {
                         nodes.add(new NodeOperation(operators.get(addedOperators)));
                         addedOperators++;
@@ -250,19 +268,8 @@ public class ScriptExpressionParser implements INodeParser {
 
 
         }
-        //System.out.println("Returning null to " + line);
-        if (!validTrees.isEmpty()) {
-            if (validTrees.size() == 1) {
-                //System.out.println(debugOffset()+"Returning : "+validTrees.get(0));
-                return validTrees.get(0);
-            } else {
-                if(validTypes.length == 1 && validTypes[0] == ScriptElement.class)
-                    return validTrees.get(0);
 
-                //System.out.println(debugOffset()+"Returning : "+result);
-                return new NodeSwitch(validTrees.toArray(new Node[0]));
-            }
-        }
+        //System.out.println("Returning null to " + line);
         return null;
     }
 
