@@ -8,6 +8,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.types.primitive.TypeResource;
+import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -64,8 +65,6 @@ public class ExprItems extends ScriptExpression {
                         itemStack.setTagCompound((NBTTagCompound) parameters[2].getObject());
                     }
                 }
-                ItemStack itemStack = new ItemStack(item,amount);
-                itemStack.setTagCompound(tag);
                 return new TypeItem(itemStack);
 
         }

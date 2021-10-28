@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -140,6 +141,14 @@ public class ScriptEventHandler {
             if (ScriptManager.callEvent(new EvtRender.EvtOnDrawNameplate((EntityPlayer) event.getEntity()))) {
                 event.setCanceled(true);
             }
+        }
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void onRenderLiving(GuiOpenEvent event) {
+        if (ScriptManager.callEvent(new EvtGUI.EvtGUIOpen(event.getGui()))) {
+            event.setCanceled(true);
         }
     }
 

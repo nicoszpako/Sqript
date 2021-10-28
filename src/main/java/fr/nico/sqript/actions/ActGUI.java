@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiOptions;
 import net.minecraft.client.gui.GuiScreenServerList;
 import net.minecraft.client.gui.GuiWorldSelection;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Action(name = "GUI Actions",
         features = {@Feature(name = "Close GUI", description = "Close the current GUI.", examples = "close current gui", pattern = "close [the] [current] (GUI|gui)", side = Side.CLIENT),
@@ -20,6 +21,8 @@ import net.minecraft.client.gui.GuiWorldSelection;
         }
 )
 public class ActGUI extends ScriptAction {
+
+    @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
     @Override
     public void execute(ScriptContext context) throws ScriptException {
         switch (getMatchedIndex()){

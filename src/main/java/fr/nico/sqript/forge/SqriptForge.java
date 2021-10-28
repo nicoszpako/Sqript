@@ -204,6 +204,7 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : actions) {
             try {
+                System.out.println("Loading action : "+c.getClassName());
                 Class toRegister = Class.forName(c.getClassName());
                 Action e = (Action) toRegister.getAnnotation(Action.class);
                 ScriptManager.registerAction(toRegister, e.name(), e.priority(), e.features());
