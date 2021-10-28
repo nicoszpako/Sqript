@@ -1,5 +1,6 @@
 package fr.nico.sqript.types.primitive;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.meta.Primitive;
 import fr.nico.sqript.structures.ScriptElement;
 import net.minecraft.util.ResourceLocation;
@@ -12,6 +13,10 @@ import javax.annotation.Nullable;
         pattern = "(\\w+:[\\w./]+)"
 )
 public class TypeResource extends PrimitiveType<ResourceLocation> {
+
+    static {
+        ScriptManager.registerTypeParser(TypeString.class, TypeResource.class, a->new TypeResource(new ResourceLocation(((TypeString)(a)).getObject())), 0);
+    }
 
 
     @Nullable

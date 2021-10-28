@@ -1,5 +1,7 @@
 package fr.nico.sqript.expressions;
 
+import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
@@ -32,7 +34,7 @@ public class ExprTypes extends ScriptExpression{
             case 1:
                 ScriptType parameter_element = parameters[0];
                 TypeString parameter_string = (TypeString) parameters[1];
-                return (ScriptType) parameter_element.parse(parameter_string.getObject());
+                return ScriptManager.parse(parameter_element, ScriptDecoder.parseType(parameter_string.getObject()));
             case 2:
                 return new TypeBoolean(parameters[0] != null && parameters[0].getObject()!=null && !(parameters[0] instanceof TypeNull)) ;
             case 3:
