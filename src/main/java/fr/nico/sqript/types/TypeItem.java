@@ -29,10 +29,13 @@ public class TypeItem extends ScriptType<ItemStack> {
 
     @Override
     public boolean equals(Object o) {
+        //System.out.println("Comparing "+this+" with "+((ScriptType)(o)).getObject());
         if(o instanceof TypeItem){
             return ItemStack.areItemStacksEqual(((TypeItem)(o)).getObject(),getObject());
         }else if(o instanceof TypeResource){
             return ((TypeResource)(o)).getObject().equals(getObject().getItem().getRegistryName());
+        }else if(o instanceof TypeItemData){
+            return this.getObject().getItem() == ((TypeItemData)o).getObject();
         }
         return false;
     }

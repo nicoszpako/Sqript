@@ -10,8 +10,12 @@ import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,6 +33,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
                 @Feature(name = "Block player is looking at", description = "Returns the block the given player is looking at", examples = "block player's looking at", pattern = "block {player} is looking at", type = "block"),
                 @Feature(name = "Player check", description = "Check if the object is a player.", examples = "{player} is a player", pattern = "{player} is a player", type = "player"),
                 @Feature(name = "Player", description = "Returns the player playing on the client side", examples = "player", pattern = "player", type = "player", side = fr.nico.sqript.structures.Side.CLIENT),
+                @Feature(name = "Slot of player's inventory", description = "Returns the item in the given slot of a player's inventory", examples = "slot 4 of player's inventory", pattern = "slot {number} of {player}['s] inventory", type = "item"),
+                @Feature(name = "Player's gamemode", description = "Returns the current gamemode of a player", examples = "if gamemode of player is 0: #Checks if player is in survival mode", pattern = "{player}['s] gamemode", type = "number"),
         }
 )
 public class ExprPlayers extends ScriptExpression {
@@ -82,6 +88,24 @@ public class ExprPlayers extends ScriptExpression {
                 return new TypeBoolean(parameters[0].getObject() instanceof EntityPlayer);
             case 8:
                 return new TypePlayer(getClientPlayer());
+            case 9:
+                player = (EntityPlayer) parameters[1].getObject();
+                int slot = ((Double) parameters[0].getObject()).intValue();
+                return new TypeItem(player.inventory.getStackInSlot(slot));
+            case 10:
+                player = (EntityPlayer) parameters[0].getObject();
+                if (player instanceof EntityPlayerMP) {
+                    return new TypeNumber(((EntityPlayerMP) player).interactionManager.getGameType().getID());
+                } else {
+                    int gamemode = 0;
+                    if (player.capabilities.isCreativeMode)
+                        gamemode = 1;
+                    else if (!player.capabilities.allowEdit)
+                        gamemode = 2;
+                    if (player.isSpectator())
+                        gamemode = 3;
+                    return new TypeNumber(gamemode);
+                }
         }
         return null;
     }
@@ -93,12 +117,23 @@ public class ExprPlayers extends ScriptExpression {
                 EntityPlayer player = (EntityPlayer) parameters[0].getObject();
                 float health = ((TypeNumber) to).getObject().floatValue();
                 player.setHealth(health);
-                break;
+                return true;
             case 4:
                 player = (EntityPlayer) parameters[0].getObject();
                 float hunger = ((TypeNumber) to).getObject().floatValue();
                 player.getFoodStats().setFoodLevel((int) hunger);
-                break;
+                return true;
+            case 9:
+                player = (EntityPlayer) parameters[1].getObject();
+                int slot = ((Double) parameters[0].getObject()).intValue();
+                player.inventory.setInventorySlotContents(slot, (ItemStack) to.getObject());
+                player.inventory.markDirty();
+                return true;
+            case 10:
+                player = (EntityPlayer) parameters[0].getObject();
+                int newgamemode = ((Double) to.getObject()).intValue();
+                player.setGameType(GameType.getByID(newgamemode));
+                return true;
         }
         return false;
     }

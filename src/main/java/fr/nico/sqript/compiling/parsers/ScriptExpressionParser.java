@@ -31,7 +31,7 @@ public class ScriptExpressionParser implements INodeParser {
         //System.out.println();
         //System.out.println("Parsing : " + line + " wanting " + Arrays.toString(validTypes) + " from parent " + parent);
 
-        String expressionString = line.getText();
+        String expressionString = ScriptDecoder.trim(line.getText());
 
         /*
          * We check if this line can be parsed by a simple parser.
@@ -82,15 +82,6 @@ public class ScriptExpressionParser implements INodeParser {
 
                         }
 
-                        /*
-                        Handling greedy expressions as ExprItems
-                         */
-                        if (expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].isGreedy()) {
-                            //System.out.println("Checking for greedy : "+expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()]+" returning "+ expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType()+" " + "valid types are : "+Arrays.toString(validTypes));
-                            if (!isTypeStrictlyValid(expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType(), validTypes))
-                                continue;
-                        }
-
 
                         try {
 
@@ -136,7 +127,7 @@ public class ScriptExpressionParser implements INodeParser {
                                         if (!parameter.isEmpty()) {
                                             if (!ScriptDecoder.isParenthesageGood(parameter))
                                                 continue matchLoop;
-                                            //System.out.println(debugOffset()+" Parsing subargument : "+parameter);
+                                            //System.out.println("Parsing subargument : " + parameter);
                                             int index = Math.min(parameterIndex, expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()]
                                                     .getTypes().length - 1);
                                             Class[] validParameterTypes = new Class[expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()]
@@ -208,9 +199,25 @@ public class ScriptExpressionParser implements INodeParser {
             } else {
                 if (validTypes.length == 1 && validTypes[0] == ScriptElement.class)
                     return validTrees.get(0);
+                else {
+                    validTrees.removeIf(n -> {
+                        NodeExpression ne = (NodeExpression) n;
+                        /*
+                            Handling greedy expressions like ExprItems
+                        */
+                        ExpressionDefinition definition = ScriptManager.getDefinitionFromExpression(ne.getExpression().getClass());
+                        if(definition != null)
+                            if (definition.transformedPatterns[ne.getExpression().getMatchedIndex()].isGreedy()) {
+                                //System.out.println("Checking for greedy : " + definition.transformedPatterns[ne.getExpression().getMatchedIndex()] + " returning " + definition.transformedPatterns[ne.getExpression().getMatchedIndex()].getReturnType() + " " + "valid types are : " + Arrays.toString(validTypes));
+                                return !isTypeStrictlyValid(definition.transformedPatterns[ne.getExpression().getMatchedIndex()].getReturnType(), validTypes);
+                            }
+                        return false;
+                    });
 
-                //System.out.println(debugOffset()+"Returning : "+result);
-                return new NodeSwitch(validTrees.toArray(new Node[0]));
+                    //System.out.println(debugOffset()+"Returning : "+result);
+                    return new NodeSwitch(validTrees.toArray(new Node[0]));
+                }
+
             }
         }
 
@@ -235,7 +242,7 @@ public class ScriptExpressionParser implements INodeParser {
             List<ExpressionToken> tokens = Arrays.asList(operatorSplitResult);
             List<Node> nodes = new ArrayList<>();
             int addedOperators = 0;
-            //System.out.println("Tokens are : "+tokens);
+            //System.out.println("Tokens are : " + tokens);
             if (tokens.size() > 1) {
                 for (ExpressionToken token : tokens) {
                     if (token.getType() == EnumTokenType.LEFT_PARENTHESIS) {
@@ -267,6 +274,7 @@ public class ScriptExpressionParser implements INodeParser {
                     //System.out.println();
                     Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
                     //System.out.println("Final tree : "+finalTree);
+                    //System.out.println("Checking types for line : "+line+" as "+finalTree+" for "+Arrays.toString(validTypes));
                     if (validTypes != null && isTypeValid(finalTree.getReturnType(), validTypes)) {
                         //System.out.println("Returning compiled : " + finalTree);
                         return finalTree;

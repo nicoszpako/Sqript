@@ -24,6 +24,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -52,8 +53,8 @@ public class ScriptEventHandler {
     }
 
     @SubscribeEvent
-    public void onItemUse(PlayerEvent.ItemPickupEvent event) throws ScriptException {
-        ScriptManager.callEvent(new EvtPlayer.EvtOnItemPickup((EntityPlayer) event.player, event.getStack()));
+    public void onItemPickup(EntityItemPickupEvent event) throws ScriptException {
+        event.setCanceled(ScriptManager.callEvent(new EvtPlayer.EvtOnItemPickup(event.getEntityPlayer(), event.getItem().getItem())));
     }
 
     @SubscribeEvent

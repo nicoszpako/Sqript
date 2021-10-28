@@ -26,7 +26,7 @@ import java.util.Objects;
 @Expression(name = "Items Expressions",
         features = {
             @Feature(name = "Item NBT tag", description = "Returns the NBT tag of the given item.", examples = "item's nbt", pattern = "{item}'s nbt [tag]", type = "dictionary"),
-            @Feature(name = "Item", description = "Returns the item associated to the given resource.", examples = "minecraft:stick", pattern = "{resource} [with data {string}]", type = "itemdata", settable = false),
+            @Feature(name = "Item", description = "Returns the item associated to the given resource.", examples = "minecraft:stick", pattern = "[a] {resource} [with data {string}]", type = "itemdata", settable = false),
             @Feature(name = "Item stack", description = "Returns a stack of the given amount of the given item.", examples = "5 of minecraft:stick", pattern = "[(a|{+number})] [of] {itemdata} [with nbt {string}] [with metadata {number}]", type = "item", settable = false)
         }, priority = -2
 )

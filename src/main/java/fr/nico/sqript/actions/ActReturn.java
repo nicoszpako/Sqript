@@ -27,7 +27,6 @@ public class ActReturn extends ScriptAction {
                 return;
             case 1:
                 context.setReturnValue(TypeBoolean.TRUE());
-                System.out.println("Set return value to : "+context.getReturnValue());
                 return;
             case 2:
                 IScript p = super.parent;
@@ -58,13 +57,10 @@ public class ActReturn extends ScriptAction {
     //We definitely stop the current execution to return the context
     @Override
     public IScript getNext(ScriptContext context) throws ScriptException {
-        //If "return" or "cancel event"
-        switch(getMatchedIndex()){
-            case 0: case 1:
-                return null;
+        //"return"
+        if (getMatchedIndex() == 0) {
+            return null;
         }
-
-        //Else if "break"
         return super.getNext(context);
     }
 

@@ -236,10 +236,10 @@ public class ScriptDecoder {
 
     public static boolean containsOperator(String expression) {
         for (Pattern p : operators_pattern) {
-            //System.out.println("Checking "+test+" with "+ s );
             Matcher m = p.matcher(expression);
+            //System.out.println("Checking if "+expression+" matches "+p.pattern());
             if (m.find()) {
-                //System.out.println("Found for "+test+" with "+s);
+                //System.out.println("Found for "+expression+" with "+p.pattern());
                 return true;
             }
         }
@@ -329,9 +329,9 @@ public class ScriptDecoder {
             saved.add(f);
         }
         //System.out.println("b : " + expression);
-
+        String testedExpression = emptyDelimiters('(',')',expression);
         //Placing operators
-        while (containsOperator(expression)) {
+        while (containsOperator(testedExpression)) {
             for (ScriptOperator operator : ScriptManager.operators) {
                 String b = "", c = "(?![^(]*\\))";
                 if (operator.word) {
@@ -359,11 +359,12 @@ public class ScriptDecoder {
                         if (!isUnary) continue;
                     }
                     expression = expression.replaceFirst("\\s*" + Pattern.quote(operator.symbol) + "\\s*", "#{" + ScriptManager.operators.indexOf(operator) + "}");
+                    testedExpression = testedExpression.replaceFirst("\\s*" + Pattern.quote(operator.symbol) + "\\s*", "#{" + ScriptManager.operators.indexOf(operator) + "}");
+
                     //System.out.println(Pattern.quote(operator.symbol) + " expression: " + expression);
                     //System.out.println(operators.size());
                     operators.add(operator);
                     //System.out.println("e:"+expression);
-
                 }
             }
         }
@@ -1113,6 +1114,31 @@ public class ScriptDecoder {
                     if(e == end){
                         String s_start = pattern.substring(0,i);
                         String s_end = pattern.substring(j+1);
+                        //System.out.println("Stop at : "+i+" ->"+ j +" Start : "+s_start + " End : "+s_end);
+                        pattern = s_start+s_end;
+                        break;
+                    }
+                    j++;
+                }
+            }
+            i++;
+        }
+        //System.out.println("Result : "+pattern);
+        return pattern;
+    }
+
+    private static String emptyDelimiters(char start, char end, String pattern) {
+        //System.out.println("Removing delimiters : "+start+" -> "+end+" in : "+pattern);
+        int i = 0;
+        while(i < pattern.length()){
+            char c = pattern.charAt(i);
+            if (c == start){
+                int j = i+1;
+                while(j < pattern.length()){
+                    char e = pattern.charAt(j);
+                    if(e == end){
+                        String s_start = pattern.substring(0,i+1);
+                        String s_end = pattern.substring(j);
                         //System.out.println("Stop at : "+i+" ->"+ j +" Start : "+s_start + " End : "+s_end);
                         pattern = s_start+s_end;
                         break;

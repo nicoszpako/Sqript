@@ -3,6 +3,7 @@ package fr.nico.sqript.compiling;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
+import fr.nico.sqript.types.primitive.TypeBoolean;
 
 import java.util.Arrays;
 
@@ -44,6 +45,8 @@ public class NodeOperation extends Node {
             //System.out.println("Children : "+ Arrays.toString(getChildren()));
             if(ScriptManager.getBinaryOperation(getChildren()[0].getReturnType(), getChildren()[1].getReturnType(), operator) != null)
                 return ScriptManager.getBinaryOperation(getChildren()[0].getReturnType(), getChildren()[1].getReturnType(), operator).getReturnType();
+            else if (operator == ScriptOperator.OR || operator == ScriptOperator.AND || operator == ScriptOperator.NOT || operator == ScriptOperator.EQUAL || operator == ScriptOperator.NOT_EQUAL)
+                return TypeBoolean.class;
             else return ScriptElement.class;
         }
         return null;

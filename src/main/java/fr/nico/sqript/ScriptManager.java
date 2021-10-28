@@ -62,7 +62,7 @@ public class ScriptManager {
     public static Map<Class<? extends ScriptNativeFunction>, NativeDefinition> nativeFunctions = new HashMap<>();
 
     public static List<IScriptParser> parsers = new ArrayList<>();
-    
+
     //Commands
     public static List<ScriptBlockCommand> clientCommands = new ArrayList<>();
     public static List<ScriptBlockCommand> serverCommands = new ArrayList<>();
@@ -78,7 +78,7 @@ public class ScriptManager {
     public static boolean RELOADING = false;
 
     public static void registerBinaryOperation(ScriptOperator o, Class a, Class b, Class<? extends ScriptElement<?>> returnType, IOperation operation) {
-        registerBinaryOperation(o,a,b,returnType,operation,0);
+        registerBinaryOperation(o, a, b, returnType, operation, 0);
     }
 
     public static void registerBinaryOperation(ScriptOperator o, Class a, Class b, Class<? extends ScriptElement<?>> returnType, IOperation operation, int priority) {
@@ -94,15 +94,15 @@ public class ScriptManager {
 
     public static void registerUnaryOperation(ScriptOperator o, Class<? extends ScriptElement<?>> a, Class<? extends ScriptElement<?>> returnType, IOperation operation) {
         unaryOperations.computeIfAbsent(o, k -> new HashMap<>());
-        unaryOperations.get(o).put(a, new OperatorDefinition(operation, returnType,0));
+        unaryOperations.get(o).put(a, new OperatorDefinition(operation, returnType, 0));
     }
 
-    public static ScriptType parse(ScriptType from, Class toType){
-        if(toType == TypeString.class)
+    public static ScriptType parse(ScriptType from, Class toType) {
+        if (toType == TypeString.class)
             return new TypeString(from.toString());
-        else{
+        else {
             TypeParserDefinition typeParserDefinition = typeParsers.get(from.getClass()).get(toType);
-            if(typeParserDefinition != null)
+            if (typeParserDefinition != null)
                 return typeParserDefinition.getParser().parse(from);
             else return null;
         }
@@ -111,31 +111,34 @@ public class ScriptManager {
     public static OperatorDefinition getBinaryOperation(Class<? extends ScriptType> a, Class<? extends ScriptType> b, ScriptOperator o) {
         //System.out.println("Getting binary operation for : "+o+" from "+a+" to "+b);
         OperatorDefinition op = null;
-        if (binaryOperations.get(o).get(ScriptElement.class) != null) {
-            final OperatorDefinition def = binaryOperations.get(o).get(ScriptElement.class).get(b);
-            if(def != null)
-                op = binaryOperations.get(o).get(a).get(b);
-            //System.out.println("3)"+op+" for "+a +" "+b);
+        if (binaryOperations.get(o) != null) {
+            if (binaryOperations.get(o).get(ScriptElement.class) != null) {
+                final OperatorDefinition def = binaryOperations.get(o).get(ScriptElement.class).get(b);
+                if (def != null)
+                    op = binaryOperations.get(o).get(a).get(b);
+                //System.out.println("3)"+op+" for "+a +" "+b);
+            }
+            if (binaryOperations.get(o).get(a) != null) {
+                op = binaryOperations.get(o).get(a).get(ScriptElement.class);
+                //System.out.println("1)"+op+" for "+a +" "+b);
+            }
+            if (binaryOperations.get(o).get(a) != null) {
+                final OperatorDefinition def = binaryOperations.get(o).get(a).get(b);
+                if (def != null && (op == null || def.getPriority() > op.getPriority()))
+                    op = binaryOperations.get(o).get(a).get(b);
+                //System.out.println("2)"+op+" for "+a +" "+b);
+            }
         }
-        if (binaryOperations.get(o).get(a) != null) {
-            op = binaryOperations.get(o).get(a).get(ScriptElement.class);
-            //System.out.println("1)"+op+" for "+a +" "+b);
-        }
-        if (binaryOperations.get(o).get(a) != null) {
-            final OperatorDefinition def = binaryOperations.get(o).get(a).get(b);
-            if(def != null && (op == null || def.getPriority()>op.getPriority()))
-                op = binaryOperations.get(o).get(a).get(b);
-            //System.out.println("2)"+op+" for "+a +" "+b);
-        }
+
 
         //System.out.println("returning "+op+" for "+a +" "+b);
 
         return op;
     }
 
-    public static ScriptInstance getScriptFromName(String name){
-        for(ScriptInstance i : scripts){
-            if(i.getName().equals(name))return i;
+    public static ScriptInstance getScriptFromName(String name) {
+        for (ScriptInstance i : scripts) {
+            if (i.getName().equals(name)) return i;
         }
         return null;
     }
@@ -150,17 +153,17 @@ public class ScriptManager {
     }
 
 
-    public static ActionDefinition getDefinitionFromAction(Class<? extends ScriptAction> cls){
-        for(ActionDefinition actionDefinition : actions){
-            if(actionDefinition.getActionClass() == cls)
+    public static ActionDefinition getDefinitionFromAction(Class<? extends ScriptAction> cls) {
+        for (ActionDefinition actionDefinition : actions) {
+            if (actionDefinition.getActionClass() == cls)
                 return actionDefinition;
         }
         return null;
     }
 
-    public static ExpressionDefinition getDefinitionFromExpression(Class<? extends ScriptExpression> cls){
-        for(ExpressionDefinition expressionDefinition : expressions){
-            if(expressionDefinition.getExpressionClass() == cls)
+    public static ExpressionDefinition getDefinitionFromExpression(Class<? extends ScriptExpression> cls) {
+        for (ExpressionDefinition expressionDefinition : expressions) {
+            if (expressionDefinition.getExpressionClass() == cls)
                 return expressionDefinition;
         }
         return null;
@@ -170,7 +173,7 @@ public class ScriptManager {
 
     public static void registerExpression(Class<? extends ScriptExpression> exp, String name, int priority, Feature... features) throws Exception {
         expressions.add(new ExpressionDefinition(name, exp, priority, features));
-        expressions.sort((a,b)->b.getPriority()-a.getPriority());
+        expressions.sort((a, b) -> b.getPriority() - a.getPriority());
         log.debug("Registering expression : " + name + " (" + exp.getSimpleName() + ")");
     }
 
@@ -197,15 +200,15 @@ public class ScriptManager {
     public static void registerPrimitive(Class<? extends PrimitiveType<?>> type, String name, String... patterns) {
         log.debug("Registering primitive : " + name + " (" + type.getSimpleName() + ")");
         TypeDefinition primitiveDefinition = new TypeDefinition(name, new String[0], new String[]{""}, type);
-        primitiveDefinition.transformedPattern = new TransformedPattern(patterns[0],0,0, new ScriptParameterDefinition[][]{{new ScriptParameterDefinition(type,false)}});
+        primitiveDefinition.transformedPattern = new TransformedPattern(patterns[0], 0, 0, new ScriptParameterDefinition[][]{{new ScriptParameterDefinition(type, false)}});
         primitives.put(type, primitiveDefinition);
     }
 
 
     public static void registerLoop(Class<? extends ScriptEvent> cls, String name, String pattern, Side side, int priority) {
         log.debug("Registering loop : " + name + " (" + cls.getSimpleName() + ")");
-        loops.add(new LoopDefinition(pattern,cls,side,name,priority));
-        loops.sort((a,b)->b.getPriority()-a.getPriority());
+        loops.add(new LoopDefinition(pattern, cls, side, name, priority));
+        loops.sort((a, b) -> b.getPriority() - a.getPriority());
 
     }
 
@@ -219,11 +222,10 @@ public class ScriptManager {
         actions.add(new ActionDefinition(name, cls, priority, features));
     }
 
-    public static void registerBlock(Class<? extends ScriptBlock> cls, Feature feature, Feature[] fields,boolean reloadable) {
+    public static void registerBlock(Class<? extends ScriptBlock> cls, Feature feature, Feature[] fields, boolean reloadable) {
         log.debug("Registering block : " + feature.name() + " (" + cls.getSimpleName() + ")");
         blocks.add(new BlockDefinition(cls, feature, fields, reloadable));
     }
-
 
 
     public static void registerOperator(ScriptOperator operator) {
@@ -237,7 +239,7 @@ public class ScriptManager {
         operators.add(operator);
     }
 
-    public static void preInit(File scriptsFolder){
+    public static void preInit(File scriptsFolder) {
         log = LogManager.getLogger("Sqript");
         log.info("Sqript" + " version " + ScriptManager.version + " is running, by Nico-");
         scriptDir = scriptsFolder;
@@ -260,7 +262,7 @@ public class ScriptManager {
         try {
             ScriptManager.log.info("Loading scripts.");
             loadScripts(scriptDir);
-        }catch (Throwable e) {
+        } catch (Throwable e) {
             ScriptManager.log.error(e.getMessage());
         }
 
@@ -268,8 +270,6 @@ public class ScriptManager {
         SqriptForge.registerCommands();
 
     }
-
-
 
 
     public static void stop() {
@@ -306,21 +306,20 @@ public class ScriptManager {
     }
 
 
-
     private static void buildOperators() {
         for (ScriptOperator s : operators) {
-            if(s.word && !s.unary){
+            if (s.word && !s.unary) {
                 ScriptDecoder.operators_list.add("(\\)\\s+|^)" + Pattern.quote(s.symbol) + "(\\s+\\()");
-            }else if (s.word) {
+            } else if (s.word) {
                 ScriptDecoder.operators_list.add("(\\s+|^)" + Pattern.quote(s.symbol) + "(\\s+\\()");
-            }else{
+            } else {
                 ScriptDecoder.operators_list.add(Pattern.quote(s.symbol));
             }
-            ScriptDecoder.operators_pattern.add(Pattern.compile(ScriptDecoder.operators_list.get(ScriptDecoder.operators_list.size()-1)));
+            ScriptDecoder.operators_pattern.add(Pattern.compile(ScriptDecoder.operators_list.get(ScriptDecoder.operators_list.size() - 1)));
         }
     }
 
-    public static void handleError(ScriptToken line, Throwable throwable){
+    public static void handleError(ScriptToken line, Throwable throwable) {
         ScriptManager.log.error("Error while loading " + line.getScriptInstance().getName() + " : ");
         if (throwable instanceof ScriptException) {
             for (String s : throwable.getMessage().split("\n"))
@@ -332,43 +331,42 @@ public class ScriptManager {
 
     private static void loadFolder(File folder) throws Throwable {
         ScriptException.ScriptExceptionList list = new ScriptException.ScriptExceptionList();
-        if(FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
+        if (FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
             ScriptManager.loadResources();
-        for(File f : folder.listFiles()) {
-            if(f.isDirectory()){
+        for (File f : folder.listFiles()) {
+            if (f.isDirectory()) {
                 loadFolder(f);
-                if(f.getName().equalsIgnoreCase("sounds")){
+                if (f.getName().equalsIgnoreCase("sounds")) {
                     for (File file : f.listFiles()) {
-                        log.info("Registering sound : "+folder.getName()+":"+file.getName().split("\\.")[0]);
+                        log.info("Registering sound : " + folder.getName() + ":" + file.getName().split("\\.")[0]);
                         addSoundToJsonFile(new File(folder, "sounds.json"), folder.getName(), file.getName().split("\\.")[0]);
-                        SoundEvent event = new SoundEvent(new ResourceLocation(folder.getName()+":"+file.getName().split("\\.")[0]));
-                        event.setRegistryName(folder.getName()+":"+file.getName().split("\\.")[0]);
+                        SoundEvent event = new SoundEvent(new ResourceLocation(folder.getName() + ":" + file.getName().split("\\.")[0]));
+                        event.setRegistryName(folder.getName() + ":" + file.getName().split("\\.")[0]);
                         SqriptForge.soundEvents.add(event);
                     }
                 }
-            }
-            else if (f.toPath().toString().endsWith(".sq")) {
+            } else if (f.toPath().toString().endsWith(".sq")) {
                 ScriptLoader loader = new ScriptLoader(f);
-                try{
+                try {
                     ScriptInstance instance = loader.loadScript();
-                    instance.callEvent(new ScriptContext(GLOBAL_CONTEXT),new EvtOnScriptLoad(f));
+                    instance.callEvent(new ScriptContext(GLOBAL_CONTEXT), new EvtOnScriptLoad(f));
                     scripts.add(instance);
-                }catch(Exception e){
-                    if(e instanceof ScriptException.ScriptExceptionList) {
+                } catch (Exception e) {
+                    if (e instanceof ScriptException.ScriptExceptionList) {
                         list.exceptionList.addAll(((ScriptException.ScriptExceptionList) (e)).exceptionList);
-                    }else
+                    } else
                         throw e;
                 }
 
             }
         }
-        if(!list.exceptionList.isEmpty()){
+        if (!list.exceptionList.isEmpty()) {
             throw list;
         }
     }
 
     private static void addSoundToJsonFile(File file, String domain, String name) throws IOException {
-        if(!file.exists())
+        if (!file.exists())
             file.createNewFile();
 
         //Parsing file and adding new json object
@@ -377,15 +375,16 @@ public class ScriptManager {
 
         try {
             obj = parser.parse(Files.newBufferedReader(file.toPath())).getAsJsonObject();
-        } catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
 
         JsonObject newSound = new JsonObject();
         newSound.add("category", new JsonPrimitive("master"));
-        newSound.add("subtitle", new JsonPrimitive("subtitle."+name));
+        newSound.add("subtitle", new JsonPrimitive("subtitle." + name));
         JsonArray sounds = new JsonArray();
-        sounds.add(domain+":"+name);
-        newSound.add("sounds",sounds);
-        obj.add(name,newSound);
+        sounds.add(domain + ":" + name);
+        newSound.add("sounds", sounds);
+        obj.add(name, newSound);
 
         //Creating as instance of gson
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -401,17 +400,17 @@ public class ScriptManager {
 
         loadFolder(mainFolder);
 
-        if(FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
+        if (FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
             loadResources();
 
-        if(FULL_DEBUG)
-            for(ScriptInstance instance : scripts){
-                List<ScriptBlock> list =  instance.getBlocksOfClass(ScriptBlockEvent.class);
+        if (FULL_DEBUG)
+            for (ScriptInstance instance : scripts) {
+                List<ScriptBlock> list = instance.getBlocksOfClass(ScriptBlockEvent.class);
                 list.addAll(instance.getBlocksOfClass(ScriptBlockCommand.class));
                 list.addAll(instance.getBlocksOfClass(ScriptBlockPacket.class));
                 list.addAll(instance.getBlocksOfClass(ScriptBlockTimeLoop.class));
                 //System.out.println("# Of blocks : "+instance.getBlocks().size());
-                for (ScriptBlock s : list)  {
+                for (ScriptBlock s : list) {
                     //System.out.println("Displaying : "+s.getHead());
                     ScriptLoader.dispScriptTree(s, 0);
                 }
@@ -424,9 +423,9 @@ public class ScriptManager {
     public static void loadResources() throws IllegalAccessException {
         //System.out.println("Adding "+mainFolder+" to loaded resources.");
         ScriptResourceLoader resourceLoader = new ScriptResourceLoader();
-        Field defaultResourcePacksField = ObfuscationReflectionHelper.findField(Minecraft.getMinecraft().getClass(),"field_110449_ao");
+        Field defaultResourcePacksField = ObfuscationReflectionHelper.findField(Minecraft.getMinecraft().getClass(), "field_110449_ao");
         defaultResourcePacksField.setAccessible(true);
-        ((ArrayList)defaultResourcePacksField.get(Minecraft.getMinecraft())).add(resourceLoader);
+        ((ArrayList) defaultResourcePacksField.get(Minecraft.getMinecraft())).add(resourceLoader);
     }
 
 
@@ -434,8 +433,8 @@ public class ScriptManager {
     public static ScriptContext callEventAndGetContext(ScriptEvent event) throws ScriptException {
         ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
         context.setReturnValue(new ScriptTypeAccessor(TypeBoolean.FALSE(), ""));
-        for(ScriptInstance instance : scripts) {
-            context = instance.callEventAndGetContext(context,event);
+        for (ScriptInstance instance : scripts) {
+            context = instance.callEventAndGetContext(context, event);
         }
         return context;
     }
@@ -443,14 +442,14 @@ public class ScriptManager {
 
     //True if the event has been cancelled
     public static boolean callEvent(ScriptEvent event) {
-        Optional<EventDefinition> optional = ScriptManager.events.stream().filter(a->a.eventClass == event.getClass()).findFirst();
+        Optional<EventDefinition> optional = ScriptManager.events.stream().filter(a -> a.eventClass == event.getClass()).findFirst();
         EventDefinition eventDefinition = null;
-        if(optional.isPresent())
+        if (optional.isPresent())
             eventDefinition = optional.get();
         boolean result = false;
-        if( eventDefinition!=null && eventDefinition.getFeature().side().isStrictlyValid()) {
+        if (eventDefinition != null && eventDefinition.getFeature().side().isStrictlyValid()) {
             ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
-            if(RELOADING)
+            if (RELOADING)
                 return false;
             for (ScriptInstance script : scripts) {
                 if (RELOADING)
@@ -465,15 +464,15 @@ public class ScriptManager {
     }
 
     @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
-    public static void clearClientCommands(){
-        for(ScriptBlockCommand command : clientCommands){
+    public static void clearClientCommands() {
+        for (ScriptBlockCommand command : clientCommands) {
             ClientCommandHandler.instance.getCommands().remove(command.getName());
         }
         clientCommands.clear();
     }
 
-    public static void clearServerCommands(){
-        for(ScriptBlockCommand command : serverCommands){
+    public static void clearServerCommands() {
+        for (ScriptBlockCommand command : serverCommands) {
             FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().getCommands().remove(command.getName());
         }
         serverCommands.clear();
@@ -485,9 +484,9 @@ public class ScriptManager {
         scripts.clear();
         ScriptNetworkManager.clear();
 
-        if(FMLCommonHandler.instance().getEffectiveSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
+        if (FMLCommonHandler.instance().getEffectiveSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
             clearClientCommands();
-        if(FMLCommonHandler.instance().getEffectiveSide() == net.minecraftforge.fml.relauncher.Side.SERVER)
+        if (FMLCommonHandler.instance().getEffectiveSide() == net.minecraftforge.fml.relauncher.Side.SERVER)
             clearServerCommands();
 
         ScriptTimer.reload();

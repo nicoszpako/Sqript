@@ -76,7 +76,7 @@ public class ActDefinition extends ScriptAction {
                 }
             }
 
-            ScriptExpression to = ScriptDecoder.parse(line.with(parameters.get(1)), compileGroup);
+            ScriptExpression to = ScriptDecoder.parse(line.with(parameters.get(1)), compileGroup,new Class[]{arg.getReturnType()});
             if (to == null)
                 throw new ScriptException.ScriptUnknownExpressionException(line.with(parameters.get(1)));
             this.setParameters(Lists.newArrayList(arg, to));

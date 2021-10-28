@@ -82,7 +82,6 @@ public class ScriptInstance {
     }
 
     public ScriptContext callEventAndGetContext(ScriptContext context, ScriptEvent event) throws ScriptException {
-        //System.out.println("Trying to call event : "+event.getClass().getSimpleName());
         context.setReturnValue(new ScriptTypeAccessor(TypeBoolean.FALSE(), ""));
         //long t1 = //System.currentTimeMillis();
         for (ScriptBlock b : getBlocksOfClass(ScriptBlockEvent.class)) {
