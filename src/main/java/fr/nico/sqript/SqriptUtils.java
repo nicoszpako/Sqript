@@ -1,9 +1,10 @@
 package fr.nico.sqript;
 
 import com.google.gson.*;
+import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.*;
-import fr.nico.sqript.types.TypeArray;
-import fr.nico.sqript.types.TypeDictionary;
+import fr.nico.sqript.types.*;
+import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.command.ICommandSender;
@@ -237,5 +238,63 @@ public class SqriptUtils {
 
     public static void sendError(String message, ICommandSender sender){
         sender.sendMessage(new TextComponentString("\2478[\2473Sqript\2478]\247r ").appendSibling(new TextComponentString(message).setStyle(new Style().setColor(TextFormatting.RED))));
+    }
+
+    public static ScriptType<?> getTagFromTypeNBTTagCompound(NBTTagCompound tag, String key){
+        switch(tag.getTagId(key)){
+            case Constants.NBT.TAG_INT:
+                return new TypeNumber(tag.getInteger(key));
+            case Constants.NBT.TAG_FLOAT:
+                return new TypeNumber(tag.getFloat(key));
+            case Constants.NBT.TAG_DOUBLE:
+                return new TypeNumber(tag.getDouble(key));
+            case Constants.NBT.TAG_LONG:
+                return new TypeNumber(tag.getLong(key));
+            case Constants.NBT.TAG_SHORT:
+                return new TypeNumber(tag.getShort(key));
+            case Constants.NBT.TAG_BYTE:
+                return new TypeBoolean(tag.getByte(key) == 0 ? false : true);
+            case Constants.NBT.TAG_BYTE_ARRAY:
+                ArrayList list = new ArrayList();
+                for(byte b : tag.getByteArray(key)){
+                    list.add(new TypeNumber(b));
+                }
+                return new TypeArray(list);
+            case Constants.NBT.TAG_LONG_ARRAY:
+            case Constants.NBT.TAG_INT_ARRAY:
+                list = new ArrayList();
+                for(int b : tag.getIntArray(key)){
+                    list.add(new TypeNumber(b));
+                }
+                return new TypeArray(list);
+            case Constants.NBT.TAG_STRING:
+                return new TypeString(tag.getString(key));
+            case Constants.NBT.TAG_COMPOUND:
+                if(tag.getCompoundTag(key).hasKey("list")){
+                    try {
+                        TypeArray typeArray = new TypeArray();
+                        typeArray.read(tag.getCompoundTag(key));
+                        return typeArray;
+                    } catch (ScriptException e) {
+                        e.printStackTrace();
+                        return new TypeNull();
+                    }
+                } else {
+                    return new TypeNBTTagCompound(tag.getCompoundTag(key));
+                }
+        }
+        return new TypeNull();
+    }
+
+    public static void setTag(NBTTagCompound tag, String key, ScriptType value){
+        if(value instanceof TypeString){
+            tag.setString(key, (String) value.getObject());
+        } else if(value instanceof TypeBoolean){
+            tag.setBoolean(key, (Boolean) value.getObject());
+        } else if(value instanceof TypeNumber){
+            tag.setDouble(key, (Double) value.getObject());
+        } else if(value instanceof TypeArray){
+            tag.setTag(key, ((TypeArray) value).write(new NBTTagCompound()));
+        }
     }
 }
