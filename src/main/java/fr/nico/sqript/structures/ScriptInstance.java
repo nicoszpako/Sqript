@@ -13,10 +13,7 @@ import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ScriptInstance {
@@ -44,6 +41,7 @@ public class ScriptInstance {
     public boolean callEvent(ScriptContext context, ScriptEvent event) {
         //System.out.println("Calling event : "+event.getClass());
         try {
+            context.setReturnValue(new ScriptTypeAccessor(TypeBoolean.FALSE(), ""));
             ScriptContext returnContext = callEventAndGetContext(context, event);
             return (boolean) returnContext.getReturnValue().element.getObject();
         } catch (Exception e) {
@@ -82,13 +80,13 @@ public class ScriptInstance {
     }
 
     public ScriptContext callEventAndGetContext(ScriptContext context, ScriptEvent event) throws ScriptException {
-        context.setReturnValue(new ScriptTypeAccessor(TypeBoolean.FALSE(), ""));
         //long t1 = //System.currentTimeMillis();
         for (ScriptBlock b : getBlocksOfClass(ScriptBlockEvent.class)) {
             ScriptBlockEvent t = (ScriptBlockEvent) b;
             //System.out.println("Checking for class : "+t.eventType+", are they equal : "+(t.eventType == event.getClass())+" is check : "+event.check(t.getParameters(),t.getMarks())+" is side ok: "+t.side.isEffectivelyValid());
             if (t.eventType == event.getClass() && event.check(t.getParameters(), t.getMarks()) && t.side.isEffectivelyValid()) {
-                //System.out.println("Calling event : "+event.getClass().getSimpleName());
+                //System.out.println("CHECKED");
+                //System.out.println("Calling event : "+event.getClass().getSimpleName()+" with accessors "+ Arrays.toString(event.getAccessors()));
                 ScriptClock clock = new ScriptClock(context);
                 context.wrap(event.getAccessors());
                 clock.start(t);

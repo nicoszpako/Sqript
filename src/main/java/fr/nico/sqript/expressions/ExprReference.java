@@ -49,7 +49,7 @@ public class ExprReference extends ScriptExpression {
             //System.out.println("Context vars are : "+varContext.printVariables());
             varHash = var.hashCode();
             if (varHash == 0)
-                varHash = varContext.getHash(line.getText());
+                varHash = varContext.getHash(line.getText(), false);
             if(varContext.getAccessor(varHash) != null)
                 return varContext.getVariable(varHash);
             else return new TypeNull();
@@ -65,6 +65,7 @@ public class ExprReference extends ScriptExpression {
 
     @Override
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) throws ScriptException {
+        //System.out.println("Setting ExprReference");
         ScriptContext varContext = context;
         if (global) {
             varContext = ScriptManager.GLOBAL_CONTEXT;
@@ -74,7 +75,7 @@ public class ExprReference extends ScriptExpression {
 
             varHash = var.hashCode();
             if (varHash == 0)
-                varHash = varContext.getHash(line.getText());
+                varHash = varContext.getHash(line.getText(), false);
             ScriptTypeAccessor typeAccessor = varContext.getAccessor(varHash);
             if(typeAccessor != null)
                 typeAccessor.setElement(to);
@@ -86,10 +87,10 @@ public class ExprReference extends ScriptExpression {
             //System.out.println("Setting var hash for : "+var+" : "+var.hashCode()+" ("+(typeAccessor == null)+")");
             //System.out.println("Context vars are : "+context.printVariables());
         } else {
-            //System.out.println("Setting reference for : "+line.text+", its null ? : "+(context.get(varHash)==null));
+            //System.out.println("Setting reference for : "+line.getText()+", its null ? : "+(context.getAccessor(varHash)==null));
             //System.out.println("varHash : "+this.varHash);
             //System.out.println("Context vars are : "+context.printVariables());
-            //System.out.println("Result is null : "+(context.get(this.varHash)==null));
+            //System.out.println("Result is null : "+(context.getAccessor(this.varHash)==null));
             ScriptTypeAccessor typeAccessor = varContext.getAccessor(varHash);
             if(typeAccessor != null)
                 typeAccessor.setElement(to);

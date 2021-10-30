@@ -8,9 +8,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiOptions;
-import net.minecraft.client.gui.GuiScreenServerList;
-import net.minecraft.client.gui.GuiWorldSelection;
+import net.minecraft.client.gui.*;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Action(name = "GUI Actions",
@@ -36,7 +34,7 @@ public class ActGUI extends ScriptAction {
                 Minecraft.getMinecraft().displayGuiScreen(new GuiWorldSelection(Minecraft.getMinecraft().currentScreen));
                 break;
             case 3:
-                Minecraft.getMinecraft().displayGuiScreen(new GuiScreenServerList(Minecraft.getMinecraft().currentScreen, Minecraft.getMinecraft().getCurrentServerData()));
+                Minecraft.getMinecraft().displayGuiScreen(new GuiMultiplayer(Minecraft.getMinecraft().currentScreen));
                 break;
         }
     }

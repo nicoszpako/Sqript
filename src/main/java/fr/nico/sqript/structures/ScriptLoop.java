@@ -197,6 +197,7 @@ public class ScriptLoop extends ScriptWrapper {
                 indexAccessor.setPattern(Pattern.compile(Pattern.quote(varName)+"'s index"));
                 indexAccessor.setKey(varName+"'s index");
                 indexAccessor.setHash((varName+"'s index").hashCode());
+                indexAccessor.setReturnType(TypeNumber.class);
                 compileGroup.declaredVariables.add(indexAccessor);
                 return;
             }
@@ -206,7 +207,7 @@ public class ScriptLoop extends ScriptWrapper {
 
         @Override
         public IScript getNext(ScriptContext context) throws ScriptException {
-            if (context.getVariable(varName+"'s index") == null) {
+            if (context.getVariable(varName+"'s index", true) == null) {
                 ScriptTypeAccessor indexAccessor = new ScriptTypeAccessor();
                 indexAccessor.setElement(new TypeNumber(-1));
                 indexAccessor.setPattern(Pattern.compile(Pattern.quote(varName)+"'s index"));
@@ -214,13 +215,14 @@ public class ScriptLoop extends ScriptWrapper {
                 indexAccessor.setHash((varName+"'s index").hashCode());
                 context.put(indexAccessor);
             }
-            TypeNumber index = (TypeNumber) context.getVariable(varName+"'s index");
+            TypeNumber index = (TypeNumber) context.getVariable(varName+"'s index", true);
+
             index.setObject(index.getObject() + 1);
-            //System.out.println("o:"+index.getObject());
+            //System.out.println("o for "+varName+" :"+index.getObject());
             typeArray = (TypeArray) array.get(context);
 
             //System.out.println(typeArray+" "+index.getObject().intValue()+" "+varHash);
-            if (context.getVariable(varHash) == null) {
+            if (context.getVariable(varHash, true) == null) {
                 context.put(new ScriptTypeAccessor(typeArray.get(index.getObject().intValue()), varHash));
             }
             //System.out.println("This.varHash : "+varHash);
@@ -232,7 +234,7 @@ public class ScriptLoop extends ScriptWrapper {
                 return getWrapped();
             } else {
                 //We exit the loop, we clear the data.
-                context.remove(varHash);
+                index.setObject(-1d);
             }
             broken = false;
             return super.getNext(context);

@@ -93,11 +93,16 @@ public class ExprCompiledExpression extends ScriptExpression {
                 ScriptOperator operator = nodeOperation.getOperator();
                 Node merged = new NodeOperation(operator);
                 //System.out.println("treeStack:" + treeStack);
+                Stack<Node> toMerge = new Stack<>();
                 for (int i = 0; i < (operator.unary ? 1 : 2); i++) {
                     if (!treeStack.empty())
-                        merged.addChild(treeStack.remove(0));
+                        toMerge.add(treeStack.pop());
                     else
-                        merged.addChild(null);
+                        toMerge.add(null);
+                }
+                int j = toMerge.size();
+                for (int i = 0; i < j; i++) {
+                    merged.addChild(toMerge.pop());
                 }
                 treeStack.push(merged);
             }

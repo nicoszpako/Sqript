@@ -82,10 +82,10 @@ public class ScriptBlockPacket extends ScriptFunctionalBlock {
         ScriptNetworkManager.registerMessage(this);
 
         //Compilation des fields "client" et "server"
-        if(fieldDefined("client")){
+        if(fieldDefined("client") && Side.CLIENT.isEffectivelyValid()){
             client = getSubBlock("client").compile();
         }
-        if(fieldDefined("server")){
+        if(fieldDefined("server") && Side.SERVER.isEffectivelyValid()){
             ScriptCompilationContext compilationContext = new ScriptCompilationContext();
             compilationContext.add("(player|sender)", TypePlayer.class);
             server = getSubBlock("server").compile(compilationContext);

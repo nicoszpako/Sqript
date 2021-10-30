@@ -64,6 +64,8 @@ public class ExprPlayers extends ScriptExpression {
                 }
             case 1:
                 TypeString s = (TypeString) parameters[0];
+                if(s.getObject() == null)
+                    return new TypeNull();
                 return new TypePlayer(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(s.getObject()));
             case 2:
                 //System.out.println(parameters[0]);
@@ -156,6 +158,7 @@ public class ExprPlayers extends ScriptExpression {
             case 10:
                 player = (EntityPlayer) parameters[1].getObject();
                 int slot = ((Double) parameters[0].getObject()).intValue();
+                //System.out.println("Setting slot : "+slot+" of "+player+" to "+to);
                 player.inventory.setInventorySlotContents(slot, (ItemStack) to.getObject());
                 player.inventory.markDirty();
                 return true;

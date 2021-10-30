@@ -26,7 +26,10 @@ public class ActReturn extends ScriptAction {
                 context.setReturnValue(getParameters().get(0).get(context));
                 return;
             case 1:
+                //System.out.println("Setting return value to true : ");
+                //System.out.println("Context return are "+context.getReturnValue());
                 context.setReturnValue(TypeBoolean.TRUE());
+                //System.out.println("Context return are "+context.getReturnValue());
                 return;
             case 2:
                 IScript p = super.parent;

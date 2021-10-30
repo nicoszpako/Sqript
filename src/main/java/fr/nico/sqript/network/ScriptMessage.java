@@ -5,6 +5,7 @@ import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.blocks.ScriptBlockPacket;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.structures.ScriptClock;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.TypePlayer;
@@ -101,12 +102,14 @@ public class ScriptMessage implements IMessage {
             }
             try {
                 if(ctx.side == Side.CLIENT){
-                    System.out.println("Executing client for  "+m.name);
-                    System.out.println("Content is : "+m.getClient().getLine());
-                    m.getClient().execute(context);
+                    //System.out.println("Executing client for  "+m.name);
+                    //System.out.println("Content is : "+m.getClient().getLine());
+                    ScriptClock clock = new ScriptClock(context);
+                    clock.start(m.getClient());
                 }else {
                     context.put(new ScriptTypeAccessor(new TypePlayer(ctx.getServerHandler().player),"(player|sender)"));
-                    m.getServer().execute(context);
+                    ScriptClock clock = new ScriptClock(context);
+                    clock.start(m.getServer());
                 }
             } catch (ScriptException e) {
                 e.printStackTrace();

@@ -30,7 +30,7 @@ import java.util.Objects;
         features = {
             @Feature(name = "Item NBT tag", description = "Returns the NBT tag of the given item.", examples = "item's nbt", pattern = "{item}'s nbt [tag]", type = "nbttagcompound"),
             @Feature(name = "Item", description = "Returns the item associated to the given resource.", examples = "minecraft:stick", pattern = "{resource} [with data {string}]", type = "itemdata", settable = false),
-            @Feature(name = "Item stack", description = "Returns a stack of the given amount of the given item.", examples = "5 of minecraft:stick", pattern = "[(a|{+number})] [of] {itemdata} [with nbt {string|nbttagcompound}] [with metadata {number}]", type = "item", settable = false)
+            @Feature(name = "Item stack", description = "Returns a stack of the given amount of the given item.", examples = "5 of minecraft:stick", pattern = "[(a|{+number} of)] {itemdata} [with nbt {string|nbttagcompound}] [with metadata {number}]", type = "item", settable = false)
         }, priority = -2
 )
 public class ExprItems extends ScriptExpression {
@@ -52,7 +52,8 @@ public class ExprItems extends ScriptExpression {
             case "Item stack":
                 int amount = getParameterOrDefault(parameters[0], 1d).intValue();
                 Item item = (Item) parameters[1].getObject();
-                ItemStack itemStack = new ItemStack(item, amount);
+                int metadata = getParameterOrDefault(parameters[3], 0d).intValue();
+                ItemStack itemStack = new ItemStack(item, amount, metadata);
                 if(parameters[2] != null) {
                     if(parameters[2] instanceof TypeString) {
                         String data = (String) parameters[2].getObject();

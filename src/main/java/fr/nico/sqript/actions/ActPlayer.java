@@ -7,6 +7,7 @@ import fr.nico.sqript.types.TypeItem;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,7 +21,7 @@ import java.util.Objects;
 
 @Action(name = "Player Actions",
         features = {
-            @Feature(name = "Teleport player", description = "Teleports a player to a given location.", examples = "teleport player at [10,25,20]", pattern = "teleport {player} to {array}"),
+            @Feature(name = "Teleport player", description = "Teleports a player to a given location.", examples = "teleport player at [10,25,20]", pattern = "teleport {player} (to|at) {array}"),
             @Feature(name = "Give item to player", description = "Gives an item to a player.", examples = "give 1 minecraft:diamond_sword to player\n", pattern = "give {item} to {player}"),
             @Feature(name = "Kick player", description = "Kicks a player from the server.", examples = "kick player with message \"You've been kicked for cheating\"", pattern = "kick {player} [with message {string}]")
         }
@@ -33,7 +34,7 @@ public class ActPlayer extends ScriptAction {
             case 0:
                 EntityPlayer player = (EntityPlayer) getParameters().get(0).get(context).getObject();
                 ArrayList pos = (ArrayList) getParameters().get(1).get(context).getObject();
-                player.setPositionAndUpdate((double)pos.get(0), (double)pos.get(1),(double) pos.get(2));
+                player.setPositionAndUpdate(((TypeNumber)pos.get(0)).getObject(), ((TypeNumber)pos.get(1)).getObject(),((TypeNumber)pos.get(2)).getObject());
                 return;
             case 1:
                 ScriptType param = getParameter(1).get(context);

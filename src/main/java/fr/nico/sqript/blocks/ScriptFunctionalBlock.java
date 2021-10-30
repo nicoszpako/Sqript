@@ -22,14 +22,11 @@ public class ScriptFunctionalBlock extends ScriptBlock {
      * Execute the IScript associated to the function and return the value
      */
     public ScriptType get(ScriptContext context, ScriptType<?>[] parameters) throws ScriptException {
-        //System.out.println("Launching function "+name+" with parameters : "+ Arrays.toString(parameters));
         ScriptContext functionContext = new ScriptContext(context);
         functionContext.setReturnValue(new ScriptTypeAccessor(null, ""));
 
         wrapParametersInContext(functionContext, parameters);
-        //System.out.println("Passed context : "+functionContext.printVariables());
-        //System.out.println("Root : "+getRoot().getClass().getSimpleName()+" "+getRoot().getLine()+" "+getRoot());
-        //System.out.println("Script tree of wrapped is : ");
+
         //ScriptLoader.dispScriptTree(wrapped,0);
         ScriptClock clock = new ScriptClock(functionContext);
         clock.start(getRoot());

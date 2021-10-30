@@ -32,6 +32,8 @@ public class ActDefinition extends ScriptAction {
         final ScriptType<?> a = first.get(context);
         final ScriptType<?> b = second.get(context);
         //System.out.println("Executing line : "+getLine()+" with index:  "+getMatchedIndex());
+        //System.out.println("a: "+a);
+        //System.out.println("b: "+b);
         switch (getMatchedIndex()) {
             case 0:
                 if (!second.set(context, ScriptManager.getBinaryOperation(b.getClass(), a.getClass(), ScriptOperator.ADD).getOperation().operate(b, a))) {

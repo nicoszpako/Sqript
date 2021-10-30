@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
                 description = "Import a bunch of functions from another script file.",
                 examples = "import:\n" +
                         "    * from my_script",
-                regex = "^imports:\\s*")
+                regex = "^import(?:s)?:\\s*")
         )
 public class ScriptBlockImport extends ScriptBlock {
 

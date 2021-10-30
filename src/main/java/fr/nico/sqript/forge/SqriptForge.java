@@ -5,6 +5,7 @@ import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.blocks.ScriptBlockCommand;
 import fr.nico.sqript.events.EvtFML;
 import fr.nico.sqript.events.EvtOnWindowSetup;
+import fr.nico.sqript.forge.capabilities.CapabilityHandler;
 import fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock;
 import fr.nico.sqript.forge.common.ScriptEventHandler;
 import fr.nico.sqript.forge.common.SqriptCommand;
@@ -14,6 +15,7 @@ import fr.nico.sqript.network.ScriptNetworkManager;
 import fr.nico.sqript.network.ScriptReloadMessage;
 import fr.nico.sqript.network.ScriptSyncDataMessage;
 import fr.nico.sqript.meta.*;
+import net.minecraft.client.audio.SoundRegistry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.DefaultStateMapper;
 import net.minecraft.item.Item;
@@ -55,6 +57,8 @@ public class SqriptForge {
     public static ArrayList<SoundEvent> soundEvents = new ArrayList<>();
     public static ArrayList<ScriptItem> scriptItems = new ArrayList<>();
     public static ArrayList<Item> items = new ArrayList<>();
+
+    private static CapabilityHandler capabilityHandler = new CapabilityHandler();
 
     @Mod.EventHandler
     public static void serverStartEvent(FMLServerStartingEvent event) {
@@ -204,7 +208,7 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : actions) {
             try {
-                System.out.println("Loading action : "+c.getClassName());
+                //System.out.println("Loading action : "+c.getClassName());
                 Class toRegister = Class.forName(c.getClassName());
                 Action e = (Action) toRegister.getAnnotation(Action.class);
                 ScriptManager.registerAction(toRegister, e.name(), e.priority(), e.features());
@@ -218,6 +222,7 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : blocks) {
             try {
+                //System.out.println("Loading block : "+c.getClassName());
                 Class toRegister = Class.forName(c.getClassName());
                 Block e = (Block) toRegister.getAnnotation(Block.class);
                 ScriptManager.registerBlock(toRegister, e.feature(), e.fields(), e.reloadable());
@@ -273,6 +278,7 @@ public class SqriptForge {
         channel.registerMessage(ScriptReloadMessage.ScriptMessageHandler.class, ScriptReloadMessage.class, 2, Side.SERVER);
 
         ScriptNetworkManager.init();
+        capabilityHandler.preInit();
 
         MinecraftForge.EVENT_BUS.register(new ScriptEventHandler());
         ScriptManager.callEvent(new EvtFML.EvtOnPreInit());
@@ -305,7 +311,7 @@ public class SqriptForge {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<net.minecraft.block.Block> event) {
         for (net.minecraft.block.Block e : blocks) {
-            System.out.println("Registering : "+e.getRegistryName());
+            //System.out.println("Registering : "+e.getRegistryName());
             event.getRegistry().register(e);
         }
     }
@@ -313,7 +319,7 @@ public class SqriptForge {
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
         for (SoundEvent e : soundEvents) {
-            System.out.println("Registering sound in handler : "+e.getRegistryName());
+            //System.out.println("Registering sound in handler : "+e.getRegistryName());
             event.getRegistry().register(e);
         }
     }

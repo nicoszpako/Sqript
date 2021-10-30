@@ -89,7 +89,7 @@ public class ScriptManager {
 
     public static void registerTypeParser(Class from, Class to, ITypeParser parser, int priority) {
         typeParsers.computeIfAbsent(from, k -> new HashMap<>());
-        typeParsers.get(from).put(to, new TypeParserDefinition(priority, parser));
+        typeParsers.get(from).put(to, new TypeParserDefinition(priority, parser, from, to));
     }
 
     public static void registerUnaryOperation(ScriptOperator o, Class<? extends ScriptElement<?>> a, Class<? extends ScriptElement<?>> returnType, IOperation operation) {
@@ -97,11 +97,32 @@ public class ScriptManager {
         unaryOperations.get(o).put(a, new OperatorDefinition(operation, returnType, 0));
     }
 
+    public static TypeParserDefinition getParser(Class c1, Class c2){
+        TypeParserDefinition a = null;
+        TypeParserDefinition b = null;
+        if(ScriptManager.typeParsers.get(c1)!=null)
+            a = ScriptManager.typeParsers.get(c1).get(c2);
+        if(ScriptManager.typeParsers.get(c2)!=null)
+            b = ScriptManager.typeParsers.get(c2).get(c1);
+        if (b == null && a == null) {
+            return null;
+        }
+        if(b != null && a != null){
+            if(b.getPriority()>a.getPriority())
+                return b;
+            else return a;
+        }
+        if(b == null)
+            return a;
+        else
+            return b;
+    }
+
     public static ScriptType parse(ScriptType from, Class toType) {
         if (toType == TypeString.class)
             return new TypeString(from.toString());
         else {
-            TypeParserDefinition typeParserDefinition = typeParsers.get(from.getClass()).get(toType);
+            TypeParserDefinition typeParserDefinition = getParser(from.getClass(),toType);
             if (typeParserDefinition != null)
                 return typeParserDefinition.getParser().parse(from);
             else return null;
@@ -128,11 +149,14 @@ public class ScriptManager {
                     op = binaryOperations.get(o).get(a).get(b);
                 //System.out.println("2)"+op+" for "+a +" "+b);
             }
+            TypeParserDefinition typeParserDefinition = getParser(a,b);
+            if(typeParserDefinition != null)
+                if (binaryOperations.get(o).get(typeParserDefinition.getFrom()) != null) {
+                    if((op = binaryOperations.get(o).get(typeParserDefinition.getFrom()).get(typeParserDefinition.getTo())) != null){
+                        return op;
+                    }
+                }
         }
-
-
-        //System.out.println("returning "+op+" for "+a +" "+b);
-
         return op;
     }
 
@@ -334,8 +358,18 @@ public class ScriptManager {
         if (FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
             ScriptManager.loadResources();
         for (File f : folder.listFiles()) {
+            //System.out.println("Looping : "+f.getName()+" in : "+ Arrays.toString(folder.listFiles()));
             if (f.isDirectory()) {
-                loadFolder(f);
+                try {
+                    loadFolder(f);
+                } catch (Exception e) {
+                    if (e instanceof ScriptException.ScriptExceptionList) {
+                        list.exceptionList.addAll(((ScriptException.ScriptExceptionList) (e)).exceptionList);
+                    } else {
+                        //System.out.println("Throwing exception.");
+                        throw e;
+                    }
+                }
                 if (f.getName().equalsIgnoreCase("sounds")) {
                     for (File file : f.listFiles()) {
                         log.info("Registering sound : " + folder.getName() + ":" + file.getName().split("\\.")[0]);
@@ -354,8 +388,10 @@ public class ScriptManager {
                 } catch (Exception e) {
                     if (e instanceof ScriptException.ScriptExceptionList) {
                         list.exceptionList.addAll(((ScriptException.ScriptExceptionList) (e)).exceptionList);
-                    } else
+                    } else {
+                        //System.out.println("Throwing exception.");
                         throw e;
+                    }
                 }
 
             }
@@ -397,8 +433,12 @@ public class ScriptManager {
     }
 
     public static void loadScripts(File mainFolder) throws Throwable {
-
-        loadFolder(mainFolder);
+        ScriptException.ScriptExceptionList elist = new ScriptException.ScriptExceptionList();
+        try{
+            loadFolder(mainFolder);
+        }catch(ScriptException.ScriptExceptionList e){
+            elist = e;
+        }
 
         if (FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
             loadResources();
@@ -409,6 +449,7 @@ public class ScriptManager {
                 list.addAll(instance.getBlocksOfClass(ScriptBlockCommand.class));
                 list.addAll(instance.getBlocksOfClass(ScriptBlockPacket.class));
                 list.addAll(instance.getBlocksOfClass(ScriptBlockTimeLoop.class));
+                list.addAll(instance.getBlocksOfClass(ScriptBlockFunction.class));
                 //System.out.println("# Of blocks : "+instance.getBlocks().size());
                 for (ScriptBlock s : list) {
                     //System.out.println("Displaying : "+s.getHead());
@@ -417,6 +458,8 @@ public class ScriptManager {
                 log.info("");
             }
         log.info("All scripts are loaded");
+        if(!elist.exceptionList.isEmpty())
+            throw elist;
     }
 
     @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
@@ -490,9 +533,18 @@ public class ScriptManager {
             clearServerCommands();
 
         ScriptTimer.reload();
-        loadScripts(scriptDir);
+        ScriptException.ScriptExceptionList elist = new ScriptException.ScriptExceptionList();
+        try{
+            loadScripts(scriptDir);
+        }catch(ScriptException.ScriptExceptionList e){
+            elist = e;
+        }
+
         SqriptForge.registerCommands();
 
         RELOADING = false;
+
+        if(!elist.exceptionList.isEmpty())
+            throw elist;
     }
 }

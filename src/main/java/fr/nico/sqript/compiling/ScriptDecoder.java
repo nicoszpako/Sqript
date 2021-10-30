@@ -103,6 +103,7 @@ public class ScriptDecoder {
 
         parsers.add((line, compilationContext, type) -> {
             //Check if it is a reference to an accessor or an other element that can be parsed
+            //System.out.println("Checking accessors for line : "+line);
             ScriptTypeAccessor h = compilationContext.getAccessorFor(line.getText());
             if (h != null) {
                 Class returnType = h.getReturnType();
@@ -114,6 +115,7 @@ public class ScriptDecoder {
                     s.setLine((ScriptToken) line.clone());
                     s.setVarHash(h.getHash());
                     s.setReturnType(returnType);
+                    //System.out.println("Hash is : "+h.getHash());
                     return new NodeExpression(s);
                 }
             }
@@ -149,7 +151,6 @@ public class ScriptDecoder {
 
     }
 
-
     public static IScript parseLine(ScriptToken line, ScriptCompilationContext compileGroup) throws Exception {
 
         IScript script = parseLoop(line, compileGroup); //On rentre dans un bloc
@@ -157,10 +158,11 @@ public class ScriptDecoder {
             script = parseAction(line, compileGroup);//Si c'est pas une boucle c'est une action
 
         //Custom parsers
-        for (IScriptParser parser : ScriptManager.parsers) {
-            if ((script = parser.parse(line, compileGroup)) != null)
-                return script;
-        }
+        if(script == null)
+            for (IScriptParser parser : ScriptManager.parsers) {
+                if ((script = parser.parse(line, compileGroup)) != null)
+                    return script;
+            }
         return script;
     }
 
@@ -312,7 +314,7 @@ public class ScriptDecoder {
         return expression;
     }
 
-    public static ExtractedOperatorsResult buildOperators(String expression) {
+    public static String buildOperators(String expression) {
         List<String> saved = new ArrayList<>();
         List<ScriptOperator> operators = new ArrayList<>();
         //System.out.println("Building operators for : " + expression);
@@ -330,6 +332,9 @@ public class ScriptDecoder {
         }
         //System.out.println("b : " + expression);
         String testedExpression = emptyDelimiters('(',')',expression);
+        testedExpression = emptyDelimiters('[',']',testedExpression);
+        testedExpression = emptyDelimiters('{','}',testedExpression);
+        testedExpression = emptyDelimiters('<','>',testedExpression);
         //Placing operators
         while (containsOperator(testedExpression)) {
             for (ScriptOperator operator : ScriptManager.operators) {
@@ -381,7 +386,7 @@ public class ScriptDecoder {
             //System.out.println("Transformed is : "+expression);
         }
         //System.out.println("Built : " + expression);
-        return new ExtractedOperatorsResult(expression, operators.toArray(new ScriptOperator[0]));
+        return expression;
     }
 
     public static ScriptExpression parse(ScriptToken expressionToken, ScriptCompilationContext compilationContext) throws ScriptException {
@@ -390,7 +395,9 @@ public class ScriptDecoder {
 
     public static ScriptExpression parse(ScriptToken expressionToken, ScriptCompilationContext compilationContext, Class[] requiredType) throws ScriptException {
         Node node = parseExpressionTree(expressionToken, compilationContext, requiredType);
+        //System.out.println("Result : "+node);
         if(node != null){
+            //System.out.println("Parsed "+expressionToken+" as node : "+node);
             if(node.getChildren() == null || node.getChildren().length == 0){
                 return ((NodeExpression)node).getExpression();
             }
@@ -543,12 +550,14 @@ public class ScriptDecoder {
         List<Node> nodes = new ArrayList<>();
         //System.out.println("Compiling string : "+string);
         while (c < string.length()) {
-            if (string.charAt(c) == '%') {
+            if (string.charAt(c) == '%' && (c == 0 || string.charAt(c-1) != '\\')) {
                 int start = c;
                 c++;
-                while (c < string.length() && string.charAt(c) != '%') {
+                while (c < string.length() && string.charAt(c) != '%' && (c == 0 || string.charAt(c-1) != '\\')) {
                     c++;
                 }
+                if(c>=string.length())
+                    return new NodeExpression(new ExprPrimitive(new TypeString(line.getText())));
                 //System.out.println("Start : "+start+" End : "+c +" '"+string.substring(start+1,c)+"'");
                 if (finalString.length() > 0) {
                     nodes.add(new NodeOperation(ScriptOperator.ADD));
@@ -564,11 +573,10 @@ public class ScriptDecoder {
             }
             c++;
         }
-        if (nodes.size() > 1 && !string.isEmpty()) {
-            nodes.add(new NodeOperation(ScriptOperator.ADD));
-        }
+
         ExprPrimitive reference = new ExprPrimitive(new TypeString(string));
         reference.setLine(line);
+        nodes.add(new NodeOperation(ScriptOperator.ADD));
         nodes.add(new NodeExpression(reference));
         //System.out.println("Nodes : "+nodes);
         //System.out.println("RPN : "+ExprCompiledExpression.infixToRPN(new ArrayList<>(nodes)));
@@ -607,8 +615,11 @@ public class ScriptDecoder {
 
                 nodes.add(new NodeOperation(ScriptOperator.ADD));
                 //System.out.println("Parsing for compiling : "+line.with(string.substring(start + 1, c)));
-                nodes.addAll(ExprCompiledExpression.astToInfix(parseExpressionTree(line.with(string.substring(start + 1, c)), compileGroup, new Class[]{ScriptElement.class})));
-
+                try {
+                    nodes.addAll(ExprCompiledExpression.astToInfix(parseExpressionTree(line.with(string.substring(start + 1, c)), compileGroup, new Class[]{ScriptElement.class})));
+                } catch (Exception e) {
+                    throw new ScriptException.ScriptUnknownTokenException(line);
+                }
                 if (c + 1 > string.length())
                     throw new ScriptException.ScriptMissingClosingTokenException(line);
                 string = string.substring(c + 1);
@@ -643,22 +654,9 @@ public class ScriptDecoder {
         StringBuilder current = new StringBuilder();
         while (c < transformedString.length()) {
             if (transformedString.charAt(c) == '"'){
-                c++;
-                StringBuilder special = new StringBuilder("\"");
-                while (transformedString.charAt(c) != '"'){
-                    special.append(transformedString.charAt(c));
+                while (c<transformedString.length() && transformedString.charAt(c) != '"') {
                     c++;
                 }
-                special.append("\"");
-                String r = current.toString();
-                if (!r.isEmpty()) {
-                    tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, r)); //We add the current built word
-                }
-                current = new StringBuilder(); //We start a new word
-                tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, special.toString())); //We add the current built word
-                c++;
-                if(c>=transformedString.length())
-                    break;
             }
             if (transformedString.charAt(c) == ')') {
                 String r = current.toString();
@@ -912,7 +910,7 @@ public class ScriptDecoder {
                                 //System.out.println("Processing char : "+pattern.charAt(k));
                                 if (k > 0 && pattern.charAt(k - 1) == '~')
                                     continue;
-                                if ("?)(:".contains("" + pattern.charAt(k))) {
+                                if ((pattern.charAt(k) == 0 || (pattern.charAt(k) == '?' && pattern.charAt(k-1) == ')'))) {
                                     //System.out.println("3 Setting eatLeftSpace to false : " + k + " : " + pattern.charAt(k));
                                     eatLeftSpace = false;
                                     break;
@@ -1045,7 +1043,7 @@ public class ScriptDecoder {
             String g = m.group(1);
             String t = g;
             String exp_capture = CAPTURE_EXPRESSION_GREEDY;
-            if ((g.charAt(0) == '+' || shouldBeLazy(pattern, m.end(1))) && g.charAt(0) != '!') {
+            if (((g.charAt(0) == '+') && g.charAt(0) != '!') || shouldBeLazy(pattern,m.end(1))) {
                 exp_capture = CAPTURE_EXPRESSION_LAZY;
             }
             if (g.charAt(0) == '+' || g.charAt(0) == '!')
@@ -1298,12 +1296,13 @@ public class ScriptDecoder {
     }
 
     public static boolean shouldBeLazy(String p, int s) {
-        //System.out.println("shouldBeLazy "+s+" :"+p);
+        //System.out.println("Should be lazy : "+p+" at "+s);
         while (s < p.length()) {
-            if (p.charAt(s) == '[' || p.charAt(s) == '(')
+            if ("[(])".contains(""+p.charAt(s)) && (s==0 || p.charAt(s-1) != '\\'))
                 return true;
             s++;
         }
+        //System.out.println("False");
         return false;
     }
 

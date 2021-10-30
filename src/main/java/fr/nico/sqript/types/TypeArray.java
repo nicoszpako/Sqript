@@ -73,6 +73,12 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType<?>>> implements I
                     o.getObject().add(b);
                     return o;
                 },2);
+        ScriptManager.registerBinaryOperation(ScriptOperator.SUBTRACT, TypeArray.class, ScriptElement.class, TypeArray.class,
+                (a,b) -> {
+                    TypeArray o = (TypeArray)a;
+                    o.getObject().remove(b);
+                    return o;
+                },2);
     }
 
     @Override

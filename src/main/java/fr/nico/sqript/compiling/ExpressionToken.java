@@ -35,5 +35,7 @@ public class ExpressionToken {
         return expressionString;
     }
 
-
+    public ScriptOperator getOperator() {
+        return operator;
+    }
 }

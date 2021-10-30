@@ -117,7 +117,7 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
                  (a, b) -> new TypeBoolean(((TypeNumber)a).getObject()>=((TypeNumber)b).getObject()));
 
         ScriptManager.registerBinaryOperation(ScriptOperator.LT, TypeNumber.class, TypeNumber.class, TypeNumber.class,
-                 (a, b) ->  {return new TypeBoolean((((TypeNumber)a).getObject())<(((TypeNumber)b).getObject()));});
+                 (a, b) -> new TypeBoolean((((TypeNumber)a).getObject())<(((TypeNumber)b).getObject())));
 
         ScriptManager.registerBinaryOperation(ScriptOperator.LTE, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                  (a, b) -> new TypeBoolean(((TypeNumber)a).getObject()<=((TypeNumber)b).getObject()));

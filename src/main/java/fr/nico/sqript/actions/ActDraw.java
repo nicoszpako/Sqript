@@ -83,8 +83,9 @@ public class ActDraw extends ScriptAction {
                 //System.out.println("B:"+getParameter(1).get(context).getClass());
                 if(getParameter(1).get(context) instanceof TypeArray)
                     list = (ArrayList<String>) ((ArrayList)getParameter(1).get(context).getObject()).stream().map(a->((ScriptType)(a)).getObject().toString()).collect(Collectors.toList());
-                else
-                    list.add(getParameter(1,context).toString());
+                else {
+                    list.add(getParameters().get(0).get(context).toString());
+                }
                 TypeArray array = (TypeArray) getParameter(2).get(context);
                 float scale = getParameterOrDefault(getParameter(3),1d,context).floatValue();
                 int color = getParameterOrDefault(getParameter(4),(double)0xFFFFFFFF,context).intValue();

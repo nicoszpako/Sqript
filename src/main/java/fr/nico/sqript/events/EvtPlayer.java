@@ -19,7 +19,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class EvtPlayer {
 
@@ -103,8 +105,29 @@ public class EvtPlayer {
     public static class EvtOnPlayerSendMessage extends ScriptEvent {
 
         public EvtOnPlayerSendMessage(EntityPlayer player, String message) {
-            super(new ScriptTypeAccessor(new TypePlayer(player), "player"),
+            super(new ScriptTypeAccessor(new TypePlayer(player), "(player|sender)"),
                     new ScriptTypeAccessor(new TypeString(message), "message"));
+        }
+    }
+
+    @Cancelable
+    @Event(
+            feature = @Feature(name = "Command sent",
+                    description = "Called when a player sends a command.",
+                    examples = "on command sent:\n" + "    set command to \"/help\" #Edit command content",
+                    pattern = "([player] sen(d[ing]|(t|s)) [a] command|command sent)"),
+            accessors = {
+                    @Feature(name = "Sender", description = "The sender of this command.", pattern = "(player|sender)", type = "player"),
+                    @Feature(name = "Command parameters", description = "The sent parameters as a string array.", pattern = "(arguments|parameters)", type = "array"),
+                    @Feature(name = "Command name", description = "The command name.", pattern = "command name", type = "string"),
+            }
+    )
+    public static class EvtOnPlayerSendCommand extends ScriptEvent {
+
+        public EvtOnPlayerSendCommand(EntityPlayer player, String commandName, String[] arguments) {
+            super(new ScriptTypeAccessor(new TypePlayer(player), "(player|sender)"),
+                    new ScriptTypeAccessor(new TypeArray(new ArrayList<>(Arrays.stream(arguments).map(a->new TypeString(a)).collect(Collectors.toList()))), "(arguments|parameters)"),
+                    new ScriptTypeAccessor(new TypeString(commandName), "command name"));
         }
     }
 

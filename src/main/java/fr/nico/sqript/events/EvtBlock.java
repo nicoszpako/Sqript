@@ -5,6 +5,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeBlock;
+import fr.nico.sqript.types.TypeNull;
 import fr.nico.sqript.types.TypePlayer;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.player.EntityPlayer;
@@ -58,7 +59,7 @@ public class EvtBlock {
 
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
-            return (((TypeResource) parameters[0]).getObject().equals(brokenBlock.getObject().getBlock().getRegistryName()));
+            return parameters[0] instanceof TypeNull || brokenBlock == null || (((TypeResource) parameters[0]).getObject().equals(brokenBlock.getObject().getBlock().getRegistryName()));
         }
     }
 

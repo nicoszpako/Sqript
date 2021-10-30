@@ -15,16 +15,16 @@ public class EvtGUI {
             feature = @Feature(name = "GUI opened",
                     description = "Called when a GUI is being opened.",
                     examples = "on gui open:",
-                    pattern = "(GUI|gui) open",
+                    pattern = "(GUI|gui) open[ed]",
                     side = Side.CLIENT),
             accessors = {
-                    @Feature(name="GUI Class", description = "The JAVA class name of the GUI being opened", pattern = "(GUI|gui) class")
+                    @Feature(name="GUI class name", description = "The JAVA class name of the GUI being opened", pattern = "(GUI|gui) [class] name")
             }
     )
     public static class EvtGUIOpen extends ScriptEvent {
 
         public EvtGUIOpen(GuiScreen guiScreen) {
-            super(new ScriptTypeAccessor(new TypeString(guiScreen == null ? "undefined" : guiScreen.getClass().getSimpleName()),"(GUI|gui) class"));
+            super(new ScriptTypeAccessor(new TypeString(guiScreen == null ? "undefined" : guiScreen.getClass().getSimpleName()),"(GUI|gui) [class] name"));
         }
     }
 

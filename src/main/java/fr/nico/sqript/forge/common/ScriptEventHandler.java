@@ -4,11 +4,15 @@ import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.ScriptTimer;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.events.*;
+import fr.nico.sqript.forge.capabilities.Capability;
+import fr.nico.sqript.forge.capabilities.CapabilityProvider;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeBlock;
 import fr.nico.sqript.types.TypeItem;
+import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -20,6 +24,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -38,6 +43,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class ScriptEventHandler {
 
@@ -117,20 +124,43 @@ public class ScriptEventHandler {
         }
     }
 
+
+    @SubscribeEvent
+    public void onPlayerSendCommand(CommandEvent event) {
+        if (event.getSender() != null && event.getPhase() == EventPriority.NORMAL && event.getSender() instanceof EntityPlayer) {
+            ScriptContext context = null;
+            try {
+                context = ScriptManager.callEventAndGetContext(new EvtPlayer.EvtOnPlayerSendCommand((EntityPlayer) event.getSender(),  event.getCommand().getName(), event.getParameters()));
+
+                if (context.getAccessor("arguments") != null && context.getAccessor("arguments").element != null)
+                    event.setParameters(Arrays.stream(((TypeArray) context.getAccessor("arguments").element).getObject().toArray(new TypeString[0])).map(ScriptElement::getObject).toArray(String[]::new));
+                //System.out.println("Cancelled : "+(boolean) context.getReturnValue().element.getObject());
+                if ((boolean) context.getReturnValue().element.getObject()) {
+                    event.setCanceled(true);
+                }
+            } catch (ScriptException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
     @SubscribeEvent
     public void onPlayerSendMessage(ServerChatEvent event) {
         if (event.getPlayer() != null && event.getPhase() == EventPriority.NORMAL) {
             ScriptContext context = null;
+            //System.out.println("Calling message sent with player : "+event.getPlayer());
             try {
                 context = ScriptManager.callEventAndGetContext(new EvtPlayer.EvtOnPlayerSendMessage(event.getPlayer(), event.getMessage()));
+                if (context.getAccessor("message") != null && context.getAccessor("message").element != null)
+                    event.setComponent(new TextComponentString((String) context.getAccessor("message").element.getObject()));
+                if ((boolean) context.getReturnValue().element.getObject()) {
+                    event.setCanceled(true);
+                }
             } catch (ScriptException e) {
                 e.printStackTrace();
             }
-            if (context.getAccessor("message") != null && context.getAccessor("message").element != null)
-                event.setComponent(new TextComponentString((String) context.getAccessor("message").element.getObject()));
-            if ((boolean) context.getReturnValue().element.getObject()) {
-                event.setCanceled(true);
-            }
+
         }
     }
 
@@ -146,7 +176,7 @@ public class ScriptEventHandler {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void onRenderLiving(GuiOpenEvent event) {
+    public void onGuiOpened(GuiOpenEvent event) {
         if (ScriptManager.callEvent(new EvtGUI.EvtGUIOpen(event.getGui()))) {
             event.setCanceled(true);
         }
@@ -167,7 +197,9 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onBlockRightClick(PlayerInteractEvent.RightClickBlock event) {
         if (event.getEntity() instanceof EntityPlayer) {
+            //System.out.println("EVENT CALLED");
             if (ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer) event.getEntity(), new TypeBlock(event.getEntityPlayer().getEntityWorld().getBlockState(new BlockPos(event.getPos()))), event.getHand(), 1, event.getPos()))) {
+                //System.out.println("EVENT CANCELLED");
                 event.setCanceled(true);
             }
         }
@@ -248,19 +280,25 @@ public class ScriptEventHandler {
     }
 
     @SubscribeEvent
-    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        EntityPlayer player = event.player;
-        if (event.phase == TickEvent.Phase.START) {
-        } else {
-            double px = player.prevPosX;
-            double py = player.prevPosY;
-            double pz = player.prevPosZ;
-            if ((px - player.posX) != 0 || (py - player.posY) != 0 || (pz - player.posZ) != 0) { //Player moved
-                if (ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerMove(player))) { //We post the event OnPlayerEvent and move back the player if the event was cancelled
-                    player.setPositionAndUpdate(px, py, pz);
+    public void onPlayerUpdate(LivingEvent.LivingUpdateEvent event) {
+        if (event.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.getEntity();
+            Capability capability = player.getCapability(CapabilityProvider.MAIN, null);
+            Double px = capability.getPrevX();
+            Double py = capability.getPrevY();
+            Double pz = capability.getPrevZ();
+            if (px != null && py != null && pz != null) {
+                if (Math.abs(px - player.posX) > 0.02 || Math.abs(py - player.posY) > 0.02 || Math.abs(pz - player.posZ) > 0.02) { //Player moved
+                    if (ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerMove(player))) { //We post the event OnPlayerEvent and move back the player if the event was cancelled
+                        player.setPositionAndUpdate(px, py, pz);
+                    }
                 }
             }
+            capability.setPrevZ(player.posZ);
+            capability.setPrevY(player.posY);
+            capability.setPrevX(player.posX);
         }
+
     }
 
     @SubscribeEvent

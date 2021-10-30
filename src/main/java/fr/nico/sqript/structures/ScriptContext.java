@@ -92,6 +92,7 @@ public class ScriptContext {
         return s;
     }
 
+
     /**
      * Returns the variable associated to the given hash.
      *
@@ -99,18 +100,25 @@ public class ScriptContext {
      * @return the variable associated to the given hash.
      */
     public ScriptType<?> getVariable(int hash) {
-        //System.out.println("Getting variable for : "+hash+" in "+ this.hashCode());
-        //System.out.println("It contains : "+printVariables());
+        return getVariable(hash, false);
+    }
+
+    public ScriptType<?> getVariable(int hash, boolean scoped) {
         final ScriptTypeAccessor a = variables.get(hash);
         if (a != null)
             return a.element;
-        else if (parent != null)
+        else if (parent != null && !scoped)
             return parent.getVariable(hash);
         else return null;
     }
 
+
     public ScriptType<?> getVariable(String name) {
-        return getVariable(getHash(name));
+        return getVariable(name,false);
+    }
+
+    public ScriptType<?> getVariable(String name, boolean scoped) {
+        return getVariable(getHash(name,scoped));
     }
 
     /**
@@ -119,7 +127,7 @@ public class ScriptContext {
      * @param variableName The variable's name.
      * @return The hash associated to the given name.
      */
-    public int getHash(String variableName) {
+    public int getHash(String variableName, boolean scoped) {
         //System.out.println("Getting hash for : "+variableName+" in "+ this.hashCode());
         for (ScriptTypeAccessor a : variables.values()) {//Simple search first
             if (a.key != null && a.key.equals(variableName))
@@ -134,8 +142,8 @@ public class ScriptContext {
             }
 
         }
-        if (parent != null) {
-            return parent.getHash(variableName);
+        if (parent != null && !scoped) {
+            return parent.getHash(variableName, false);
         }
         return variableName.hashCode();
     }

@@ -12,6 +12,7 @@ import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.structures.TransformedPattern;
 import fr.nico.sqript.types.primitive.TypeString;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -54,16 +55,23 @@ public class ScriptExpressionParser implements INodeParser {
          */
         List<Node> validTrees = new ArrayList<>();
         for (ExpressionDefinition expressionDefinition : ScriptManager.expressions) {
-
+            //System.out.println("Testing "+line+" for "+expressionDefinition.getName());
             MatchResult[] matchResults = expressionDefinition.getMatchResults(expressionString);
             /*
              * If the expression matched, then we parse each found arguments, and we check if its type is convenient. If not, we check the next expression.
              */
             if (matchResults != null) {
-                //System.out.println("Matched "+expressionDefinition.getExpressionClass()+":"+ Arrays.toString(matchResults));
                 matchLoop:
                 for (MatchResult matchResult : matchResults) {
                     if (expressionDefinition.getFeatures()[matchResult.getMatchedIndex()].side().isEffectivelyValid()) {
+                        if (expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].isGreedy()) {
+                            //System.out.println("Checking for greedy : " + expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getPattern() + " returning " + expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType() + " " + "valid types are : " + Arrays.toString(validTypes) + " for line " + line);
+                            if (!isTypeStrictlyValid(expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType(), validTypes)) {
+                                //System.out.println("Continuing as bad greedy");
+                                continue;
+                            }
+                        }
+                        //System.out.println("Matched " + expressionDefinition.getExpressionClass() + ":" + Arrays.toString(matchResults));
 
                         /*
                          * If we are parsing the exact same line that the parent on the exact same expression, then we continue to the next expression parsing check so that we don't enter an infinite loop.
@@ -99,7 +107,7 @@ public class ScriptExpressionParser implements INodeParser {
                              */
                             if (expression.validate(arguments, line)) {
                                 NodeExpression nodeExpression = new NodeExpression(expression);
-
+                                //System.out.println("Validated");
 
                                 List<String> parameters = new ArrayList<>();
                                 /*
@@ -150,27 +158,10 @@ public class ScriptExpressionParser implements INodeParser {
                                     }
                                     parameterIndex++;
                                 }
-                                //System.out.println(debugOffset() + "Sub expressions are: " + Arrays.toString(subExpressions));
-
-                            /*
-                             * We check if the given types are verified by the expression instance.
-
-                            for (int i = 0; i < subExpressions.length; i++) {
-                                ScriptParameterDefinition[] associatedParameterDefinition = transformedPattern.getTypes()[i];
-                                if (subExpressions[i] != null) {
-                                    ScriptExpression subExpression = subExpressions[i].getExpression();
-                                    if (subExpression != null && !checkTypes(associatedParameterDefinition, subExpression)) {
-                                        //System.out.println("Not valid because incorrect types for " + expression);
-                                        continue expressionLoop;
-                                    }
-                                }
-                            }
-                            */
+                                //System.out.println("Sub expressions are: " + Arrays.toString(subExpressions));
                                 nodeExpression.setChildren(subExpressions);
                                 //System.out.println("Adding to switch : " + nodeExpression);
                                 validTrees.add(nodeExpression);
-                            } else {
-                                //System.out.println(debugOffset() + "Not valid because not validated by expression.");
                             }
                         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                             e.printStackTrace();
@@ -193,31 +184,25 @@ public class ScriptExpressionParser implements INodeParser {
         }
         //System.out.println("Valid trees for " + line + " are " + validTrees);
         if (!validTrees.isEmpty()) {
-            if (validTrees.size() == 1) {
-                //System.out.println(debugOffset()+"Returning : "+validTrees.get(0));
-                return validTrees.get(0);
-            } else {
-                if (validTypes.length == 1 && validTypes[0] == ScriptElement.class)
-                    return validTrees.get(0);
-                else {
-                    validTrees.removeIf(n -> {
-                        NodeExpression ne = (NodeExpression) n;
+            validTrees.removeIf(n -> {
+                NodeExpression ne = (NodeExpression) n;
                         /*
                             Handling greedy expressions like ExprItems
                         */
-                        ExpressionDefinition definition = ScriptManager.getDefinitionFromExpression(ne.getExpression().getClass());
-                        if(definition != null)
-                            if (definition.transformedPatterns[ne.getExpression().getMatchedIndex()].isGreedy()) {
-                                //System.out.println("Checking for greedy : " + definition.transformedPatterns[ne.getExpression().getMatchedIndex()] + " returning " + definition.transformedPatterns[ne.getExpression().getMatchedIndex()].getReturnType() + " " + "valid types are : " + Arrays.toString(validTypes));
-                                return !isTypeStrictlyValid(definition.transformedPatterns[ne.getExpression().getMatchedIndex()].getReturnType(), validTypes);
-                            }
-                        return false;
-                    });
-
-                    //System.out.println(debugOffset()+"Returning : "+result);
-                    return new NodeSwitch(validTrees.toArray(new Node[0]));
-                }
-
+                ExpressionDefinition definition = ScriptManager.getDefinitionFromExpression(ne.getExpression().getClass());
+                if (definition != null)
+                    if (definition.transformedPatterns[ne.getExpression().getMatchedIndex()].isGreedy()) {
+                        //System.out.println("Checking for greedy : " + definition.transformedPatterns[ne.getExpression().getMatchedIndex()].getPattern() + " returning " + definition.transformedPatterns[ne.getExpression().getMatchedIndex()].getReturnType() + " " + "valid types are : " + Arrays.toString(validTypes)+" for line "+line);
+                        return !isTypeStrictlyValid(definition.transformedPatterns[ne.getExpression().getMatchedIndex()].getReturnType(), validTypes);
+                    }
+                return false;
+            });
+            //System.out.println("After filtered trees : "+validTrees);
+            if (validTrees.size() == 1) {
+                //System.out.println(debugOffset()+"Returning : "+validTrees.get(0));
+                return validTrees.get(0);
+            } else if (validTrees.size() > 1) {
+                return new NodeSwitch(validTrees.toArray(new Node[0]));
             }
         }
 
@@ -230,9 +215,7 @@ public class ScriptExpressionParser implements INodeParser {
             /*
              * We parse the operators in the string.
              */
-            ExtractedOperatorsResult operatorsBuiltResult = ScriptDecoder.buildOperators(expressionString);
-            List<ScriptOperator> operators = Arrays.asList(operatorsBuiltResult.getOperators());
-            String operatorsBuildString = operatorsBuiltResult.getTransformedString();
+            String operatorsBuildString = ScriptDecoder.buildOperators(expressionString);
             operatorsBuildString = ScriptDecoder.trim(operatorsBuildString);
 
             /*
@@ -241,10 +224,9 @@ public class ScriptExpressionParser implements INodeParser {
             ExpressionToken[] operatorSplitResult = ScriptDecoder.splitAtOperators(operatorsBuildString);
             List<ExpressionToken> tokens = Arrays.asList(operatorSplitResult);
             List<Node> nodes = new ArrayList<>();
-            int addedOperators = 0;
-            //System.out.println("Tokens are : " + tokens);
             if (tokens.size() > 1) {
                 for (ExpressionToken token : tokens) {
+                    //System.out.println("Parsing elements from  "+ line+" : "+token.getExpressionString());
                     if (token.getType() == EnumTokenType.LEFT_PARENTHESIS) {
                         nodes.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
                     } else if (token.getType() == EnumTokenType.RIGHT_PARENTHESIS) {
@@ -257,12 +239,12 @@ public class ScriptExpressionParser implements INodeParser {
                             }
                             nodes.add(node);
                         } catch (Exception ignored) {
+                            ignored.printStackTrace();
                             return null;
                         }
 
                     } else if (token.getType() == EnumTokenType.OPERATOR) {
-                        nodes.add(new NodeOperation(operators.get(addedOperators)));
-                        addedOperators++;
+                        nodes.add(new NodeOperation(token.getOperator()));
                     }
                 }
             }
@@ -273,9 +255,10 @@ public class ScriptExpressionParser implements INodeParser {
                     //System.out.println("Nodes are : "+nodes);
                     //System.out.println();
                     Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
-                    //System.out.println("Final tree : "+finalTree);
+                    //System.out.println("Final tree for " +line+" : "+finalTree);
                     //System.out.println("Checking types for line : "+line+" as "+finalTree+" for "+Arrays.toString(validTypes));
-                    if (validTypes != null && isTypeValid(finalTree.getReturnType(), validTypes)) {
+
+                    if (finalTree != null && validTypes != null && isTypeValid(finalTree.getReturnType(), validTypes)) {
                         //System.out.println("Returning compiled : " + finalTree);
                         return finalTree;
                     }
@@ -285,8 +268,6 @@ public class ScriptExpressionParser implements INodeParser {
                     return null;
                 }
             }
-
-
         }
 
         //System.out.println("Returning null to " + line);
@@ -294,9 +275,9 @@ public class ScriptExpressionParser implements INodeParser {
     }
 
     public static boolean isTypeValid(Class type, Class[] validTypes) {
-        for (int i = 0; i < validTypes.length; i++) {
-            //System.out.println("Checking if " + type + " is assignable from " + validTypes[i] + " : " + type.isAssignableFrom(validTypes[i]));
-            if (validTypes[i] == ScriptElement.class || (validTypes[i] != null && type.isAssignableFrom(validTypes[i])))
+        for (Class validType : validTypes) {
+            //System.out.println(type == null);
+            if (validType == ScriptElement.class || (validType != null && type.isAssignableFrom(validType)))
                 return true;
         }
         return false;

@@ -4,6 +4,7 @@ import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.types.TypeNull;
 import fr.nico.sqript.types.interfaces.IIndexedCollection;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
@@ -22,7 +23,7 @@ import java.util.Random;
                 @Feature(name = "Random element of an array", description = "Returns a random element of an array.", examples = "random element of [1,4,7]", pattern = "[a] random element of {array|dictionary}"),
                 @Feature(name = "First element of an array", description = "Returns the first element of an array.", examples = "first element of [1,4,7]", pattern = "[the] first element of {array|dictionary}"),
                 @Feature(name = "Last element of an array", description = "Returns the last element of an array.", examples = "last element of [1,4,7]", pattern = "[the] last element of {array|dictionary}"),
-                @Feature(name = "Element of an array", description = "Returns the element at the given index of an array. Be careful, indices start at 0.", examples = "[7,1,0,2,6][0] #Returns 7", pattern = "{+array|dictionary}~[{+element}~]"),
+                @Feature(name = "Element of an array", description = "Returns the element at the given index of an array. Be careful, indices start at 0.", examples = "[7,1,0,2,6][0] #Returns 7", pattern = "{array|dictionary}~[{+element}~]"),
                 @Feature(name = "Range of two number", description = "Returns an array of numbers between two boundaries.", examples = "numbers from 1 to 5 #Returns [1,2,3,4,5]", pattern = "numbers from {number} to {number}", type = "array"),
                 @Feature(name = "Range of numbers", description = "Returns an array of numbers between 0 and a boundary.", examples = "numbers in range of 5 #Returns [0,1,2,3,4,5]", pattern = "[numbers in] range of {number}", type = "array"),
                 @Feature(name = "Range of random numbers", description = "Returns an array of a random subset of numbers between 0 and a boundary.", examples = "random numbers in range of 10\n", pattern = "random numbers in range of {number}", type = "array"),
@@ -37,7 +38,7 @@ import java.util.Random;
 public class ExprArrays extends ScriptExpression {
 
     @Override
-    public ScriptType<?> get(ScriptContext context, ScriptType<?>[] parameters) {
+    public ScriptType<?> get(ScriptContext context, ScriptType<?>[] parameters) throws ScriptException.ScriptNullReferenceException {
         switch (getMatchedIndex()) {
             case 0://new array
                 TypeArray array = new TypeArray();
@@ -56,12 +57,17 @@ public class ExprArrays extends ScriptExpression {
                 a = (IIndexedCollection) parameters[0];
                 return a.get(a.size() - 1);
             case 5: //array[int] expression
+
                 if (parameters[0] instanceof TypeArray) {
                     a = (IIndexedCollection) parameters[0];
                     TypeNumber n = (TypeNumber) parameters[1];
                     return a.get(n.getObject().intValue());
                 } else if (parameters[0] instanceof TypeDictionary) {
                     TypeDictionary d = (TypeDictionary) parameters[0]; //A simple wrapper for the HashMap
+                    if (parameters[1] instanceof TypeNull) {
+                        throw new ScriptException.ScriptNullReferenceException(line);
+                    }
+                    //System.out.println("Getting in "+d +" for key : "+parameters[1]);
                     return d.getObject().get(parameters[1]);
                 }
                 break;
@@ -96,6 +102,7 @@ public class ExprArrays extends ScriptExpression {
                 }
                 return TypeBoolean.FALSE();
             case 10: //element is not in
+                //System.out.println("Parameters are : "+Arrays.toString(parameters));
                 b = parameters[0];
                 array = (TypeArray) parameters[1];
                 for (ScriptType i : array.getObject()) {
@@ -103,6 +110,8 @@ public class ExprArrays extends ScriptExpression {
                 }
                 return TypeBoolean.TRUE();
             case 11://contains
+                if(parameters[1] instanceof TypeNull || parameters[0] instanceof TypeNull)
+                    return TypeBoolean.FALSE();
                 b = parameters[1];
                 array = (TypeArray) parameters[0];
                 for (ScriptType<?> i : array.getObject()) {

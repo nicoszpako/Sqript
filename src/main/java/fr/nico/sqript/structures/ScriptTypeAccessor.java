@@ -66,7 +66,7 @@ public class ScriptTypeAccessor {
 
     @Override
     public String toString() {
-        return pattern + (element == null ? "null" : element.toString());
+        return pattern +":"+ (element == null ? "null" : element.toString());
     }
 
     @Override

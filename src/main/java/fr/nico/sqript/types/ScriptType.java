@@ -18,7 +18,7 @@ public abstract class ScriptType<T>  extends ScriptElement<T>  {
 
     @Override
     public boolean equals(Object o){
-        return o instanceof ScriptType && ((ScriptType)o).getObject().equals(this.getObject());
+        return ((ScriptType) o).getObject() != null && ((ScriptType) o).getObject().equals(this.getObject());
     }
 
     @Override
