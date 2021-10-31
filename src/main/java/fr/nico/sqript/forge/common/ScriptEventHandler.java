@@ -48,8 +48,16 @@ import java.util.stream.Collectors;
 
 public class ScriptEventHandler {
 
+    @SideOnly(Side.SERVER)
     @SubscribeEvent
     public void onTick(TickEvent.ServerTickEvent event) throws ScriptException {
+        if (event.phase == TickEvent.Phase.START)
+            ScriptTimer.tick();
+    }
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientTickEvent event) throws ScriptException {
         if (event.phase == TickEvent.Phase.START)
             ScriptTimer.tick();
     }

@@ -102,8 +102,6 @@ public class ScriptMessage implements IMessage {
             }
             try {
                 if(ctx.side == Side.CLIENT){
-                    //System.out.println("Executing client for  "+m.name);
-                    //System.out.println("Content is : "+m.getClient().getLine());
                     ScriptClock clock = new ScriptClock(context);
                     clock.start(m.getClient());
                 }else {

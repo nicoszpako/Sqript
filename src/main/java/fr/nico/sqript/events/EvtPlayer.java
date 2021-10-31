@@ -262,7 +262,7 @@ public class EvtPlayer {
                     description = "Called when a player jumps.",
                     examples = "on player jump:\n" +
                             "    cancel event #Forbid jumping",
-                    pattern = "[player] (jump|jumped)"),
+                    pattern = "[player] (jump|jumped)", side = Side.CLIENT),
             accessors = {
                     @Feature(name = "Player",description = "The player that jumped.", pattern = "player", type = "player"),
             }

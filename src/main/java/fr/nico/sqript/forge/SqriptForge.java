@@ -42,7 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-@Mod(name = "Sqript", modid = "sqript")
+@Mod(name = "Sqript", modid = "sqript", version = "1.0")
 @Mod.EventBusSubscriber(modid = "sqript")
 public class SqriptForge {
 

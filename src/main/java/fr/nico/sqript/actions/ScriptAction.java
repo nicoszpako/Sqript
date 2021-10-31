@@ -8,6 +8,8 @@ import fr.nico.sqript.meta.ActionDefinition;
 import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeNull;
+import fr.nico.sqript.types.primitive.TypeNumber;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +30,8 @@ public abstract class ScriptAction extends IScript {
     }
 
     public <T> T getParameterOrDefault(ScriptExpression parameter, T defaultValue, ScriptContext context) throws ScriptException {
-        return parameter == null ? defaultValue : (T) parameter.get(context).getObject();
+        ScriptType result = null;
+        return (parameter == null || ((result = parameter.get(context)) instanceof TypeNull)) ? defaultValue : (T) result.getObject();
     }
 
     public void setParameters(List<ScriptExpression> parameters) {
