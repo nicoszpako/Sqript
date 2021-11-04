@@ -42,6 +42,7 @@ import java.util.Objects;
                 @Feature(name = "Player", description = "Returns the player playing on the client side", examples = "player", pattern = "player", type = "player", side = fr.nico.sqript.structures.Side.CLIENT),
                 @Feature(name = "Slot of player's inventory", description = "Returns the item in the given slot of a player's inventory", examples = "slot 4 of player's inventory", pattern = "slot {number} of {player}['s] inventory", type = "item"),
                 @Feature(name = "Player's gamemode", description = "Returns the current gamemode of a player", examples = "if gamemode of player is 0: #Checks if player is in survival mode", pattern = "{player}['s] gamemode", type = "number"),
+                @Feature(name = "Player's sneak", description = "Returns if the player is sneak.", examples = "if player is sneaking:", pattern = "{player}['s] is sneak[ing]", type = "boolean"),
         }
 )
 public class ExprPlayers extends ScriptExpression {
@@ -118,6 +119,9 @@ public class ExprPlayers extends ScriptExpression {
                         gamemode = 3;
                     return new TypeNumber(gamemode);
                 }
+            case 12:
+                player = (EntityPlayer) parameters[0].getObject();
+                return new TypeBoolean(player.isSneaking());
         }
         return null;
     }
