@@ -29,7 +29,7 @@ import java.util.Random;
                 @Feature(name = "Range of random numbers", description = "Returns an array of a random subset of numbers between 0 and a boundary.", examples = "random numbers in range of 10\n", pattern = "random numbers in range of {number}", type = "array"),
                 @Feature(name = "Element is in an array", description = "Returns whether an element is in an array.", examples = "7 is in [1,5,9,12] #Returns false", pattern = "{element} is in {array|dictionary}", type = "boolean"),
                 @Feature(name = "Element is not in an array", description = "Returns whether an element is not in an array.", examples = "7 is not in [1,5,9,12] #Returns true", pattern = "{element} is not in {array|dictionary}", type = "boolean"),
-                @Feature(name = "Array contains an element", description = "Returns whether an array contains element.", examples = "[1.5,4,5,8] contains [4,8] #Returns true", pattern = "{array|dictionary} contains {element}", type = "boolean"),
+                @Feature(name = "Array contains an array", description = "Returns whether an array contains another array.", examples = "[1.5,4,5,8] contains [4,8] #Returns true", pattern = "{array|dictionary} contains {array|dictionary}", type = "boolean"),
                 @Feature(name = "Sorted array", description = "Returns a sorted copy of an array. Elements will be sorted only if they are comparable.", examples = "sorted elements of [1,8,5] #Returns [1,5,8]", pattern = "sorted [(0;ascending)|(1;descending)] ((2;elements)|(3;keys)) of {array|dictionary}", type = "array"),
                 @Feature(name = "Copy of an array", description = "Returns a copy of an array.", examples = "copy of [1,8,5]", pattern = "copy of {array}", type = "array"),
         },
@@ -96,28 +96,22 @@ public class ExprArrays extends ScriptExpression {
                 return array;
             case 9: //element is in
                 ScriptType<?> b = parameters[0];
-                array = (TypeArray) parameters[1];
-                for (ScriptType<?> i : array.getObject()) {
-                    if (b.equals(i)) return TypeBoolean.TRUE();
-                }
-                return TypeBoolean.FALSE();
+                a = (IIndexedCollection) parameters[1];
+                return new TypeBoolean(a.contains(b));
             case 10: //element is not in
-                //System.out.println("Parameters are : "+Arrays.toString(parameters));
                 b = parameters[0];
-                array = (TypeArray) parameters[1];
-                for (ScriptType i : array.getObject()) {
-                    if (b.equals(i)) return TypeBoolean.FALSE();
-                }
-                return TypeBoolean.TRUE();
+                a = (IIndexedCollection) parameters[1];
+                return new TypeBoolean(!a.contains(b));
             case 11://contains
                 if(parameters[1] instanceof TypeNull || parameters[0] instanceof TypeNull)
                     return TypeBoolean.FALSE();
-                b = parameters[1];
-                array = (TypeArray) parameters[0];
-                for (ScriptType<?> i : array.getObject()) {
-                    if (b.equals(i)) return TypeBoolean.TRUE();
+                IIndexedCollection a2 = (IIndexedCollection) parameters[1];
+                IIndexedCollection a1 = (TypeArray) parameters[0];
+                for (int i = 0; i < a2.size(); i++) {
+                    if(!a1.contains(a2.get(i)))
+                        return TypeBoolean.FALSE();
                 }
-                return TypeBoolean.FALSE();
+                return TypeBoolean.TRUE();
             case 12://sorted elements of
                 a = (IIndexedCollection) parameters[0];
                 return (ScriptType<?>) a.sort(marks);

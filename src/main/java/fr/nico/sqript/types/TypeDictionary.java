@@ -138,6 +138,11 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
 
 
     @Override
+    public boolean contains(ScriptType<?> t) {
+        return getObject().containsValue(t);
+    }
+
+    @Override
     public ScriptType<?> get(int index) {
         return getObject().values().toArray(new ScriptType[0])[index];
     }
