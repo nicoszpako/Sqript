@@ -65,7 +65,6 @@ public class ExprReference extends ScriptExpression {
 
     @Override
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) throws ScriptException {
-        //System.out.println("Setting ExprReference");
         ScriptContext varContext = context;
         if (global) {
             varContext = ScriptManager.GLOBAL_CONTEXT;
@@ -80,7 +79,7 @@ public class ExprReference extends ScriptExpression {
             if(typeAccessor != null)
                 typeAccessor.setElement(to);
             else{
-                typeAccessor = new ScriptTypeAccessor(to,varHash);
+                typeAccessor = new ScriptTypeAccessor(to,line.getText(),varHash);
                 typeAccessor.setKey(var);
                 varContext.put(typeAccessor);
             }

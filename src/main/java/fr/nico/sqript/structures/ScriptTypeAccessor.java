@@ -54,13 +54,8 @@ public class ScriptTypeAccessor {
         this.element = element;
         try {
             this.pattern = ScriptDecoder.transformPattern(match).pattern;
-            this.key = match;
-        } catch (ScriptException.ScriptPatternError scriptPatternError) {
-            ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+ blockType.getSimpleName());
-            scriptPatternError.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
+        this.key = match;
         this.hash = varHash;
     }
 
