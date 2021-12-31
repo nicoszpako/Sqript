@@ -106,7 +106,7 @@ public class ExprArrays extends ScriptExpression {
                 if(parameters[1] instanceof TypeNull || parameters[0] instanceof TypeNull)
                     return TypeBoolean.FALSE();
                 IIndexedCollection a2 = (IIndexedCollection) parameters[1];
-                IIndexedCollection a1 = (TypeArray) parameters[0];
+                IIndexedCollection a1 = (IIndexedCollection) parameters[0];
                 for (int i = 0; i < a2.size(); i++) {
                     if(!a1.contains(a2.get(i)))
                         return TypeBoolean.FALSE();

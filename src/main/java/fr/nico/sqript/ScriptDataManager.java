@@ -10,6 +10,8 @@ import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.vecmath.Matrix3f;
+import javax.vecmath.Matrix4f;
 import java.io.File;
 
 public class ScriptDataManager {

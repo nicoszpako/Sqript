@@ -548,7 +548,6 @@ public class ScriptDecoder {
         int c = 0;
         StringBuilder finalString = new StringBuilder();
         List<Node> nodes = new ArrayList<>();
-        //System.out.println("Compiling string : "+string);
         while (c < string.length()) {
             if (string.charAt(c) == '%' && (c == 0 || string.charAt(c-1) != '\\')) {
                 int start = c;
@@ -574,15 +573,21 @@ public class ScriptDecoder {
             c++;
         }
 
-        ExprPrimitive reference = new ExprPrimitive(new TypeString(string));
+        ExprPrimitive reference = new ExprPrimitive(new TypeString(string.replaceAll("\\\\%","%")));
         reference.setLine(line);
-        nodes.add(new NodeOperation(ScriptOperator.ADD));
-        nodes.add(new NodeExpression(reference));
-        //System.out.println("Nodes : "+nodes);
-        //System.out.println("RPN : "+ExprCompiledExpression.infixToRPN(new ArrayList<>(nodes)));
-        Node result = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
-        //System.out.println("Result "+result);
+        Node result;
+        if(!nodes.isEmpty()){
+            nodes.add(new NodeOperation(ScriptOperator.ADD));
+            nodes.add(new NodeExpression(reference));
+            //System.out.println("Nodes : "+nodes);
+            //System.out.println("RPN : "+ExprCompiledExpression.infixToRPN(new ArrayList<>(nodes)));
+            result = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
+        }else{
+            result = new NodeExpression(reference);
+        }
         return result;
+
+
     }
 
     /**
