@@ -10,6 +10,8 @@ import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.vecmath.Matrix3f;
+import javax.vecmath.Matrix4f;
 import java.io.File;
 
 public class ScriptDataManager {
@@ -35,10 +37,10 @@ public class ScriptDataManager {
 
     public static void save() throws Exception {
         NBTTagCompound total = new NBTTagCompound();
-        //System.out.println("Saving global variables "+ScriptManager.GLOBAL_CONTEXT.printVariables());
         for (ScriptTypeAccessor s : ScriptManager.GLOBAL_CONTEXT.getAccessors()) {
+            if(s.element == null)
+                continue;
             if (s.element instanceof ISerialisable) {
-                //System.out.println("Saving : "+s);
                 ISerialisable savable = (ISerialisable) s.element;
                 String key = s.key;
                 NBTTagCompound value = savable.write(new NBTTagCompound());
@@ -47,12 +49,10 @@ public class ScriptDataManager {
                 toAdd.setTag("value", value);
                 toAdd.setString("type", typeName);
                 total.setTag(key, toAdd);
-                //System.out.println("Saved variable "+key+" as a "+typeName+" with value "+value);
             } else {
                 throw new ScriptException.ScriptTypeNotSaveableException(s.element.getClass());
             }
         }
-        //System.out.println("Global variables are " + ScriptManager.GLOBAL_CONTEXT.printVariables());
         File f = new File(ScriptManager.scriptDir, "data.dat");
         CompressedStreamTools.write(total, f);
     }
