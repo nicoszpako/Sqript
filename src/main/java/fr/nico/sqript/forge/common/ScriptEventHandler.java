@@ -211,7 +211,7 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onBlockRightClick(PlayerInteractEvent.RightClickBlock event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            if (ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer) event.getEntity(), new TypeBlock(event.getEntityPlayer().getEntityWorld().getBlockState(new BlockPos(event.getPos())), event.getPos(), event.getWorld()), event.getHand(), 1, event.getPos()))) {
+            if (ScriptManager.callEvent(new EvtBlock.EvtOnBlockClick((EntityPlayer) event.getEntity(),  new TypeBlock(event.getEntityPlayer().getEntityWorld().getBlockState(new BlockPos(event.getPos())), event.getPos(), event.getWorld()), event.getHand(), 1, event.getPos()))) {
                 event.setCanceled(true);
             }
         }

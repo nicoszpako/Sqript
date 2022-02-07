@@ -12,6 +12,7 @@ import fr.nico.sqript.types.interfaces.IIndexedCollection;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.interfaces.ISerialisable;
 import fr.nico.sqript.types.primitive.PrimitiveType;
+import fr.nico.sqript.types.primitive.TypeBoolean;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -125,6 +126,11 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType<?>>> implements I
             getObject().add((ScriptType) savable);
         }
         //System.out.println("Read finished : "+ this);
+    }
+
+    @Override
+    public boolean contains(ScriptType<?> t) {
+        return getObject().contains(t);
     }
 
     @Override
