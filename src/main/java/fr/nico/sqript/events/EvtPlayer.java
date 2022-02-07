@@ -450,4 +450,22 @@ public class EvtPlayer {
         }
 
     }
+
+    @Event(
+            feature = @Feature(name = "Player tick",
+                    description = "Called when the player ticks.",
+                    examples = "on player tick:",
+                    pattern = "player tick"),
+            accessors = {
+                    @Feature(name = "Player", description = "The entity player.", pattern = "player", type = "player"),
+            }
+    )
+    public static class EvtOnPlayerTick extends ScriptEvent {
+
+        public EvtOnPlayerTick(EntityPlayer player) {
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"));
+        }
+
+    }
+
 }
