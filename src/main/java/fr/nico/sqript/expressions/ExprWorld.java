@@ -24,7 +24,7 @@ public class ExprWorld extends ScriptExpression {
             case 0:
                 return new TypeWorld(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld());
             case 1:
-                World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
+                World world = (World) parameters[0].getObject();
                 return new TypeNumber(world.getWorldTime());
             case 2:
                 AxisAlignedBB axisAlignedBB = (AxisAlignedBB) parameters[1].getObject();

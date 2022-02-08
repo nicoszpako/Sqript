@@ -43,6 +43,7 @@ import java.util.Objects;
                 @Feature(name = "Slot of player's inventory", description = "Returns the item in the given slot of a player's inventory", examples = "slot 4 of player's inventory", pattern = "slot {number} of {player}['s] inventory", type = "item"),
                 @Feature(name = "Player's gamemode", description = "Returns the current gamemode of a player", examples = "if gamemode of player is 0: #Checks if player is in survival mode", pattern = "{player}['s] gamemode", type = "number"),
                 @Feature(name = "Player's sneak", description = "Returns if the player is sneak.", examples = "if player is sneaking:", pattern = "{player}['s] is sneak[ing]", type = "boolean"),
+                @Feature(name = "Player's armor level", description = "Returns the given player's armor level.", examples = "player's armor", pattern = "{+player}['s] (armor [level])", type = "number"),
                 @Feature(name = "Player's BoundingBox", description = "Returns the AxisAlignedBB of player.", examples = "player boundingBox", pattern = "{player}['s] boundingBox", type = "axisalignedbb"),
         }
 )
@@ -124,6 +125,9 @@ public class ExprPlayers extends ScriptExpression {
                 player = (EntityPlayer) parameters[0].getObject();
                 return new TypeBoolean(player.isSneaking());
             case 13:
+                player = (EntityPlayer) parameters[0].getObject();
+                return new TypeNumber(player.getTotalArmorValue());
+            case 14:
                 player = (EntityPlayer) parameters[0].getObject();
                 return new TypeAxisAlignedBB(player.getEntityBoundingBox());
         }
