@@ -160,7 +160,7 @@ public class ScriptEventHandler {
             //System.out.println("Calling message sent with player : "+event.getPlayer());
             try {
                 context = ScriptManager.callEventAndGetContext(new EvtPlayer.EvtOnPlayerSendMessage(event.getPlayer(), event.getMessage()));
-                if (context.getAccessor("message") != null && context.getAccessor("message").element != null)
+                if (context.getAccessor("message") != null && context.getAccessor("message").element != null && !context.getAccessor("message").element.getObject().equals(event.getMessage()))
                     event.setComponent(new TextComponentString((String) context.getAccessor("message").element.getObject()));
                 if ((boolean) context.getReturnValue().element.getObject()) {
                     event.setCanceled(true);
@@ -324,6 +324,7 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
         if (ScriptManager.callEvent(new EvtLiving.EvtOnLivingDeath(event.getEntity(), event.getSource()))) {
+            event.getEntityLiving().setHealth(1f);
             event.setCanceled(true);
         }
     }

@@ -223,36 +223,35 @@ public class ScriptExpressionParser implements INodeParser {
              */
             ExpressionToken[] operatorSplitResult = ScriptDecoder.splitAtOperators(operatorsBuildString);
             List<ExpressionToken> tokens = Arrays.asList(operatorSplitResult);
+            System.out.println("Tokens are : "+tokens);
             List<Node> nodes = new ArrayList<>();
-            if (tokens.size() > 1) {
-                for (ExpressionToken token : tokens) {
-                    //System.out.println("Parsing elements from  "+ line+" : "+token.getExpressionString());
-                    if (token.getType() == EnumTokenType.LEFT_PARENTHESIS) {
-                        nodes.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
-                    } else if (token.getType() == EnumTokenType.RIGHT_PARENTHESIS) {
-                        nodes.add(new NodeParenthesis(EnumTokenType.RIGHT_PARENTHESIS));
-                    } else if (token.getType() == EnumTokenType.EXPRESSION) {
-                        try {
-                            Node node = parse(line.with(token.getExpressionString().trim()), compilationContext, new Class[]{ScriptElement.class});
-                            if (node == null) {
-                                return null;
-                            }
-                            nodes.add(node);
-                        } catch (Exception ignored) {
-                            ignored.printStackTrace();
+            for (ExpressionToken token : tokens) {
+                //System.out.println("Parsing elements from  "+ line+" : "+token.getExpressionString());
+                if (token.getType() == EnumTokenType.LEFT_PARENTHESIS) {
+                    nodes.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
+                } else if (token.getType() == EnumTokenType.RIGHT_PARENTHESIS) {
+                    nodes.add(new NodeParenthesis(EnumTokenType.RIGHT_PARENTHESIS));
+                } else if (token.getType() == EnumTokenType.EXPRESSION) {
+                    try {
+                        Node node = parse(line.with(token.getExpressionString().trim()), compilationContext, new Class[]{ScriptElement.class});
+                        if (node == null) {
                             return null;
                         }
-
-                    } else if (token.getType() == EnumTokenType.OPERATOR) {
-                        nodes.add(new NodeOperation(token.getOperator()));
+                        nodes.add(node);
+                    } catch (Exception ignored) {
+                        ignored.printStackTrace();
+                        return null;
                     }
+
+                } else if (token.getType() == EnumTokenType.OPERATOR) {
+                    nodes.add(new NodeOperation(token.getOperator()));
                 }
             }
             if (nodes.isEmpty())
                 return null;
             else {
                 try {
-                    //System.out.println("Nodes are : "+nodes);
+                    System.out.println("Nodes are : "+nodes);
                     //System.out.println();
                     Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
                     //System.out.println("Final tree for " +line+" : "+finalTree);

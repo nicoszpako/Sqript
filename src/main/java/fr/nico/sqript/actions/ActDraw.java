@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 
 @Action(name = "Draw Actions",
         features = {
-            @Feature(name = "Draw text",description = "Draws a string at a specific position on the screen.",examples = "draw text \"Health : %player's health%\" at [10,10]", pattern = "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number}]", side = Side.CLIENT),
+            @Feature(name = "Draw text",description = "Draws a string at a specific position on the screen.",examples = "draw text \"Health : %player's health%\" at [10,10]", pattern = "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number} [(1;without alpha)]]", side = Side.CLIENT),
             @Feature(name = "Draw rectangle",description = "Draws a coloured filled custom sized rectangle at a specific position on the screen.", examples = "draw rectangle at [10,10] with size [20,5] with color 0xFFFF0000",pattern = "draw [colored] rect[angle] at {array} with size {array} [and] with color {number} [(1;without alpha)]", side = Side.CLIENT),
             @Feature(name = "Draw textured rectangle",description = "Draws a textured custom sized rectangle at a specific position on the screen.", examples = "draw textured rectangle at [-15,-7.5] with size [30,15] using texture sample:logo.png",pattern = "draw textured rect[angle] at {array} with size {array} (with|using) texture {resource} [with uv {array}]", side = Side.CLIENT),
-            @Feature(name = "Draw line",description = "Draws a line between given positions on the screen.", examples = "draw line from [10,10] to [100,100] with stroke 6 and with color 0",pattern = "draw line from {location} to {location} with stroke {number} [and] with color {number}", side = Side.CLIENT),
+            @Feature(name = "Draw line",description = "Draws a line between given positions on the screen.", examples = "draw line from [10,10] to [100,100] with stroke 6 and with color 0",pattern = "draw line from {location} to {location} with stroke {number} [and] with color {number} [(1;without alpha)]", side = Side.CLIENT),
             @Feature(name = "Rotate canvas",description = "Rotate the draw canvas.",
                     examples =
                     "draw text \"Text 1\" at [10,10] #Won't be rotated\n" +
@@ -62,7 +62,7 @@ import java.util.stream.Collectors;
                     side = Side.CLIENT),
             @Feature(name = "Push canvas matrix",description = "Pushes a new matrix onto the matrix pile. Allows to \"save the current\" matrix configuration.", examples = "push canvas matrix",pattern = "push canvas matrix", side = Side.CLIENT),
             @Feature(name = "Pop canvas matrix",description = "Pops the top matrix from the matrix pile. Allows to \"come back to the previous\" matrix configuration.", examples = "pop canvas matrix",pattern = "pop canvas matrix", side = Side.CLIENT),
-            @Feature(name = "Draw circle",description = "Draws a circle of given radius at given position on the screen.", examples = "draw circle at [10,10] with radius 6 and with color 0",pattern = "draw circle at {location} with radius {number} [and] with color {number}", side = Side.CLIENT),
+            @Feature(name = "Draw circle",description = "Draws a circle of given radius at given position on the screen.", examples = "draw circle at [10,10] with radius 6 and with color 0",pattern = "draw circle at {location} with radius {number} [and] with color {number} [(1;without alpha)]", side = Side.CLIENT),
         }
 )
 public class ActDraw extends ScriptAction {
@@ -157,14 +157,15 @@ public class ActDraw extends ScriptAction {
                 TypeArray p1 = (TypeArray) getParameter(1).get(context);
                 TypeArray p2 = (TypeArray) getParameter(2).get(context);
                 scale = getParametersSize()>=3? ((Double) getParameter(3,context)).floatValue() :1;
-                color = getParametersSize()>=4? ((Double) getParameter(4,context)).intValue() :0xFFFFFF;
+                color = getParametersSize() >=4 ? ((Double) getParameter(4,context)).intValue() :0xFFFFFFFF;
+                if(getMarkValue(1))
+                    color = 0xFF000000 | color;
                 float red = (float)(color >> 16 & 255) / 255.0F;
                 float blue = (float)(color >> 8 & 255) / 255.0F;
                 float green = (float)(color & 255) / 255.0F;
                 float alpha = 255;
                 GL11.glPushMatrix();
                 drawLine((float)SqriptUtils.getX(p1),(float)SqriptUtils.getY(p1),(float)SqriptUtils.getZ(p1),SqriptUtils.getX(p2),SqriptUtils.getY(p2),scale,red,green,blue,alpha);
-                GL11.glColor3f(1,1,1);
 
                 GL11.glPopMatrix();
                 break;
@@ -209,13 +210,14 @@ public class ActDraw extends ScriptAction {
                 location = (ILocatable) getParameter(1).get(context);
                 double radius = (double) getParameter(2).get(context).getObject();
                 color = getParametersSize() >=3 ? ((Double) getParameter(3,context)).intValue() :0xFFFFFFFF;
+                if(getMarkValue(1))
+                    color = 0xFF000000 | color;
                 red = (float)(color >> 16 & 255) / 255.0F;
                 blue = (float)(color >> 8 & 255) / 255.0F;
                 green = (float)(color & 255) / 255.0F;
-                alpha = 255;
-                GlStateManager.color(red, green, blue, alpha);
+                alpha = 1;
                 GL11.glPushMatrix();
-                drawCircle(location.getVector().x,location.getVector().y,radius);
+                drawCircle(location.getVector().x,location.getVector().y,radius,red,green,blue,alpha);
                 GL11.glColor3f(1,1,1);
                 GL11.glPopMatrix();
                 break;
@@ -223,7 +225,7 @@ public class ActDraw extends ScriptAction {
 
     }
 
-    public static void drawCircle(double x, double y, double r) {
+    public static void drawCircle(double x, double y, double r, float re, float g, float b, float a) {
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -233,6 +235,8 @@ public class ActDraw extends ScriptAction {
         vertexbuffer.pos(x, y,0).endVertex();
         // for some the circle is only drawn if theta is decreasing rather than
         // ascending
+        GlStateManager.color(re,g,b,a);
+
         double end = Math.PI * 2.0;
         double incr = end / 40d;
         for (double theta = -incr; theta < end; theta += incr) {
@@ -260,6 +264,7 @@ public class ActDraw extends ScriptAction {
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        GL11.glColor3f(1,1,1);
 
     }
 
