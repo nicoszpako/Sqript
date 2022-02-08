@@ -8,11 +8,14 @@ import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import java.util.Arrays;
 
 public class EvtLiving {
 
@@ -70,8 +73,8 @@ public class EvtLiving {
     @Event(
             feature = @Feature(name = "Living death",
                     description = "This event is triggered just before an entity dies of damage.",
-                    examples = "on zombie death:",
-                    pattern = "((1;(living|entity))|(2;{entity|resource}))['s] death"),
+                    examples = {"on player death:","on zombie death:"},
+                    pattern = "((1;(living|entity))|(2;player)|(3;{entity|resource}))['s] death"),
             accessors = {
                     @Feature(name = "Victim", description = "The victim of the death event.", pattern = "victim", type = "entity"),
                     @Feature(name = "Damage type", description = "The damage type of dealt damage.", pattern = "damage type", type = "damage_source"),
@@ -88,8 +91,13 @@ public class EvtLiving {
 
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
-            if (parameters.length == 0 || parameters[0] == null)
+            System.out.println("Checking for parameters :"+ Arrays.toString(parameters));
+            System.out.println("Marks are : "+Integer.toBinaryString(marks));
+            if (parameters.length == 0 || parameters[0] == null || ((marks >> 1) & 1) == 1)
                 return true;
+            else if (((marks >> 2) & 1) == 1 && victim instanceof EntityPlayer){
+                return true;
+            }
             else if (parameters[0] instanceof TypeEntity) {
                 return victim.getClass().isAssignableFrom(((TypeEntity) parameters[0]).getObject().getClass());
             } else if (parameters[0] instanceof TypeResource) {

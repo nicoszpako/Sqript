@@ -319,7 +319,6 @@ public class ScriptDecoder {
         List<ScriptOperator> operators = new ArrayList<>();
         //System.out.println("Building operators for : " + expression);
         //Saving variables and arrays
-        expression = save(expression, "{[<", "}]>", saved);
 
         //System.out.println("a : " + expression);
         //Removing strings
@@ -330,7 +329,9 @@ public class ScriptDecoder {
             //System.out.println("n:"+expression);
             saved.add(f);
         }
-        //System.out.println("b : " + expression);
+        expression = save(expression, "{[<", "}]>", saved);
+
+        //System.out.println("b : " + expression+" ; saved = "+saved);
         String testedExpression = emptyDelimiters('(',')',expression);
         testedExpression = emptyDelimiters('[',']',testedExpression);
         testedExpression = emptyDelimiters('{','}',testedExpression);

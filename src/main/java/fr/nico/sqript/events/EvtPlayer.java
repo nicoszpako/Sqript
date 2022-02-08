@@ -343,25 +343,6 @@ public class EvtPlayer {
 
     }
 
-    @Cancelable
-    @Event(
-            feature = @Feature(name = "Player death",
-                    description = "This event is triggered just before a player dies of damage.",
-                    examples = "on player death:",
-                    pattern = "[player] death"),
-            accessors = {
-                    @Feature(name = "Victim", description = "The victim of the death event.", pattern = "victim", type = "player"),
-                    @Feature(name = "Damage type", description = "The damage type of dealt damage.", pattern = "damage type", type = "damage_source"),
-                    @Feature(name = "Attacker", description = "The damage dealer of the death event.", pattern = "attacker", type = "entity"),
-            }
-    )
-    public static class EvtOnLivingDeath extends ScriptEvent {
-
-        public EvtOnLivingDeath(Entity victim, DamageSource damageSource) {
-            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(),"victim"), new ScriptTypeAccessor(damageSource.getImmediateSource() != null ? new TypeEntity(damageSource.getImmediateSource()) : new TypeNull(),"attacker"), new ScriptTypeAccessor(new TypeDamageSource(damageSource),"damageType"));
-        }
-
-    }
 
     @Cancelable
     @Event(

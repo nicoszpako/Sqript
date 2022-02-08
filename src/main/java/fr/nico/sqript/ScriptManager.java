@@ -443,7 +443,7 @@ public class ScriptManager {
         if (FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
             loadResources();
 
-        if (FULL_DEBUG)
+        if (FULL_DEBUG && !RELOADING)
             for (ScriptInstance instance : scripts) {
                 List<ScriptBlock> list = instance.getBlocksOfClass(ScriptBlockEvent.class);
                 list.addAll(instance.getBlocksOfClass(ScriptBlockCommand.class));

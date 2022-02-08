@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -35,7 +36,6 @@ import java.util.Objects;
 )
 public class ActEntity extends ScriptAction {
 
-    @SideOnly(Side.SERVER)
     @Override
     public void execute(ScriptContext context) throws ScriptException {
         switch (getMatchedIndex()) {
@@ -44,7 +44,7 @@ public class ActEntity extends ScriptAction {
                 ScriptType entityType = getParameters().get(1).get(context);
                 ILocatable pos = (ILocatable) getParameters().get(2).get(context);
                 Entity entity = null;
-                World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
+                World world = FMLCommonHandler.instance().getSidedDelegate().getServer().getEntityWorld();
                 for (int i = 0; i < number; i++) {
                     if(entityType instanceof TypeEntity)
                         entity = ((TypeEntity)entityType).getObject();
@@ -59,7 +59,7 @@ public class ActEntity extends ScriptAction {
                 return;
             case 1:
                 entity = (Entity) getParameters().get(0).get(context).getObject();
-                entity.setDead();
+                entity.attackEntityFrom(DamageSource.OUT_OF_WORLD, Float.MAX_VALUE);
                 return;
         }
     }

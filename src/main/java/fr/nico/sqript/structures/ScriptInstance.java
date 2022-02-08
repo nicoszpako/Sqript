@@ -82,14 +82,13 @@ public class ScriptInstance {
     public ScriptContext callEventAndGetContext(ScriptContext context, ScriptEvent event) throws ScriptException {
         //long t1 = //System.currentTimeMillis();
         for (ScriptBlock b : getBlocksOfClass(ScriptBlockEvent.class)) {
-            ScriptBlockEvent t = (ScriptBlockEvent) b;
-            //System.out.println("Checking for class : "+t.eventType+", are they equal : "+(t.eventType == event.getClass())+" is check : "+event.check(t.getParameters(),t.getMarks())+" is side ok: "+t.side.isEffectivelyValid());
-            if (t.eventType == event.getClass() && event.check(t.getParameters(), t.getMarks()) && t.side.isEffectivelyValid()) {
+            ScriptBlockEvent scriptBlockEvent = (ScriptBlockEvent) b;
+            if (scriptBlockEvent.eventType == event.getClass() && event.check(scriptBlockEvent.getParameters(), scriptBlockEvent.getMarks()) && scriptBlockEvent.side.isEffectivelyValid()) {
                 //System.out.println("CHECKED");
                 //System.out.println("Calling event : "+event.getClass().getSimpleName()+" with accessors "+ Arrays.toString(event.getAccessors()));
                 ScriptClock clock = new ScriptClock(context);
                 context.wrap(event.getAccessors());
-                clock.start(t);
+                clock.start(scriptBlockEvent);
                 ////System.out.println("Finished ! It took : " + (System.currentTimeMillis() - t1) + " ms");
             }
         }
