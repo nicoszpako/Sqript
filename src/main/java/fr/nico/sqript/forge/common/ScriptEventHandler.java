@@ -65,7 +65,13 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) throws ScriptException {
         if (event.phase == TickEvent.Phase.START)
-            ScriptManager.callEvent(new EvtOnWorldTick());
+            ScriptManager.callEvent(new EvtOnWorldTick(event.world));
+    }
+
+    @SubscribeEvent
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) throws ScriptException {
+        if (event.phase == TickEvent.Phase.START)
+            ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerTick(event.player));
     }
 
     @SubscribeEvent
