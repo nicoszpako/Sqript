@@ -1,15 +1,18 @@
 package fr.nico.sqript.blocks;
 
+import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.compiling.ScriptCompilationContext;
+import fr.nico.sqript.compiling.ScriptDecoder;
+import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.forge.SqriptForge;
+import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.meta.Feature;
+import fr.nico.sqript.structures.*;
 import fr.nico.sqript.types.TypeConsole;
 import fr.nico.sqript.types.TypePlayer;
-import fr.nico.sqript.ScriptManager;
-import fr.nico.sqript.meta.Block;
-import fr.nico.sqript.structures.*;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
-import fr.nico.sqript.compiling.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
@@ -21,20 +24,22 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Block(
         feature = @Feature(name = "Command",
@@ -48,7 +53,8 @@ import java.util.stream.Collectors;
                 @Feature(name = "side"),
                 @Feature(name = "description"),
                 @Feature(name = "usage"),
-                @Feature(name = "aliases")
+                @Feature(name = "aliases"),
+                @Feature(name = "permission")
         }
 )
 public class ScriptBlockCommand extends ScriptBlock implements ICommand {
@@ -58,58 +64,6 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
 
     public ScriptBlockCommand(ScriptToken head) {
-        Feature[] features = new Feature[]{new Feature(){
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return null;
-            }
-
-            @Override
-            public String name() {
-                return null;
-            }
-
-            @Override
-            public String description() {
-                return null;
-            }
-
-            @Override
-            public String[] examples() {
-                return new String[0];
-            }
-
-            @Override
-            public String pattern() {
-                return null;
-            }
-
-            @Override
-            public String regex() {
-                return null;
-            }
-
-            @Override
-            public String type() {
-                return null;
-            }
-
-            @Override
-            public boolean settable() {
-                return false;
-            }
-
-            @Override
-            public fr.nico.sqript.structures.Side side() {
-                return null;
-            }
-
-            @Override
-            public int priority() {
-                return 0;
-            }
-        }};
-
         //System.out.println("Loading block command:"+head);
         final String def = ScriptDecoder.splitAtDoubleDot(head.getText().replaceFirst("command\\s+/", ""))[0];
         Matcher m = Pattern.compile("<(.*?)>").matcher(def);
@@ -152,6 +106,9 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         if (fieldDefined("aliases"))
             this.setAliases(getSubBlock("aliases").getContent().stream().map(ScriptToken::getText).toArray(String[]::new));
 
+        if (fieldDefined("permission"))
+            this.setPermission(getSubBlock("permission").getRawContent());
+
         if (side == fr.nico.sqript.structures.Side.BOTH || (side == fr.nico.sqript.structures.Side.CLIENT)) {
             SqriptForge.addClientCommand(this);
         }
@@ -169,6 +126,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
     private String[] aliases = new String[0];
     private String description;
     private String usage;
+    private String permission;
 
     public fr.nico.sqript.structures.Side getSide() {
         return side;
@@ -192,6 +150,14 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
     public void setUsage(String usage) {
         this.usage = usage;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
     public String getName() {
@@ -286,8 +252,8 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
     @Override
     public boolean checkPermission(MinecraftServer minecraftServer, ICommandSender iCommandSender) {
-        //Going to add a permission system
-        return true;
+        if(getPermission() == null) return true;
+        return MinecraftForge.EVENT_BUS.post(new checkPermission(minecraftServer, iCommandSender, getPermission()));
     }
 
     @Override
@@ -308,4 +274,32 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
     public int compareTo(ICommand o) {
         return 0;
     }
+
+
+    @Cancelable
+    public static class checkPermission extends Event {
+
+        private final MinecraftServer minecraftServer;
+        private final ICommandSender commandSender;
+        private final String permission;
+
+        public checkPermission(MinecraftServer minecraftServer, ICommandSender commandSender, String permission) {
+            this.minecraftServer = minecraftServer;
+            this.commandSender = commandSender;
+            this.permission = permission;
+        }
+
+        public MinecraftServer getMinecraftServer() {
+            return minecraftServer;
+        }
+
+        public ICommandSender getCommandSender() {
+            return commandSender;
+        }
+
+        public String getPermission() {
+            return permission;
+        }
+    }
+
 }
