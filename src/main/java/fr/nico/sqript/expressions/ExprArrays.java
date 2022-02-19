@@ -30,7 +30,7 @@ import java.util.Random;
                 @Feature(name = "Element is in an array", description = "Returns whether an element is in an array.", examples = "7 is in [1,5,9,12] #Returns false", pattern = "{element} is in {array|dictionary}", type = "boolean"),
                 @Feature(name = "Element is not in an array", description = "Returns whether an element is not in an array.", examples = "7 is not in [1,5,9,12] #Returns true", pattern = "{element} is not in {array|dictionary}", type = "boolean"),
                 @Feature(name = "Array contains an array", description = "Returns whether an array contains another array.", examples = "[1.5,4,5,8] contains [4,8] #Returns true", pattern = "{array|dictionary} contains {array|dictionary}", type = "boolean"),
-                @Feature(name = "Sorted array", description = "Returns a sorted copy of an array. Elements will be sorted only if they are comparable.", examples = "sorted elements of [1,8,5] #Returns [1,5,8]", pattern = "sorted [(0;ascending)|(1;descending)] ((2;elements)|(3;keys)) of {array|dictionary}", type = "array"),
+                @Feature(name = "Sorted array", description = "Returns a sorted copy of an array. Elements will be sorted only if they are comparable.", examples = "sorted elements of [1,8,5] #Returns [1,5,8]", pattern = "sorted [((0;ascending)|(1;descending))] ((2;elements)|(3;keys)) of {array|dictionary}", type = "array"),
                 @Feature(name = "Copy of an array", description = "Returns a copy of an array.", examples = "copy of [1,8,5]", pattern = "copy of {array}", type = "array"),
         },
         priority = -1

@@ -3,6 +3,7 @@ package fr.nico.sqript.structures;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.compiling.SimpleRegex;
 import fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock;
 import fr.nico.sqript.types.ScriptType;
 
@@ -31,10 +32,8 @@ public class ScriptTypeAccessor {
     public ScriptTypeAccessor(ScriptType element, String match) {
         this.element = element;
         try {
-            this.pattern = Pattern.compile(ScriptDecoder.toSimpleRegex(match).replaceAll("\\{","\\\\{").replaceAll("}","\\\\}"));
+            this.pattern = Pattern.compile(SimpleRegex.simplePatternToRegex(match).replaceAll("\\{","\\\\{").replaceAll("}","\\\\}"));
             this.key = match;
-            if(pattern == null)
-                throw new ScriptException.ScriptPatternError("");
         } catch (ScriptException.ScriptPatternError scriptPatternError) {
             ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+ blockType.getSimpleName());
             scriptPatternError.printStackTrace();

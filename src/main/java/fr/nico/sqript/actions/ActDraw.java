@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Action(name = "Draw Actions",
         features = {
-            @Feature(name = "Draw text",description = "Draws a string at a specific position on the screen.",examples = "draw text \"Health : %player's health%\" at [10,10]", pattern = "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number} [(1;without alpha)]]", side = Side.CLIENT),
+            @Feature(name = "Draw text",description = "Draws a string at a specific position on the screen.",examples = "draw text \"Health : %player's health%\" at [10,10]", pattern = "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number} [(2;without alpha)]]", side = Side.CLIENT),
             @Feature(name = "Draw rectangle",description = "Draws a coloured filled custom sized rectangle at a specific position on the screen.", examples = "draw rectangle at [10,10] with size [20,5] with color 0xFFFF0000",pattern = "draw [colored] rect[angle] at {array} with size {array} [and] with color {number} [(1;without alpha)]", side = Side.CLIENT),
             @Feature(name = "Draw textured rectangle",description = "Draws a textured custom sized rectangle at a specific position on the screen.", examples = "draw textured rectangle at [-15,-7.5] with size [30,15] using texture sample:logo.png",pattern = "draw textured rect[angle] at {array} with size {array} (with|using) texture {resource} [with uv {array}]", side = Side.CLIENT),
             @Feature(name = "Draw line",description = "Draws a line between given positions on the screen.", examples = "draw line from [10,10] to [100,100] with stroke 6 and with color 0",pattern = "draw line from {location} to {location} with stroke {number} [and] with color {number} [(1;without alpha)]", side = Side.CLIENT),
@@ -88,7 +88,9 @@ public class ActDraw extends ScriptAction {
                 }
                 TypeArray array = (TypeArray) getParameter(2).get(context);
                 float scale = getParameterOrDefault(getParameter(3),1d,context).floatValue();
-                int color = getParameterOrDefault(getParameter(4),(double)0xFFFFFFFF,context).intValue();
+                int color = getParametersSize() >=3 ? ((Double) getParameter(4,context)).intValue() :0xFFFFFFFF;
+                if(getMarkValue(2))
+                    color = 0xFF000000 | color;
                 GL11.glPushMatrix();
                 GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
                 GlStateManager.enableBlend();

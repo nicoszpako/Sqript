@@ -8,7 +8,7 @@ import fr.nico.sqript.types.ScriptType;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 @Expression(name = "Console Expressions",
-        features = @Feature(name = "Console/server", description = "Returns the instance of the console/server.", examples = "server", pattern = "console|server", type = "sender")
+        features = @Feature(name = "Console/server", description = "Returns the instance of the console/server.", examples = "server", pattern = "(console|server)", type = "sender")
 )
 public class ExprConsole extends ScriptExpression {
 

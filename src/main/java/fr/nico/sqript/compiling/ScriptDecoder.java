@@ -887,153 +887,17 @@ public class ScriptDecoder {
         //System.out.println("\n"+string+"\n"+sb.toString());
     }
 
-    public static String toSimpleRegex(String pattern){
-        int closingToken = 0;
-        int openingToken = 0;
-        while (openingToken < pattern.length()) {
-            boolean comment = openingToken > 0 && pattern.charAt(openingToken - 1) == '~';
-            if (pattern.charAt(openingToken) == '[' && !comment) {
-                //System.out.println(pattern);
-                //pct(openingToken);
-                closingToken = openingToken;
-                //System.out.println("Pattern is now : "+pattern);
-                boolean eatLeftSpace = true;
-                boolean eatRightSpace = true;
-                boolean needsRightSpace = false;
-                boolean needsLeftSpace = false;
-                int brDepth = 0;
-                while (closingToken < pattern.length()) {
-                    //System.out.println(pattern);
-                    //pct(i);
-                    if (pattern.charAt(closingToken) == '[')
-                        brDepth++;
-                    if (pattern.charAt(closingToken) == ']')
-                        brDepth--;
-                    if (brDepth == 0 && pattern.charAt(closingToken) == ']' && !(closingToken > 1 && pattern.charAt(closingToken - 1) == '~')) { //Found closing token
-                        if (openingToken - 1 > 0 && pattern.charAt(openingToken - 1) == ' ') {
-                            needsLeftSpace = true;
-                            for (int k = openingToken - 1; k >= 0; k--) {
-                                //System.out.println("Processing char : "+pattern.charAt(k));
-                                if (k > 0 && pattern.charAt(k - 1) == '~')
-                                    continue;
-                                if ((pattern.charAt(k) == 0 || (pattern.charAt(k) == '?' && pattern.charAt(k-1) == ')'))) {
-                                    //System.out.println("3 Setting eatLeftSpace to false : " + k + " : " + pattern.charAt(k));
-                                    eatLeftSpace = false;
-                                    break;
-                                }
-                            }
-
-                        }
-                        int depth = 0;
-                        if (closingToken + 1 < pattern.length()
-                                && pattern.charAt(closingToken + 1) == ' '
-                                && (openingToken == 0
-                                || " ?)(:|".contains("" + pattern.charAt(openingToken - 1)))) {
-                            //pct(closingToken);
-                            needsRightSpace = true;
-                            if (openingToken == 0)
-                                eatRightSpace = false;
-                            for (int k = 0; k < openingToken; k++) {
-                                if (k > 0 && pattern.charAt(k - 1) == '~')
-                                    continue;
-                                if (pattern.charAt(k) == '[' || pattern.charAt(k) == '(')
-                                    depth++;
-                                else if (pattern.charAt(k) == ']' || pattern.charAt(k) == ')')
-                                    depth--;
-                                else if (depth == 0 && !" ?)(:|".contains("" + pattern.charAt(k)) || k == openingToken - 1) {
-                                    eatRightSpace = false;
-                                    break;
-                                }
-                            }
-                            if (!eatRightSpace) {
-                                depth = 0;
-                                for (int k = closingToken + 1; k < pattern.length(); k++) {
-                                    if (pattern.charAt(k - 1) == '~')
-                                        continue;
-                                    if (pattern.charAt(k) == '[')
-                                        depth++;
-                                    else if (pattern.charAt(k) == ']')
-                                        depth--;
-                                    else if (depth == 0 && !" ?)(:|".contains("" + pattern.charAt(k))) {
-                                        eatRightSpace = !(eatLeftSpace && needsLeftSpace);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    closingToken++;
-                }
-                String firstPart;
-                String middlePart = pattern.substring(openingToken + 1, closingToken);
-                String lastPart = pattern.substring(closingToken + (needsRightSpace ? 2 : 1));
-                //System.out.println("Processed "+pattern+" "+needsLeftSpace+" "+eatLeftSpace+" "+needsRightSpace+" "+eatRightSpace);
-
-                firstPart = pattern.substring(0, openingToken - (needsLeftSpace ? 1 : 0));
-                pattern = firstPart + (needsLeftSpace ? "(?: " : "(?:") + middlePart + (needsRightSpace ? (eatRightSpace ? " )?" : ")? ") : ")?") + lastPart;
-            }
-            openingToken++;
-        }
-
-        pattern=pattern.replaceAll("~","\\\\");
-        return pattern;
-    }
-
     public static TransformedPattern transformPattern(String pattern) throws Exception {
-        //System.out.println("Transforming : "+pattern);
+        System.out.println("Transforming : "+pattern);
         //Saved reference to the base pattern
         String basePattern = pattern;
-        int i = 0;
         int markCount = 0;
-
-        int optionalDeepness = 0;
         //Checking if greedy
         boolean greedy = isPatternGreedy(pattern);
-        //System.out.println("Is pattern '"+pattern+"' greedy : "+greedy);
 
-        //System.out.println("Processing : "+pattern);
-        while (i < pattern.length()) {
-            char c = pattern.charAt(i);
-            boolean comment = i > 0 && pattern.charAt(i - 1) == '~';
-            if (c == ')' && !comment) {
-                int j = i;
-                int mark = -1;
-                while (j > 0) {
-                    if (pattern.charAt(j) == ';' && !(pattern.charAt(j - 1) == '~')) { //Marks
-                        j--;
-                        //System.out.println("found a dot-comma : "+openingToken+" "+pattern.charAt(openingToken));
-                        StringBuilder number = new StringBuilder();
-                        while (j > 0 && pattern.charAt(j) >= '0' && pattern.charAt(j) <= '9') {
-                            //System.out.println("charAt(openingToken) is a number : "+openingToken+" "+pattern.charAt(openingToken));
-                            number.insert(0, pattern.charAt(j));
-                            j--;
-                        }
-                        mark = Integer.parseInt(number.toString());
-                        markCount++;
-                    }
-
-                    if (pattern.charAt(j) == '(' && !(j > 1 && pattern.charAt(j - 1) == '~' || pattern.charAt(j + 1) == '?'))
-                        break;
-                    j--;
-                }
-
-                String firstPart = pattern.substring(0, j);
-                //System.out.println("mark:"+mark);
-                String middlePart = pattern.substring(j + (mark != -1 ? String.valueOf(mark).length() + 2 : 1), i);
-                String lastPart = pattern.substring(i + 1);
-                //System.out.println("\n"+firstPart+"\n"+middlePart+"\n"+lastPart);
-                pattern = firstPart + "(?" + (mark != -1 ? "<m" + mark + ">" : ":") + middlePart + ")" + lastPart;
-                //System.out.println(pattern+"   "+i);
-                i += mark != -1 ? String.valueOf(mark).length() + 3 : 2;
-            }
-
-            i++;
-        }
-        //System.out.println("Pre final processing : "+pattern);
         //pattern = pattern.replaceAll(" \\[","[ ");
-        pattern = toSimpleRegex(pattern);
-        //System.out.println("Basic translation : "+pattern);
+        pattern = SimpleRegex.simplePatternToRegex(pattern);
+        System.out.println("Basic translation : "+pattern);
 
         //End of basic translation to regex
 
@@ -1088,7 +952,7 @@ public class ScriptDecoder {
             paramTypes.add(parameterDefinitions.toArray(new ScriptParameterDefinition[0]));
         }
         pattern = "^\\s*" + pattern + "$";//End of parsing;
-        //System.out.println("Transformed : "+pattern+" with :"+markCount+" marks\n");
+        System.out.println("Transformed : "+pattern+" with :"+markCount+" marks\n");
         TransformedPattern result = new TransformedPattern(pattern, markCount, argCount, paramTypes.toArray(new ScriptParameterDefinition[0][0]));
         result.setGreedy(greedy);
         return result;
