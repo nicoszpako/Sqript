@@ -8,6 +8,25 @@ public class SimpleRegex {
         return convert(compile(treefy(simplePattern)));
     }
 
+    private static boolean optional(Tree<PatternLabel> tree){
+        if(tree.label == null || tree.label.patternType == EnumPatternType.PARENTHESIS){
+            boolean result = true;
+            for (Tree<PatternLabel> child : tree.children) {
+                result = result && optional(child);
+            }
+            return result;
+        }else {
+            switch(tree.label.patternType){
+                case SPACE:
+                case CHAR:
+                    return false;
+                case BRACKETS:
+                    return true;
+            }
+        }
+        return false;
+    }
+
     private static Tree<PatternLabel> compile(Tree<PatternLabel> tree) {
         ListIterator<Tree<PatternLabel>> i = tree.children.listIterator();
         while (i.hasNext()) {
@@ -16,9 +35,15 @@ public class SimpleRegex {
                 if (i.hasNext() && tree.children.get(i.nextIndex()).label.patternType == EnumPatternType.BRACKETS) {
                     tree.children.get(i.nextIndex()).add(0, current);
                     i.remove();
-                } else if (i.hasPrevious() && tree.children.get(i.previousIndex()).label.patternType == EnumPatternType.BRACKETS) {
-                    tree.children.get(i.previousIndex()).add(current);
-                    i.remove();
+                }else if (i.hasPrevious() && i.previousIndex() >= 1 && tree.children.get(i.previousIndex()-1).label.patternType == EnumPatternType.BRACKETS) {
+                    boolean allOptional = true;
+                    for (int j = 0; j < i.previousIndex()-1; j++) {
+                        allOptional = allOptional && optional(tree.children.get(j));
+                    }
+                    if(allOptional){
+                        tree.children.get(i.previousIndex()-1).add(current);
+                        i.remove();
+                    }
                 }
             }
         }
@@ -71,7 +96,11 @@ public class SimpleRegex {
                 skip = false;
             }
             if (!skip) {
-                if (s1.charAt(c) == '[') {
+                if (s1.charAt(c) == '~'){
+                    c++;
+                    treeStack.peek().add(new Tree<>(new PatternLabel(EnumPatternType.CHAR, '\\')));
+                    treeStack.peek().add(new Tree<>(new PatternLabel(EnumPatternType.CHAR, s1.charAt(c))));
+                } else if (s1.charAt(c) == '[') {
                     treeStack.add(new Tree<>(new PatternLabel(EnumPatternType.BRACKETS)));
                 } else if (s1.charAt(c) == '(') {
                     treeStack.add(new Tree<>(new PatternLabel(EnumPatternType.PARENTHESIS)));

@@ -91,8 +91,8 @@ public class EvtLiving {
 
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
-            System.out.println("Checking for parameters :"+ Arrays.toString(parameters));
-            System.out.println("Marks are : "+Integer.toBinaryString(marks));
+            //System.out.println("Checking for parameters :"+ Arrays.toString(parameters));
+            //System.out.println("Marks are : "+Integer.toBinaryString(marks));
             if (parameters.length == 0 || parameters[0] == null || ((marks >> 1) & 1) == 1)
                 return true;
             else if (((marks >> 2) & 1) == 1 && victim instanceof EntityPlayer){

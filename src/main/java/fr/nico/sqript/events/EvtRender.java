@@ -142,5 +142,20 @@ public class EvtRender {
 
     }
 
+    @Event(
+            feature = @Feature(name = "Render of world",
+                    description = "Called when world is rendered",
+                    examples = "on render of world:",
+                    pattern = "(render [of] world|world render)",
+                    side = Side.CLIENT
+            ),
+            accessors = {}
+    )
+    public static class EvtOnRenderWorld extends ScriptEvent {
+
+        public EvtOnRenderWorld() {
+        }
+
+    }
 
 }

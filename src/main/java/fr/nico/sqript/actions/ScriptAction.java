@@ -30,7 +30,7 @@ public abstract class ScriptAction extends IScript {
     }
 
     public <T> T getParameterOrDefault(ScriptExpression parameter, T defaultValue, ScriptContext context) throws ScriptException {
-        ScriptType result = null;
+        ScriptType result;
         return (parameter == null || ((result = parameter.get(context)) instanceof TypeNull)) ? defaultValue : (T) result.getObject();
     }
 

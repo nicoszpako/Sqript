@@ -1,16 +1,19 @@
 package fr.nico.sqript.compiling.parsers;
 
 import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.blocks.ScriptBlock;
+import fr.nico.sqript.blocks.ScriptBlockFunction;
+import fr.nico.sqript.blocks.ScriptFunctionalBlock;
 import fr.nico.sqript.compiling.*;
-import fr.nico.sqript.expressions.ExprCompiledExpression;
-import fr.nico.sqript.expressions.ExprPrimitive;
-import fr.nico.sqript.expressions.ExprReference;
-import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.expressions.*;
 import fr.nico.sqript.meta.ExpressionDefinition;
 import fr.nico.sqript.meta.MatchResult;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
+import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.TransformedPattern;
+import fr.nico.sqript.types.TypeFunction;
+import fr.nico.sqript.types.primitive.PrimitiveType;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -18,10 +21,117 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 public class ScriptExpressionParser implements INodeParser {
 
+    public static List<INodeParser> parsers = new ArrayList<>();
+
+
+    public static void init() {
+        parsers.add((token, group, type) -> {
+            //Check if it is a function
+            ExprNativeFunction f;
+            Matcher m = ScriptDecoder.pattern_function.matcher(token.getText());
+            if (m.find()) {
+                //System.out.println("Found for a function : "+m.group(1)+" with "+m.group(2)+" for "+token);
+                //Priority to not native functions
+                ScriptFunctionalBlock sf;
+                NodeExpression functionNode = null;
+                if ((sf = token.getScriptInstance().getFunction(m.group(1))) != null) {
+                    functionNode =  new NodeExpression(new ExprFunction(sf));
+                }
+                if ((f = ScriptDecoder.parseNativeFunction(token.with(m.group(1)))) != null) {
+                    functionNode = new NodeExpression(f);
+                }
+
+                if(functionNode != null){
+                    //System.out.println("Splitting "+m.group(2));
+                    for(String s : ScriptDecoder.splitAtComa(m.group(2))){
+                        //System.out.println("Adding function parameter : "+s);
+                        functionNode.addChild(ScriptDecoder.parseExpressionTree(token.with(s), group, new Class[]{ScriptElement.class}));
+                    }
+                    return functionNode;
+                }
+            }
+            return null;
+        });
+
+        parsers.add((line, group, type) -> {
+            //Check for replaced string
+            Matcher m = ScriptDecoder.pattern_capture_quotes.matcher(line.getText());
+            if (m.matches()) {
+                Matcher p = ScriptDecoder.pattern_percent.matcher(m.group(1));
+                if (!p.find())
+                    return new NodeExpression(new ExprPrimitive(new TypeString(m.group(2))));
+                else {
+                    return ScriptDecoder.compileString(line.with(m.group(2)), group);
+                }
+            }
+            return null;
+        });
+
+
+        parsers.add((line, group, type) -> {
+            //Check if it is a primitive
+            PrimitiveType primitive = ScriptDecoder.parsePrimitive(line);
+            //System.out.println("Primitive is null : "+(primitive==null));
+            if (primitive != null) {
+                //System.out.println("Found a primitive ! It's a : "+primitive.getClass());
+                return new NodeExpression(new ExprPrimitive(primitive));
+            }
+            return null;
+        });
+
+        parsers.add((line, compilationContext, type) -> {
+            //Check if it is a reference to an accessor or an other element that can be parsed
+            //System.out.println("Checking accessors for line : "+line);
+            ScriptTypeAccessor h = compilationContext.getAccessorFor(line.getText());
+            if (h != null) {
+                Class returnType = h.getReturnType();
+                if (returnType == null)
+                    throw new ScriptException.ScriptUndefinedReferenceException(line);
+                else {
+                    //System.out.println("Returning reference for : "+line);
+                    ExprReference s = new ExprReference(h.getHash());
+                    s.setLine((ScriptToken) line.clone());
+                    s.setVarHash(h.getHash());
+                    s.setReturnType(returnType);
+                    //System.out.println("Hash is : "+h.getHash());
+                    return new NodeExpression(s);
+                }
+            }
+            return null;
+        });
+
+
+        parsers.add((line, group, type) -> {
+            //Check if it is a not-native function reference
+            //System.out.println("Checking if it's a function");
+            if (line.getScriptInstance() != null)
+                for (ScriptBlock fc : line.getScriptInstance().getBlocksOfClass(ScriptBlockFunction.class)) {
+                    //System.out.println("Checking for : "+fc.getClass().getSimpleName());
+                    ScriptBlockFunction function = (ScriptBlockFunction) fc;
+                    if (function.name.equals(line.getText())) {
+                        //System.out.println("Returning function : "+function);
+                        return new NodeExpression(new ExprResult(new TypeFunction(function)));
+                    }
+                }
+            return null;
+        });
+
+        parsers.add((line, group, type) -> {
+            //Check if it is an option
+            if (line.getText().startsWith("@")) {
+                if (line.getScriptInstance().getOptions().containsKey(line.getText().substring(1))) {
+                    //System.out.println("Returning option for : "+line.getText());
+                    return new NodeExpression(line.getScriptInstance().getOptions().get(line.getText().substring(1)));
+                }
+            }
+            return null;
+        });
+    }
 
     @Override
     public Node parse(ScriptToken line, ScriptCompilationContext compilationContext, Class[] type) throws ScriptException {
@@ -37,7 +147,7 @@ public class ScriptExpressionParser implements INodeParser {
         /*
          * We check if this line can be parsed by a simple parser.
          */
-        for (INodeParser parser : ScriptDecoder.parsers) {
+        for (INodeParser parser : parsers) {
             Node node;
             if ((node = parser.parse(line, compilationContext, validTypes)) != null) {
                 //System.out.println("Parsed : " + node);
@@ -199,7 +309,7 @@ public class ScriptExpressionParser implements INodeParser {
             });
             //System.out.println("After filtered trees : "+validTrees);
             if (validTrees.size() == 1) {
-                //System.out.println(debugOffset()+"Returning : "+validTrees.get(0));
+                //System.out.println("Returning : "+validTrees.get(0));
                 return validTrees.get(0);
             } else if (validTrees.size() > 1) {
                 return new NodeSwitch(validTrees.toArray(new Node[0]));
@@ -223,15 +333,19 @@ public class ScriptExpressionParser implements INodeParser {
              */
             ExpressionToken[] operatorSplitResult = ScriptDecoder.splitAtOperators(operatorsBuildString);
             List<ExpressionToken> tokens = Arrays.asList(operatorSplitResult);
-            System.out.println("Tokens are : "+tokens);
+            //System.out.println("Tokens are : "+tokens);
             List<Node> nodes = new ArrayList<>();
             for (ExpressionToken token : tokens) {
                 //System.out.println("Parsing elements from  "+ line+" : "+token.getExpressionString());
+
                 if (token.getType() == EnumTokenType.LEFT_PARENTHESIS) {
                     nodes.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
                 } else if (token.getType() == EnumTokenType.RIGHT_PARENTHESIS) {
                     nodes.add(new NodeParenthesis(EnumTokenType.RIGHT_PARENTHESIS));
                 } else if (token.getType() == EnumTokenType.EXPRESSION) {
+                    if(token.getExpressionString().equals(expressionString)){
+                        return null;
+                    }
                     try {
                         Node node = parse(line.with(token.getExpressionString().trim()), compilationContext, new Class[]{ScriptElement.class});
                         if (node == null) {
@@ -251,7 +365,7 @@ public class ScriptExpressionParser implements INodeParser {
                 return null;
             else {
                 try {
-                    System.out.println("Nodes are : "+nodes);
+                    //System.out.println("Nodes are : "+nodes);
                     //System.out.println();
                     Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
                     //System.out.println("Final tree for " +line+" : "+finalTree);

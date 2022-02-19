@@ -8,6 +8,8 @@ import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.TypeString;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 @Action(name = "Network Actions",
         features = {
@@ -21,6 +23,7 @@ public class ActNetwork extends ScriptAction {
     public void execute(ScriptContext context) throws ScriptException {
         switch (getMatchedIndex()){
             case 0:
+
                 ScriptType element = getParameters().get(0).get(context);
                 TypeString key = (TypeString) getParameters().get(1).get(context);
                 ScriptNetworkManager.sendToAll(key.getObject(),element);

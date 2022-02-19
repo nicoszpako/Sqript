@@ -60,7 +60,7 @@ import java.util.regex.Pattern;
 public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
     ScriptParameterDefinition[][] argumentsDefinitions;
-    private final String name;
+    private final String name ;
 
 
     public ScriptBlockCommand(ScriptToken head) {
@@ -144,9 +144,6 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         this.description = description;
     }
 
-    public String getUsage() {
-        return usage;
-    }
 
     public void setUsage(String usage) {
         this.usage = usage;
@@ -166,7 +163,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
     @Override
     public String getUsage(ICommandSender iCommandSender) {
-        return usage;
+        return (usage == null ? "/"+name : usage);
     }
 
     public void setAliases(String[] aliases) {

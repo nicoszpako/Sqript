@@ -26,11 +26,11 @@ import java.util.stream.Collectors;
 
 @Action(name = "Draw Actions",
         features = {
-            @Feature(name = "Draw text",description = "Draws a string at a specific position on the screen.",examples = "draw text \"Health : %player's health%\" at [10,10]", pattern = "draw [(1;shadowed)] text {string} at {array} [with scale {number}] [[and] with color {number} [(2;without alpha)]]", side = Side.CLIENT),
+            @Feature(name = "Draw text",description = "Draws a string at a specific position on the screen.",examples = "draw text \"Health : %player's health%\" at [10,10]", pattern = "draw [(1;shadowed)] [(3;centered)] text {string} at {array} [with scale {number}] [[and] with color {number} [(2;without alpha)]]", side = Side.CLIENT),
             @Feature(name = "Draw rectangle",description = "Draws a coloured filled custom sized rectangle at a specific position on the screen.", examples = "draw rectangle at [10,10] with size [20,5] with color 0xFFFF0000",pattern = "draw [colored] rect[angle] at {array} with size {array} [and] with color {number} [(1;without alpha)]", side = Side.CLIENT),
             @Feature(name = "Draw textured rectangle",description = "Draws a textured custom sized rectangle at a specific position on the screen.", examples = "draw textured rectangle at [-15,-7.5] with size [30,15] using texture sample:logo.png",pattern = "draw textured rect[angle] at {array} with size {array} (with|using) texture {resource} [with uv {array}]", side = Side.CLIENT),
             @Feature(name = "Draw line",description = "Draws a line between given positions on the screen.", examples = "draw line from [10,10] to [100,100] with stroke 6 and with color 0",pattern = "draw line from {location} to {location} with stroke {number} [and] with color {number} [(1;without alpha)]", side = Side.CLIENT),
-            @Feature(name = "Rotate canvas",description = "Rotate the draw canvas.",
+            @Feature(name = "Rotate canvas",description = "Rotate the draw canvas, around a vector if the given vector is not null, else around the Z axis.",
                     examples =
                     "draw text \"Text 1\" at [10,10] #Won't be rotated\n" +
                     "push canvas matrix #Pushes a new matrix onto the matrix pile\n" +
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
                     "draw text \"Text 2\" at [20,20] #Will be displayed rotated by 90 degrees\n" +
                     "pop canvas matrix\n" +
                     "draw text \"Text 3\" at [20,20] #Won't be rotated because the matrix has been popped.",
-                    pattern = "rotate canvas by {number} [((1;degrees)|(2;radians))]",
+                    pattern = "rotate canvas by {number} [around {array}] [((1;degrees)|(2;radians))]",
                     side = Side.CLIENT),
             @Feature(name = "Translate canvas",description = "Translate the draw canvas.",
                     examples =
@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
                                     "draw text \"Text 2\" at [20,20] #Will be displayed translated by 10 units to the right\n" +
                                     "pop canvas matrix\n" +
                                     "draw text \"Text 3\" at [20,20] #Won't be translated because the matrix has been popped.",
-                    pattern = "translate canvas by {array}",
+                    pattern = "translate canvas (by|at) {array}",
                     side = Side.CLIENT),
             @Feature(name = "Scale canvas",description = "Scale the draw canvas.",
                     examples =
@@ -88,17 +88,22 @@ public class ActDraw extends ScriptAction {
                 }
                 TypeArray array = (TypeArray) getParameter(2).get(context);
                 float scale = getParameterOrDefault(getParameter(3),1d,context).floatValue();
-                int color = getParametersSize() >=3 ? ((Double) getParameter(4,context)).intValue() :0xFFFFFFFF;
+                int color = getParameterOrDefault(getParameter(4), 0xFFFFFF, context);
                 if(getMarkValue(2))
                     color = 0xFF000000 | color;
+
                 GL11.glPushMatrix();
                 GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
                 GlStateManager.enableBlend();
                 GL11.glTranslatef((float)SqriptUtils.getX(array),(float)SqriptUtils.getY(array),(float)SqriptUtils.getZ(array));
                 GL11.glScalef(scale,scale,1);
+                GL11.glDisable(GL11.GL_CULL_FACE);
                 for (int i = 0; i < list.size(); i++) {
-                    Minecraft.getMinecraft().fontRenderer.drawString(list.get(i).replaceAll("&","\247"),0,Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT*i,color,((getMarks()>>1)&1)==1);
+                    float textWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(list.get(i).replaceAll("&","\247"));
+                    Minecraft.getMinecraft().fontRenderer.drawString(list.get(i).replaceAll("&","\247"),getMarkValue(3) ? -scale*textWidth/2 : 0,Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT*i,color,((getMarks()>>1)&1)==1);
                 }
+                GL11.glEnable(GL11.GL_CULL_FACE);
+
                 GlStateManager.disableAlpha();
                 GlStateManager.disableBlend();
                 GlStateManager.resetColor();
@@ -118,9 +123,10 @@ public class ActDraw extends ScriptAction {
                 GlStateManager.enableBlend();
                 float px = (float) location.getVector().x;
                 float py = (float) location.getVector().y;
+                float pz = (float) location.getVector().z;
                 float w = (float) size.getVector().x;
                 float h = (float) size.getVector().y;
-                GL11.glTranslatef(px,py, 0);
+                GL11.glTranslatef(px,py, pz);
                 drawRect(0,0,w,h,color);
                 GlStateManager.disableAlpha();
                 GlStateManager.disableBlend();
@@ -167,16 +173,16 @@ public class ActDraw extends ScriptAction {
                 float green = (float)(color & 255) / 255.0F;
                 float alpha = 255;
                 GL11.glPushMatrix();
-                drawLine((float)SqriptUtils.getX(p1),(float)SqriptUtils.getY(p1),(float)SqriptUtils.getZ(p1),SqriptUtils.getX(p2),SqriptUtils.getY(p2),scale,red,green,blue,alpha);
-
+                drawLine((float)SqriptUtils.getX(p1),(float)SqriptUtils.getY(p1),(float)SqriptUtils.getZ(p1),SqriptUtils.getX(p2),SqriptUtils.getY(p2),SqriptUtils.getZ(p2),scale,red,green,blue,alpha);
                 GL11.glPopMatrix();
                 break;
             case 4:
                 double angle = getParameterOrDefault(getParameter(1),0d,context);
                 //System.out.println(Integer.toBinaryString(getMarks()));
+                Vec3d vec3d = ((TypeArray) getParameter(2).get(context)).getVector();
                 if(getMarkValue(2))
                     angle = Math.toDegrees(angle);
-                GL11.glRotated(angle,0,0,1);
+                GL11.glRotated(angle,vec3d.x,vec3d.y,vec3d.z);
                 break;
             case 5:
                 ILocatable locatable = (ILocatable) getParameter(1).get(context);
@@ -250,7 +256,7 @@ public class ActDraw extends ScriptAction {
         GlStateManager.disableBlend();
     }
 
-    public static void drawLine(double x,double y, double z,double x2, double y2, float lineWidth, float r, float g, float b, float a) {
+    public static void drawLine(double x,double y, double z,double x2, double y2, double z2,float lineWidth, float r, float g, float b, float a) {
         GlStateManager.enableBlend();
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
         GlStateManager.disableTexture2D();
@@ -261,7 +267,7 @@ public class ActDraw extends ScriptAction {
         BufferBuilder vertexbuffer = tessellator.getBuffer();
         vertexbuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
         vertexbuffer.pos(x, y, z).endVertex();
-        vertexbuffer.pos(x2, y2, z).endVertex();
+        vertexbuffer.pos(x2, y2, z2).endVertex();
         tessellator.draw();
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();

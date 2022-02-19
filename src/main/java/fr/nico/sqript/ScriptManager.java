@@ -492,12 +492,9 @@ public class ScriptManager {
         boolean result = false;
         if (eventDefinition != null && eventDefinition.getFeature().side().isStrictlyValid()) {
             ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
-            if (RELOADING)
-                return false;
-            for (ScriptInstance script : scripts) {
-                if (RELOADING)
-                    return false;
-                if (script.callEvent(context, event)) {
+            Iterator<ScriptInstance> iterator = scripts.iterator();
+            while(iterator.hasNext()){
+                if (iterator.next().callEvent(context, event)) {
                     //System.out.println("Returning true");
                     result = true;
                 }

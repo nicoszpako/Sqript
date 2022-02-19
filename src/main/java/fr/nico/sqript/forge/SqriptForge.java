@@ -263,6 +263,7 @@ public class SqriptForge {
                 Objects.requireNonNull(FMLCommonHandler.instance().getMinecraftServerInstance().getServer()).getCommandManager().getCommands().put(command.getName(), command);
                 Objects.requireNonNull(FMLCommonHandler.instance().getMinecraftServerInstance().getServer()).getCommandManager().getCommands().put(command.getName(), command);
             }
+
         }
     }
 

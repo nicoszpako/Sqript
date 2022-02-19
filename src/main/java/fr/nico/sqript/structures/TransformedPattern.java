@@ -40,10 +40,6 @@ public class TransformedPattern {
         this.pattern = pattern;
     }
 
-    public int getMarksCount() {
-        return marksCount;
-    }
-
     public int getArgsCount() {
         return argsCount;
     }
@@ -93,27 +89,27 @@ public class TransformedPattern {
      * @return
      */
     public int getAllMarks(String line){
-        System.out.println("Getting all marks for : "+line);
-        System.out.println("Pattern is : "+getPattern().pattern());
+        //System.out.println("Getting all marks for : "+line);
+        //System.out.println("Pattern is : "+getPattern().pattern());
         int r = 0;
         Matcher m = getPattern().matcher(line);
         m.find();
-        System.out.println("Mark count is : "+marksCount);
+        //System.out.println("Mark count is : "+marksCount);
 
         for (int i = 1; i <= marksCount; i++) {
             try{
-                System.out.println("Checking for mark : "+i);
+                //System.out.println("Checking for mark : "+i);
                 if(m.group("m"+i)!=null)
                 {
-                    System.out.println("m"+i+" group is not null");
+                    //System.out.println("m"+i+" group is not null");
                     r = r | (1 << i);
-                    System.out.println(Integer.toBinaryString(r));
+                    //System.out.println(Integer.toBinaryString(r));
                 }
             }catch(Exception ignored){
-                //ignored.printStackTrace();
+                ignored.printStackTrace();
             }
         }
-        System.out.println("Marks are : "+ Integer.toBinaryString(r));
+        //System.out.println("Marks are : "+ Integer.toBinaryString(r));
         return r;
     }
 

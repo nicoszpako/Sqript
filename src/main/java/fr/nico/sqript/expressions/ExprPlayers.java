@@ -44,7 +44,8 @@ import java.util.Objects;
                 @Feature(name = "Player's gamemode", description = "Returns the current gamemode of a player", examples = "if gamemode of player is 0: #Checks if player is in survival mode", pattern = "{player}['s] gamemode", type = "number"),
                 @Feature(name = "Player's sneak", description = "Returns if the player is sneak.", examples = "if player is sneaking:", pattern = "{player}['s] is sneak[ing]", type = "boolean"),
                 @Feature(name = "Player's armor level", description = "Returns the given player's armor level.", examples = "player's armor", pattern = "{+player}['s] (armor [level])", type = "number"),
-                @Feature(name = "Player's BoundingBox", description = "Returns the AxisAlignedBB of player.", examples = "player boundingBox", pattern = "{player}['s] boundingBox", type = "axisalignedbb"),
+                @Feature(name = "Player's bounding box", description = "Returns the AxisAlignedBB of player.", examples = "player bounding box", pattern = "{player}['s] bounding box", type = "axisalignedbb"),
+                @Feature(name = "Player's rotation yaw", description = "Returns the AxisAlignedBB of player.", examples = "player rotation yaw", pattern = "{player}['s] [head]['s] [rotation] yaw", type = "number"),
         }
 )
 public class ExprPlayers extends ScriptExpression {
@@ -130,6 +131,9 @@ public class ExprPlayers extends ScriptExpression {
             case 14:
                 player = (EntityPlayer) parameters[0].getObject();
                 return new TypeAxisAlignedBB(player.getEntityBoundingBox());
+            case 15:
+                player = (EntityPlayer) parameters[0].getObject();
+                return new TypeNumber(player.getRotationYawHead());
         }
         return null;
     }

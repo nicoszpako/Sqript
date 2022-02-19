@@ -34,120 +34,20 @@ public class ScriptDecoder {
 
     public static List<String> operators_list = new LinkedList<>();
     public static List<Pattern> operators_pattern = new LinkedList<>();
-    public static List<INodeParser> parsers = new ArrayList<>();
-    static Pattern pattern_function = Pattern.compile("^\\s*(\\w*)\\((.*)\\)\\s*$");
-    static Pattern pattern_removed_string = Pattern.compile("\\{S(\\d*)}");
-    static Pattern pattern_capture_quotes = Pattern.compile("(" + CAPTURE_BETWEEN_QUOTES + ")");
-    static Pattern pattern_variable = Pattern.compile("^(?:\\$)?\\{(.*)}$");
-    static Pattern pattern_compiled_string = Pattern.compile("@\\{S(\\d*)}");
-    static Pattern pattern_percent = Pattern.compile("(?<!~)%");
-    static Pattern pattern_L = Pattern.compile("(?<!\\\\)(L\\{(\\d+)})");
+    public static Pattern pattern_function = Pattern.compile("^\\s*(\\w*)\\((.*)\\)\\s*$");
+    public static Pattern pattern_removed_string = Pattern.compile("\\{S(\\d*)}");
+    public static Pattern pattern_capture_quotes = Pattern.compile("(" + CAPTURE_BETWEEN_QUOTES + ")");
+    public static Pattern pattern_variable = Pattern.compile("^(?:\\$)?\\{(.*)}$");
+    public static Pattern pattern_compiled_string = Pattern.compile("@\\{S(\\d*)}");
+    public static Pattern pattern_percent = Pattern.compile("(?<!~)%");
+    public static Pattern pattern_mark = Pattern.compile("\\?<m(\\d*)>");
+    public static Pattern pattern_L = Pattern.compile("(?<!\\\\)(L\\{(\\d+)})");
 
 
 
     public static void init() {
 
-        parsers.add((token, group, type) -> {
-            //Check if it is a function
-            ExprNativeFunction f;
-            Matcher m = pattern_function.matcher(token.getText());
-            if (m.find()) {
-                //System.out.println("Found for a function : "+m.group(1)+" with "+m.group(2)+" for "+token);
-                //Priority to not native functions
-                ScriptFunctionalBlock sf;
-                NodeExpression functionNode = null;
-                if ((sf = token.getScriptInstance().getFunction(m.group(1))) != null) {
-                    functionNode =  new NodeExpression(new ExprFunction(sf));
-                }
-                if ((f = parseNativeFunction(token.with(m.group(1)))) != null) {
-                    functionNode = new NodeExpression(f);
-                }
-
-                if(functionNode != null){
-                    //System.out.println("Splitting "+m.group(2));
-                    for(String s : splitAtComa(m.group(2))){
-                        //System.out.println("Adding function parameter : "+s);
-                        functionNode.addChild(parseExpressionTree(token.with(s), group, new Class[]{ScriptElement.class}));
-                    }
-                    return functionNode;
-                }
-            }
-            return null;
-        });
-
-        parsers.add((line, group, type) -> {
-            //Check for replaced string
-            Matcher m = pattern_capture_quotes.matcher(line.getText());
-            if (m.matches()) {
-                Matcher p = pattern_percent.matcher(m.group(1));
-                if (!p.find())
-                    return new NodeExpression(new ExprPrimitive(new TypeString(m.group(2))));
-                else {
-                    return compileString(line.with(m.group(2)), group);
-                }
-            }
-            return null;
-        });
-
-
-        parsers.add((line, group, type) -> {
-            //Check if it is a primitive
-            PrimitiveType primitive = parsePrimitive(line);
-            //System.out.println("Primitive is null : "+(primitive==null));
-            if (primitive != null) {
-                //System.out.println("Found a primitive ! It's a : "+primitive.getClass());
-                return new NodeExpression(new ExprPrimitive(primitive));
-            }
-            return null;
-        });
-
-        parsers.add((line, compilationContext, type) -> {
-            //Check if it is a reference to an accessor or an other element that can be parsed
-            //System.out.println("Checking accessors for line : "+line);
-            ScriptTypeAccessor h = compilationContext.getAccessorFor(line.getText());
-            if (h != null) {
-                Class returnType = h.getReturnType();
-                if (returnType == null)
-                    throw new ScriptException.ScriptUndefinedReferenceException(line);
-                else {
-                    //System.out.println("Returning reference for : "+line);
-                    ExprReference s = new ExprReference(h.getHash());
-                    s.setLine((ScriptToken) line.clone());
-                    s.setVarHash(h.getHash());
-                    s.setReturnType(returnType);
-                    //System.out.println("Hash is : "+h.getHash());
-                    return new NodeExpression(s);
-                }
-            }
-            return null;
-        });
-
-
-        parsers.add((line, group, type) -> {
-            //Check if it is a not-native function reference
-            //System.out.println("Checking if it's a function");
-            if (line.getScriptInstance() != null)
-                for (ScriptBlock fc : line.getScriptInstance().getBlocksOfClass(ScriptBlockFunction.class)) {
-                    //System.out.println("Checking for : "+fc.getClass().getSimpleName());
-                    ScriptBlockFunction function = (ScriptBlockFunction) fc;
-                    if (function.name.equals(line.getText())) {
-                        //System.out.println("Returning function : "+function);
-                        return new NodeExpression(new ExprResult(new TypeFunction(function)));
-                    }
-                }
-            return null;
-        });
-
-        parsers.add((line, group, type) -> {
-            //Check if it is an option
-            if (line.getText().startsWith("@")) {
-                if (line.getScriptInstance().getOptions().containsKey(line.getText().substring(1))) {
-                    //System.out.println("Returning option for : "+line.getText());
-                    return new NodeExpression(line.getScriptInstance().getOptions().get(line.getText().substring(1)));
-                }
-            }
-            return null;
-        });
+        ScriptExpressionParser.init();
 
     }
 
@@ -888,7 +788,7 @@ public class ScriptDecoder {
     }
 
     public static TransformedPattern transformPattern(String pattern) throws Exception {
-        System.out.println("Transforming : "+pattern);
+        //System.out.println("Transforming : "+pattern);
         //Saved reference to the base pattern
         String basePattern = pattern;
         int markCount = 0;
@@ -897,7 +797,11 @@ public class ScriptDecoder {
 
         //pattern = pattern.replaceAll(" \\[","[ ");
         pattern = SimpleRegex.simplePatternToRegex(pattern);
-        System.out.println("Basic translation : "+pattern);
+        Matcher m = pattern_mark.matcher(pattern);
+        while(m.find()){
+            markCount = Math.max(markCount,Integer.parseInt(m.group(1)));
+        }
+        //System.out.println("Basic translation : "+pattern);
 
         //End of basic translation to regex
 
@@ -906,7 +810,7 @@ public class ScriptDecoder {
         List<ScriptParameterDefinition[]> paramTypes = new ArrayList<>();
         int argCount = 0;
         Pattern p = Pattern.compile("\\{(.*?)}");
-        Matcher m = p.matcher(pattern);
+        m = p.matcher(pattern);
         m:
         while (m.find()) {
             //System.out.println("Found group 1 as : " + m.group(1));
@@ -952,7 +856,7 @@ public class ScriptDecoder {
             paramTypes.add(parameterDefinitions.toArray(new ScriptParameterDefinition[0]));
         }
         pattern = "^\\s*" + pattern + "$";//End of parsing;
-        System.out.println("Transformed : "+pattern+" with :"+markCount+" marks\n");
+        //System.out.println("Transformed : "+pattern+" with :"+markCount+" marks\n");
         TransformedPattern result = new TransformedPattern(pattern, markCount, argCount, paramTypes.toArray(new ScriptParameterDefinition[0][0]));
         result.setGreedy(greedy);
         return result;
@@ -1020,151 +924,6 @@ public class ScriptDecoder {
         return pattern;
     }
 
-    public static TransformedPattern patternToRegex(String pattern) throws Exception {
-
-        //Saved reference to the base pattern
-        String basePattern = pattern;
-        //pattern = pattern.replaceAll(" \\[","[ ");
-        int i = 0;
-
-        int markCount = 0;
-        int argCount = 0;
-        boolean greedy = isPatternGreedy(pattern);
-        //System.out.println("Is pattern '"+pattern+"' greedy : "+greedy);
-        while (i < pattern.length()) {
-            char c = pattern.charAt(i);
-            boolean comment = i > 0 && pattern.charAt(i - 1) == '~';
-            if (c == ')' && !comment) {
-                int j = i;
-                int mark = -1;
-                while (j > 0) {
-                    if (pattern.charAt(j) == ';' && !(pattern.charAt(j - 1) == '~')) { //Marks
-                        j--;
-                        //System.out.println("found a dot-comma : "+j+" "+pattern.charAt(j));
-                        StringBuilder number = new StringBuilder();
-                        while (j > 0 && pattern.charAt(j) >= '0' && pattern.charAt(j) <= '9') {
-                            //System.out.println("charAt(j) is a number : "+j+" "+pattern.charAt(j));
-                            number.insert(0, pattern.charAt(j));
-                            j--;
-                        }
-                        mark = Integer.parseInt(number.toString());
-                        markCount++;
-                    }
-
-                    if (pattern.charAt(j) == '(' && !(j > 1 && pattern.charAt(j - 1) == '~' || pattern.charAt(j + 1) == '?'))
-                        break;
-                    j--;
-                }
-
-                String firstPart = pattern.substring(0, j);
-                //System.out.println("mark:"+mark);
-                String middlePart = pattern.substring(j + (mark != -1 ? String.valueOf(mark).length() + 2 : 1), i);
-                String lastPart = pattern.substring(i + 1);
-                //System.out.println("\n"+firstPart+"\n"+middlePart+"\n"+lastPart);
-                pattern = firstPart + "(?" + (mark != -1 ? "<m" + mark + ">" : ":") + middlePart + ")" + lastPart;
-                //System.out.println(pattern+"   "+i);
-                i += mark != -1 ? String.valueOf(mark).length() + 3 : 2;
-            }
-
-            i++;
-        }
-
-        i = 0;
-        int j = 0;
-        markCount = 0;
-        while (j < pattern.length()) {
-            boolean comment = j > 0 && pattern.charAt(j - 1) == '~';
-            if (pattern.charAt(j) == '[' && !comment) {
-                i = j;
-                //System.out.println(pattern);
-                boolean eatLeftSpace = true;
-                boolean eatRightSpace = true;
-                boolean needsRightSpace = false;
-                boolean needsLeftSpace = false;
-                int brDepth = 0;
-                while (i < pattern.length()) {
-                    if (pattern.charAt(i) == '[')
-                        brDepth++;
-                    if (pattern.charAt(i) == ']')
-                        brDepth--;
-                    if (brDepth == 0 && pattern.charAt(i) == ']' && !(i > 1 && pattern.charAt(i - 1) == '~')) {
-                        if (j - 1 > 0 && pattern.charAt(j - 1) == ' ') {
-                            needsLeftSpace = true;
-                            for (int k = j - 1; k >= 0; k--) {
-                                //System.out.println(pattern.charAt(k));
-                                if (k > 0 && pattern.charAt(k - 1) == '~')
-                                    continue;
-                                if ("?)(:".contains("" + pattern.charAt(k))) {
-                                    //System.out.println("3 Setting eatLeftSpace to false : " + k + " : " + pattern.charAt(k));
-                                    eatLeftSpace = false;
-                                    break;
-                                }
-                            }
-
-                        }
-                        int depth = 0;
-                        if (i + 1 < pattern.length() && pattern.charAt(i + 1) == ' ' && (j == 0 || " ?)(:".contains("" + pattern.charAt(j - 1)))) {
-                            needsRightSpace = true;
-                            if (j == 0)
-                                eatRightSpace = false;
-                            for (int k = 0; k < j; k++) {
-                                if (k > 0 && pattern.charAt(k - 1) == '~')
-                                    continue;
-                                if (pattern.charAt(k) == '[' || pattern.charAt(k) == '(')
-                                    depth++;
-                                else if (pattern.charAt(k) == ']' || pattern.charAt(k) == ')')
-                                    depth--;
-                                else if (depth == 0 && !" ?)(:".contains("" + pattern.charAt(k)) || k == j - 1) {
-                                    eatRightSpace = false;
-                                    break;
-                                }
-                            }
-                            if (!eatRightSpace) {
-                                depth = 0;
-                                for (int k = i + 1; k < pattern.length(); k++) {
-                                    if (pattern.charAt(k - 1) == '~')
-                                        continue;
-                                    if (pattern.charAt(k) == '[' || (k < pattern.length() - 1 && pattern.charAt(k) == '(' && pattern.charAt(k + 1) == '?'))
-                                        depth++;
-                                    else if (pattern.charAt(k) == ']' || (k < pattern.length() - 1 && pattern.charAt(k) == ')' && pattern.charAt(k + 1) == '?'))
-                                        depth--;
-                                    else if (depth == 0 && !" ?)(:".contains("" + pattern.charAt(k))) {
-                                        eatRightSpace = !eatLeftSpace;
-                                        break;
-                                    }
-                                }
-                            }
-
-                        }
-
-                        break;
-                    }
-                    i++;
-                }
-
-
-                String firstPart;
-                String middlePart = pattern.substring(j + 1, i);
-                String lastPart = pattern.substring(i + (needsRightSpace ? 2 : 1));
-                //System.out.println("- "+pattern+" "+needsLeftSpace+" "+eatLeftSpace+" "+needsRightSpace+" "+eatRightSpace);
-
-                firstPart = pattern.substring(0, j - (needsLeftSpace ? 1 : 0));
-                pattern = firstPart + (needsLeftSpace ? "(?: " : "(?:") + middlePart + (needsRightSpace ? (eatRightSpace ? " )?" : ")? ") : ")?") + lastPart;
-                //System.out.println(pattern);
-            }
-            j++;
-        }
-
-        pattern = pattern.replaceAll("~", "\\\\");
-        pattern = pattern.replaceAll("\\{", "\\\\{");
-
-        //System.out.println("Basic translation : "+pattern);
-        //System.out.println("Transformed : "+pattern+" with :"+markCount+" marks\n");
-        TransformedPattern result = new TransformedPattern(pattern, markCount, argCount, new ScriptParameterDefinition[0][0]);
-        result.setGreedy(greedy);
-        return result;
-    }
-
     public static boolean shouldBeLazy(String p, int s) {
         //System.out.println("Should be lazy : "+p+" at "+s);
         while (s < p.length()) {
@@ -1186,7 +945,7 @@ public class ScriptDecoder {
     }
 
     public static PrimitiveType parsePrimitive(ScriptToken parameter) throws ScriptException {
-        //System.out.println("Getting primitive for "+parameter.text);
+        //System.out.println("Getting primitive for "+parameter.getText());
         for (TypeDefinition primitiveDefinition : ScriptManager.primitives.values()) {
             //System.out.println("Checking primitive, checking if "+primitiveDefinition.getName()+" with regex "+primitiveDefinition.transformedPattern.getPattern()+" is matched by "+parameter);
             if ((primitiveDefinition.matchedPattern(parameter.getText()))) {
