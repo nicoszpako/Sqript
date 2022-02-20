@@ -36,7 +36,7 @@ import java.util.List;
                 @Feature(name = "Element is synchronized", description = "Returns whether an element has been synchronized from the server.", examples = "\"my_key\" is synced\n", pattern = "value [of] {string} is (synced|synchronized)", type = "boolean"),
                 @Feature(name = "Synchronized element", description = "Returns whether an element has been synchronized from the server.", examples = "synced value of \"my_key\"", pattern = "(synced|synchronized) value [of] {string}"),
                 @Feature(name = "HTTP request result using POST method", description = "Returns the result of a POST method sent to the given address with the given parameters.", examples = "result of http post \"sqript.fr\" with values (dictionary with [[\"username\",\"nico-\"],[\"password\",314159268]])", pattern = "[result of] http post {string} with values {nbttagcompound|dictionary|string}"),
-                @Feature(name = "HTTP request result using GET method", description = "Returns the result of a GET method sent to the given address with the given headers.", examples = "result of http post \"sqript.fr\" with headers (dictionary with [[\"username\",\"nico-\"],[\"password\",314159268]])", pattern = "[result of] http post {string} with values {dictionary}"),
+                @Feature(name = "HTTP request result using GET method", description = "Returns the result of a GET method sent to the given address with the given headers.", examples = "result of http post \"sqript.fr\" with headers (dictionary with [[\"username\",\"nico-\"],[\"password\",314159268]])", pattern = "[result of] http get {string} with header[s] {dictionary}"),
         }
 )
 public class ExprNetwork extends ScriptExpression {
