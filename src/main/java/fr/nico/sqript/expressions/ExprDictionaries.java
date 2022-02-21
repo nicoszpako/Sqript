@@ -7,6 +7,8 @@ import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeDictionary;
+import fr.nico.sqript.types.TypeNBTTagCompound;
+import fr.nico.sqript.types.primitive.TypeString;
 
 import java.util.Collection;
 
@@ -14,7 +16,7 @@ import java.util.Collection;
         features = {
                 @Feature(name = "Dictionary", description = "Returns a new dictionary.", examples = "set {my_dictionary} to a new dictionary", pattern = "[a] [new] dictionary", type = "dictionary"),
                 @Feature(name = "Dictionary from an array of key-value couples", description = "Returns a new dictionary based on elements of an array that represent key-value couples.", examples = "set {my_dictionary} to a new dictionary with [[\"Key 1\",\"Value 1\"]]", pattern = "[a] [new] dictionary with {array*}", type = "dictionary"),
-                @Feature(name = "Keys of dictionary", description = "Returns an array containing the keys of the given dictionary.", examples = "keys of dictionary with [[\"Key 1\",\"Value 1\"]] #[\"Key 1\"]", pattern = "keys of {dictionary}", type = "array"),
+                @Feature(name = "Keys of dictionary/nbt", description = "Returns an array containing the keys of the given dictionary or nbt.", examples = "keys of dictionary with [[\"Key 1\",\"Value 1\"]] #[\"Key 1\"]", pattern = "keys of {dictionary|nbttagcompound}", type = "array"),
         }
 )
 public class ExprDictionaries extends ScriptExpression {
@@ -32,10 +34,16 @@ public class ExprDictionaries extends ScriptExpression {
                 }
                 return d;
             case 2:
-                d = ((TypeDictionary) parameters[0]);
+                ScriptType h = parameters[0];
                 TypeArray result = new TypeArray();
-                for (ScriptType scriptType : d.getObject().keySet()) {
-                    result.getObject().add(scriptType);
+                if(h instanceof TypeDictionary)
+                    for (ScriptType scriptType : ((TypeDictionary)h).getObject().keySet()) {
+                        result.getObject().add(scriptType);
+                    }
+                else if(h instanceof TypeNBTTagCompound){
+                    for (String key : ((TypeNBTTagCompound)h).getObject().getKeySet()) {
+                        result.getObject().add(new TypeString(key));
+                    }
                 }
                 return result;
         }

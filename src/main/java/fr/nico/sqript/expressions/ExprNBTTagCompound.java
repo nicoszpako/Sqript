@@ -15,7 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 @Expression(name = "NBTTagCompound",
         features = {
                 @Feature(name = "NBTTagCompound", description = "Returns a new NBTTagCompound.", examples = "set {my_nbtcompound} to a new nbt compound", pattern = "[a] [new] nbt compound", type = "nbttagcompound"),
-                @Feature(name = "NBTTagCompound from an json string", description = "Returns a new NBTTagCompound based on elements of json string.", examples = "set {my_nbtcompound} to a new nbt compound with json \"{\"name\":\"test\"}\"", pattern = "[a] [new] nbt compound with json {string}", type = "nbttagcompound"),
+                @Feature(name = "NBTTagCompound from an json string", description = "Returns a new NBTTagCompound based on elements of json string.", examples = "set {my_nbtcompound} to a new nbt compound with json \"{\"name\":\"test\"}\"", pattern = "[a] [new] nbt compound (with|from|of) json {string}", type = "nbttagcompound"),
                 @Feature(name = "NBTTagCompound value", description = "Returns value of key NBTTagCompound.", examples = "tag {string} of {nbt}", pattern = "tag {string} of {nbttagcompound}"),
         }
 )

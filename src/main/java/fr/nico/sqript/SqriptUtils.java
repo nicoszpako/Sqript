@@ -9,6 +9,7 @@ import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -240,6 +241,7 @@ public class SqriptUtils {
         sender.sendMessage(new TextComponentString("\2478[\2473Sqript\2478]\247r ").appendSibling(new TextComponentString(message).setStyle(new Style().setColor(TextFormatting.RED))));
     }
 
+
     public static ScriptType<?> getTagFromTypeNBTTagCompound(NBTTagCompound tag, String key){
         switch(tag.getTagId(key)){
             case Constants.NBT.TAG_INT:
@@ -265,6 +267,12 @@ public class SqriptUtils {
                 list = new ArrayList();
                 for(int b : tag.getIntArray(key)){
                     list.add(new TypeNumber(b));
+                }
+                return new TypeArray(list);
+            case Constants.NBT.TAG_LIST:
+                list = new ArrayList();
+                for (int i = 0; i < tag.getTagList(key,Constants.NBT.TAG_COMPOUND).tagCount(); i++) {
+                    list.add(new TypeNBTTagCompound(tag.getTagList(key,Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
                 }
                 return new TypeArray(list);
             case Constants.NBT.TAG_STRING:
