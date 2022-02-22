@@ -205,4 +205,40 @@ public class EvtLiving {
             return false;
         }
     }
+
+    @Cancelable
+    @Event(
+            feature = @Feature(name = "Living Heal",
+                    description = "This event is triggered on server side just before heal is applied to an entity.",
+                    examples = "on pig heal:",
+                    pattern = "((1;(living|entity))|(2;{entity|resource})) heal[d] [by {entity|resource}]"),
+            accessors = {
+                    @Feature(name = "Victim", description = "The victim of the heal event.", pattern = "(victim|entity)", type = "entity"),
+                    @Feature(name = "Heal amount", description = "The amount of dealt damage.", pattern = "[heal] amount", type = "number"),}
+    )
+    public static class EvtOnLivingHeal extends ScriptEvent {
+        Entity victim;
+
+        public EvtOnLivingHeal(Entity victim, float amount) {
+            super(new ScriptTypeAccessor(victim != null ? new TypeEntity(victim) : new TypeNull(), "(victim|entity)"),
+                    new ScriptTypeAccessor(new TypeNumber(amount), "amount"));
+            this.victim = victim;
+        }
+
+        @Override
+        public boolean check(ScriptType[] parameters, int marks) {
+            boolean result = true;
+            if (parameters.length == 0 || parameters[0] == null)
+                result = false;
+            else if (parameters[0] instanceof TypeEntity) {
+                result = victim.getClass().isAssignableFrom(((TypeEntity) parameters[0]).getObject().getClass());
+            } else if (parameters[0] instanceof TypeResource) {
+                result = ForgeRegistries.ENTITIES.getValue((ResourceLocation) (parameters[0]).getObject()).getEntityClass() == victim.getClass();
+            }
+
+            if (parameters[1] == null)
+                result = false;
+            return result;
+        }
+    }
 }

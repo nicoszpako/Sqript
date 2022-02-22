@@ -335,6 +335,13 @@ public class ScriptEventHandler {
     }
 
     @SubscribeEvent
+    public void onLivingHeal(LivingHealEvent event) {
+        if (ScriptManager.callEvent(new EvtLiving.EvtOnLivingHeal(event.getEntity(), event.getAmount()))) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
         if (ScriptManager.callEvent(new EvtLiving.EvtOnLivingDeath(event.getEntity(), event.getSource()))) {
             event.getEntityLiving().setHealth(1f);
