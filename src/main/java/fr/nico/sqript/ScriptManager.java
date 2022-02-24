@@ -169,10 +169,12 @@ public class ScriptManager {
 
     public static OperatorDefinition getUnaryOperation(Class a, ScriptOperator o) {
         try {
+
             return unaryOperations.get(o).get(a);
         } catch (NullPointerException e) {
             log.error("Operation : '" + o + " is not supported by " + a.getClass().getSimpleName());
         }
+        //System.out.println("Returning null");
         return null;
     }
 

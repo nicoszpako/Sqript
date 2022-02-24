@@ -1,13 +1,11 @@
 package fr.nico.sqript.compiling;
 
 import fr.nico.sqript.ScriptManager;
-import fr.nico.sqript.structures.ITypeParser;
-import fr.nico.sqript.structures.ScriptElement;
-import fr.nico.sqript.structures.ScriptOperator;
-import fr.nico.sqript.structures.TypeParserDefinition;
+import fr.nico.sqript.structures.*;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class NodeOperation extends Node {
 
@@ -38,10 +36,14 @@ public class NodeOperation extends Node {
     @Override
     public Class<? extends ScriptElement> getReturnType() {
         //System.out.println("Getting type for : "+toString());
+        //System.out.println("Children : "+ Arrays.toString(getChildren()));
+        //System.out.println(Arrays.stream(getChildren()).map(Node::getReturnType).collect(Collectors.toList()));
         if(getChildren().length == 1){
             if(operator == ScriptOperator.NOT)
                 return TypeBoolean.class;
-            return ScriptManager.getUnaryOperation(getChildren()[0].getReturnType(), operator).getReturnType();
+            OperatorDefinition operatorDefinition = ScriptManager.getUnaryOperation(getChildren()[0].getReturnType(), operator);
+            //System.out.println(operatorDefinition);
+            return operatorDefinition.getReturnType();
         }else if(getChildren().length == 2){
             //System.out.println((getChildren()[0] == null) +" "+getChildren()[0].getReturnType());
             //System.out.println((getChildren()[1] == null) +" "+getChildren()[1].getReturnType());

@@ -14,11 +14,13 @@ import fr.nico.sqript.types.primitive.TypeNumber;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Expression(name = "Arrays",
         features = {
-                @Feature(name = "Array", description = "Instantiates a new array.", examples = "[3.141,2.718,\"Hello !\"]", pattern = "~[{element*}~]", type = "array"),
+                @Feature(name = "Array", description = "Instantiates a new array.", examples = "[3.141,2.718,\"Hello !\"]", pattern = "~[{+element*}~]", type = "array"),
                 @Feature(name = "Size of an array", description = "Returns the size of an array.", examples = "size of [1,4,7] #Returns 3", pattern = "size of {array|dictionary}", type = "number"),
                 @Feature(name = "Random element of an array", description = "Returns a random element of an array.", examples = "random element of [1,4,7]", pattern = "[a] random element of {array|dictionary}"),
                 @Feature(name = "First element of an array", description = "Returns the first element of an array.", examples = "first element of [1,4,7]", pattern = "[the] first element of {array|dictionary}"),
@@ -42,7 +44,7 @@ public class ExprArrays extends ScriptExpression {
         switch (getMatchedIndex()) {
             case 0://new array
                 TypeArray array = new TypeArray();
-                array.getObject().addAll(Arrays.asList(parameters));
+                array.getObject().addAll(Arrays.stream(parameters).filter(Objects::nonNull).collect(Collectors.toList()));
                 return array;
             case 1: //size of array
                 IIndexedCollection a = (IIndexedCollection) parameters[0];

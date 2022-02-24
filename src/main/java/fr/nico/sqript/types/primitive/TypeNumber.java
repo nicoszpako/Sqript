@@ -132,6 +132,7 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
 
     @Override
     public String format(String format) {
+        //System.out.println("Formatiing with :"+format);
         DecimalFormat decimalFormat = new DecimalFormat(format.replaceAll("-","#"));
         return decimalFormat.format(getObject());
     }

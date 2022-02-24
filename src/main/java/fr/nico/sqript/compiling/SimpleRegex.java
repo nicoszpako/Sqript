@@ -5,7 +5,9 @@ import java.util.*;
 public class SimpleRegex {
 
     public static String simplePatternToRegex(String simplePattern) throws Exception {
-        return convert(compile(treefy(simplePattern)));
+        String result = convert(compile(treefy(simplePattern)));
+        //System.out.println("Converted "+simplePattern+" as "+result);
+        return result;
     }
 
     private static boolean optional(Tree<PatternLabel> tree){
