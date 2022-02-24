@@ -43,7 +43,7 @@ public class NodeExpression extends Node {
 
     public boolean childrenAreNull() {
         for(Node n : getChildren())
-            if (n == null) return true;
-        return false;
+            if (n != null) return false;
+        return true;
     }
 }

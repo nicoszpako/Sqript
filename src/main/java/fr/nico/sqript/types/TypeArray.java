@@ -120,7 +120,7 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType<?>>> implements I
                 e.printStackTrace();
             }
             if (!(t instanceof ISerialisable))
-                throw new ScriptException.ScriptTypeNotSaveableException(t.getClass());
+                throw new ScriptException.ScriptTypeNotSaveableException(typeName,t.getClass());
             ISerialisable savable = (ISerialisable) t;
             savable.read(value);
             getObject().add((ScriptType) savable);

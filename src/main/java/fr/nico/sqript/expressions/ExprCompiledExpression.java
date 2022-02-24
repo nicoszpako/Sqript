@@ -69,8 +69,10 @@ public class ExprCompiledExpression extends ScriptExpression {
         //System.out.println("RPN to AST from rpn : " + nodes);
         while (!nodes.isEmpty()) {//While there are tokens to be read
             Node node = nodes.remove(0);
+            //System.out.println("Top is : "+node);
             if (node instanceof NodeExpression || node instanceof NodeSwitch || (node instanceof NodeOperation && node.getChildren() != null && node.getChildren().length > 0)) {
                 if(node instanceof NodeSwitch || node instanceof NodeOperation){
+                    //System.out.println("Pushing "+node+" into : "+treeStack);
                     treeStack.push(node);
                 }else {
                     NodeExpression nodeExpression = (NodeExpression) node;
@@ -83,8 +85,10 @@ public class ExprCompiledExpression extends ScriptExpression {
                             else merged.addChild(null);
                         }
                         treeStack.push(merged);
-                    } else
+                    } else {
+                        //System.out.println("Pushing : "+nodeExpression);
                         treeStack.push(nodeExpression);
+                    }
                     //System.out.println("Treestack is : "+treeStack);
                 }
 
@@ -92,7 +96,7 @@ public class ExprCompiledExpression extends ScriptExpression {
                 NodeOperation nodeOperation = (NodeOperation) node;
                 ScriptOperator operator = nodeOperation.getOperator();
                 Node merged = new NodeOperation(operator);
-                //System.out.println("treeStack:" + treeStack);
+                //System.out.println("after operator treeStack:" + treeStack);
                 Stack<Node> toMerge = new Stack<>();
                 for (int i = 0; i < (operator.unary ? 1 : 2); i++) {
                     if (!treeStack.empty())
@@ -212,6 +216,9 @@ public class ExprCompiledExpression extends ScriptExpression {
             } else if (o == ScriptOperator.NOT_EQUAL) {
                 return (new TypeBoolean(!o1.equals(o2)));
             } else if (o.unary) {
+                //System.out.println(o1);
+                //System.out.println(o);
+                //System.out.println(o1.getClass());
                 return ScriptManager.getUnaryOperation(o1.getClass(), o).getOperation().operate(o1, null);
             } else {
                 final Class<? extends ScriptType> c1 = o1 == null ? null : o1.getClass();

@@ -42,8 +42,10 @@ public class NodeOperation extends Node {
             if(operator == ScriptOperator.NOT)
                 return TypeBoolean.class;
             OperatorDefinition operatorDefinition = ScriptManager.getUnaryOperation(getChildren()[0].getReturnType(), operator);
-            //System.out.println(operatorDefinition);
-            return operatorDefinition.getReturnType();
+            //System.out.println("Found operation : " + operatorDefinition);
+            if(operatorDefinition != null)
+                return operatorDefinition.getReturnType();
+            else return ScriptElement.class;
         }else if(getChildren().length == 2){
             //System.out.println((getChildren()[0] == null) +" "+getChildren()[0].getReturnType());
             //System.out.println((getChildren()[1] == null) +" "+getChildren()[1].getReturnType());

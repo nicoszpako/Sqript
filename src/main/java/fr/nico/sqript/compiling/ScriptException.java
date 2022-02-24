@@ -76,15 +76,16 @@ public class ScriptException extends Exception {
     public static class ScriptTypeNotSaveableException extends ScriptException {
 
         Class type;
-
-        public ScriptTypeNotSaveableException(Class type) {
+        String key;
+        public ScriptTypeNotSaveableException(String key, Class type) {
             super(null);
             this.type = type;
+            this.key = key;
         }
 
         @Override
         public String getMessage() {
-            return "Type is not savable : " + type.getSimpleName();
+            return key+"'s type is not savable : " + type.getSimpleName();
         }
     }
 

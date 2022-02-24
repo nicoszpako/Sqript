@@ -258,7 +258,10 @@ public class ScriptExpressionParser implements INodeParser {
                     Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
                     //System.out.println("Final tree for " +line+" : "+finalTree);
                     //System.out.println("Checking types for line : "+line+" as "+finalTree+" for "+Arrays.toString(validTypes));
-
+                    //System.out.println("A");
+                    //System.out.println(finalTree);
+                    //System.out.println(finalTree.getReturnType());
+                    //System.out.println("B");
                     if (finalTree != null && validTypes != null && isTypeValid(finalTree.getReturnType(), validTypes)) {
                         //System.out.println("Returning compiled : " + finalTree);
                         return finalTree;
@@ -419,6 +422,7 @@ public class ScriptExpressionParser implements INodeParser {
     }
 
     public static boolean isTypeValid(Class type, Class[] validTypes) {
+        //System.out.println("Is type valid : "+type+ " "+Arrays.toString(validTypes));
         for (Class validType : validTypes) {
             //System.out.println(type == null);
             if (validType == ScriptElement.class || (validType != null && type.isAssignableFrom(validType)))

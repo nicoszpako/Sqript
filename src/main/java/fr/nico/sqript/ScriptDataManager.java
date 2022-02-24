@@ -50,7 +50,7 @@ public class ScriptDataManager {
                 toAdd.setString("type", typeName);
                 total.setTag(key, toAdd);
             } else {
-                throw new ScriptException.ScriptTypeNotSaveableException(s.element.getClass());
+                throw new ScriptException.ScriptTypeNotSaveableException(s.key, s.element.getClass());
             }
         }
         File f = new File(ScriptManager.scriptDir, "data.dat");
@@ -65,7 +65,7 @@ public class ScriptDataManager {
             try {
                 ScriptElement t = SqriptUtils.rawInstantiation(ScriptElement.class, typeClass);
                 if (!(t instanceof ISerialisable))
-                    throw new ScriptException.ScriptTypeNotSaveableException(t.getClass());
+                    throw new ScriptException.ScriptTypeNotSaveableException(typeName, t.getClass());
                 ISerialisable savable = (ISerialisable) t;
                 savable.read(tag);
                 //System.out.println("Returning : "+t);
