@@ -17,17 +17,14 @@ import java.util.Random;
 
 public class ScriptBlock extends Block{
 
-
-    String drop;
+    ResourceLocation drop;
     int harvestLevel;
 
     public int getHarvestLevel() {
         return harvestLevel;
     }
 
-
-
-    public ScriptBlock(Material materialIn, String drop, int harvestLevel) {
+    public ScriptBlock(Material materialIn, ResourceLocation drop, int harvestLevel) {
         super(materialIn);
         this.drop = drop;
         this.harvestLevel = harvestLevel;
@@ -39,12 +36,10 @@ public class ScriptBlock extends Block{
         return BlockRenderLayer.SOLID;
     }
 
-
-
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
         if(drop == null)
-            return Items.AIR;
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(drop));
+            return ForgeRegistries.ITEMS.getValue(getRegistryName());
+        return ForgeRegistries.ITEMS.getValue(drop);
     }
 }

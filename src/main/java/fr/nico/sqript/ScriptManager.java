@@ -54,7 +54,7 @@ public class ScriptManager {
     public static List<EventDefinition> events = new ArrayList<>();
     public static List<ActionDefinition> actions = new ArrayList<>();
     public static List<BlockDefinition> blocks = new ArrayList<>();
-    public static List<ExpressionDefinition> expressions = new ArrayList<>();
+    public static Map<ExpressionIdentifier,ExpressionDefinition> expressions = new LinkedHashMap<>();
     public static List<LoopDefinition> loops = new ArrayList<>();
 
     public static Map<Class<? extends ScriptElement<?>>, TypeDefinition> types = new HashMap<>();
@@ -169,7 +169,6 @@ public class ScriptManager {
 
     public static OperatorDefinition getUnaryOperation(Class a, ScriptOperator o) {
         try {
-
             return unaryOperations.get(o).get(a);
         } catch (NullPointerException e) {
             log.error("Operation : '" + o + " is not supported by " + a.getClass().getSimpleName());
@@ -188,19 +187,16 @@ public class ScriptManager {
     }
 
     public static ExpressionDefinition getDefinitionFromExpression(Class<? extends ScriptExpression> cls) {
-        for (ExpressionDefinition expressionDefinition : expressions) {
-            if (expressionDefinition.getExpressionClass() == cls)
-                return expressionDefinition;
-        }
-        return null;
+        return expressions.get(new ExpressionIdentifier(0,cls));
     }
 
     public static final boolean FULL_DEBUG = true;
 
-    public static void registerExpression(Class<? extends ScriptExpression> exp, String name, int priority, Feature... features) throws Exception {
-        expressions.add(new ExpressionDefinition(name, exp, priority, features));
-        expressions.sort((a, b) -> b.getPriority() - a.getPriority());
-        log.debug("Registering expression : " + name + " (" + exp.getSimpleName() + ")");
+    public static void registerExpression(Class<? extends ScriptExpression> expressionClass, String name, int priority, Feature... features) throws Exception {
+        expressions.put(new ExpressionIdentifier(priority,expressionClass),new ExpressionDefinition(name, expressionClass, priority, features));
+        log.debug("Registering expression : " + name + " (" + expressionClass.getSimpleName() + ")" + " hash : "+new ExpressionIdentifier(priority,expressionClass).hashCode());
+        //log.debug(expressions);
+        //log.debug(expressions.values());
     }
 
     public static void registerNativeFunction(Class<? extends ScriptNativeFunction> func, String name, String[] definitions, String[] description, String example[]) {
@@ -334,6 +330,7 @@ public class ScriptManager {
 
     private static void buildOperators() {
         for (ScriptOperator s : operators) {
+            //System.out.println("Building operator : "+s);
             if (s.word && !s.unary) {
                 ScriptDecoder.operators_list.add("(\\)\\s+|^)" + Pattern.quote(s.symbol) + "(\\s+\\()");
             } else if (s.word) {
@@ -341,6 +338,7 @@ public class ScriptManager {
             } else {
                 ScriptDecoder.operators_list.add(Pattern.quote(s.symbol));
             }
+            //System.out.println("Added : "+ScriptDecoder.operators_list.get(ScriptDecoder.operators_list.size()-1));
             ScriptDecoder.operators_pattern.add(Pattern.compile(ScriptDecoder.operators_list.get(ScriptDecoder.operators_list.size() - 1)));
         }
     }
@@ -445,20 +443,21 @@ public class ScriptManager {
         if (FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
             loadResources();
 
-        if (FULL_DEBUG && !RELOADING)
+        if (FULL_DEBUG) {
             for (ScriptInstance instance : scripts) {
                 List<ScriptBlock> list = instance.getBlocksOfClass(ScriptBlockEvent.class);
                 list.addAll(instance.getBlocksOfClass(ScriptBlockCommand.class));
                 list.addAll(instance.getBlocksOfClass(ScriptBlockPacket.class));
                 list.addAll(instance.getBlocksOfClass(ScriptBlockTimeLoop.class));
                 list.addAll(instance.getBlocksOfClass(ScriptBlockFunction.class));
-                //System.out.println("# Of blocks : "+instance.getBlocks().size());
+                //System.out.println("# Of blocks : " + instance.getBlocks().size());
                 for (ScriptBlock s : list) {
-                    //System.out.println("Displaying : "+s.getHead());
+                    System.out.println("Displaying : " + s.getHead());
                     ScriptLoader.dispScriptTree(s, 0);
                 }
                 log.info("");
             }
+        }
         log.info("All scripts are loaded");
         if(!elist.exceptionList.isEmpty())
             throw elist;

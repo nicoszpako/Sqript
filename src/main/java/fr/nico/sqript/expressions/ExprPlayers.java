@@ -87,7 +87,7 @@ public class ExprPlayers extends ScriptExpression {
                 return new TypeVector(Vec3d.fromPitchYaw(player.getPitchYaw().x, player.getRotationYawHead()));
             case 6:
                 player = (EntityPlayer) parameters[0].getObject();
-                return new TypeItem(player.getHeldItem(EnumHand.MAIN_HAND));
+                return new TypeItemStack(player.getHeldItem(EnumHand.MAIN_HAND));
             case 7:
                 player = (EntityPlayer) parameters[0].getObject();
                 World world = player.world;
@@ -107,7 +107,7 @@ public class ExprPlayers extends ScriptExpression {
             case 10:
                 player = (EntityPlayer) parameters[1].getObject();
                 int slot = ((Double) parameters[0].getObject()).intValue();
-                return new TypeItem(player.inventory.getStackInSlot(slot));
+                return new TypeItemStack(player.inventory.getStackInSlot(slot));
             case 11:
                 player = (EntityPlayer) parameters[0].getObject();
                 if (player instanceof EntityPlayerMP) {
@@ -166,8 +166,8 @@ public class ExprPlayers extends ScriptExpression {
                     }
                     item = new ItemStack(i,1);
                 }
-                if (param instanceof TypeItem) {
-                    item = ((TypeItem) (param)).getObject();
+                if (param instanceof TypeItemStack) {
+                    item = ((TypeItemStack) (param)).getObject();
                 }
                 player.setHeldItem(EnumHand.MAIN_HAND, item);
                 return true;

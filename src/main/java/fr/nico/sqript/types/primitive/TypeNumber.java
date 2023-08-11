@@ -82,7 +82,7 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
                 (a,b) -> new TypeNumber(((TypeNumber)a).getObject()%((TypeNumber)b).getObject()));
 
         ScriptManager.registerBinaryOperation(ScriptOperator.QUOTIENT, TypeNumber.class, TypeNumber.class, TypeNumber.class,
-                (a,b) -> new TypeNumber(Math.floorDiv(((TypeNumber)a).getObject().intValue(),((TypeNumber)b).getObject().intValue())));
+                (a,b) -> new TypeNumber((double)Math.floorDiv(((TypeNumber)a).getObject().intValue(),((TypeNumber)b).getObject().intValue())));
 
         ScriptManager.registerBinaryOperation(ScriptOperator.DIVIDE, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                  (a,b) -> new TypeNumber(((TypeNumber)a).getObject()/((TypeNumber)b).getObject()));

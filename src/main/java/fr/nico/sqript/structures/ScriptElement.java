@@ -20,6 +20,8 @@ public class ScriptElement<T> {
 
     private T object;
 
+
+
     public ScriptElement(){}
 
     public ScriptElement(T object){
@@ -29,6 +31,8 @@ public class ScriptElement<T> {
     public T getObject() {
         return object;
     }
+
+
 
     public void setObject(T object) {
         this.object = object;

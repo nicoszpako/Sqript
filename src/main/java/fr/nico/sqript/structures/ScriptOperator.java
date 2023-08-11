@@ -82,7 +82,7 @@ public class ScriptOperator {
     public final String symbol; //ex: "+".
     public final byte priority; //0 = max priority;
     public final boolean unary; //defines if this operator operates on one term or two.
-    public final boolean word; //defines if this operator should be recognized if his symbol is bounded with on or more white spaces (regex gonna be : \s+symbol\s+).
+    public final boolean word; //defines if this operator should be recognized if his symbol is bounded with one or more white spaces (regex gonna be : \s+symbol\s+).
     public final boolean postfixed; //defines if this operator is already postfixed in the expression or not.
 
     public Order order = Order.LEFT_TO_RIGHT;

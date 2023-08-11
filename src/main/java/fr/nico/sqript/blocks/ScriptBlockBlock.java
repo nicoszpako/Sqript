@@ -12,6 +12,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -71,7 +72,7 @@ public class ScriptBlockBlock extends ScriptBlock {
         if(fieldDefined("hardness"))
             hardness = Float.parseFloat(getSubBlock("hardness").getRawContent());
             //System.out.println("ITEM TYPE FIELD IS NOT DEFINED");
-        fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock block = new fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock(material,drop,harvestLevel);
+        fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock block = new fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock(material,new ResourceLocation(drop),harvestLevel);
         block.setRegistryName(this.getHead().getScriptInstance().getName(),registryName);
         texture = this.getHead().getScriptInstance().getName()+":"+texture;
         block.setUnlocalizedName(registryName);

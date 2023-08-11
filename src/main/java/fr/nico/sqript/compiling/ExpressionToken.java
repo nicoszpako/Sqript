@@ -23,7 +23,7 @@ public class ExpressionToken {
     public String toString() {
         return "Token{" +
                 "type=" + type +
-                ", expression='" + expressionString + '\'' +
+                ",expression=" + (expressionString == null ? operator.toString() : expressionString) + '\'' +
                 '}';
     }
 

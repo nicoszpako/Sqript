@@ -213,7 +213,7 @@ public class ScriptExpressionParser implements INodeParser {
             /*
              * We parse the operators in the string.
              */
-            String operatorsBuildString = ScriptDecoder.buildOperators(expressionString);
+            String operatorsBuildString = ScriptDecoder.buildOperators(line,expressionString);
             operatorsBuildString = ScriptDecoder.trim(operatorsBuildString);
 
             /*
@@ -236,6 +236,7 @@ public class ScriptExpressionParser implements INodeParser {
                     }
                     try {
                         node = parse(line.with(token.getExpressionString().trim()), compilationContext, new Class[]{ScriptElement.class});
+                        //System.out.println("Parsed node : " + node);
                         if (node == null) {
                             return null;
                         }
@@ -280,7 +281,7 @@ public class ScriptExpressionParser implements INodeParser {
 
     private List<Node> parseValidTrees(ScriptToken line, ScriptCompilationContext compilationContext, ScriptExpression parent, Class[] validTypes, String expressionString, String[] replacedStrings) throws ScriptException {
         List<Node> validTrees = new ArrayList<>();
-        for (ExpressionDefinition expressionDefinition : ScriptManager.expressions) {
+        for (ExpressionDefinition expressionDefinition : ScriptManager.expressions.values()) {
             //System.out.println("Testing "+line+" for "+expressionDefinition.getName());
             MatchResult[] matchResults = expressionDefinition.getMatchResults(expressionString);
             /*

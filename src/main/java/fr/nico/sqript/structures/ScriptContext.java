@@ -128,7 +128,7 @@ public class ScriptContext {
      * @return The hash associated to the given name.
      */
     public int getHash(String variableName, boolean scoped) {
-        //System.out.println("Getting hash for : "+variableName+" in "+ this.hashCode());
+
         for (ScriptTypeAccessor a : variables.values()) {//Simple search first
             if (a.key != null && a.key.equals(variableName))
                 return a.hash;

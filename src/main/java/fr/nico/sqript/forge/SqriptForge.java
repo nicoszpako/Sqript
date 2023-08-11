@@ -1,6 +1,7 @@
 package fr.nico.sqript.forge;
 
 import com.google.common.collect.SetMultimap;
+import fr.nico.sqript.EnumLoadPhase;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.blocks.ScriptBlockCommand;
 import fr.nico.sqript.events.EvtFML;
@@ -33,6 +34,7 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -53,12 +55,18 @@ public class SqriptForge {
     public static File scriptDir;
 
     public static ArrayList<ScriptBlock> blocks = new ArrayList<>();
+    public static ArrayList<Item> items = new ArrayList<>();
 
     public static ArrayList<SoundEvent> soundEvents = new ArrayList<>();
     public static ArrayList<ScriptItem> scriptItems = new ArrayList<>();
-    public static ArrayList<Item> items = new ArrayList<>();
 
     private static CapabilityHandler capabilityHandler = new CapabilityHandler();
+
+    private static EnumLoadPhase currentPhase;
+
+    public static EnumLoadPhase getCurrentPhase(){
+        return currentPhase;
+    }
 
     @Mod.EventHandler
     public static void serverStartEvent(FMLServerStartingEvent event) {
@@ -77,8 +85,7 @@ public class SqriptForge {
     }
 
     @Mod.EventHandler
-    public void
-    construction(FMLConstructionEvent event) throws IOException {
+    public void construction(FMLConstructionEvent event) throws IOException {
 
         scriptDir = new File("scripts");
         if (!scriptDir.exists()) {
@@ -124,7 +131,7 @@ public class SqriptForge {
     }
 
     public static void modBuilding(FMLConstructionEvent event, ModContainer container) throws Exception {
-
+        currentPhase = EnumLoadPhase.Build;
         SetMultimap<String, ASMDataTable.ASMData> modData = event.getASMHarvestedData().getAnnotationsFor(container);
 
         Set<ASMDataTable.ASMData> primitives = modData.get(Primitive.class.getName());
@@ -269,6 +276,9 @@ public class SqriptForge {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        currentPhase = EnumLoadPhase.Load;
+
+
         channel.registerMessage(ScriptSyncDataMessage.ScriptSyncDataMessageHandler.class, ScriptSyncDataMessage.class, 0, Side.SERVER);
         channel.registerMessage(ScriptSyncDataMessage.ScriptSyncDataMessageHandler.class, ScriptSyncDataMessage.class, 0, Side.CLIENT);
 
@@ -292,7 +302,9 @@ public class SqriptForge {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+
         ScriptManager.callEvent(new EvtFML.EvtOnPostInit());
+        currentPhase = EnumLoadPhase.Run;
     }
 
     @SubscribeEvent

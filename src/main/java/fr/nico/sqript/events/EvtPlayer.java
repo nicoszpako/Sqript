@@ -60,7 +60,7 @@ public class EvtPlayer {
         public EnumHand hand;
 
         public EvtOnItemRightClick(EntityPlayer player, ItemStack clicked, EnumHand hand) {
-            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(new TypeItem(clicked),"[click[ed]] item"));
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(new TypeItemStack(clicked),"[click[ed]] item"));
             this.clickedItem = clicked;
             this.hand = hand;
         }
@@ -148,7 +148,7 @@ public class EvtPlayer {
 
         public EvtOnItemPickup(EntityPlayer player,ItemStack item) {
             super(new ScriptTypeAccessor(new TypePlayer(player),"player"),
-                    new ScriptTypeAccessor(new TypeItem(item),"[picked [up]] item"));
+                    new ScriptTypeAccessor(new TypeItemStack(item),"[picked [up]] item"));
         }
 
     }
@@ -170,7 +170,7 @@ public class EvtPlayer {
 
         public EvtOnItemUse(EntityPlayer player,ItemStack item) {
             super(new ScriptTypeAccessor(new TypePlayer(player),"player"),
-                    new ScriptTypeAccessor(new TypeItem(item),"[used] item"));
+                    new ScriptTypeAccessor(new TypeItemStack(item),"[used] item"));
         }
 
     }
@@ -190,7 +190,7 @@ public class EvtPlayer {
 
         public EvtOnItemUsed(EntityPlayer player,ItemStack item) {
             super(new ScriptTypeAccessor(new TypePlayer(player),"player"),
-                    new ScriptTypeAccessor(new TypeItem(item),"[used] item"));
+                    new ScriptTypeAccessor(new TypeItemStack(item),"[used] item"));
         }
 
     }
@@ -379,7 +379,7 @@ public class EvtPlayer {
     public static class EvtOnItemToss extends ScriptEvent {
 
         public EvtOnItemToss(EntityPlayer entityPlayer, EntityItem itemEntity) {
-            super(new ScriptTypeAccessor(entityPlayer != null ? new TypePlayer(entityPlayer) : new TypeNull(),"player"), new ScriptTypeAccessor(new TypeItem(itemEntity.getItem()),"item"));
+            super(new ScriptTypeAccessor(entityPlayer != null ? new TypePlayer(entityPlayer) : new TypeNull(),"player"), new ScriptTypeAccessor(new TypeItemStack(itemEntity.getItem()),"item"));
         }
 
     }

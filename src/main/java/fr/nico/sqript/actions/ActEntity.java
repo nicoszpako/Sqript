@@ -1,32 +1,18 @@
 package fr.nico.sqript.actions;
 
-import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeEntity;
-import fr.nico.sqript.types.TypeItem;
 import fr.nico.sqript.types.interfaces.ILocatable;
-import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-import java.util.Objects;
 
 @Action(name = "Entity Actions",
         features = {

@@ -213,7 +213,7 @@ public class ScriptDecoder {
         return expression;
     }
 
-    public static String buildOperators(String expression) {
+    public static String buildOperators(ScriptToken line, String expression) throws ScriptException.ScriptUnknownExpressionException {
         List<String> saved = new ArrayList<>();
         List<ScriptOperator> operators = new ArrayList<>();
         //System.out.println("Building operators for : " + expression);
@@ -221,9 +221,9 @@ public class ScriptDecoder {
 
         //System.out.println("a : " + expression);
         //Removing strings
-        Matcher m = pattern_capture_quotes.matcher(expression);
-        while (m.find()) {
-            String f = m.group(1);
+        Matcher matcher = pattern_capture_quotes.matcher(expression);
+        while (matcher.find()) {
+            String f = matcher.group(1);
             expression = expression.replaceFirst(Pattern.quote(f), "L{" + saved.size() + "}");
             //System.out.println("n:"+expression);
             saved.add(f);
@@ -237,21 +237,23 @@ public class ScriptDecoder {
         testedExpression = emptyDelimiters('<', '>', testedExpression);
         //Placing operators
         while (containsOperator(testedExpression)) {
+            String newTestedExpression = testedExpression;
             for (ScriptOperator operator : ScriptManager.operators) {
-                String b = "", c = "(?![^(]*\\))";
+                String patternPrefix = "", patternSuffix = "(?![^(]*\\))";
                 if (operator.word) {
-                    b = "(" + (operator.unary ? "" : "\\)") + "\\s+|^|})";
-                    //c = "\\operator\\(+" + c;
-                    c = "\\s+\\(";
+                    patternPrefix = "(?:" + (operator.unary ? "" : "\\)") + "\\s+|^|}|\\()";
+                    //patternSuffix = "\\operator\\(+" + patternSuffix;
+                    patternSuffix = "\\s+\\(";
                 }
-                //System.out.println("Checking with : "+"(" + b + Pattern.quote(operator.symbol) + c + ")");
-                Pattern p = Pattern.compile("(" + b + Pattern.quote(operator.symbol) + c + ")");
-                m = p.matcher(expression);
-                //System.out.println("Trying to match  : "+expression+" with regex : "+"(" + b + Pattern.quote(operator.symbol) + c + ")");
-                if (m.find()) {
+                //System.out.println("Checking with : "+patternPrefix +"(" + Pattern.quote(operator.symbol)+")"+ patternSuffix);
+
+                Pattern p = Pattern.compile(patternPrefix +"(" + Pattern.quote(operator.symbol)+")"+ patternSuffix);
+                matcher = p.matcher(expression);
+                //System.out.println("Trying to match  : "+expression+" with regex : "+"(" + patternPrefix + Pattern.quote(operator.symbol) + patternSuffix + ")");
+                if (matcher.find()) {
                     if (operator.unary && !operator.postfixed) {//Check if this one is unary
                         boolean isUnary = false;
-                        int position = m.start();
+                        int position = matcher.start();
                         if (position == 0)
                             isUnary = true;
                         else {
@@ -263,12 +265,12 @@ public class ScriptDecoder {
                         }
                         if (!isUnary) continue;
                     }
-                    int match_start = m.start(1);
-                    int match_end = m.end(1);
+                    int match_start = matcher.start(1);
+                    int match_end = matcher.end(1);
                     //System.out.println("Expression A ; " + expression);
                     expression = expression.substring(0, match_start) + "#{" + ScriptManager.operators.indexOf(operator) + "}" + expression.substring(match_end);
                     //System.out.println("Expression B ; " + expression);
-                    testedExpression = testedExpression.replaceFirst("\\s*" + Pattern.quote(operator.symbol) + "\\s*", "#{" + ScriptManager.operators.indexOf(operator) + "}");
+                    newTestedExpression = newTestedExpression.replaceFirst("\\s*" + Pattern.quote(operator.symbol) + "\\s*", "#{" + ScriptManager.operators.indexOf(operator) + "}");
 
                     //System.out.println(Pattern.quote(operator.symbol) + " expression: " + expression);
                     //System.out.println(operators.size());
@@ -276,6 +278,10 @@ public class ScriptDecoder {
                     //System.out.println("e:"+expression);
                 }
             }
+            if (newTestedExpression.equals(testedExpression)){
+                throw new ScriptException.ScriptUnknownExpressionException(line);
+            }
+            testedExpression = newTestedExpression;
         }
         //System.out.println("c : " + expression);
 
@@ -284,9 +290,9 @@ public class ScriptDecoder {
         //System.out.println("Pattern : "+pattern_L.pattern());
 
         //System.out.println("Saved are : "+saved);
-        while ((m = pattern_L.matcher(expression)).find()) {
-            //System.out.println("Found a group : "+m.group());
-            expression = expression.replaceFirst(Pattern.quote(m.group()), saved.get(Integer.parseInt(m.group(2))));
+        while ((matcher = pattern_L.matcher(expression)).find()) {
+            //System.out.println("Found a group : "+matcher.group());
+            expression = expression.replaceFirst(Pattern.quote(matcher.group()), saved.get(Integer.parseInt(matcher.group(2))));
             //System.out.println("Transformed is : "+expression);
         }
         //System.out.println("Built : " + expression);

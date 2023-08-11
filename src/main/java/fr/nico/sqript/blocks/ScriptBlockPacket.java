@@ -24,9 +24,9 @@ import java.util.Arrays;
                 description = "Define a packet of data that can be sent to a player or to the server. Packets will transmit data only if the data's type is serialisable. Packets are used to transmit information between players (clients) and the server, they are useful in GUIs for example, to tell the server whenever the client clicks on a button (otherwise, as this happens on the player's computer, the server can't know it). Be careful when using packets, and always try to check if the information is verified, because anyone can send a packet with false informations in order to cheat or to mess with the server. For example, checking distances can be good when a player asks the server to open an inventory. ",
                 examples = "packet test_packet(message):\n" +
                         "\tclient:\n" +
-                        "\t\tprint message\n" +
+                        "\t\tprint \"client side print:\" + message\n" +
                         "\tserver:\n" +
-                        "\t\tprint message\n" +
+                        "\t\tprint \"client side print:\" + message\n" +
                         "\n" +
                         "command /sendPacket {string}:\n" +
                         "\tsend test_packet(arg-1) to player",

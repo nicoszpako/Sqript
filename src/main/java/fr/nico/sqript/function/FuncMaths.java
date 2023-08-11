@@ -48,11 +48,11 @@ public class FuncMaths extends ScriptNativeFunction {
                 return new TypeNumber(Math.sqrt((Double) parameters[0].getObject()));
             case 5:
 
-                return new TypeNumber(Math.floor((Double) parameters[0].getObject()));
+                return new TypeNumber((int)Math.floor((Double) parameters[0].getObject()));
             case 6:
-                return new TypeNumber(Math.round((Double) parameters[0].getObject()));
+                return new TypeNumber((int)Math.round((Double) parameters[0].getObject()));
             case 7:
-                return new TypeNumber(Math.ceil((Double) parameters[0].getObject()));
+                return new TypeNumber((int)Math.ceil((Double) parameters[0].getObject()));
             case 8:
                 return new TypeNumber(Math.abs((Double) parameters[0].getObject()));
         }

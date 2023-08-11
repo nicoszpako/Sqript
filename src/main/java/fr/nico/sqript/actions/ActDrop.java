@@ -6,7 +6,7 @@ import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
-import fr.nico.sqript.types.TypeItem;
+import fr.nico.sqript.types.TypeItemStack;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.item.EntityItem;
@@ -43,8 +43,8 @@ public class ActDrop extends ScriptAction {
                     }
                     item = new ItemStack(i,amount);
                 }
-                if (param instanceof TypeItem) {
-                    item = ((TypeItem) (param)).getObject();
+                if (param instanceof TypeItemStack) {
+                    item = ((TypeItemStack) (param)).getObject();
                 }
                 if(item==null)
                     return;

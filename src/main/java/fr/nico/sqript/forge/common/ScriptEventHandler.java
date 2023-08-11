@@ -11,7 +11,7 @@ import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeBlock;
-import fr.nico.sqript.types.TypeItem;
+import fr.nico.sqript.types.TypeItemStack;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -45,7 +45,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class ScriptEventHandler {
 
@@ -353,7 +352,7 @@ public class ScriptEventHandler {
     public void onLivingDrops(LivingDropsEvent event) {
         ArrayList<ScriptType<?>> list = new ArrayList<>();
         event.getDrops().forEach(entityItem -> {
-            list.add(new TypeItem(entityItem.getItem()));
+            list.add(new TypeItemStack(entityItem.getItem()));
         });
         if (ScriptManager.callEvent(new EvtLiving.EvtOnLivingDrops(event.getEntity(), event.getSource(), new TypeArray(list)))) {
             event.setCanceled(true);
@@ -371,7 +370,7 @@ public class ScriptEventHandler {
     public void onPlayerDrops(PlayerDropsEvent event) {
         ArrayList<ScriptType<?>> list = new ArrayList<>();
         event.getDrops().forEach(entityItem -> {
-            list.add(new TypeItem(entityItem.getItem()));
+            list.add(new TypeItemStack(entityItem.getItem()));
         });
         if (ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerDrops(event.getEntityPlayer(), event.getSource(), new TypeArray(list)))) {
             event.setCanceled(true);

@@ -239,7 +239,6 @@ public class ExprCompiledExpression extends ScriptExpression {
                     } catch (Exception ignored) {
                     }
                 }
-                
             } else {
                 for (Node branch : node.getChildren()) {
                     if (ScriptExpressionParser.isTypeValid(branch.getReturnType(), validTypes)) {
