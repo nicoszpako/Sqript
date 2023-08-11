@@ -11,6 +11,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
@@ -25,6 +26,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class SqriptUtils {
 
@@ -173,6 +175,7 @@ public class SqriptUtils {
     }
 
     public static String getIdentifier(String str) {
+        str = str.replaceAll(" ","_").toLowerCase(Locale.ROOT);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             if ((i == 0 && Character.isJavaIdentifierStart(str.charAt(i))) || (i > 0 && Character.isJavaIdentifierPart(str.charAt(i))))

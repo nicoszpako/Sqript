@@ -24,8 +24,8 @@ import java.io.FileWriter;
 
 @Action(name = "Registery Actions",
         features = {
-                @Feature(name = "Register a new item", description = "Creates and registers a new item in the game.", examples = "register a new item named \"Copper\" with texture \"copper_item\"", pattern = "register [a] [new] item named {string} [with (texture {resource}|model {resource})] [with [max] stack size {number}] [in tab {string}]", side = Side.CLIENT),
-                @Feature(name = "Register a new block", description = "Creates and registers a new block in the game.", examples = "register a new block named \"Copper Ore\" with texture \"copper_ore\"", pattern = "register [a] [new] block named {string} [with (texture {resource}|model {resource})] [with [max] stack size {number}] [with hardness {number}] [with harvest level {number}] [with material {string}] [dropping {resource}] [in tab {string}]", side = Side.CLIENT),
+                @Feature(name = "Register a new item", description = "Creates and registers a new item in the game.", examples = "register a new item with identifier \"copper\" named \"Copper\" with texture \"copper_item\"", pattern = "register [a] [new] item [with identifier] {string} [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [in tab {string}]", side = Side.CLIENT),
+                @Feature(name = "Register a new block", description = "Creates and registers a new block in the game.", examples = "register a new block with identifier \"copper_ore\" named \"Copper Ore\" with texture \"copper_ore\"", pattern = "register [a] [new] block [with identifier] {string} [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [with hardness {number}] [with harvest level {number}] [with material {string}] [dropping {resource}] [in tab {string}]", side = Side.CLIENT),
         }
 )
 public class ActRegistery extends ScriptAction {
@@ -181,9 +181,10 @@ public class ActRegistery extends ScriptAction {
             File jsonFile = new File(itemModelsFolder,registryName+".json");
             String content = ("{"+"\n"
                     +"    \"variants\": {\n"
-                    +"        \"normal\": [\n"
-                    +"            { \"model\": \""+getLine().getScriptInstance().getName()+":"+registryName+"\" }\n"
-                    +"        ]\n"
+                    +"        \"facing=north\":   { \"model\": \""+getLine().getScriptInstance().getName()+":"+registryName+"\", \"y\":90 },\n"
+                    +"        \"facing=east\":   { \"model\": \""+getLine().getScriptInstance().getName()+":"+registryName+"\", \"y\":180 },\n"
+                    +"        \"facing=south\":   { \"model\": \""+getLine().getScriptInstance().getName()+":"+registryName+"\", \"y\":270 },\n"
+                    +"        \"facing=west\":   { \"model\": \""+getLine().getScriptInstance().getName()+":"+registryName+"\" }\n"
                     +"    }\n"
                     +"}"
             ).replaceAll("'","\"");
@@ -205,7 +206,8 @@ public class ActRegistery extends ScriptAction {
             //Il faut créer le dossier et l'enregistrer à la main
             File jsonFile = new File(itemModelsFolder,registryName+".json");
             String content = ("{"+"\n"
-                    +"  'parent': '"+getLine().getScriptInstance().getName()+":block/"+registryName+"'\n"
+                    +"  'parent': '"+getLine().getScriptInstance().getName()+":block/"+registryName+"',\n"
+                    + "\"display\": {\r\n        \"gui\": {\r\n            \"rotation\": [ 30, 225, 0 ],\r\n            \"translation\": [ 0, 0, 0],\r\n            \"scale\":[ 0.625, 0.625, 0.625 ]\r\n        },\r\n        \"ground\": {\r\n            \"rotation\": [ 0, 0, 0 ],\r\n            \"translation\": [ 0, 3, 0],\r\n            \"scale\":[ 0.25, 0.25, 0.25 ]\r\n        },\r\n        \"fixed\": {\r\n            \"rotation\": [ 0, 0, 0 ],\r\n            \"translation\": [ 0, 0, 0],\r\n            \"scale\":[ 0.5, 0.5, 0.5 ]\r\n        },\r\n        \"thirdperson_righthand\": {\r\n            \"rotation\": [ 75, 45, 0 ],\r\n            \"translation\": [ 0, 2.5, 0],\r\n            \"scale\": [ 0.375, 0.375, 0.375 ]\r\n        },\r\n        \"firstperson_righthand\": {\r\n            \"rotation\": [ 0, 45, 0 ],\r\n            \"translation\": [ 0, 0, 0 ],\r\n            \"scale\": [ 0.40, 0.40, 0.40 ]\r\n        },\r\n        \"firstperson_lefthand\": {\r\n            \"rotation\": [ 0, 225, 0 ],\r\n            \"translation\": [ 0, 0, 0 ],\r\n            \"scale\": [ 0.40, 0.40, 0.40 ]\r\n        }\r\n    }"
                     +"}").replaceAll("'","\"");
             createFileIfNotExist(jsonFile,content);
     }
