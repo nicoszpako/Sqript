@@ -1,16 +1,8 @@
 package fr.nico.sqript.forge.gui;
 
+import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
-import com.flansmod.client.handlers.FlansModResourceHandler;
-import com.flansmod.client.model.ModelVehicle;
-import com.flansmod.client.model.RenderVehicle;
-import com.flansmod.common.driveables.ItemVehicle;
-import com.flansmod.common.driveables.VehicleType;
-import com.nicoszpako.orycial.common.Utils;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -25,13 +17,7 @@ public class Renderer extends Widget{
 	
 	ItemStack renderItem;
 	public boolean fullRenderItem=false;
-	
-	private static final RenderVehicle vehicleRenderer;
-	static
-	{
-		vehicleRenderer = new RenderVehicle(Minecraft.getMinecraft().getRenderManager());
-	}
-	
+
 	public Renderer(int width,int height, EnumRenderType renderType, ItemStack s, float scale) {
 		this.renderType=renderType;
 		renderItem=s;
@@ -72,26 +58,6 @@ public class Renderer extends Widget{
 					GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
 			}
-			GL11.glPopMatrix();
-
-		}else if(renderType==EnumRenderType.VEHICLE){
-			GL11.glPushMatrix();
-
-			if(!(renderItem.getItem() instanceof ItemVehicle))return;
-			ItemVehicle itemv = (ItemVehicle)renderItem.getItem();
-			VehicleType type = itemv.type;
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			GL11.glTranslatef(this.x+this.style.margin_left, this.y+style.height/2+this.style.margin_top, 100);
-			GL11.glScalef(-110F / type.cameraDistance, 110F / type.cameraDistance, 110F / type.cameraDistance);
-			GL11.glScaled(this.scale, this.scale, this.scale);
-			GL11.glRotatef(180F, 0F, 0F, 1F);
-			GL11.glRotatef(10F, 1F, 0F, 0F);
-			GL11.glRotatef(-40, 0F, 1F, 0F);
-			Minecraft.getMinecraft().renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
-			Utils.drawVehicle(type);
-			
-			GL11.glDisable(GL11.GL_LIGHTING);
 			GL11.glPopMatrix();
 
 		}else if(renderType==EnumRenderType.PLAYER){

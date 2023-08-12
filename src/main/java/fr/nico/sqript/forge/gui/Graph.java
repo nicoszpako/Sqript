@@ -2,7 +2,6 @@ package fr.nico.sqript.forge.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import mapwriter.util.Render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 

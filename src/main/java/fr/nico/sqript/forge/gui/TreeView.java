@@ -3,10 +3,6 @@ package fr.nico.sqript.forge.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
-import com.nicoszpako.orycial.client.frames.Styles;
-
 import net.minecraft.item.Item;
 
 public class TreeView<T> extends Container{
