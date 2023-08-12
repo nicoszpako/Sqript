@@ -2,14 +2,18 @@ package fr.nico.sqript.types;
 
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
+import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.item.Item;
 
 @Type(name = "itemtype",
-        parsableAs = {})
+        parsableAs = {TypeResource.class})
 public class TypeItem extends ScriptType<Item> {
 
     @Override
     public ScriptElement<?> parse(String typeName) {
+        if(typeName.equalsIgnoreCase("resource")){
+            return new TypeResource(getObject().getRegistryName());
+        }
         return null;
     }
 

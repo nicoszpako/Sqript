@@ -48,7 +48,7 @@ public class EvtPlayer {
             feature = @Feature(name = "Item right clicked",
                     description = "Called when a player right clicks an item.",
                     examples = "on item click with minecraft:emerald:",
-                    pattern = "[item] click [with {item}] [with ((1;left)|(2;right)) hand]"),
+                    pattern = "[(item|right)] click [(with|on) {item}] [with ((1;left)|(2;right)) hand]"),
             accessors = {
                     @Feature(name = "Player", description = "The player that clicked on the item.", pattern = "player", type = "player"),
                     @Feature(name = "Clicked item", description = "The clicked item.", pattern = "[click[ed]] item", type = "item"),
