@@ -43,8 +43,11 @@ public class SqriptUtils {
     }
 
     public static double getZ(TypeArray array) {
-        if (array.getObject().size() > 2)
+
+        if(array.getObject().size() == 3)
             return ((TypeNumber) (((ArrayList) (array.getObject())).get(2))).getObject();
+        else if(array.getObject().size() == 2)
+            return ((TypeNumber) (((ArrayList) (array.getObject())).get(1))).getObject();
         else return 0;
     }
 

@@ -12,16 +12,25 @@ import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelManager;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.client.model.ModelLoader;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Action(name = "Draw Actions",
@@ -34,11 +43,11 @@ import java.util.stream.Collectors;
                     examples =
                     "draw text \"Text 1\" at [10,10] #Won't be rotated\n" +
                     "push canvas matrix #Pushes a new matrix onto the matrix pile\n" +
-                    "rotate canvas by 90 degrees\n" +
+                    "rotate canvas by 90\n" +
                     "draw text \"Text 2\" at [20,20] #Will be displayed rotated by 90 degrees\n" +
                     "pop canvas matrix\n" +
                     "draw text \"Text 3\" at [20,20] #Won't be rotated because the matrix has been popped.",
-                    pattern = "rotate canvas by {number} [around {array}] [((1;degrees)|(2;radians))]",
+                    pattern = "rotate canvas by {number} [around {array}] [in ((1;degrees)|(2;radians))]",
                     side = Side.CLIENT),
             @Feature(name = "Translate canvas",description = "Translate the draw canvas.",
                     examples =
@@ -63,6 +72,7 @@ import java.util.stream.Collectors;
             @Feature(name = "Push canvas matrix",description = "Pushes a new matrix onto the matrix pile. Allows to \"save the current\" matrix configuration.", examples = "push canvas matrix",pattern = "push canvas matrix", side = Side.CLIENT),
             @Feature(name = "Pop canvas matrix",description = "Pops the top matrix from the matrix pile. Allows to \"come back to the previous\" matrix configuration.", examples = "pop canvas matrix",pattern = "pop canvas matrix", side = Side.CLIENT),
             @Feature(name = "Draw circle",description = "Draws a circle of given radius at given position on the screen.", examples = "draw circle at [10,10] with radius 6 and with color 0",pattern = "draw circle at {location} with radius {number} [and] with color {number} [(1;without alpha)]", side = Side.CLIENT),
+            @Feature(name = "Render model",description = "Renders a .json model in the world.", examples = "render model test:my_model at [50,15,20]",pattern = "render model {resource} at {array}", side = Side.CLIENT),
         }
 )
 public class ActDraw extends ScriptAction {
@@ -228,6 +238,29 @@ public class ActDraw extends ScriptAction {
                 drawCircle(location.getVector().x,location.getVector().y,radius,red,green,blue,alpha);
                 GL11.glColor3f(1,1,1);
                 GL11.glPopMatrix();
+                break;
+            case 10:
+                resourceLocation = (ResourceLocation)getParameter(1).get(context).getObject();
+                location = (ILocatable) getParameter(2).get(context);
+                GL11.glPushMatrix();
+                GL11.glScaled(5,5,5);
+                GL11.glTranslated(location.getVector().x,location.getVector().y,location.getVector().z);
+                ModelManager modelManager = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager();
+
+                IBakedModel bakedModel = modelManager.getModel(new ModelResourceLocation(resourceLocation.toString()));
+                if(bakedModel == modelManager.getMissingModel()){
+                    bakedModel = modelManager.getModel(new ModelResourceLocation(resourceLocation.toString(),"inventory"));
+                }
+                List<BakedQuad> quads = bakedModel.getQuads(null, null, 0L);
+                //System.out.println(modelManager.getMissingModel() == bakedModel);
+                Tessellator tessellator = Tessellator.getInstance();
+                BufferBuilder bufferbuilder = tessellator.getBuffer();
+                bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
+                Minecraft.getMinecraft().getRenderItem().renderQuads(bufferbuilder, quads, -1, ItemStack.EMPTY);
+                tessellator.draw();
+
+                GL11.glPopMatrix();
+                //System.out.println("Rendering");
                 break;
         }
 

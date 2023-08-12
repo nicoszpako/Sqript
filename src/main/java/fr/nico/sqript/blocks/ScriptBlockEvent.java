@@ -45,6 +45,10 @@ public class ScriptBlockEvent extends ScriptBlock {
         if(eventType == null)
             throw new ScriptException.ScriptUnknownEventException(getHead());
         this.side = eventType.getAnnotation(Event.class).feature().side();
+
+        if(!side.isValid())
+            return;
+
         super.init(block);
     }
 
@@ -90,11 +94,12 @@ public class ScriptBlockEvent extends ScriptBlock {
         if(fieldDefined("side"))
             side = Side.from(getSubBlock("side").getRawContent());
 
-        if(side!=null && !side.isStrictlyValid())
+        if(side!=null && !side.isValid())
             return;
 
         ScriptCompilationContext group = new ScriptCompilationContext();
         group.addArray(Arrays.asList(eventType.getAnnotation(Event.class).accessors()));
+
         setRoot(getMainField().compile(group));
         getScriptInstance().registerBlock(this);
 

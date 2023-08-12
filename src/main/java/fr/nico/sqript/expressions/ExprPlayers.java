@@ -35,7 +35,7 @@ import java.util.Objects;
                 @Feature(name = "Player's name", description = "Returns the given player's name.", examples = "player's username", pattern = "{+player}['s] name", type = "string"),
                 @Feature(name = "Player's health", description = "Returns the given player's health.", examples = "player's health", pattern = "{+player}['s] health", type = "number"),
                 @Feature(name = "Player's hunger level", description = "Returns the given player's hunger level.", examples = "player's hunger", pattern = "{+player}['s] (hunger|food [level])", type = "number"),
-                @Feature(name = "Player's look vector", description = "Returns the given player's look vector.", examples = "player's look vector", pattern = "{+player}['s] look vector", type = "vector"),
+                @Feature(name = "Player's look vector", description = "Returns the given player's look vector.", examples = "player's look vector smoothed with partial ticks", pattern = "{+player}['s] look vector [smoothed with {number}]", type = "vector"),
                 @Feature(name = "Player's tool", description = "Returns the given player's tool.", examples = "{player}'s tool", pattern = "{+player}['s] tool", type = "item"),
                 @Feature(name = "Block player is looking at", description = "Returns the block the given player is looking at", examples = "block player's looking at", pattern = "block {player} is looking at", type = "block"),
                 @Feature(name = "Player check", description = "Check if the object is a player.", examples = "{player} is a player", pattern = "{player} is a player", type = "player"),
@@ -45,7 +45,7 @@ import java.util.Objects;
                 @Feature(name = "Player's sneak", description = "Returns if the player is sneak.", examples = "if player is sneaking:", pattern = "{player}['s] is sneak[ing]", type = "boolean"),
                 @Feature(name = "Player's armor level", description = "Returns the given player's armor level.", examples = "player's armor", pattern = "{+player}['s] (armor [level])", type = "number"),
                 @Feature(name = "Player's bounding box", description = "Returns the AxisAlignedBB of player.", examples = "player bounding box", pattern = "{player}['s] bounding box", type = "axisalignedbb"),
-                @Feature(name = "Player's rotation yaw", description = "Returns the AxisAlignedBB of player.", examples = "player rotation yaw", pattern = "{player}['s] [head]['s] [rotation] yaw", type = "number"),
+                @Feature(name = "Player's rotation yaw", description = "Returns the AxisAlignedBB of player.", examples = "player rotation yaw", pattern = "{player}['s] [head]['s] [rotation] yaw [smoothed with {number}]", type = "number"),
         }
 )
 public class ExprPlayers extends ScriptExpression {
@@ -84,7 +84,8 @@ public class ExprPlayers extends ScriptExpression {
                 return new TypeNumber(player.getFoodStats().getFoodLevel());
             case 5:
                 player = (EntityPlayer) parameters[0].getObject();
-                return new TypeVector(Vec3d.fromPitchYaw(player.getPitchYaw().x, player.getRotationYawHead()));
+                float partialTicks = getParameterOrDefault(parameters[1],1d).floatValue();
+                return new TypeVector(player.getLook(partialTicks));
             case 6:
                 player = (EntityPlayer) parameters[0].getObject();
                 return new TypeItemStack(player.getHeldItem(EnumHand.MAIN_HAND));
@@ -133,7 +134,8 @@ public class ExprPlayers extends ScriptExpression {
                 return new TypeAxisAlignedBB(player.getEntityBoundingBox());
             case 15:
                 player = (EntityPlayer) parameters[0].getObject();
-                return new TypeNumber(player.getRotationYawHead());
+                partialTicks = getParameterOrDefault(parameters[1],1d).floatValue();
+                return new TypeNumber( player.prevRotationYawHead + (player.rotationYawHead - player.prevRotationYawHead) * partialTicks);
         }
         return null;
     }

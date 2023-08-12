@@ -35,6 +35,10 @@ public class SqriptCommand extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length>0){
             if(args[0].equalsIgnoreCase("reload")){
+                if(args.length == 2 && args[1].equalsIgnoreCase("client")){
+                    SqriptForge.channel.sendToAll(new ScriptReloadMessage());
+                    return;
+                }
                 if(args.length == 2 && args[1].equalsIgnoreCase("all")){
                     SqriptForge.channel.sendToAll(new ScriptReloadMessage());
                 }

@@ -31,7 +31,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -270,7 +269,6 @@ public class ScriptManager {
 
     public static void init() {
 
-
         try {
             ScriptDataManager.load();
         } catch (Exception e) {
@@ -491,15 +489,20 @@ public class ScriptManager {
         if (optional.isPresent())
             eventDefinition = optional.get();
         boolean result = false;
-        if (eventDefinition != null && eventDefinition.getFeature().side().isStrictlyValid()) {
+        if (eventDefinition != null && eventDefinition.getFeature().side().isValid()) {
             ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
-            Iterator<ScriptInstance> iterator = scripts.iterator();
-            while(iterator.hasNext()){
-                if (iterator.next().callEvent(context, event)) {
-                    //System.out.println("Returning true");
-                    result = true;
+            try {
+                Iterator<ScriptInstance> iterator = scripts.iterator();
+                while(iterator.hasNext()){
+                    if (iterator.next().callEvent(context, event)) {
+                        //System.out.println("Returning true");
+                        result = true;
+                    }
                 }
+            }catch (Exception e){
+                e.printStackTrace();
             }
+
         }
         return result;
     }

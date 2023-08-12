@@ -122,7 +122,7 @@ public class ScriptLoader {
             BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
             if (blockDefinition == null)
                 throw new ScriptException.ScriptUnknownTokenException(head);
-            if (blockDefinition.getFeature().side().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())) {
+            if (blockDefinition.getFeature().side().isValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())) {
                 Class scriptBlockClass = blockDefinition.getBlockClass();
                 ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptToken.class).newInstance(head);
                 scriptBlock.setLine(head);

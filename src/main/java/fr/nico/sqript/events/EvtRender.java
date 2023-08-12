@@ -5,6 +5,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.TypePlayer;
+import fr.nico.sqript.types.primitive.TypeNumber;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
@@ -149,11 +150,14 @@ public class EvtRender {
                     pattern = "(render [of] world|world render)",
                     side = Side.CLIENT
             ),
-            accessors = {}
+            accessors = {
+                    @Feature(name = "Partial ticks", description = "The partial ticks since last frame.", pattern = "partial ticks", type = "number"),
+            }
     )
     public static class EvtOnRenderWorld extends ScriptEvent {
 
-        public EvtOnRenderWorld() {
+        public EvtOnRenderWorld(float partialTicks) {
+            setAccessors(new ScriptTypeAccessor[]{new ScriptTypeAccessor(new TypeNumber(partialTicks),"partial ticks")});
         }
 
     }

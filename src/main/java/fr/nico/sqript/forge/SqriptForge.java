@@ -17,6 +17,7 @@ import fr.nico.sqript.network.ScriptReloadMessage;
 import fr.nico.sqript.network.ScriptSyncDataMessage;
 import fr.nico.sqript.meta.*;
 import net.minecraft.client.audio.SoundRegistry;
+import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.DefaultStateMapper;
 import net.minecraft.item.Item;

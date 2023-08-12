@@ -21,7 +21,7 @@ public enum Side {
                 return null;
         }
 
-        public boolean isStrictlyValid(){
+        public boolean isValid(){
                 switch(this){
                         case SERVER:
                                 return FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.SERVER;

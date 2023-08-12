@@ -1,15 +1,21 @@
 package fr.nico.sqript.expressions;
 
 import fr.nico.sqript.forge.gui.Frame;
+import fr.nico.sqript.forge.gui.Image;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeFrame;
+import fr.nico.sqript.types.TypeImage;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.ResourceLocation;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 @Expression(name = "Frame Expressions",
         features = {
@@ -28,7 +34,14 @@ public class ExprFrame extends ScriptExpression {
             case 0:
                 return new TypeFrame(new Frame());
             case 1:
-                return new TypeNumber(resolution.getScaledHeight_double());
+                ResourceLocation resourceLocation = (ResourceLocation) parameters[0].getObject();
+                try {
+                    InputStream inputStream = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream();
+                    System.out.println(inputStream.read()+" "+inputStream.read()+" "+inputStream.read());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return new TypeImage(new Image(resourceLocation,0,0));
             case 2:
                 String text = (String) parameters[0].getObject();
                 return new TypeNumber(Minecraft.getMinecraft().fontRenderer.getStringWidth(text));

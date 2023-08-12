@@ -2,8 +2,6 @@ package fr.nico.sqript.forge.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -11,12 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class TreeSelector extends Button {
+public class DropSelection extends Button {
 
-    public List<TreeSelector> choices = new ArrayList<TreeSelector>();
-    public TreeSelector selected;
-    public String label;
-    public Item icon;
+    public List<String> choices;
+    public String selected;
     int selectorId;
     private String displayText;
     private boolean extended = false;
@@ -25,13 +21,12 @@ public class TreeSelector extends Button {
     private boolean hover;
     private boolean hold;
 
-
-    public TreeSelector(Style style, String label, Item icon) {
+    public DropSelection(Style style, List<String> choices) {
         super(style);
         this.extendedHeight = style.height;
+        selected = choices.get(0);
         selectorId = new Random().nextInt(10000);
-        this.label = label;
-        this.icon = icon;
+        this.choices = choices;
         // TODO Auto-generated constructor stub
     }
 
@@ -48,10 +43,8 @@ public class TreeSelector extends Button {
         if (extended) {
             getFrame().interactCode = selectorId;
             getFrame().isInteracting = true;
-            this.style.height = (choices.size() + 1) * style.height;
         } else {
             getFrame().isInteracting = false;
-            this.style.height = extendedHeight;
         }
     }
 
@@ -66,13 +59,17 @@ public class TreeSelector extends Button {
     @Override
     public void draw(int mouseX, int mouseY) {
         GlStateManager.pushMatrix();
+        if (extended) GL11.glDisable(GL11.GL_SCISSOR_TEST);
         super.drawBorders(style.bordercolor);
-        if (isMouseInBox(mouseX, mouseY, x, y, x + style.width, y + extendedHeight)) {
-            drawRect(x, y, x + style.width, y + extendedHeight, style.hoverColor);
+        if (isMouseInBox(mouseX, mouseY, x, y, x + style.width, y + style.height)) {
+            drawRect(x, y, x + style.width, y + style.height, style.hoverColor);
             checkClick(mouseX, mouseY);
         } else {
-            drawRect(x, y, x + style.width, y + extendedHeight, style.backgroundcolor);
+            drawRect(x, y, x + style.width, y + style.height, style.backgroundcolor);
 
+        }
+        if (!isMouseInBox(mouseX, mouseY, x, y, x + style.width, y + style.height * choices.size()) && Mouse.isButtonDown(0) && extended) {
+            setExtended(false);
         }
         if (extended) {
             GlStateManager.translate(0, 0, 4);
@@ -80,53 +77,39 @@ public class TreeSelector extends Button {
             GlStateManager.translate(0, 1, 0);
 
             int i = 1;
-            for (TreeSelector s : choices) {
+            for (String s : choices) {
+                if (s.equals(selected)) continue;
 
-                CuboidInfos c = new CuboidInfos(this.x, this.y + extendedHeight * i, style.width, extendedHeight);
+                CuboidInfos c = new CuboidInfos(this.x, this.y + style.height * i, style.width, style.height);
 
                 if (c.isMouseOn(mouseX, mouseY)) {
 
-                    drawRect(c.x, c.y, c.x + c.width, c.y + extendedHeight, this.style.getBackgroundcolor());
-
+                    drawRect(c.x, c.y, c.x + c.width, c.y + c.height, 0xFF000000);
+                    drawRect(c.x + 1, c.y, c.x + c.width - 1, c.y + c.height - 1, style.hoverColor);
                     if (Mouse.isButtonDown(0)) {
 
+                        this.setExtended(false);
 
                         this.selected = s;
-                        if (!getFrame().hold) {
-                            getFrame().handleAction(this, EnumAction.MOUSE_LEAVE);
-                            getFrame().hold = true;
-                        }
-                    } else {
-
-                        getFrame().hold = false;
-
-
+                        getFrame().handleAction(this, EnumAction.MOUSE_LEAVE);
+                        getFrame().hold = true;
+                        break;
                     }
                 } else {
+                    drawRect(c.x, c.y, c.x + c.width, c.y + c.height, 0xFF000000);
+                    drawRect(c.x + 1, c.y, c.x + c.width - 1, c.y + c.height - 1, style.backgroundcolor);
 
 
                 }
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(c.x + (c.height - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT) / 2 + 15, 2 + c.y + extendedHeight / 2 - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2, 0);
-                GlStateManager.scale(0.8, 0.8, 1);
-                drawString(Minecraft.getMinecraft().fontRenderer, s.label.length() > 15 ? s.label.substring(0, 15) + "..." : s.label, 0, 0, 0xFFBBBBBB);
-
-                GlStateManager.popMatrix();
-                if (s.icon != null) {
-                    this.drawItem(new ItemStack(s.icon, 1), c.x, c.y);
-                }
+                drawString(Minecraft.getMinecraft().fontRenderer, s, c.x + (c.height - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT) / 2, c.y + c.height / 2 - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2, 0xFFBBBBBB);
                 i++;
             }
             GlStateManager.translate(0, -1, 0);
 
         }
-        GlStateManager.translate(this.x + (extendedHeight - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT) / 2, this.y + extendedHeight / 2 - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2, 0);
-        drawString(Minecraft.getMinecraft().fontRenderer, extended ? "▲" : "▼", this.style.width - 10, 0, 0xFFFFFFFF);
 
-        GlStateManager.scale(0.8, 0.8, 1);
-        drawString(Minecraft.getMinecraft().fontRenderer, this.label, 0, 0, 0xFFFFFFFF);
-
-
+        drawString(Minecraft.getMinecraft().fontRenderer, selected, this.x + (this.style.height - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT) / 2, this.y + this.style.height / 2 - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2, 0xFFFFFFFF);
+        drawString(Minecraft.getMinecraft().fontRenderer, extended ? "▲" : "▼", this.x + this.style.width - 8, this.y + this.style.height / 2 - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2, 0xFFFFFFFF);
         GL11.glColor3d(1, 1, 1);
         GlStateManager.popMatrix();
     }

@@ -181,7 +181,7 @@ public class ScriptEventHandler {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onRenderLiving(RenderWorldLastEvent event) {
-        ScriptManager.callEvent(new EvtRender.EvtOnRenderWorld());
+        ScriptManager.callEvent(new EvtRender.EvtOnRenderWorld(event.getPartialTicks()));
     }
 
     @SubscribeEvent

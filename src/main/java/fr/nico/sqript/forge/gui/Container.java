@@ -1,8 +1,10 @@
 package fr.nico.sqript.forge.gui;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -66,28 +68,6 @@ public class Container extends Widget implements IClickListener, IKeyListener, I
 
     public Container(Style style) {
         this.style = style;
-    }
-
-    public static void drawTexturedRect(double x, double y, double w, double h) {
-        drawTexturedRect(x, y, w, h, 0.0D, 0.0D, 1.0D, 1.0D);
-    }
-
-    public static void drawTexturedRect(double x, double y, double w, double h, double u1, double v1, double u2,
-                                        double v2) {
-        try {
-
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder vertexbuffer = tessellator.getBuffer();
-            vertexbuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            vertexbuffer.pos(x + w, y, 0).tex(u2, v1).endVertex();
-            vertexbuffer.pos(x, y, 0).tex(u1, v1).endVertex();
-            vertexbuffer.pos(x, y + h, 0).tex(u1, v2).endVertex();
-            vertexbuffer.pos(x + w, y + h, 0).tex(u2, v2).endVertex();
-            // renderer.finishDrawing();
-            tessellator.draw();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
     }
 
     public void clearWidgets() {
