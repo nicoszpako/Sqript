@@ -5,7 +5,7 @@ import fr.nico.sqript.forge.gui.Image;
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
 
-@Type(name = "button",
+@Type(name = "image",
         parsableAs = {})
 public class TypeImage extends ScriptType<Image> {
 
@@ -16,7 +16,7 @@ public class TypeImage extends ScriptType<Image> {
 
     @Override
     public String toString() {
-        return "image";
+        return "Image "+getObject().imageName;
     }
 
     public TypeImage(Image image) {
