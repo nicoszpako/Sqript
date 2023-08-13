@@ -492,9 +492,9 @@ public class ScriptManager {
         if (eventDefinition != null && eventDefinition.getFeature().side().isValid()) {
             ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
             try {
-                Iterator<ScriptInstance> iterator = scripts.iterator();
-                while(iterator.hasNext()){
-                    if (iterator.next().callEvent(context, event)) {
+                for (ScriptInstance script : scripts) {
+                    //System.out.println("Callign event in script : "+script.getName());
+                    if (script.callEvent(context, event)) {
                         //System.out.println("Returning true");
                         result = true;
                     }

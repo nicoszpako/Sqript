@@ -47,4 +47,8 @@ public abstract class ScriptEvent {
     public void setAccessors(ScriptTypeAccessor[] accessors) {
         this.accessors = accessors;
     }
+
+    public boolean checkMark(int markIndex, int marks){
+        return ((marks >> markIndex) & 1)==1;
+    }
 }

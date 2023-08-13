@@ -151,13 +151,13 @@ public class ScriptExpressionParser implements INodeParser {
     }
 
     @Override
-    public Node parse(ScriptToken line, ScriptCompilationContext compilationContext, Class[] type) throws ScriptException {
-        return parse(line, compilationContext, null, type);
+    public Node parse(ScriptToken line, ScriptCompilationContext compilationContext, Class[] requiredTypes) throws ScriptException {
+        return parse(line, compilationContext, null, requiredTypes);
     }
 
-    public Node parse(ScriptToken line, ScriptCompilationContext compilationContext, ScriptExpression parent, Class[] validTypes) throws ScriptException {
+    public Node parse(ScriptToken line, ScriptCompilationContext compilationContext, ScriptExpression parent, Class[] requiredTypes) throws ScriptException {
         //System.out.println();
-        //System.out.println("Parsing : " + line + " wanting " + Arrays.toString(validTypes) + " from parent " + parent);
+        //System.out.println("Parsing : " + line + " wanting " + Arrays.toString(requiredTypes) + " from parent " + parent);
 
         String expressionString = ScriptDecoder.trim(line.getText());
         String[] strings = ScriptDecoder.extractStrings(line.getText());
@@ -167,13 +167,13 @@ public class ScriptExpressionParser implements INodeParser {
         /*
          * We check if this line can be parsed by a simple parser.
          */
-        Node node = externalParse(line, compilationContext, validTypes);
+        Node node = externalParse(line, compilationContext, requiredTypes);
         if (node != null) return node;
 
         /*
          * We loop through all registered expressions.
          */
-        List<Node> validTrees = parseValidTrees(line, compilationContext, parent, validTypes, expressionString, strings);
+        List<Node> validTrees = parseValidTrees(line, compilationContext, parent, requiredTypes, expressionString, strings);
 
 
         //System.out.println("Valid trees for " + line + " are " + validTrees);
@@ -182,15 +182,15 @@ public class ScriptExpressionParser implements INodeParser {
          */
         if (!validTrees.isEmpty()) {
             validTrees.removeIf(n -> {
-                NodeExpression ne = (NodeExpression) n;
+                NodeExpression nodeExpression = (NodeExpression) n;
                 /*
                  *   Handling greedy expressions like ExprItems
                  */
-                ExpressionDefinition definition = ScriptManager.getDefinitionFromExpression(ne.getExpression().getClass());
+                ExpressionDefinition definition = ScriptManager.getDefinitionFromExpression(nodeExpression.getExpression().getClass());
                 if (definition != null)
-                    if (definition.transformedPatterns[ne.getExpression().getMatchedIndex()].isGreedy()) {
-                        //System.out.println("Checking for greedy : " + definition.transformedPatterns[ne.getExpression().getMatchedIndex()].getPattern() + " returning " + definition.transformedPatterns[ne.getExpression().getMatchedIndex()].getReturnType() + " " + "valid types are : " + Arrays.toString(validTypes)+" for line "+line);
-                        return !isTypeStrictlyValid(definition.transformedPatterns[ne.getExpression().getMatchedIndex()].getReturnType(), validTypes);
+                    if (definition.transformedPatterns[nodeExpression.getExpression().getMatchedIndex()].isGreedy()) {
+                        //System.out.println("Checking for greedy : " + definition.transformedPatterns[nodeExpression.getExpression().getMatchedIndex()].getPattern() + " returning " + definition.transformedPatterns[nodeExpression.getExpression().getMatchedIndex()].getReturnType() + " " + "valid types are : " + Arrays.toString(requiredTypes)+" for line "+line);
+                        return !isTypeStrictlyValid(definition.transformedPatterns[nodeExpression.getExpression().getMatchedIndex()].getReturnType(), requiredTypes);
                     }
                 return false;
             });
@@ -258,12 +258,12 @@ public class ScriptExpressionParser implements INodeParser {
                     //System.out.println();
                     Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
                     //System.out.println("Final tree for " +line+" : "+finalTree);
-                    //System.out.println("Checking types for line : "+line+" as "+finalTree+" for "+Arrays.toString(validTypes));
+                    //System.out.println("Checking types for line : "+line+" as "+finalTree+" for "+Arrays.toString(requiredTypes));
                     //System.out.println("A");
                     //System.out.println(finalTree);
                     //System.out.println(finalTree.getReturnType());
                     //System.out.println("B");
-                    if (finalTree != null && validTypes != null && isTypeValid(finalTree.getReturnType(), validTypes)) {
+                    if (finalTree != null && requiredTypes != null && isTypeValid(finalTree.getReturnType(), requiredTypes)) {
                         //System.out.println("Returning compiled : " + finalTree);
                         return finalTree;
                     }

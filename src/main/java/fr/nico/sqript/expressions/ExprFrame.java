@@ -35,13 +35,8 @@ public class ExprFrame extends ScriptExpression {
                 return new TypeFrame(new Frame());
             case 1:
                 ResourceLocation resourceLocation = (ResourceLocation) parameters[0].getObject();
-                try {
-                    InputStream inputStream = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream();
-                    System.out.println(inputStream.read()+" "+inputStream.read()+" "+inputStream.read());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return new TypeImage(new Image(resourceLocation,0,0));
+                System.out.println("Loiading image:"+resourceLocation.toString());
+                return new TypeImage(new Image(resourceLocation,100,100));
             case 2:
                 String text = (String) parameters[0].getObject();
                 return new TypeNumber(Minecraft.getMinecraft().fontRenderer.getStringWidth(text));

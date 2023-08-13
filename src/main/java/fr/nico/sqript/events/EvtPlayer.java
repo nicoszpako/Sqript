@@ -48,7 +48,7 @@ public class EvtPlayer {
             feature = @Feature(name = "Item right clicked",
                     description = "Called when a player right clicks an item.",
                     examples = "on item click with minecraft:emerald:",
-                    pattern = "[(item|right)] click [(with|on) {item}] [with ((1;left)|(2;right)) hand]"),
+                    pattern = "[((1;client)|(2;server))] [(item|right)] click [(with|on) {item}] [with ((3;left)|(4;right)) hand]"),
             accessors = {
                     @Feature(name = "Player", description = "The player that clicked on the item.", pattern = "player", type = "player"),
                     @Feature(name = "Clicked item", description = "The clicked item.", pattern = "[click[ed]] item", type = "item"),
@@ -58,11 +58,13 @@ public class EvtPlayer {
 
         public ItemStack clickedItem;
         public EnumHand hand;
+        public net.minecraftforge.fml.relauncher.Side side;
 
-        public EvtOnItemRightClick(EntityPlayer player, ItemStack clicked, EnumHand hand) {
+        public EvtOnItemRightClick(EntityPlayer player, ItemStack clicked, EnumHand hand, net.minecraftforge.fml.relauncher.Side side) {
             super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(new TypeItemStack(clicked),"[click[ed]] item"));
             this.clickedItem = clicked;
             this.hand = hand;
+            this.side = side;
         }
 
         @Override
@@ -74,19 +76,25 @@ public class EvtPlayer {
 
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
-            boolean hand = true;
-            if (this.hand == EnumHand.MAIN_HAND)
-                hand = ((marks >> 2) & 1)==1;
+            System.out.println(checkMark(2,marks)+" "+checkMark(1,marks));
 
-            if (this.hand == EnumHand.OFF_HAND)
-                hand = ((marks >> 1) & 1)==1;
+            boolean correctSide = true;
+            if(checkMark(2,marks))
+                correctSide = side.isServer();
+            if(checkMark(1,marks))
+                correctSide = side.isClient();
 
-            hand = hand | marks == 0; //Case in which no hand has been configured
+            boolean correctHands = true;
+            if (checkMark(2,marks))
+                correctHands = hand == EnumHand.MAIN_HAND;
+
+            if (checkMark(1,marks))
+                correctHands = hand == EnumHand.OFF_HAND;
 
             if(parameters.length==0 || parameters[0] == null)
-                return hand;
+                return correctHands;
 
-            return (((TypeResource)parameters[0]).getObject().equals(clickedItem.getItem().getRegistryName())) && hand;
+            return correctSide && correctHands && (((TypeResource)parameters[0]).getObject().equals(clickedItem.getItem().getRegistryName()));
         }
     }
 

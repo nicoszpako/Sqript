@@ -3,6 +3,7 @@ package fr.nico.sqript.compiling;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.blocks.ScriptBlock;
+import fr.nico.sqript.blocks.ScriptBlockEvent;
 import fr.nico.sqript.meta.BlockDefinition;
 import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptInstance;
@@ -30,7 +31,9 @@ public class ScriptLoader {
     public static void dispScriptTree(IScript s, int i) {
         String tab = "";
         for (int j = 0; j < i; j++) tab += "|    ";
-        ScriptManager.log.info(tab + (s.parent != null ? s.parent.getClass().getSimpleName() + " >> " : "") + s.getClass().getSimpleName() + (s instanceof ScriptAction ? (s.toString().isEmpty() ? " <" + ((ScriptAction) s).getMatchedName() + "> " + "(" + ((ScriptAction) s).getParameters() + ")" : s.toString()) : "") + " -> " + ((s.next != null ? s.next.getClass().getSimpleName() : "[null]")));
+        String actionString = (s instanceof ScriptAction ? (s.toString().isEmpty() ? " <" + ((ScriptAction) s).getMatchedName() + "> " + "(" + ((ScriptAction) s).getParameters() + ")" : s.toString()) : "");
+        String eventString = (s instanceof ScriptBlockEvent ? ((ScriptBlockEvent)s).eventType.getSimpleName() : "");
+        ScriptManager.log.info(tab + (s.parent != null ? s.parent.getClass().getSimpleName() + " >> " : "") + s.getClass().getSimpleName() + eventString + actionString + " -> " + ((s.next != null ? s.next.getClass().getSimpleName() : "[null]")));
         if (s instanceof ScriptLoop) {
             ScriptLoop sl = (ScriptLoop) s;
             if (sl instanceof ScriptLoop.ScriptLoopIF) {

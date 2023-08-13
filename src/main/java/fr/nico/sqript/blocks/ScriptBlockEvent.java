@@ -10,6 +10,7 @@ import fr.nico.sqript.meta.EventDefinition;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
+import fr.nico.sqript.structures.TransformedPattern;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeNull;
 
@@ -52,6 +53,11 @@ public class ScriptBlockEvent extends ScriptBlock {
         super.init(block);
     }
 
+    @Override
+    public void displayTree(int i) {
+        ScriptLoader.dispScriptTree(getRoot(),i);
+    }
+
     public Class<? extends ScriptEvent> parseEvent(ScriptToken line) {
         //System.out.println("Parsing event for : "+line);
         line = line.with(line.getText().trim());
@@ -60,14 +66,15 @@ public class ScriptBlockEvent extends ScriptBlock {
             int matchedPatternIndex = -1;
             if ((matchedPatternIndex = eventDefinition.getMatchedPatternIndex(line.getText())) != -1) {
                 //Parsing the arguments
-                String[] arguments = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllArguments(line.getText());
+                TransformedPattern transformedPattern = eventDefinition.getTransformedPatterns()[matchedPatternIndex];
+                String[] arguments = transformedPattern.getAllArguments(line.getText());
                 //System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length+" "+Arrays.toString(arguments));
                 ScriptType[] parameters = new ScriptType[arguments.length];
                 int marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.getText());
                 for (int i = 0; i < arguments.length; i++) {
                     try {
                         if(arguments[i] != null)
-                            parameters[i] = ScriptDecoder.parse(line.with(arguments[i]),new ScriptCompilationContext()).get(ScriptContext.fromGlobal());
+                            parameters[i] = ScriptDecoder.parse(line.with(arguments[i]),new ScriptCompilationContext(),transformedPattern.getValidTypes(i)).get(ScriptContext.fromGlobal());
                         else parameters[i] = new TypeNull();
                     } catch (Exception ignored) {
                     }

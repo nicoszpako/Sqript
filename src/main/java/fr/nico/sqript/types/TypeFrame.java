@@ -33,6 +33,7 @@ public class TypeFrame extends ScriptType<Frame> {
         ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeFrame.class, ScriptElement.class, TypeFrame.class,
                 (a,b) -> {
                     TypeFrame frame = (TypeFrame)a;
+                    System.out.println("Adding "+b.getObject().toString()+" to "+frame.getObject().toString()+" "+((b.getObject() instanceof Widget)));
                     if (b.getObject() instanceof Widget){
                         Widget widget = ((Widget)b.getObject());
                         frame.getObject().addWidget(widget);

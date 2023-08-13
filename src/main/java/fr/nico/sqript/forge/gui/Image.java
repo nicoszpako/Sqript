@@ -9,7 +9,7 @@ public class Image extends Widget {
     public String imageName;
     public ResourceLocation image;
     public boolean modal = false;
-    public boolean useUvs;
+    public boolean useUvs = false;
     public double[] Uvs = new double[3];
 
     public Image(ResourceLocation resourceLocation, int width, int height) {

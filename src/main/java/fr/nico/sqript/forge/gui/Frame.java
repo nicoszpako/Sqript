@@ -218,6 +218,7 @@ public class Frame extends GuiScreen {
     }
 
     public void addWidget(Widget w) {
+        System.out.println("Adding widget :"+w);
         isInteracting = false;
         w.x = (int) (w.x + origin.x);
         w.y = (int) (w.y + origin.y);

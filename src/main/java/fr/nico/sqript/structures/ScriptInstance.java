@@ -39,7 +39,7 @@ public class ScriptInstance {
     }
 
     public boolean callEvent(ScriptContext context, ScriptEvent event) {
-        //System.out.println("Calling event : "+event.getClass());
+
         try {
             context.setReturnValue(new ScriptTypeAccessor(TypeBoolean.FALSE(), ""));
             ScriptContext returnContext = callEventAndGetContext(context, event);
@@ -81,10 +81,14 @@ public class ScriptInstance {
 
     public ScriptContext callEventAndGetContext(ScriptContext context, ScriptEvent event) throws ScriptException {
         //long t1 = //System.currentTimeMillis();
+        //System.out.println("Calling event and get context");
+
         for (ScriptBlock b : getBlocksOfClass(ScriptBlockEvent.class)) {
             ScriptBlockEvent scriptBlockEvent = (ScriptBlockEvent) b;
+            if(event instanceof EvtPlayer.EvtOnItemRightClick)
+                System.out.println("Calling event : "+event.getClass()+" "+scriptBlockEvent.eventType);
             if (scriptBlockEvent.eventType == event.getClass() && event.check(scriptBlockEvent.getParameters(), scriptBlockEvent.getMarks()) && scriptBlockEvent.side.isEffectivelyValid()) {
-                //System.out.println("CHECKED");
+                System.out.println("CHECKED");
                 //System.out.println("Calling event : "+event.getClass().getSimpleName()+" with accessors "+ Arrays.toString(event.getAccessors()));
                 ScriptClock clock = new ScriptClock(context);
                 context.wrap(event.getAccessors());
