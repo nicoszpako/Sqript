@@ -28,6 +28,7 @@ public class Widget extends Gui {
     protected FontRenderer fontRenderer = mc.fontRenderer;
     protected ScaledResolution scaledResolution = new ScaledResolution(mc);
     protected int x = 0, y = 0;
+    protected int initX = 0, initY = 0;
     private Container parent = null;
     private List<String> tooltip = null;
 
@@ -49,11 +50,18 @@ public class Widget extends Gui {
     }
 
     public static int xFromCenter(int a) {
+        return (int) xFromCenter((float)a);
+    }
+    public static int yFromCenter(int a) {
+        return (int) yFromCenter((float)a);
+    }
+
+    public static float xFromCenter(float a) {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         return sr.getScaledWidth() / 2 + a;
     }
 
-    public static int yFromCenter(int a) {
+    public static float yFromCenter(float a) {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         return sr.getScaledHeight() / 2 + a;
     }

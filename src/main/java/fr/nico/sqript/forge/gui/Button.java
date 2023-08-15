@@ -25,11 +25,12 @@ public class Button extends Widget {
     //See constants to choose
     protected int drawType = 0;
     public static final int DRAW_TEXT = 0;
+    public static final int DRAW_TEXT_AND_TEXTURE = 5;
     public static final int DRAW_ICON = 1;
     public static final int DRAW_TEXT_AND_ICON = 4;
     public static final int DRAW_ITEM = 2;
 
-    protected int actionCode = 0;
+    private int buttonId;
     protected String command = "";
     protected boolean canHold = false;
     protected DisplayInfos itemDisplayInfos = new DisplayInfos(0, 0, 1, 512, 512);
@@ -140,22 +141,22 @@ public class Button extends Widget {
         checkClick(mouseX, mouseY);
 
         switch (drawType) {
-            case 0:
+            case DRAW_TEXT:
                 GlStateManager.translate(this.x + this.style.width / 2f, this.y + this.style.height / 2f
                         - (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT * textScale) / 2, 0);
                 GlStateManager.scale(textScale, textScale, 1);
                 if (displayText != null)
                     drawCenteredString(Minecraft.getMinecraft().fontRenderer, this.displayText, 0, 0, displayTextColor);
                 break;
-            case 1:
+            case DRAW_ICON:
                 if (resourceLocation != null)
                     drawIcon(resourceLocation);
                 break;
-            case 2:
+            case DRAW_ITEM:
                 if (itemstack != null)
                     drawItem(itemstack);
                 break;
-            case 4:
+            case DRAW_TEXT_AND_ICON:
                 if (displayText != null)
                     drawString(Minecraft.getMinecraft().fontRenderer, this.displayText, (int) (this.x + itemDisplayInfos.x),
                             this.y + (int) (itemDisplayInfos.y + this.style.height / 2
@@ -165,7 +166,28 @@ public class Button extends Widget {
                     drawIcon(resourceLocation);
 
                 break;
-            case 5:
+            case DRAW_TEXT_AND_TEXTURE:
+                if (displayText != null)
+                    drawString(Minecraft.getMinecraft().fontRenderer, this.displayText, (int) (this.x + itemDisplayInfos.x),
+                            this.y + (int) (itemDisplayInfos.y + this.style.height / 2
+                                    - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2),
+                            displayTextColor);
+                if (resourceLocation != null) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.disableLighting();
+                    //System.out.println(hold+" "+hover);
+                    if(hold){
+                        GlStateManager.color(0.8f, 0.8f, 0.8f);
+                    }else if(hover){
+                        GlStateManager.color(0.9f, 0.9f, 0.9f);
+                    }else
+                        GlStateManager.color(1, 1, 1);
+                    Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+                    drawTexturedRect(x, y, this.style.width, this.style.height);
+                    GlStateManager.resetColor();
+                    GlStateManager.popMatrix();
+                }
+            case 6:
                 customRenderer(mouseX, mouseY);
                 break;
 
@@ -211,11 +233,7 @@ public class Button extends Widget {
     }
 
     public void onClick(EnumAction action) {
-        if (this.getFrame().message != null) {
-            this.getFrame().message.handleAction(this, action);
-            return;
-        }
-        ((Frame) Minecraft.getMinecraft().currentScreen).handleAction(this, action);
+        ((Frame) Minecraft.getMinecraft().currentScreen).buttonClicked(action,getButtonId());
     }
 
     public int getHoverColor() {
@@ -290,12 +308,12 @@ public class Button extends Widget {
         this.iconDisplayInfos = iconDisplayInfos;
     }
 
-    public int getActionCode() {
-        return actionCode;
+    public int getButtonId() {
+        return buttonId;
     }
 
-    public void setActionCode(int actionCode) {
-        this.actionCode = actionCode;
+    public void setButtonId(int buttonId) {
+        this.buttonId = buttonId;
     }
 
     public String getCommand() {

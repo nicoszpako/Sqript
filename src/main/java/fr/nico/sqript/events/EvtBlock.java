@@ -96,7 +96,7 @@ public class EvtBlock {
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
 
-            System.out.println("Checking with :"+Arrays.toString(parameters)+" "+marks);
+            //System.out.println("Checking with :"+Arrays.toString(parameters)+" "+marks);
             Object registryName = null;
             if(parameters[0] != null)
                 registryName = parameters[0].getObject();

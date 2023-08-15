@@ -38,6 +38,19 @@ public class Frame extends GuiScreen {
     private List<String> tooltipToDraw;
     private Widget drawingToolTipWidget;
 
+    public static final IAnchor top_left = (x,y,w,h) -> new Vector2f(x,y);
+    public static final IAnchor center = (x,y,w,h) -> new Vector2f(Widget.xFromCenter(x)-w/2,Widget.yFromCenter(y)-h/2);
+
+    private IAnchor anchor = top_left;
+
+    public Frame(){
+        this(center);
+    }
+
+    public Frame(IAnchor anchor){
+        this.anchor = anchor;
+    }
+
     public static void drawUncoloredRect(int left, int top, int right, int bottom) {
         if (left < right) {
             int i = left;
@@ -224,9 +237,11 @@ public class Frame extends GuiScreen {
 
     public void addRunningWidget(Widget w) {
         //System.out.println("Adding widget :"+w);
+
         isInteracting = false;
-        w.x = (int) (w.x + origin.x);
-        w.y = (int) (w.y + origin.y);
+        Vector2f position = anchor.transformPosition(w.initX,w.initY,w.style.width,w.style.height);
+        w.x = (int) position.x+ (int)origin.x;
+        w.y = (int) position.y+ (int)origin.y;
         w.setId(runningWidgets.size());
         w.onAddToFrame(this);
         w.parentFrame = this;
@@ -254,6 +269,11 @@ public class Frame extends GuiScreen {
             message.handleAction(w, action);
         }
     }
+
+    public void buttonClicked(EnumAction action, int buttonId) {
+
+    }
+
 
     public void addKeyTypeListener(IKeyListener w) {
         this.widgetsHandlingKeyType.add(w);
