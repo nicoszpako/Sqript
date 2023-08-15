@@ -25,7 +25,7 @@ public class MessageFloat extends Message {
 
     @Override
     public void addWidgets() {
-        this.widgets.clear();
+        this.blankWidgets.clear();
         t = new TextField(Styles.basic(145, 15));
         t.setOnlyNumbers(true);
         t.style.setMargin(0, 5, 0, 0);
@@ -47,7 +47,7 @@ public class MessageFloat extends Message {
 
 
         m.addWidget(bc);
-        this.addWidget(m);
+        this.addRunningWidget(m);
     }
 
 

@@ -10,7 +10,13 @@ import fr.nico.sqript.types.primitive.TypeNumber;
 
 @Expression(name = "Date Expressions",
         features = {
-                @Feature(name = "Date", description = "Returns the given date or time.", examples = "15 minutes and 4 seconds", pattern = "[{number} year[s]] [[and] {number} month[s]] [[and] {number} week[s]] [[and] {number} day[s]] [[and] {number} hour[s]] [[and] {number} minute[s]] [[and] {number} second[s]] [[and] {number} tick[s]]", type = "date"),
+                @Feature(name = "Year", description = "Returns the given amount of years.", examples = "1 year and 5 months", pattern = "{number} year[s] [[and] {date}]", type = "date"),
+                @Feature(name = "Month", description = "Returns the given amount of months.", examples = "1 month and 5 weeks", pattern = "{number} month[s] [[and] {date}]", type = "date"),
+                @Feature(name = "Day", description = "Returns the given amount of days.", examples = "1 day and 5 hours", pattern = "{number} day[s] [[and] {date}]", type = "date"),
+                @Feature(name = "Hour", description = "Returns the given amount of hours.", examples = "1 hour and 5 minutes", pattern = "{number} hour[s] [[and] {date}]", type = "date"),
+                @Feature(name = "Minute", description = "Returns the given amount of minutes.", examples = "1 minute and 5 seconds", pattern = "{number} minute[s] [[and] {date}]", type = "date"),
+                @Feature(name = "Second", description = "Returns the given amount of seconds.", examples = "1 second and 5 ticks", pattern = "{number} second[s] [[and] {date}]", type = "date"),
+                @Feature(name = "Tick", description = "Returns the given amount of ticks.", examples = "1 tick", pattern = "{number} tick[s] [[and] {date}]", type = "date"),
                 @Feature(name = "Now", description = "Returns the current date.", examples = "now", pattern = "now", type = "date")
         })
 public class ExprDate extends ScriptExpression{
@@ -19,48 +25,30 @@ public class ExprDate extends ScriptExpression{
         @Override
         public ScriptType get(ScriptContext context, ScriptType[] parameters) {
             //System.out.println("Date parameters :" + Arrays.toString(parameters));
+
             switch (getMatchedIndex()){
                 case 0:
-                    long total = 0;
-                    int i=0;
-                    for(ScriptType t: parameters){
-                        if(t!=null && t instanceof TypeNumber){
-                            long mult = 1;
-                            //System.out.println(i);
-                            switch(i){
-                                case 0:
-                                    mult= 20L *60*60*24*7*365; //year
-                                    break;
-                                case 1:
-                                    mult=20*60*60*24*7*30; //month
-                                    break;
-                                case 2:
-                                    mult=20*60*60*24*7; //week
-                                    break;
-                                case 3:
-                                    mult=20*60*60*24; //day
-                                    break;
-                                case 4:
-                                    mult=20*60*60; //hour
-                                    break;
-                                case 5:
-                                    mult=20*60; //minute
-                                    break;
-                                case 6:
-                                    mult=20; //second
-                                    break;
-                                case 7:
-                                    mult=1; //tick
-                                    break;
-                            }
-                            //System.out.println(mult);
-                            TypeNumber number = (TypeNumber)t;
-                            total+=number.getObject()*mult;
-                        }
-                        i++;
-                    }
-                    return new TypeDate(total);
+                    int amount = ((Double)parameters[0].getObject()).intValue();
+                    return new TypeDate(amount*20L *60*60*24*7*365);
                 case 1:
+                    amount = ((Double)parameters[0].getObject()).intValue();
+                    return new TypeDate((long) amount *20*60*60*24*7*30);
+                case 2:
+                    amount = ((Double)parameters[0].getObject()).intValue();
+                    return new TypeDate((long) amount *20*60*60*24*7);
+                case 3:
+                    amount = ((Double)parameters[0].getObject()).intValue();
+                    return new TypeDate((long) amount *20*60*60*24);
+                case 4:
+                    amount = ((Double)parameters[0].getObject()).intValue();
+                    return new TypeDate((long) amount *20*60*60);
+                case 5:
+                    amount = ((Double)parameters[0].getObject()).intValue();
+                    return new TypeDate((long) amount *20*60);
+                case 6:
+                    amount = ((Double)parameters[0].getObject()).intValue();
+                    return new TypeDate((long) amount *20);
+                case 7:
                     return new TypeDate(System.currentTimeMillis());
             }
             return null;

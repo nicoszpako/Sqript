@@ -46,7 +46,7 @@ public class ScriptBlockEvent extends ScriptBlock {
         if(eventType == null)
             throw new ScriptException.ScriptUnknownEventException(getHead());
         this.side = eventType.getAnnotation(Event.class).feature().side();
-
+        System.out.println("Initialising : "+eventType+ " sided : "+side);
         if(!side.isValid())
             return;
 
@@ -68,7 +68,7 @@ public class ScriptBlockEvent extends ScriptBlock {
                 //Parsing the arguments
                 TransformedPattern transformedPattern = eventDefinition.getTransformedPatterns()[matchedPatternIndex];
                 String[] arguments = transformedPattern.getAllArguments(line.getText());
-                //System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length+" "+Arrays.toString(arguments));
+                System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length+" "+Arrays.toString(arguments));
                 ScriptType[] parameters = new ScriptType[arguments.length];
                 int marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.getText());
                 for (int i = 0; i < arguments.length; i++) {
@@ -84,7 +84,7 @@ public class ScriptBlockEvent extends ScriptBlock {
                     if (event.validate(parameters, marks)) {
                         this.marks = marks;
                         this.parameters = parameters;
-                        //System.out.println("Validated");
+                        System.out.println("Validated");
                         return eventDefinition.getEventClass();
                     }else{
                         //System.out.println("Not validated");

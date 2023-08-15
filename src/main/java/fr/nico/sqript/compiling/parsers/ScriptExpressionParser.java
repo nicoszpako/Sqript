@@ -392,7 +392,7 @@ public class ScriptExpressionParser implements INodeParser {
                                 }
                                 //System.out.println("Sub expressions are: " + Arrays.toString(subExpressions));
                                 nodeExpression.setChildren(subExpressions);
-                                //System.out.println("Adding to switch : " + nodeExpression);
+                                //System.out.println("Adding to valid list : " + nodeExpression);
                                 validTrees.add(nodeExpression);
                             }
                         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

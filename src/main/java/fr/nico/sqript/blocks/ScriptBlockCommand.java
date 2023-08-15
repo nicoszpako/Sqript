@@ -1,5 +1,8 @@
 package fr.nico.sqript.blocks;
 
+import com.google.common.base.Functions;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptCompilationContext;
 import fr.nico.sqript.compiling.ScriptDecoder;
@@ -20,6 +23,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -34,10 +38,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -255,6 +256,14 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
     @Override
     public List<String> getTabCompletions(MinecraftServer minecraftServer, ICommandSender iCommandSender, String[] strings, @Nullable BlockPos blockPos) {
+
+        int nArg = strings.length-1;
+        if(argumentsDefinitions.length >= nArg){
+            if(Arrays.stream(argumentsDefinitions[nArg]).anyMatch(s -> s.getTypeClass() == TypePlayer.class)){
+                return getListOfStringsMatchingLastWord(strings,
+                        Arrays.asList(FMLCommonHandler.instance().getMinecraftServerInstance().getOnlinePlayerNames()));
+            }
+        }
         return new ArrayList<>();
     }
 
@@ -272,6 +281,40 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         return 0;
     }
 
+    public static List<String> getListOfStringsMatchingLastWord(String[] inputArgs, Collection<?> possibleCompletions)
+    {
+        String s = inputArgs[inputArgs.length - 1];
+        List<String> list = Lists.<String>newArrayList();
+
+        if (!possibleCompletions.isEmpty())
+        {
+            for (String s1 : Iterables.transform(possibleCompletions, Functions.toStringFunction()))
+            {
+                if (doesStringStartWith(s, s1))
+                {
+                    list.add(s1);
+                }
+            }
+
+            if (list.isEmpty())
+            {
+                for (Object object : possibleCompletions)
+                {
+                    if (object instanceof ResourceLocation && doesStringStartWith(s, ((ResourceLocation)object).getResourcePath()))
+                    {
+                        list.add(String.valueOf(object));
+                    }
+                }
+            }
+        }
+
+        return list;
+    }
+
+    public static boolean doesStringStartWith(String original, String region)
+    {
+        return region.regionMatches(true, 0, original, 0, original.length());
+    }
 
     @Cancelable
     public static class checkPermission extends Event {

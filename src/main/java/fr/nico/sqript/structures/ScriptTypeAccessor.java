@@ -32,7 +32,7 @@ public class ScriptTypeAccessor {
     public ScriptTypeAccessor(ScriptType element, String match) {
         this.element = element;
         try {
-            this.pattern = Pattern.compile(SimpleRegex.simplePatternToRegex(match).replaceAll("\\{","\\\\{").replaceAll("}","\\\\}"));
+            this.pattern = Pattern.compile(SimpleRegex.simplePatternToRegex(match,true).replaceAll("\\{","\\\\{").replaceAll("}","\\\\}"));
             this.key = match;
         } catch (ScriptException.ScriptPatternError scriptPatternError) {
             ScriptManager.log.error("Error trying to generate an accessor : "+pattern+" in "+ blockType.getSimpleName());

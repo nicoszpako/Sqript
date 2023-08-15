@@ -4,7 +4,7 @@ public class TestFrame extends Frame {
     int a = 0xFFFFFFFF;
 
     public TestFrame() {
-        this.widgets.clear();
+        this.blankWidgets.clear();
         this.widgetsHandlingMouseWheel.clear();
         TabPane maincontainer = new TabPane(Widget.xFromCenter(-200), Widget.yFromCenter(-130), 400, 260);
         maincontainer.style.setBackgroundcolor(0xFF888888);
@@ -41,7 +41,7 @@ public class TestFrame extends Frame {
 
         maincontainer.setTabDisplayMode(TabPane.DISPLAY_UP);
 
-        addWidget(maincontainer);
+        addRunningWidget(maincontainer);
     }
 
 

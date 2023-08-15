@@ -818,7 +818,7 @@ public class ScriptDecoder {
         //Checking if greedy
         boolean greedy = isPatternGreedy(pattern);
 
-        pattern = SimpleRegex.simplePatternToRegex(pattern);
+        pattern = SimpleRegex.simplePatternToRegex(pattern,false);
         Matcher m = pattern_mark.matcher(pattern);
         while (m.find()) {
             markCount = Math.max(markCount, Integer.parseInt(m.group(1)));

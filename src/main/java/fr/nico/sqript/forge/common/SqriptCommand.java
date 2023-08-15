@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -35,11 +36,12 @@ public class SqriptCommand extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length>0){
             if(args[0].equalsIgnoreCase("reload")){
+
                 if(args.length == 2 && args[1].equalsIgnoreCase("client")){
                     SqriptForge.channel.sendToAll(new ScriptReloadMessage());
                     return;
                 }
-                if(args.length == 2 && args[1].equalsIgnoreCase("all")){
+                if(args.length == 1 || !args[1].equalsIgnoreCase("server")){
                     SqriptForge.channel.sendToAll(new ScriptReloadMessage());
                 }
                 long t = System.currentTimeMillis();
@@ -90,8 +92,9 @@ public class SqriptCommand extends CommandBase {
 
     private void sendHelp(ICommandSender sender) {
         SqriptUtils.sendMessage("Here are the Sqript commands : ",sender);
-        SqriptUtils.sendMessage("/sqript reload \2477Reloads all the scripts on the logical server side.",sender);
-        SqriptUtils.sendMessage("/sqript reload all \2477Reloads all the scripts on the server and on all connected clients.",sender);
+        SqriptUtils.sendMessage("/sqript reload \2477Reloads all the scripts on both sides for all players.",sender);
+        SqriptUtils.sendMessage("/sqript reload client \2477Reloads all the scripts on all connected clients.",sender);
+        SqriptUtils.sendMessage("/sqript reload server \2477Reloads all the scripts on the server side only.",sender);
         SqriptUtils.sendMessage("/sqript generateDoc \2477Generate a .md file to list all actions, expressions, blocks, and events.",sender);
         SqriptUtils.sendMessage("/sqript help \2477Displays this.",sender);
     }

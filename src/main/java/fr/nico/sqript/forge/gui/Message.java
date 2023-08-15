@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 public class Message extends Frame {
 
@@ -100,7 +99,7 @@ public class Message extends Frame {
 
         main.addWidget(descc);
         main.addWidget(pay);
-        this.addWidget(main);
+        this.addRunningWidget(main);
     }
 
     @Override

@@ -48,7 +48,7 @@ public class EvtPlayer {
             feature = @Feature(name = "Item right clicked",
                     description = "Called when a player right clicks an item.",
                     examples = "on item click with minecraft:emerald:",
-                    pattern = "[((1;client)|(2;server))] [(item|right)] click [(with|on) {item}] [with ((3;left)|(4;right)) hand]"),
+                    pattern = "[((1;client)|(2;server))] [(item|right)] click [(with|on) {itemtype}] [with ((3;left)|(4;right)) hand]"),
             accessors = {
                     @Feature(name = "Player", description = "The player that clicked on the item.", pattern = "player", type = "player"),
                     @Feature(name = "Clicked item", description = "The clicked item.", pattern = "[click[ed]] item", type = "item"),
@@ -69,9 +69,10 @@ public class EvtPlayer {
 
         @Override
         public boolean validate(ScriptType[] parameters, int marks) {
-            if (parameters[0] != null && parameters[0] instanceof TypeResource)
+            System.out.println("Validating with parameters : "+Arrays.toString(parameters));
+            if (parameters[0] != null && parameters[0].getObject() != null && parameters[0] instanceof TypeResource)
                 return ForgeRegistries.ITEMS.getValue((ResourceLocation) parameters[0].getObject()) != null;
-            return super.validate(parameters, marks);
+            return false;
         }
 
         @Override
@@ -85,16 +86,16 @@ public class EvtPlayer {
                 correctSide = side.isClient();
 
             boolean correctHands = true;
-            if (checkMark(2,marks))
+            if (checkMark(4,marks))
                 correctHands = hand == EnumHand.MAIN_HAND;
 
-            if (checkMark(1,marks))
+            if (checkMark(3,marks))
                 correctHands = hand == EnumHand.OFF_HAND;
 
             if(parameters.length==0 || parameters[0] == null)
                 return correctHands;
 
-            return correctSide && correctHands && (((TypeResource)parameters[0]).getObject().equals(clickedItem.getItem().getRegistryName()));
+            return correctSide && correctHands && (((TypeItem)parameters[0]).getObject().equals(clickedItem.getItem()));
         }
     }
 

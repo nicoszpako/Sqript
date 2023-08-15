@@ -25,7 +25,7 @@ import java.io.FileWriter;
 @Action(name = "Registery Actions",
         features = {
                 @Feature(name = "Register a new item", description = "Creates and registers a new item in the game.", examples = "register a new item with identifier \"copper\" named \"Copper\" with texture \"copper_item\"", pattern = "register [a] [new] item [with identifier] {string} [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [in tab {string}]", side = Side.CLIENT),
-                @Feature(name = "Register a new block", description = "Creates and registers a new block in the game.", examples = "register a new block with identifier \"copper_ore\" named \"Copper Ore\" with texture \"copper_ore\"", pattern = "register [a] [new] block [with identifier] {string} [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [with hardness {number}] [with harvest level {number}] [with material {string}] [dropping {resource}] [in tab {string}]", side = Side.CLIENT),
+                @Feature(name = "Register a new block", description = "Creates and registers a new block in the game.", examples = "register a new block with identifier \"copper_ore\" named \"Copper Ore\" with texture \"copper_ore\"", pattern = "register [a] [new] block [with identifier] {string} [named {string}] [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [with hardness {number}] [with harvest level {number}] [with material {string}] [dropping {resource}] [in tab {string}]", side = Side.CLIENT),
         }
 )
 public class ActRegistery extends ScriptAction {
@@ -43,16 +43,17 @@ public class ActRegistery extends ScriptAction {
     }
 
     private void registerNewBlock(ScriptContext context) throws ScriptException {
-        String name = (String) getParameter(1).get(context).getObject();
-        String registryName = SqriptUtils.getIdentifier(name);
-        ResourceLocation blockTexture = getParameterOrDefault(getParameter(2), null, context);
-        ResourceLocation blockName = getParameterOrDefault(getParameter(3), null, context);
-        int maxStackSize = getParameterOrDefault(getParameter(4), 64, context);
-        float hardness = getParameterOrDefault(getParameter(5), 0, context);
-        int harvestLevel = getParameterOrDefault(getParameter(6), 0, context);
-        String materialName = getParameterOrDefault(getParameter(7), "iron", context);
-        ResourceLocation drop =  getParameterOrDefault(getParameter(8), null, context);
-        CreativeTabs creativeTab = loadTabFromName(getParameterOrDefault(getParameter(9), "misc", context));
+        String identifier = (String) getParameter(1).get(context).getObject();
+        String registryName = SqriptUtils.getIdentifier(identifier);
+        String blockName = getParameterOrDefault(getParameter(2), null, context);
+        ResourceLocation blockTexture = getParameterOrDefault(getParameter(3), null, context);
+        ResourceLocation blockModel = getParameterOrDefault(getParameter(4), null, context);
+        int maxStackSize = getParameterOrDefault(getParameter(5), 64, context);
+        float hardness = getParameterOrDefault(getParameter(6), 0, context);
+        int harvestLevel = getParameterOrDefault(getParameter(7), 0, context);
+        String materialName = getParameterOrDefault(getParameter(8), "iron", context);
+        ResourceLocation drop =  getParameterOrDefault(getParameter(9), null, context);
+        CreativeTabs creativeTab = loadTabFromName(getParameterOrDefault(getParameter(10), "misc", context));
 
         Material material = Material.ROCK;
         fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock block = new fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock(material,drop,harvestLevel);
@@ -64,13 +65,14 @@ public class ActRegistery extends ScriptAction {
         //System.out.println("Max stack size of item is : "+maxStackSize);
         SqriptForge.blocks.add(block);
 
-        String itemTextureString = blockTexture == null ? "" : blockTexture.toString().replaceAll("\\.png","");
+        String blockModelName = blockTexture == null ? blockModel.toString() : blockTexture.toString().replaceAll("\\.png","");
+        String itemBlockModelName = blockTexture == null ? blockModel.getResourceDomain()+":block/"+blockModel.getResourcePath() : blockTexture.toString().replaceAll("\\.png","");
 
         try {
             if(blockTexture!=null)
-                createBlockModel(registryName, itemTextureString);
-            createBlockState(registryName,itemTextureString);
-            createItemBlockModel(registryName,itemTextureString);
+                createBlockModel(registryName, blockModelName);
+            createBlockState(registryName,blockModelName);
+            createItemBlockModel(registryName,itemBlockModelName);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,7 +80,7 @@ public class ActRegistery extends ScriptAction {
         Item itemBlock = new ItemBlock(block){
             @Override
             public String getItemStackDisplayName(ItemStack stack) {
-                return name;
+                return blockName == null ? identifier : blockName;
             }
         }.setUnlocalizedName(block.getUnlocalizedName()).setRegistryName(block.getRegistryName());
         SqriptForge.items.add(itemBlock);
@@ -165,7 +167,7 @@ public class ActRegistery extends ScriptAction {
             createFileIfNotExist(jsonFile,content);
     }
 
-    private void createBlockState(String registryName, String texture) throws Exception {
+    private void createBlockState(String registryName, String modelName) throws Exception {
         //Creating the model/blockstate file if the model file was not specified
         //System.out.println("Creating model file for item : "+registryName);
 
@@ -181,10 +183,10 @@ public class ActRegistery extends ScriptAction {
             File jsonFile = new File(itemModelsFolder,registryName+".json");
             String content = ("{"+"\n"
                     +"    \"variants\": {\n"
-                    +"        \"facing=north\":   { \"model\": \""+getLine().getScriptInstance().getName()+":"+registryName+"\", \"y\":90 },\n"
-                    +"        \"facing=east\":   { \"model\": \""+getLine().getScriptInstance().getName()+":"+registryName+"\", \"y\":180 },\n"
-                    +"        \"facing=south\":   { \"model\": \""+getLine().getScriptInstance().getName()+":"+registryName+"\", \"y\":270 },\n"
-                    +"        \"facing=west\":   { \"model\": \""+getLine().getScriptInstance().getName()+":"+registryName+"\" }\n"
+                    +"        \"facing=north\":   { \"model\": \""+modelName+"\", \"y\":90 },\n"
+                    +"        \"facing=east\":   { \"model\": \""+modelName+"\", \"y\":180 },\n"
+                    +"        \"facing=south\":   { \"model\": \""+modelName+"\", \"y\":270 },\n"
+                    +"        \"facing=west\":   { \"model\": \""+modelName+"\" }\n"
                     +"    }\n"
                     +"}"
             ).replaceAll("'","\"");
@@ -192,7 +194,7 @@ public class ActRegistery extends ScriptAction {
     }
 
 
-    private void createItemBlockModel(String registryName, String texture) throws Exception {
+    private void createItemBlockModel(String registryName, String modelName) throws Exception {
         //Creating the model/blockstate file if the model file was not specified
         //System.out.println("Creating model file for item : "+registryName);
             //File scriptFile
@@ -206,7 +208,7 @@ public class ActRegistery extends ScriptAction {
             //Il faut créer le dossier et l'enregistrer à la main
             File jsonFile = new File(itemModelsFolder,registryName+".json");
             String content = ("{"+"\n"
-                    +"  'parent': '"+getLine().getScriptInstance().getName()+":block/"+registryName+"',\n"
+                    +"  'parent': '"+modelName+"',\n"
                     + "\"display\": {\r\n        \"gui\": {\r\n            \"rotation\": [ 30, 225, 0 ],\r\n            \"translation\": [ 0, 0, 0],\r\n            \"scale\":[ 0.625, 0.625, 0.625 ]\r\n        },\r\n        \"ground\": {\r\n            \"rotation\": [ 0, 0, 0 ],\r\n            \"translation\": [ 0, 3, 0],\r\n            \"scale\":[ 0.25, 0.25, 0.25 ]\r\n        },\r\n        \"fixed\": {\r\n            \"rotation\": [ 0, 0, 0 ],\r\n            \"translation\": [ 0, 0, 0],\r\n            \"scale\":[ 0.5, 0.5, 0.5 ]\r\n        },\r\n        \"thirdperson_righthand\": {\r\n            \"rotation\": [ 75, 45, 0 ],\r\n            \"translation\": [ 0, 2.5, 0],\r\n            \"scale\": [ 0.375, 0.375, 0.375 ]\r\n        },\r\n        \"firstperson_righthand\": {\r\n            \"rotation\": [ 0, 45, 0 ],\r\n            \"translation\": [ 0, 0, 0 ],\r\n            \"scale\": [ 0.40, 0.40, 0.40 ]\r\n        },\r\n        \"firstperson_lefthand\": {\r\n            \"rotation\": [ 0, 225, 0 ],\r\n            \"translation\": [ 0, 0, 0 ],\r\n            \"scale\": [ 0.40, 0.40, 0.40 ]\r\n        }\r\n    }"
                     +"}").replaceAll("'","\"");
             createFileIfNotExist(jsonFile,content);

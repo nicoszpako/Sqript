@@ -85,10 +85,7 @@ public class ScriptInstance {
 
         for (ScriptBlock b : getBlocksOfClass(ScriptBlockEvent.class)) {
             ScriptBlockEvent scriptBlockEvent = (ScriptBlockEvent) b;
-            if(event instanceof EvtPlayer.EvtOnItemRightClick)
-                System.out.println("Calling event : "+event.getClass()+" "+scriptBlockEvent.eventType);
             if (scriptBlockEvent.eventType == event.getClass() && event.check(scriptBlockEvent.getParameters(), scriptBlockEvent.getMarks()) && scriptBlockEvent.side.isEffectivelyValid()) {
-                System.out.println("CHECKED");
                 //System.out.println("Calling event : "+event.getClass().getSimpleName()+" with accessors "+ Arrays.toString(event.getAccessors()));
                 ScriptClock clock = new ScriptClock(context);
                 context.wrap(event.getAccessors());

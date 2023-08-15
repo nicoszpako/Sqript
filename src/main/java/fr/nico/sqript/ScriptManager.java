@@ -5,6 +5,7 @@ import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.blocks.*;
 import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.events.EvtOnScriptLoad;
+import fr.nico.sqript.events.EvtPlayer;
 import fr.nico.sqript.events.ScriptEvent;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.forge.common.ScriptResourceLoader;
@@ -382,6 +383,7 @@ public class ScriptManager {
                 try {
                     ScriptInstance instance = loader.loadScript();
                     instance.callEvent(new ScriptContext(GLOBAL_CONTEXT), new EvtOnScriptLoad(f));
+                    //System.out.println("Added instance : "+instance.getName());
                     scripts.add(instance);
                 } catch (Exception e) {
                     if (e instanceof ScriptException.ScriptExceptionList) {
@@ -441,24 +443,29 @@ public class ScriptManager {
         if (FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
             loadResources();
 
-        if (FULL_DEBUG) {
-            for (ScriptInstance instance : scripts) {
-                List<ScriptBlock> list = instance.getBlocksOfClass(ScriptBlockEvent.class);
-                list.addAll(instance.getBlocksOfClass(ScriptBlockCommand.class));
-                list.addAll(instance.getBlocksOfClass(ScriptBlockPacket.class));
-                list.addAll(instance.getBlocksOfClass(ScriptBlockTimeLoop.class));
-                list.addAll(instance.getBlocksOfClass(ScriptBlockFunction.class));
-                //System.out.println("# Of blocks : " + instance.getBlocks().size());
-                for (ScriptBlock s : list) {
-                    System.out.println("Displaying : " + s.getHead());
-                    ScriptLoader.dispScriptTree(s, 0);
-                }
-                log.info("");
-            }
-        }
+
         log.info("All scripts are loaded");
         if(!elist.exceptionList.isEmpty())
             throw elist;
+
+        if (FULL_DEBUG) {
+            try{
+                for (ScriptInstance instance : scripts) {
+                    List<ScriptBlock> list = instance.getBlocksOfClass(ScriptBlockEvent.class);
+                    list.addAll(instance.getBlocksOfClass(ScriptBlockCommand.class));
+                    list.addAll(instance.getBlocksOfClass(ScriptBlockPacket.class));
+                    list.addAll(instance.getBlocksOfClass(ScriptBlockTimeLoop.class));
+                    list.addAll(instance.getBlocksOfClass(ScriptBlockFunction.class));
+                    //System.out.println("# Of blocks : " + instance.getBlocks().size());
+                    for (ScriptBlock s : list) {
+                        //System.out.println("Displaying : " + s.getHead());
+                        ScriptLoader.dispScriptTree(s, 0);
+                    }
+                    log.info("");
+                }
+            }catch (Exception ignored){}
+
+        }
     }
 
     @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
@@ -493,7 +500,6 @@ public class ScriptManager {
             ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
             try {
                 for (ScriptInstance script : scripts) {
-                    //System.out.println("Callign event in script : "+script.getName());
                     if (script.callEvent(context, event)) {
                         //System.out.println("Returning true");
                         result = true;

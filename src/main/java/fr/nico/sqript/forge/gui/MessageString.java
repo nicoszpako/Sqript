@@ -28,7 +28,7 @@ public class MessageString extends Message {
 
     @Override
     public void addWidgets() {
-        this.widgets.clear();
+        this.blankWidgets.clear();
         t = new TextField(Styles.basic(146, 15));
         t.setOnlyNumbers(false);
         t.setMaxStringLength(maxLength);
@@ -52,7 +52,7 @@ public class MessageString extends Message {
 
 
         m.addWidget(bc);
-        this.addWidget(m);
+        this.addRunningWidget(m);
     }
 
 

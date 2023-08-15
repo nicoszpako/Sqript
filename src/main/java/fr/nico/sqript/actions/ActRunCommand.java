@@ -18,7 +18,8 @@ public class ActRunCommand extends ScriptAction {
 
     @SideOnly(Side.CLIENT)
     public void executeClient(String command){
-        Minecraft.getMinecraft().getConnection().sendPacket((new CPacketChatMessage(command)));
+        if(Minecraft.getMinecraft().getConnection() != null)
+            Minecraft.getMinecraft().getConnection().sendPacket((new CPacketChatMessage(command)));
     }
 
     public void executeServer(ICommandSender sender, String command){

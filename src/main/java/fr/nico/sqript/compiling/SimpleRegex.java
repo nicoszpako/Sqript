@@ -4,64 +4,111 @@ import java.util.*;
 
 public class SimpleRegex {
 
-    public static String simplePatternToRegex(String simplePattern) throws Exception {
-        String result = convert(compile(treefy(simplePattern)));
+    public static String simplePatternToRegex(String simplePattern, boolean canBeOptional) throws Exception {
         //System.out.println("Converted "+simplePattern+" as "+result);
-        return result;
+        return convert(canBeOptional? compileOptional(treefy(simplePattern)) : compileNonOptional(treefy(simplePattern)));
     }
 
-    private static boolean optional(Tree<PatternLabel> tree){
-        if(tree.label == null || tree.label.patternType == EnumPatternType.PARENTHESIS){
+    private static boolean allOptional(Tree<PatternToken> tree){
+        if(tree.label == null || tree.label.tokenType == EnumTokenType.PARENTHESIS){
             boolean result = true;
-            for (Tree<PatternLabel> child : tree.children) {
-                result = result && optional(child);
+            for (Tree<PatternToken> child : tree.children) {
+                result = result && allOptional(child);
             }
             return result;
         }else {
-            switch(tree.label.patternType){
-                case SPACE:
-                case CHAR:
-                    return false;
-                case BRACKETS:
-                    return true;
-            }
+            return labelIsOptional(tree.label);
+        }
+    }
+
+    private static boolean labelIsOptional(PatternToken label) {
+        switch(label.tokenType){
+            case PARENTHESIS:
+            case CHAR:
+                return false;
+            case SPACE:
+            case BRACKETS:
+                return true;
         }
         return false;
     }
 
-    private static Tree<PatternLabel> compile(Tree<PatternLabel> tree) {
-        ListIterator<Tree<PatternLabel>> i = tree.children.listIterator();
+
+    static Tree<PatternToken> compileNonOptional(Tree<PatternToken> tree) throws PatternAllOptionalException {
+        if(allOptional(tree))
+            throw new PatternAllOptionalException();
+        return compile(tree,true,0);
+    }
+
+    static Tree<PatternToken> compileOptional(Tree<PatternToken> tree) {
+        return compile(tree,true,0);
+    }
+
+    static Tree<PatternToken> compile(Tree<PatternToken> tree,boolean parentPrecedentIsOptional,int indent) {
+
+        //String tab = "";
+        //for (int i = 0; i < indent; i++) {
+        //    tab+="\t";
+        //}
+        boolean precedentIsOptional = true;
+        //System.out.println(tab+"Compiling : "+tree);
+        Tree<PatternToken> result = new Tree<PatternToken>();
+        ListIterator<Tree<PatternToken>> i = tree.children.listIterator();
+        // Looping over all the tree's children
         while (i.hasNext()) {
-            Tree<PatternLabel> current = i.next();
-            if (current.label != null && current.label.patternType == EnumPatternType.SPACE) {
-                if (i.hasNext() && tree.children.get(i.nextIndex()).label.patternType == EnumPatternType.BRACKETS) {
-                    tree.children.get(i.nextIndex()).add(0, current);
-                    i.remove();
-                }else if (i.hasPrevious() && i.previousIndex() >= 1 && tree.children.get(i.previousIndex()-1).label.patternType == EnumPatternType.BRACKETS) {
-                    boolean allOptional = true;
-                    for (int j = 0; j < i.previousIndex()-1; j++) {
-                        allOptional = allOptional && optional(tree.children.get(j));
+
+            Tree<PatternToken> current = i.next();
+            //System.out.println(tab+"Current : "+current+" , precedentIsOptional : "+precedentIsOptional+", parentPrecedentIsOptional : "+parentPrecedentIsOptional);
+            if (current.label != null && current.label.tokenType == EnumTokenType.SPACE) {
+                if (i.hasPrevious() && i.previousIndex() >= 1 && tree.children.get(i.previousIndex()-1).label.tokenType == EnumTokenType.BRACKETS) {
+                    //If left-adjacent to a char
+                    if(i.previousIndex()-1>=1){
+                        if(tree.children.get(i.previousIndex()-1).label.tokenType == EnumTokenType.CHAR){
+                            continue;
+                        }
                     }
-                    if(allOptional){
+                    if(precedentIsOptional || i.previousIndex() == 1){
+                        if(i.nextIndex()==tree.children.size()-1){
+                            if(!precedentIsOptional || !parentPrecedentIsOptional)
+                                continue;
+                        }
                         tree.children.get(i.previousIndex()-1).add(current);
                         i.remove();
+                        //System.out.println(tab+"Shifted pre : "+convert(tree));
+
+                        continue;
                     }
                 }
+                if (i.hasNext() && tree.children.get(i.nextIndex()).label.tokenType == EnumTokenType.BRACKETS) {
+                    //If right-adjacent to a char
+                    if(tree.children.size() > i.nextIndex()+1){
+                        if(tree.children.get(i.nextIndex()+1).label.tokenType == EnumTokenType.CHAR){
+                            continue;
+                        }
+                    }
+                    tree.children.get(i.nextIndex()).add(0, current);
+                    i.remove();
+                    //System.out.println(tab+"Shifted post : "+convert(tree));
+
+                }
+            }else{
+                if(current.label != null && current.label.tokenType != EnumTokenType.CHAR)
+                    i.set(compile(current,parentPrecedentIsOptional && precedentIsOptional,indent+1));
+                precedentIsOptional = precedentIsOptional && allOptional(current);
             }
+
         }
-        for (int j = 0; j < tree.children.size(); j++) {
-            tree.children.set(j, compile(tree.children.get(j)));
-        }
+        //System.out.println(tab+"Result : "+convert(tree));
         return tree;
     }
 
-    private static String convert(Tree<PatternLabel> tree) {
+    static String convert(Tree<PatternToken> tree) {
         StringBuilder result = new StringBuilder();
         if(tree.label == null){
-            for (Tree<PatternLabel> alternatives : tree.children) {
+            for (Tree<PatternToken> alternatives : tree.children) {
                 result.append(convert(alternatives));
             }
-        }else switch (tree.label.patternType) {
+        }else switch (tree.label.tokenType) {
             case SPACE:
                 result.append(' ');
                 break;
@@ -70,14 +117,14 @@ public class SimpleRegex {
                 break;
             case PARENTHESIS:
                 result.append("(?").append(tree.label.groupName == null ? ":" : "<m" + tree.label.groupName + ">");
-                for (Tree<PatternLabel> alternatives : tree.children) {
+                for (Tree<PatternToken> alternatives : tree.children) {
                     result.append(convert(alternatives)).append('|');
                 }
                 result.deleteCharAt(result.length() - 1).append(")");
                 break;
             case BRACKETS:
                 result.append("(?:");
-                for (Tree<PatternLabel> alternatives : tree.children) {
+                for (Tree<PatternToken> alternatives : tree.children) {
                     result.append(convert(alternatives));
                 }
                 result.append(")?");
@@ -86,48 +133,48 @@ public class SimpleRegex {
         return result.toString();
     }
 
-    private static Tree<PatternLabel> treefy(String s1) throws Exception {
+    static Tree<PatternToken> treefy(String pattern) throws Exception {
         int c = 0;
-        Stack<Tree<PatternLabel>> treeStack = new Stack<>();
+        Stack<Tree<PatternToken>> treeStack = new Stack<>();
         treeStack.add(new Tree<>());
         boolean skip = false;
-        while (c < s1.length()) {
-            if(s1.charAt(c) == '{') {
+        while (c < pattern.length()) {
+            if(pattern.charAt(c) == '{') {
                 skip = true;
-            } else if (s1.charAt(c) == '}'){
+            } else if (pattern.charAt(c) == '}'){
                 skip = false;
             }
             if (!skip) {
-                if (s1.charAt(c) == '~'){
+                if (pattern.charAt(c) == '~'){
                     c++;
-                    treeStack.peek().add(new Tree<>(new PatternLabel(EnumPatternType.CHAR, '\\')));
-                    treeStack.peek().add(new Tree<>(new PatternLabel(EnumPatternType.CHAR, s1.charAt(c))));
-                } else if (s1.charAt(c) == '[') {
-                    treeStack.add(new Tree<>(new PatternLabel(EnumPatternType.BRACKETS)));
-                } else if (s1.charAt(c) == '(') {
-                    treeStack.add(new Tree<>(new PatternLabel(EnumPatternType.PARENTHESIS)));
+                    treeStack.peek().add(new Tree<>(new PatternToken(EnumTokenType.CHAR, '\\')));
+                    treeStack.peek().add(new Tree<>(new PatternToken(EnumTokenType.CHAR, pattern.charAt(c))));
+                } else if (pattern.charAt(c) == '[') {
+                    treeStack.add(new Tree<>(new PatternToken(EnumTokenType.BRACKETS)));
+                } else if (pattern.charAt(c) == '(') {
+                    treeStack.add(new Tree<>(new PatternToken(EnumTokenType.PARENTHESIS)));
                     treeStack.add(new Tree<>());
-                } else if (s1.charAt(c) == '|') {
-                    Tree<PatternLabel> top = treeStack.pop();
+                } else if (pattern.charAt(c) == '|') {
+                    Tree<PatternToken> top = treeStack.pop();
                     if (top == null || top.label != null)
-                        throw new Exception("Bad use of '|' at " + c + " in : " + s1);
+                        throw new Exception("Bad use of '|' at " + c + " in : " + pattern);
                     treeStack.peek().add(top);
                     treeStack.add(new Tree<>());
-                } else if (s1.charAt(c) == ']') {
-                    Tree<PatternLabel> top = treeStack.pop();
-                    if (top == null || top.label == null || !(top.label.patternType == EnumPatternType.BRACKETS))
-                        throw new Exception("Bad use of brackets at " + c + " in : " + s1);
+                } else if (pattern.charAt(c) == ']') {
+                    Tree<PatternToken> top = treeStack.pop();
+                    if (top == null || top.label == null || !(top.label.tokenType == EnumTokenType.BRACKETS))
+                        throw new Exception("Bad use of brackets at " + c + " in : " + pattern);
                     treeStack.peek().add(top);
-                } else if (s1.charAt(c) == ')') {
-                    Tree<PatternLabel> top = treeStack.pop();
+                } else if (pattern.charAt(c) == ')') {
+                    Tree<PatternToken> top = treeStack.pop();
                     treeStack.peek().add(top);
                     top = treeStack.pop();
-                    if (top == null || top.label == null || !(top.label.patternType == EnumPatternType.PARENTHESIS))
-                        throw new Exception("Bad use of parenthesis at " + c + " in : " + s1);
+                    if (top == null || top.label == null || !(top.label.tokenType == EnumTokenType.PARENTHESIS))
+                        throw new Exception("Bad use of parenthesis at " + c + " in : " + pattern);
                     treeStack.peek().add(top);
-                } else if (s1.charAt(c) == ' ') {
-                    treeStack.peek().add(new Tree<>(new PatternLabel(EnumPatternType.SPACE)));
-                } else if (s1.charAt(c) ==';'){
+                } else if (pattern.charAt(c) == ' ') {
+                    treeStack.peek().add(new Tree<>(new PatternToken(EnumTokenType.SPACE)));
+                } else if (pattern.charAt(c) ==';'){
                     StringBuilder groupName = new StringBuilder();
                     while(!treeStack.peek().children.isEmpty()){
                         groupName.append(convert(treeStack.peek().children.remove(treeStack.peek().children.size()-1)));
@@ -135,17 +182,20 @@ public class SimpleRegex {
                     //Stack top is : ..... | PARENTHESIS | ALTERNATIVE so in order to get PARENTHESIS tree we get (n-2)th element
                     treeStack.get(treeStack.size()-2).label.groupName = groupName.toString();
                 } else
-                    treeStack.peek().add(new Tree<>(new PatternLabel(EnumPatternType.CHAR, s1.charAt(c))));
+                    treeStack.peek().add(new Tree<>(new PatternToken(EnumTokenType.CHAR, pattern.charAt(c))));
             }else{
-                treeStack.peek().add(new Tree<>(new PatternLabel(EnumPatternType.CHAR, s1.charAt(c))));
+                treeStack.peek().add(new Tree<>(new PatternToken(EnumTokenType.CHAR, pattern.charAt(c))));
             }
             c++;
         }
         if (treeStack.size() == 1)
             return treeStack.pop();
-        else throw new Exception("Bracket or parenthesis error in : " + s1);
+        else throw new Exception("Bracket or parenthesis error in : " + pattern);
     }
 
+
+    public static class PatternAllOptionalException extends Exception {    }
+    public static class BadUseOfBracketException extends Exception {    }
 
     public static class Tree<T> {
 
@@ -211,34 +261,34 @@ public class SimpleRegex {
         }
     }
 
-    public enum EnumPatternType {
+    public enum EnumTokenType {
         BRACKETS,
         PARENTHESIS,
         SPACE,
         CHAR
     }
 
-    public static class PatternLabel {
+    public static class PatternToken {
 
-        private EnumPatternType patternType;
+        private EnumTokenType tokenType;
         private char content;
         private String groupName;
 
-        public PatternLabel(EnumPatternType patternType) {
-            this.patternType = patternType;
+        public PatternToken(EnumTokenType patternType) {
+            this.tokenType = patternType;
         }
 
-        public PatternLabel(EnumPatternType patternType, char content) {
-            this.patternType = patternType;
+        public PatternToken(EnumTokenType patternType, char content) {
+            this.tokenType = patternType;
             this.content = content;
         }
 
-        public EnumPatternType getPatternType() {
-            return patternType;
+        public EnumTokenType getTokenType() {
+            return tokenType;
         }
 
-        public void setPatternType(EnumPatternType patternType) {
-            this.patternType = patternType;
+        public void setTokenType(EnumTokenType tokenType) {
+            this.tokenType = tokenType;
         }
 
         public char getContent() {
@@ -251,7 +301,7 @@ public class SimpleRegex {
 
         @Override
         public String toString() {
-            return patternType +
+            return tokenType +
                     (content == 0 ? "" : " '" + content + "'");
         }
 
@@ -259,13 +309,13 @@ public class SimpleRegex {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            PatternLabel that = (PatternLabel) o;
-            return patternType == that.patternType && Objects.equals(content, that.content);
+            PatternToken that = (PatternToken) o;
+            return tokenType == that.tokenType && Objects.equals(content, that.content);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(patternType, content);
+            return Objects.hash(tokenType, content);
         }
     }
 

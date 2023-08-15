@@ -254,7 +254,7 @@ public class ScriptEventHandler {
     @SubscribeEvent
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            System.out.println("clicking : "+event.getHand()+" "+event.getSide()+" "+event.getItemStack());
+            //System.out.println("clicking : "+event.getHand()+" "+event.getSide()+" "+event.getItemStack());
             if (ScriptManager.callEvent(new EvtPlayer.EvtOnItemRightClick((EntityPlayer) event.getEntity(), event.getItemStack(), event.getHand(), event.getSide()))) {
                 event.setCanceled(true);
             }

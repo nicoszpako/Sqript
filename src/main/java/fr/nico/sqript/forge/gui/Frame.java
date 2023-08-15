@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.io.IOException;
@@ -29,7 +28,8 @@ public class Frame extends GuiScreen {
     public Message message;
     public boolean hold = false;
     public boolean specialInteractionMode = false;
-    protected List<Widget> widgets = new ArrayList<Widget>();
+    protected List<Widget> blankWidgets = new ArrayList<Widget>();
+    protected List<Widget> runningWidgets = new ArrayList<Widget>();
     protected ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
     List<IMouseWheelListener> widgetsHandlingMouseWheel = new ArrayList<IMouseWheelListener>();
     List<IClickListener> widgetsHandlingMouseClick = new ArrayList<IClickListener>();
@@ -86,7 +86,9 @@ public class Frame extends GuiScreen {
     }
 
     public void addWidgets() {
-
+        for (Widget blankWidget : blankWidgets) {
+            addRunningWidget(blankWidget);
+        }
     }
 
     public boolean isDrawToolTip() {
@@ -106,10 +108,9 @@ public class Frame extends GuiScreen {
     @Override
     public void initGui() {
         if (refreshing)
-            this.widgets.clear();
+            this.runningWidgets.clear();
         this.addWidgets();
-        for (Widget w : widgets) {
-
+        for (Widget w : runningWidgets) {
             w.init();
         }
 
@@ -217,23 +218,27 @@ public class Frame extends GuiScreen {
             }
     }
 
-    public void addWidget(Widget w) {
-        System.out.println("Adding widget :"+w);
+    public void addWidget(Widget w){
+        blankWidgets.add(w);
+    }
+
+    public void addRunningWidget(Widget w) {
+        //System.out.println("Adding widget :"+w);
         isInteracting = false;
         w.x = (int) (w.x + origin.x);
         w.y = (int) (w.y + origin.y);
-        w.setId(widgets.size());
+        w.setId(runningWidgets.size());
         w.onAddToFrame(this);
         w.parentFrame = this;
-        widgets.add(w);
+        runningWidgets.add(w);
     }
 
     public void removeWidget(Widget w) {
-        widgets.remove(w);
+        blankWidgets.remove(w);
     }
 
     public void removeWidget(int index) {
-        widgets.remove(index);
+        blankWidgets.remove(index);
     }
 
     public void addMouseInputListener(IMouseWheelListener w) {
@@ -325,6 +330,7 @@ public class Frame extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        //System.out.println("Number of widgets:"+ runningWidgets.size()+" "+blankWidgets.size());
         if (message != null) {
             message.drawScreen(mouseX, mouseY, partialTicks);
             GlStateManager.translate(0, 0, -250);
@@ -336,7 +342,7 @@ public class Frame extends GuiScreen {
         if (!Mouse.isButtonDown(0))
             hold = false;
         tickExisted++;
-        for (Widget w : widgets) {
+        for (Widget w : runningWidgets) {
             w.draw(mouseX, mouseY);
         }
         if (isDrawToolTip()) {
@@ -347,7 +353,7 @@ public class Frame extends GuiScreen {
     }
 
     public Widget getWidgetFromId(int id) {
-        for (Widget w : widgets) {
+        for (Widget w : runningWidgets) {
             if (w.getId() == id)
                 return w;
         }
@@ -355,7 +361,7 @@ public class Frame extends GuiScreen {
     }
 
     public Widget getWidgetUnderMouse(int mouseX, int mouseY) {
-        for (Widget w : widgets) {
+        for (Widget w : runningWidgets) {
             if (w.isMouseOnWidget(mouseX, mouseY))
                 return w;
         }
@@ -370,8 +376,5 @@ public class Frame extends GuiScreen {
         this.canBeClosed = canBeClosed;
     }
 
-    public void clearWidgets() {
-        widgets.clear();
-    }
 
 }
