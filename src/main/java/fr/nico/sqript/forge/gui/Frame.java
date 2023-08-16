@@ -1,5 +1,7 @@
 package fr.nico.sqript.forge.gui;
 
+import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.events.EvtGUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -41,7 +43,7 @@ public class Frame extends GuiScreen {
     public static final IAnchor top_left = (x,y,w,h) -> new Vector2f(x,y);
     public static final IAnchor center = (x,y,w,h) -> new Vector2f(Widget.xFromCenter(x)-w/2,Widget.yFromCenter(y)-h/2);
 
-    private IAnchor anchor = top_left;
+    private IAnchor anchor;
 
     public Frame(){
         this(center);
@@ -240,6 +242,7 @@ public class Frame extends GuiScreen {
 
         isInteracting = false;
         Vector2f position = anchor.transformPosition(w.initX,w.initY,w.style.width,w.style.height);
+        //System.out.println("position : "+position);
         w.x = (int) position.x+ (int)origin.x;
         w.y = (int) position.y+ (int)origin.y;
         w.setId(runningWidgets.size());
@@ -271,7 +274,7 @@ public class Frame extends GuiScreen {
     }
 
     public void buttonClicked(EnumAction action, int buttonId) {
-
+        ScriptManager.callEvent(new EvtGUI.EvtButtonClicked(buttonId));
     }
 
 

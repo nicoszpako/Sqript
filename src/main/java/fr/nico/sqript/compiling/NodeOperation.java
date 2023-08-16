@@ -2,6 +2,7 @@ package fr.nico.sqript.compiling;
 
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.structures.*;
+import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 
 import java.util.Arrays;
@@ -55,6 +56,8 @@ public class NodeOperation extends Node {
             //System.out.println(ScriptManager.getBinaryOperation(getChildren()[1].getReturnType(), getChildren()[0].getReturnType(), operator));
             if(getChildren()[1] == null ||  getChildren()[0] == null)
                 return null;
+            Class<? extends ScriptType<?>> firstType = getChildren()[0].getReturnType();
+            Class<? extends ScriptType<?>> secondType = getChildren()[0].getReturnType();
             if(ScriptManager.getBinaryOperation(getChildren()[0].getReturnType(), getChildren()[1].getReturnType(), operator) != null)
                 return ScriptManager.getBinaryOperation(getChildren()[0].getReturnType(), getChildren()[1].getReturnType(), operator).getReturnType();
             else if(ScriptManager.getBinaryOperation(getChildren()[1].getReturnType(), getChildren()[0].getReturnType(), operator) != null)

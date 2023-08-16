@@ -163,7 +163,6 @@ public class Widget extends Gui {
         GlStateManager.translate(x, y, 0);
         RenderHelper.enableGUIStandardItemLighting();
 
-
         Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(itemstack, 0, 0);
 
         Minecraft.getMinecraft().getRenderItem().renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, itemstack, 0, 0, itemstack.getCount() > 1 ? String.valueOf(itemstack.getCount()) : "");
@@ -279,7 +278,7 @@ public class Widget extends Gui {
     }
 
     public void setX(int x) {
-        this.x = x;
+        this.initX = x;
     }
 
     public int getY() {
@@ -287,7 +286,7 @@ public class Widget extends Gui {
     }
 
     public void setY(int y) {
-        this.y = y;
+        this.initY = y;
     }
 
     public Container getParent() {
@@ -307,10 +306,12 @@ public class Widget extends Gui {
     }
 
     public void onAddToFrame(Frame frame) {
+        refreshScale();
         this.parentFrame = frame;
     }
 
     public void onAddToContainer(Container container) {
+        refreshScale();
         this.parentFrame = container.parentFrame;
     }
 

@@ -1,6 +1,7 @@
 package fr.nico.sqript.forge.gui;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -113,6 +114,7 @@ public class Button extends Widget {
                     getHighestParent().style.height * scaledResolution.getScaleFactor());
 
         } else {
+
             GL11.glScissor(x * scaledResolution.getScaleFactor() - (int) style.bordersize * scaledResolution.getScaleFactor(),
                     mc.displayHeight - (y + style.height) * scaledResolution.getScaleFactor()
                             - (int) style.bordersize * scaledResolution.getScaleFactor(),
@@ -120,6 +122,9 @@ public class Button extends Widget {
                             + 2 * (int) style.bordersize * scaledResolution.getScaleFactor(),
                     style.height * scaledResolution.getScaleFactor()
                             + 2 * (int) style.bordersize * scaledResolution.getScaleFactor());
+
+
+
         }
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
@@ -184,6 +189,7 @@ public class Button extends Widget {
                         GlStateManager.color(1, 1, 1);
                     Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
                     drawTexturedRect(x, y, this.style.width, this.style.height);
+
                     GlStateManager.resetColor();
                     GlStateManager.popMatrix();
                 }

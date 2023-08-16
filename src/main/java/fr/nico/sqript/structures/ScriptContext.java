@@ -129,14 +129,13 @@ public class ScriptContext {
      */
     public int getHash(String variableName, boolean scoped) {
 
-        for (ScriptTypeAccessor a : variables.values()) {//Simple search first
-            if (a.key != null && a.key.equals(variableName))
-                return a.hash;
-        }
         for (Integer hash : variables.keySet()) {//Pattern search second
+            ScriptTypeAccessor scriptTypeAccessor = variables.get(hash);
+            if (scriptTypeAccessor.key != null && scriptTypeAccessor.key.equals(variableName))
+                return scriptTypeAccessor.hash;
             if (variables.get(hash).getPattern() != null) {
                 Matcher m = variables.get(hash).getPattern().matcher(variableName);
-                //System.out.println("check if "+variables.get(hash).pattern.pattern()+" matches "+variableName+" it's : "+m.matches());
+                //System.out.println("check if "+variables.get(hash).getPattern().pattern()+" matches "+variableName+" it's : "+m.matches());
                 if (m.matches())
                     return hash;
             }
@@ -216,5 +215,15 @@ public class ScriptContext {
         else if (parent != null)
             return parent.getAccessor(varHash);
         else return null;
+    }
+
+    public String printPatterns() {
+        String s = "(" + this.hashCode() + ") ";
+        for (int a : variables.keySet()) {
+            s += "[" + variables.get(a).key+" ["+variables.get(a).getPattern()+"] " + "/" + a + ":" + variables.get(a).element + "] ";
+        }
+        if (parent != null)
+            s += " => [" + parent.printVariables() + "]";
+        return s;
     }
 }

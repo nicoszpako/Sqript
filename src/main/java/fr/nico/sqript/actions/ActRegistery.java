@@ -24,8 +24,8 @@ import java.io.FileWriter;
 
 @Action(name = "Registery Actions",
         features = {
-                @Feature(name = "Register a new item", description = "Creates and registers a new item in the game.", examples = "register a new item with identifier \"copper\" named \"Copper\" with texture \"copper_item\"", pattern = "register [a] [new] item [with identifier] {string} [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [in tab {string}]", side = Side.CLIENT),
-                @Feature(name = "Register a new block", description = "Creates and registers a new block in the game.", examples = "register a new block with identifier \"copper_ore\" named \"Copper Ore\" with texture \"copper_ore\"", pattern = "register [a] [new] block [with identifier] {string} [named {string}] [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [with hardness {number}] [with harvest level {number}] [with material {string}] [dropping {resource}] [in tab {string}]", side = Side.CLIENT),
+                @Feature(name = "Register a new item", description = "Creates and registers a new item in the game.", examples = "register a new item with identifier \"copper\" named \"Copper\" with texture \"test:copper_item\"", pattern = "register [a] [new] item [with identifier] {string} [named {string}] [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [in tab {string}]", side = Side.CLIENT),
+                @Feature(name = "Register a new block", description = "Creates and registers a new block in the game.", examples = "register a new block with identifier \"copper_ore\" named \"Copper Ore\" with texture \"test:copper_ore\"", pattern = "register [a] [new] block [with identifier] {string} [named {string}] [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [with hardness {number}] [with harvest level {number}] [with material {string}] [dropping {resource}] [in tab {string}]", side = Side.CLIENT),
         }
 )
 public class ActRegistery extends ScriptAction {
@@ -88,13 +88,14 @@ public class ActRegistery extends ScriptAction {
 
     private void registerNewItem(ScriptContext context) throws ScriptException {
         String name = (String) getParameter(1).get(context).getObject();
+        String displayName = getParameterOrDefault(getParameter(2), name, context);
         String registryName = SqriptUtils.getIdentifier(name);
-        ResourceLocation itemTexture = getParameterOrDefault(getParameter(2), null, context);
-        ResourceLocation itemModel = getParameterOrDefault(getParameter(3), null, context);
-        int itemStackSize = getParameterOrDefault(getParameter(4), 64, context);
-        CreativeTabs creativeTab = loadTabFromName(getParameterOrDefault(getParameter(5), "misc", context));
+        ResourceLocation itemTexture = getParameterOrDefault(getParameter(3), null, context);
+        ResourceLocation itemModel = getParameterOrDefault(getParameter(4), null, context);
+        int itemStackSize = getParameterOrDefault(getParameter(5), 64, context);
+        CreativeTabs creativeTab = loadTabFromName(getParameterOrDefault(getParameter(6), "misc", context));
 
-        Item item = new ScriptItemBase(name);
+        Item item = new ScriptItemBase(displayName);
         item.setRegistryName(getLine().getScriptInstance().getName(), registryName);
         item.setUnlocalizedName(registryName);
         //System.out.println("Max stack size of item is : "+maxStackSize);
@@ -112,7 +113,7 @@ public class ActRegistery extends ScriptAction {
     }
 
     private CreativeTabs loadTabFromName(String creative_tab) {
-        System.out.println("Getting creative tab from : " + creative_tab);
+        //System.out.println("Getting creative tab from : " + creative_tab);
         for (CreativeTabs tab : CreativeTabs.CREATIVE_TAB_ARRAY) {
             if (tab.getTabLabel().equalsIgnoreCase(creative_tab) || creative_tab.startsWith(tab.getTabLabel()))
                 return tab;

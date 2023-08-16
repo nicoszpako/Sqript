@@ -44,16 +44,19 @@ public class ExprFrame extends ScriptExpression {
                 return new TypeImage(new Image(new ResourceLocation(resourceLocation.toString()),100,100));
             case 2:
                 resourceLocation = (ResourceLocation) getParameterOrDefault(parameters[0],null);
-                String text = (String) getParameterOrDefault(parameters[1],"");
+                String text = getParameterOrDefault(parameters[1],"");
                 Vec3d pos = parameters[2] == null ? Vec3d.ZERO : SqriptUtils.arrayToLocation((ArrayList) parameters[2].getObject());
                 Vec3d size = parameters[3] == null ? new Vec3d(100,20,0): SqriptUtils.arrayToLocation((ArrayList) parameters[3].getObject());
                 int id = getParameterOrDefault(parameters[4],0d).intValue();
                 Button button = new Button((int)pos.x,(int)pos.y,(int)size.x,(int)size.y,text);
                 button.setResourceLocation(resourceLocation);
-                if(resourceLocation != null)
+                if (resourceLocation != null) {
                     button.setDrawType(Button.DRAW_TEXT_AND_TEXTURE);
-                else
+                    button.style.setBackgroundcolor(0);
+                    button.style.setHoverColor(0);
+                } else {
                     button.setDrawType(Button.DRAW_TEXT);
+                }
                 button.setId(id);
                 return new TypeButton(button);
             case 3:

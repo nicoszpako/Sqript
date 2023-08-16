@@ -208,6 +208,7 @@ public class ScriptLoop extends ScriptWrapper {
         @Override
         public IScript getNext(ScriptContext context) throws ScriptException {
             if (context.getVariable(varName+"'s index", true) == null) {
+                //System.out.println("Registering new variable");
                 ScriptTypeAccessor indexAccessor = new ScriptTypeAccessor();
                 indexAccessor.setElement(new TypeNumber(-1));
                 indexAccessor.setPattern(Pattern.compile(Pattern.quote(varName)+"'s index"));
@@ -215,6 +216,9 @@ public class ScriptLoop extends ScriptWrapper {
                 indexAccessor.setHash((varName+"'s index").hashCode());
                 context.put(indexAccessor);
             }
+            //System.out.println(context.printVariables());
+            //System.out.println(context.printPatterns());
+            //System.out.println("Getting : "+varName+" "+context.getVariable(varName+"'s index"));
             TypeNumber index = (TypeNumber) context.getVariable(varName+"'s index", true);
 
             index.setObject(index.getObject() + 1);

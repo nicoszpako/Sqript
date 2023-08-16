@@ -69,10 +69,7 @@ public class EvtPlayer {
 
         @Override
         public boolean validate(ScriptType[] parameters, int marks) {
-            System.out.println("Validating with parameters : "+Arrays.toString(parameters));
-            if (parameters[0] != null && parameters[0].getObject() != null && parameters[0] instanceof TypeResource)
-                return ForgeRegistries.ITEMS.getValue((ResourceLocation) parameters[0].getObject()) != null;
-            return false;
+            return (parameters[0] != null && parameters[0].getObject() != null && parameters[0] instanceof TypeItem);
         }
 
         @Override

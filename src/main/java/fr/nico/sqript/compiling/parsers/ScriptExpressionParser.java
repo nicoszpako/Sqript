@@ -157,6 +157,7 @@ public class ScriptExpressionParser implements INodeParser {
 
     public Node parse(ScriptToken line, ScriptCompilationContext compilationContext, ScriptExpression parent, Class[] requiredTypes) throws ScriptException {
         //System.out.println();
+
         //System.out.println("Parsing : " + line + " wanting " + Arrays.toString(requiredTypes) + " from parent " + parent);
 
         String expressionString = ScriptDecoder.trim(line.getText());
@@ -424,9 +425,13 @@ public class ScriptExpressionParser implements INodeParser {
 
     public static boolean isTypeValid(Class type, Class[] validTypes) {
         //System.out.println("Is type valid : "+type+ " "+Arrays.toString(validTypes));
+
+        // If type is null then it is uncertain, so it is considered as valid
+        if(type == null)
+            return true;
         for (Class validType : validTypes) {
             //System.out.println(type == null);
-            if (validType == ScriptElement.class || (validType != null && type.isAssignableFrom(validType)))
+            if (validType == ScriptElement.class || (validType != null && type!=null && type.isAssignableFrom(validType)))
                 return true;
         }
         return false;

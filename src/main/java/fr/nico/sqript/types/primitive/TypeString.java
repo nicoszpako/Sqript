@@ -7,6 +7,7 @@ import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.types.interfaces.ISerialisable;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
@@ -21,7 +22,9 @@ public class TypeString extends PrimitiveType<String> implements ISerialisable {
     public ScriptElement parse(String typeName) {
         switch(typeName){
             case "number":
-                return new TypeNumber(typeName);
+                return new TypeNumber(getObject());
+            case "resource":
+                return new TypeResource(new ResourceLocation(getObject()));
         }
         return null;
     }
