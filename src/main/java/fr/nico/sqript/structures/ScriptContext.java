@@ -188,7 +188,7 @@ public class ScriptContext {
     public ScriptContext wrap(ScriptTypeAccessor... accessors) {
         if(accessors!=null)
             for (ScriptTypeAccessor accessor : accessors) {
-                variables.put(accessor.hash, accessor);
+                put(accessor);
             }
         return this;
     }

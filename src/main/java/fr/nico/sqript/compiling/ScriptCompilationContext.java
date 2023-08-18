@@ -40,6 +40,7 @@ public class ScriptCompilationContext {
     }
 
     public void add(String variable, Class returnType){
+        //System.out.println("Adding variable to compilation context : "+variable+" returning "+returnType);
         ScriptTypeAccessor sa = new ScriptTypeAccessor(null,variable);
         sa.setReturnType(returnType);
         declaredVariables.add(sa);
@@ -57,6 +58,12 @@ public class ScriptCompilationContext {
         }
     }
 
+
+    @Override
+    public String toString() {
+        return "ScriptCompilationContext{" +
+                "declaredVariables=" + declaredVariables + (parent == null ? "" : "["+parent.toString()+"]")+"}";
+    }
 
     public void addArray(List<Feature> asList) {
         for(Feature s : asList)

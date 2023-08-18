@@ -147,7 +147,7 @@ public class ScriptLoop extends ScriptWrapper {
         public void build(ScriptToken line, ScriptCompilationContext compileGroup) throws ScriptException {
             line = line.with(line.getText().replaceFirst("\\s*", ""));
             ScriptToken transformed = new ScriptToken(line.getText().replaceFirst("\\s*else if\\s*", "").replaceAll(":", ""), line.getLineNumber(), line.getScriptInstance());
-            ScriptExpression scriptExpression = ScriptDecoder.parse(transformed, new ScriptCompilationContext());
+            ScriptExpression scriptExpression = ScriptDecoder.parse(transformed, compileGroup);
             if (scriptExpression != null)
                 setCondition(scriptExpression);
             else {

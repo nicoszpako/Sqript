@@ -159,6 +159,7 @@ public class ScriptExpressionParser implements INodeParser {
         //System.out.println();
 
         //System.out.println("Parsing : " + line + " wanting " + Arrays.toString(requiredTypes) + " from parent " + parent);
+        //System.out.println("Compilation context is : "+compilationContext);
 
         String expressionString = ScriptDecoder.trim(line.getText());
         String[] strings = ScriptDecoder.extractStrings(line.getText());

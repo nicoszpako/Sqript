@@ -23,8 +23,8 @@ public class ExprNumbers extends ScriptExpression {
         switch (getMatchedIndex()) {
             case 0:
                 double x = (double)parameters[0].getObject();
-                double a = (double)parameters[0].getObject();
-                double b = (double)parameters[0].getObject();
+                double a = (double)parameters[1].getObject();
+                double b = (double)parameters[2].getObject();
                 return new TypeBoolean(x<=b && x>=a);
 
         }

@@ -32,6 +32,8 @@ public class ScriptTypeAccessor {
     public ScriptTypeAccessor(ScriptType element, String match) {
         this.element = element;
         try {
+            if(element != null)
+                this.returnType = element.getClass();
             this.pattern = Pattern.compile(SimpleRegex.simplePatternToRegex(match,true).replaceAll("\\{","\\\\{").replaceAll("}","\\\\}"));
             this.key = match;
         } catch (ScriptException.ScriptPatternError scriptPatternError) {
@@ -83,6 +85,7 @@ public class ScriptTypeAccessor {
 
     public void setElement(ScriptType element) {
         this.element = element;
+        this.returnType = element.getType();
     }
 
     public void setPattern(Pattern pattern) {

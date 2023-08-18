@@ -18,7 +18,7 @@ public class Label extends Widget {
     public Label(String displayText, int textColor, double scale) {
         text = displayText;
         this.displayLines = displayText.replaceAll("&", "\247").split("\\\\n");
-        System.out.println("Actual string : " + Arrays.toString(this.displayLines));
+        //System.out.println("Actual string : " + Arrays.toString(this.displayLines));
         this.textColor = textColor;
         this.scale = scale;
         this.style.width = getSizedWidth();

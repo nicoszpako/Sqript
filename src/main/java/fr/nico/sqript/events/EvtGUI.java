@@ -19,7 +19,7 @@ public class EvtGUI {
                     pattern = "(GUI|gui) open[ed]",
                     side = Side.CLIENT),
             accessors = {
-                    @Feature(name="GUI class name", description = "The JAVA class name of the GUI being opened", pattern = "(GUI|gui) [class] name")
+                    @Feature(name="GUI class name", description = "The JAVA class name of the GUI being opened", pattern = "(GUI|gui) [class] name", type="string")
             }
     )
     public static class EvtGUIOpen extends ScriptEvent {
@@ -36,7 +36,7 @@ public class EvtGUI {
                     pattern = "(button click|click on [a] button)",
                     side = Side.CLIENT),
             accessors = {
-                    @Feature(name="Clicked button id", description = "The clicked button's id.", pattern = "button id")
+                    @Feature(name="Clicked button id", description = "The clicked button's id.", pattern = "button id", type = "number")
             }
     )
     public static class EvtButtonClicked extends ScriptEvent {

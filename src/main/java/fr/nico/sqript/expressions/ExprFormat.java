@@ -20,7 +20,7 @@ public class ExprFormat extends ScriptExpression {
 
         switch (getMatchedIndex()) {
             case 0:
-                System.out.println("Formatting");
+                //System.out.println("Formatting");
                 ScriptType element = parameters[0];
                 String format = (String) parameters[1].getObject();
                 if (!(element instanceof IFormatable)) {
