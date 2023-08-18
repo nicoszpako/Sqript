@@ -1,6 +1,6 @@
 typeframe
 typebutton
-typelabel
+typelabel & label display text
 typecontainer
 
 exprframe
@@ -11,6 +11,7 @@ register item
 register block
 open frame
 
+number is between
 
 get player look with partial ticks
 

@@ -20,18 +20,18 @@ public class ScriptDataManager {
         File f = new File(ScriptManager.scriptDir, "data.dat");
         if (!f.exists()) return;
         NBTTagCompound nbt = CompressedStreamTools.read(f);
-        //System.out.println("Loading saved data.");
+        System.out.println("Loading saved data.");
         assert nbt != null : "Wasn't able to read the data.dat file";
         for (String s : nbt.getKeySet()) {
-            //System.out.println("Loading : " + s);
+            System.out.println("Loading : " + s);
             NBTTagCompound n = nbt.getCompoundTag(s);
             String typeName = n.getString("type");
             NBTTagCompound value = n.getCompoundTag("value");
-            //System.out.println("Value : " + value + " as " + s);
+            System.out.println("Value : " + value + " as " + s);
             ScriptType t = instanciateWithData(typeName, value);
             ScriptManager.GLOBAL_CONTEXT.put(new ScriptTypeAccessor(t, s)); //We add the variable to the context
         }
-        //System.out.println("Global variables are " + ScriptManager.GLOBAL_CONTEXT.printVariables());
+        System.out.println("Global variables are " + ScriptManager.GLOBAL_CONTEXT.printVariables());
 
     }
 
@@ -49,8 +49,6 @@ public class ScriptDataManager {
                 toAdd.setTag("value", value);
                 toAdd.setString("type", typeName);
                 total.setTag(key, toAdd);
-            } else {
-                throw new ScriptException.ScriptTypeNotSaveableException(s.key, s.element.getClass());
             }
         }
         File f = new File(ScriptManager.scriptDir, "data.dat");

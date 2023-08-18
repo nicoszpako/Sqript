@@ -3,13 +3,11 @@ package fr.nico.sqript.events;
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
-import fr.nico.sqript.types.ScriptType;
-import fr.nico.sqript.types.TypeBlock;
-import fr.nico.sqript.types.TypeNull;
-import fr.nico.sqript.types.TypePlayer;
+import fr.nico.sqript.types.*;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -68,7 +66,7 @@ public class EvtBlock {
             feature = @Feature(name = "Block right clicked",
                     description = "Called when a player clicks on a block",
                     examples = "on right click on minecraft:diamond_block:\n",
-                    pattern = "((1;left)|(2;right)) click on (block|[block of] {block}) [with ((3;left)|(4;right)) hand]"),
+                    pattern = "((1;left)|(2;right)) click on block [of] {block} [with ((3;left)|(4;right)) hand]"),
             accessors = {
                     @Feature(name = "Player", description = "The player that clicked the block.", pattern = "player", type = "player"),
                     @Feature(name = "Clicked block", description = "The clicked block.", pattern = "(clicked block|click-block)", type = "block"),
@@ -90,16 +88,16 @@ public class EvtBlock {
 
         @Override
         public boolean validate(ScriptType[] parameters, int marks) {
-            return super.validate(parameters, marks);
+            return (parameters[0] != null && parameters[0].getObject() != null && parameters[0] instanceof TypeBlock);
         }
 
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
 
-            //System.out.println("Checking with :"+Arrays.toString(parameters)+" "+marks);
-            Object registryName = null;
+            //System.out.println("Checking with :"+Arrays.toString(parameters)+" "+parameters[0].getClass()+" "+clickedBlock.getObject()+" "+marks);
+            ResourceLocation registryName = null;
             if(parameters[0] != null)
-                registryName = parameters[0].getObject();
+                registryName = ((TypeBlock)parameters[0]).getObject().getBlock().getRegistryName();
 
             boolean hand = this.hand == EnumHand.MAIN_HAND;
 

@@ -48,7 +48,7 @@ public class TypeBlock extends ScriptType<IBlockState> implements ILocatable {
 
     @Override
     public String toString() {
-        return this.getObject().getBlock().getLocalizedName();
+        return this.getObject().toString();
     }
 
     public TypeBlock(IBlockState block) {

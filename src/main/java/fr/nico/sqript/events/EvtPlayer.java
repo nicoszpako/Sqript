@@ -424,15 +424,15 @@ public class EvtPlayer {
             feature = @Feature(name = "Player respawn",
                     description = "This event is triggered when a player reappears in the world after dying or passing through the end portal to the overworld.",
                     examples = "on respawn:",
-                    pattern = "[player] respawn[ing]"),
+                    pattern = "[player] [re]spawn[ing]"),
             accessors = {
                     @Feature(name = "Player", description = "The player that respawned.", pattern = "player", type = "player"),
                     @Feature(name = "End conquered", description = "Whether the respawn is due to the end conquest.", pattern = "end conquered", type = "boolean")
             }
     )
-    public static class EvtOnPlayerRespawnEvent extends ScriptEvent {
+    public static class EvtOnPlayerRespawn extends ScriptEvent {
 
-        public EvtOnPlayerRespawnEvent(EntityPlayer entityPlayer, boolean endConquered) {
+        public EvtOnPlayerRespawn(EntityPlayer entityPlayer, boolean endConquered) {
             super(new ScriptTypeAccessor(entityPlayer != null ? new TypePlayer(entityPlayer) : new TypeNull(),"player"), new ScriptTypeAccessor(new TypeBoolean(endConquered),"endConquered"));
         }
 

@@ -25,7 +25,6 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -36,7 +35,6 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -280,6 +278,8 @@ public class ScriptEventHandler {
         }
     }
 
+
+
     @SubscribeEvent
     public void onPlayerHit(LivingAttackEvent event) {
         if (event.getEntity() instanceof EntityPlayer) {
@@ -390,7 +390,7 @@ public class ScriptEventHandler {
 
     @SubscribeEvent
     public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerRespawnEvent(event.player, event.isEndConquered()));
+        ScriptManager.callEvent(new EvtPlayer.EvtOnPlayerRespawn(event.player, event.isEndConquered()));
     }
 
 }

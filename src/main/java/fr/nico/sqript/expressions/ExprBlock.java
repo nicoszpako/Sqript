@@ -78,8 +78,9 @@ public class ExprBlock extends ScriptExpression {
                 TypeResource resource = (TypeResource) parameters[0];
                 int metadata = parameters[1] == null ? 0 : ((Double) parameters[1].getObject()).intValue();
                 Block block = ForgeRegistries.BLOCKS.getValue(resource.getObject());
-                System.out.println("Found block is : "+block);
                 IBlockState state = block.getStateFromMeta(metadata);
+                //System.out.println("Found block is : "+state+" "+block);
+
                 return new TypeBlock(state);
             case "Block color":
                 //System.out.println("Parameters : "+ Arrays.toString(parameters));

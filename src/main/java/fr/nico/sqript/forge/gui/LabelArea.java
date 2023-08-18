@@ -24,7 +24,7 @@ public class LabelArea extends Label {
         GlStateManager.translate(x, y, 2);
         GlStateManager.scale(scale, scale, scale);
 
-        drawScrolledSplitString(displayText, 0, 0, (int) (this.style.width * (1 / scale)), this.textColor);
+        drawScrolledSplitString(text, 0, 0, (int) (this.style.width * (1 / scale)), this.textColor);
         GlStateManager.popMatrix();
     }
 

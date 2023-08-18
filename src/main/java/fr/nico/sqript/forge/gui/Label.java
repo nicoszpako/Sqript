@@ -4,16 +4,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
+import java.util.Arrays;
+
 public class Label extends Widget {
 
     public boolean rightToLeft;
-    protected String displayText;
+    protected String[] displayLines;
+    protected String text;
     protected EnumDisplayStyle style_display = EnumDisplayStyle.NORMAL;
     protected double scale;
     protected int textColor;
 
     public Label(String displayText, int textColor, double scale) {
-        this.displayText = displayText;
+        text = displayText;
+        this.displayLines = displayText.replaceAll("&", "\247").split("\\\\n");
+        System.out.println("Actual string : " + Arrays.toString(this.displayLines));
         this.textColor = textColor;
         this.scale = scale;
         this.style.width = getSizedWidth();
@@ -23,33 +28,39 @@ public class Label extends Widget {
     @Override
     public void draw(int mouseX, int mouseY) {
         super.draw(mouseX, mouseY);
-        GlStateManager.pushMatrix();
 
         if (this.getParent() != null) {
             GL11.glScissor(getHighestParent().x * scaledResolution.getScaleFactor(), mc.displayHeight - (getHighestParent().y + getHighestParent().style.height) * scaledResolution.getScaleFactor(), getHighestParent().style.width * scaledResolution.getScaleFactor(), getHighestParent().style.height * scaledResolution.getScaleFactor());
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
         } else {
-            GL11.glScissor(x * scaledResolution.getScaleFactor() - (int) style.bordersize * scaledResolution.getScaleFactor(), mc.displayHeight - (y + style.height) * scaledResolution.getScaleFactor() - (int) style.bordersize * scaledResolution.getScaleFactor(), style.width * scaledResolution.getScaleFactor() + 2 * (int) style.bordersize * scaledResolution.getScaleFactor(), style.height * scaledResolution.getScaleFactor() + 2 * (int) style.bordersize * scaledResolution.getScaleFactor());
+            //GL11.glScissor(x * scaledResolution.getScaleFactor() - (int) style.bordersize * scaledResolution.getScaleFactor(), mc.displayHeight - (y + style.height) * scaledResolution.getScaleFactor() - (int) style.bordersize * scaledResolution.getScaleFactor(), style.width * scaledResolution.getScaleFactor() + 2 * (int) style.bordersize * scaledResolution.getScaleFactor(), style.height * scaledResolution.getScaleFactor() + 2 * (int) style.bordersize * scaledResolution.getScaleFactor());
         }
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.translate(x - (rightToLeft ? fontRenderer.getStringWidth(displayText) * scale : 0), y, 0);
-        GlStateManager.scale(scale, scale, 1);
-        if (style_display == EnumDisplayStyle.NORMAL)
-            drawString(Minecraft.getMinecraft().fontRenderer, displayText, 0, 0, textColor);
-        if (style_display == EnumDisplayStyle.CENTER)
-            drawCenteredString(Minecraft.getMinecraft().fontRenderer, displayText, 0, 0, textColor);
+        int i = 0;
+        for (String displayText : displayLines) {
+            GlStateManager.pushMatrix();
+            //System.out.println(x - (rightToLeft ? fontRenderer.getStringWidth(displayText) * scale : 0));
+            GlStateManager.translate(x - (rightToLeft ? fontRenderer.getStringWidth(displayText) * scale : 0), y+i*Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT*scale, 0);
+            GlStateManager.scale(scale, scale, 1);
+            if (style_display == EnumDisplayStyle.NORMAL)
+                drawString(Minecraft.getMinecraft().fontRenderer, displayText, 0, 0, textColor);
+            if (style_display == EnumDisplayStyle.CENTER)
+                drawCenteredString(Minecraft.getMinecraft().fontRenderer, displayText, (int) (style.getWidth()/2/getScale()), 0, textColor);
+            GlStateManager.popMatrix();
+            i++;
+        }
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
-        GlStateManager.popMatrix();
     }
 
     public String getDisplayText() {
-        return displayText;
+        return text;
     }
 
     public void setDisplayText(String displayText) {
-        this.displayText = displayText;
+        this.text = displayText;
+        this.displayLines = displayText.replaceAll("&", "\247").split("\\\\n");
     }
 
     public double getScale() {
@@ -69,11 +80,11 @@ public class Label extends Widget {
     }
 
     public int getSizedWidth() {
-        return (int) (fontRenderer.getStringWidth(getDisplayText()) * getScale());
+        return Arrays.stream(displayLines).map(s->fontRenderer.getStringWidth(s)*getScale()).max(Double::compare).get().intValue();
     }
 
     public int getSizedHeight() {
-        return (int) (fontRenderer.FONT_HEIGHT * getScale());
+        return (int) (fontRenderer.FONT_HEIGHT * getScale() * displayLines.length);
     }
 
     public EnumDisplayStyle getStyleDisplay() {

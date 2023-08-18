@@ -21,6 +21,8 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
 
     @Override
     public ScriptElement parse(String typeName) {
+        if (typeName.equals("string"))
+            return new TypeString(getObject().toString());
         return null;
     }
 
