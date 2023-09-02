@@ -9,11 +9,6 @@ import fr.nico.sqript.structures.ScriptElement;
 public class TypeImage extends ScriptType<Image> {
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return "Image "+getObject().imageName;
     }

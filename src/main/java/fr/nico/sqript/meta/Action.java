@@ -18,5 +18,7 @@ public @interface Action {
      */
     Feature[] features();
 
+    Side side() default Side.BOTH;
+
     int priority() default 0;
 }

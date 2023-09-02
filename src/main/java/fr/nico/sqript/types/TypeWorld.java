@@ -11,11 +11,6 @@ import net.minecraft.world.World;
 public class TypeWorld extends ScriptType< World > {
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return this.getObject().getWorldInfo().getWorldName();
     }
@@ -23,6 +18,5 @@ public class TypeWorld extends ScriptType< World > {
     public TypeWorld(World world) {
         super(world);
     }
-
 
 }

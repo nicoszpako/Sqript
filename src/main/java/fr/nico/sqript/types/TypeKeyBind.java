@@ -10,21 +10,15 @@ import java.io.File;
 
 @Type(name = "key",
         parsableAs = {})
-public class TypeKey extends ScriptType<KeyBinding> {
-
-    @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
+public class TypeKeyBind extends ScriptType<KeyBinding> {
 
     @Override
     public String toString() {
         return this.getObject().getDisplayName();
     }
 
-    public TypeKey(KeyBinding key) {
+    public TypeKeyBind(KeyBinding key) {
         super(key);
     }
-
 
 }

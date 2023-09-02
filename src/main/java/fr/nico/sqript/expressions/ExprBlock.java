@@ -29,7 +29,6 @@ import java.util.ArrayList;
         features = {
                 @Feature(name = "Block at location", description = "Returns the block at the given location", examples = "block at player's location", pattern = "block at {array} [in world {number}]", type = "block"),
                 @Feature(name = "Blocks in radius of location", description = "Returns blocks in a radius of the given location", examples = "block in a radius of 5 around player's location", pattern = "blocks in [a] radius [of] {number} [blocks] around {element} [in world {number}]", type = "array"),
-                @Feature(name = "Block", description = "Returns the block associated to the given resource and metadata.", examples = "minecraft:stone with metadata 2", pattern = "{resource} [with metadata {number}]", type = "block"),
                 @Feature(name = "Block color", description = "Returns the color associated to the given block in a minecraft map.", examples = "color of minecraft:stone with metadata 2", pattern = "{block} color [in world {number}]", type = "number"),
                 @Feature(name = "Terrain height", description = "Efficiently returns the terrain height at the given location.", examples = "terrain height at player's location", pattern = "terrain height at {array} [in world {number}]", type = "number"),
         }
@@ -73,15 +72,7 @@ public class ExprBlock extends ScriptExpression {
                     }
                 }
                 return new TypeArray(list);
-            case "Block":
 
-                TypeResource resource = (TypeResource) parameters[0];
-                int metadata = parameters[1] == null ? 0 : ((Double) parameters[1].getObject()).intValue();
-                Block block = ForgeRegistries.BLOCKS.getValue(resource.getObject());
-                IBlockState state = block.getStateFromMeta(metadata);
-                //System.out.println("Found block is : "+state+" "+block);
-
-                return new TypeBlock(state);
             case "Block color":
                 //System.out.println("Parameters : "+ Arrays.toString(parameters));
                 worldId = parameters[1] == null ? 0 : (int) parameters[2].getObject();

@@ -11,11 +11,6 @@ import java.io.File;
 public class TypeMessagePrototype extends ScriptType<ScriptMessage> {
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return this.getObject().getMessage_id();
     }

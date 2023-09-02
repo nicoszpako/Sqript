@@ -31,12 +31,6 @@ import java.util.Objects;
 )
 public class TypeArray extends ScriptType<ArrayList<ScriptType<?>>> implements ISerialisable, IIndexedCollection, ILocatable {
 
-    @Nullable
-    @Override
-    public ScriptElement parse(String typeName) {
-        return null;
-    }
-
     public static String replaceLast(String string, String toReplace, String replacement) {
         int pos = string.lastIndexOf(toReplace);
         if (pos > -1) {

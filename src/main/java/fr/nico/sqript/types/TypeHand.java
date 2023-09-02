@@ -17,11 +17,6 @@ public class TypeHand extends ScriptType< EnumHand > {
     }
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return this.getObject().name();
     }

@@ -29,13 +29,6 @@ public class TypeBoolean extends PrimitiveType<Boolean> implements ISerialisable
         return new TypeBoolean(true);
     }
 
-    @Nullable
-    @Override
-    public ScriptElement<?> parse(String parseAs) {
-        if(parseAs.equals("string"))return new TypeString(String.valueOf(getObject()));
-        return null;
-    }
-
     public TypeBoolean(String match) {
         this(Boolean.valueOf(match));
     }

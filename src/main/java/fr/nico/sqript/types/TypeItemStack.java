@@ -1,18 +1,17 @@
 package fr.nico.sqript.types;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import java.util.Objects;
 
 @Type(name = "item",
         parsableAs = {})
 public class TypeItemStack extends ScriptType<ItemStack> {
-
-    @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
 
     @Override
     public String toString() {
@@ -21,6 +20,14 @@ public class TypeItemStack extends ScriptType<ItemStack> {
 
     public TypeItemStack(ItemStack itemStack) {
         super(itemStack);
+    }
+
+    static {
+        ScriptManager.registerTypeParser(TypeResource.class,TypeItemStack.class,r-> {
+            if(ForgeRegistries.ITEMS.getValue(r.getObject()) == null)
+                System.err.println("Item not defined : "+r.getObject());
+            return new TypeItemStack(new ItemStack(ForgeRegistries.ITEMS.getValue(r.getObject())));}
+        ,0);
     }
 
     @Override

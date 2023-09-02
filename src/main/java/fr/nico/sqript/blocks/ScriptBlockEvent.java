@@ -100,9 +100,9 @@ public class ScriptBlockEvent extends ScriptBlock {
     protected void load() throws Exception {
         if(fieldDefined("side"))
             side = Side.from(getSubBlock("side").getRawContent());
-
-        if(side!=null && !side.isValid())
+        if (side != null && !side.isValid()) {
             return;
+        }
 
         ScriptCompilationContext group = new ScriptCompilationContext();
         group.addArray(Arrays.asList(eventType.getAnnotation(Event.class).accessors()));

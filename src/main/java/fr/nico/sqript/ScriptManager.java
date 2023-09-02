@@ -15,6 +15,7 @@ import fr.nico.sqript.network.ScriptNetworkManager;
 import fr.nico.sqript.structures.*;
 import fr.nico.sqript.structures.IOperation;
 import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeImage;
 import fr.nico.sqript.types.primitive.PrimitiveType;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.meta.*;
@@ -54,7 +55,7 @@ public class ScriptManager {
     public static List<EventDefinition> events = new ArrayList<>();
     public static List<ActionDefinition> actions = new ArrayList<>();
     public static List<BlockDefinition> blocks = new ArrayList<>();
-    public static Map<ExpressionIdentifier,ExpressionDefinition> expressions = new LinkedHashMap<>();
+    public static Map<ExpressionIdentifier, ExpressionDefinition> expressions = new LinkedHashMap<>();
     public static List<LoopDefinition> loops = new ArrayList<>();
 
     public static Map<Class<? extends ScriptElement<?>>, TypeDefinition> types = new HashMap<>();
@@ -73,7 +74,7 @@ public class ScriptManager {
     public static List<ScriptOperator> operators = new ArrayList<>();
 
     //Type parsers
-    public static HashMap<Class, HashMap<Class, TypeParserDefinition>> typeParsers = new HashMap<>();
+    public static HashMap<Class, HashMap<Class, TypeParserDefinition<?, ?>>> typeParsers = new HashMap<>();
 
     public static boolean RELOADING = false;
 
@@ -87,9 +88,13 @@ public class ScriptManager {
         binaryOperations.get(o).get(a).put(b, new OperatorDefinition(operation, returnType, priority));
     }
 
-    public static void registerTypeParser(Class from, Class to, ITypeParser parser, int priority) {
+    public static <T extends ScriptElement<?>,U extends ScriptElement<?>> void registerTypeParser(Class<T> from, Class<U> to, ITypeParser<T,U> parser) {
+        registerTypeParser(from,to,parser,0);
+    }
+
+    public static <T extends ScriptElement<?>,U extends ScriptElement<?>> void registerTypeParser(Class<T> from, Class<U> to, ITypeParser<T,U> parser, int priority) {
         typeParsers.computeIfAbsent(from, k -> new HashMap<>());
-        typeParsers.get(from).put(to, new TypeParserDefinition(priority, parser, from, to));
+        typeParsers.get(from).put(to, new TypeParserDefinition<T,U>(priority, parser, from, to));
     }
 
     public static void registerUnaryOperation(ScriptOperator o, Class<? extends ScriptElement<?>> a, Class<? extends ScriptElement<?>> returnType, IOperation operation) {
@@ -97,67 +102,78 @@ public class ScriptManager {
         unaryOperations.get(o).put(a, new OperatorDefinition(operation, returnType, 0));
     }
 
-    public static TypeParserDefinition getParser(Class c1, Class c2){
-        TypeParserDefinition a = null;
-        TypeParserDefinition b = null;
-        if(ScriptManager.typeParsers.get(c1)!=null)
-            a = ScriptManager.typeParsers.get(c1).get(c2);
-        if(ScriptManager.typeParsers.get(c2)!=null)
-            b = ScriptManager.typeParsers.get(c2).get(c1);
-        if (b == null && a == null) {
-            return null;
+    public static <T extends ScriptElement<?>, U extends ScriptElement<?>> TypeParserDefinition<T, U> getParser(T from, Class<U> to) {
+        TypeParserDefinition<T, U> a = null;
+        if (ScriptManager.typeParsers.get(from.getClass()) != null) {
+            a = (TypeParserDefinition<T, U>) ScriptManager.typeParsers.get(from.getClass()).get(to);
+            //System.out.println("Found parser for "+from+" "+to);
         }
-        if(b != null && a != null){
-            if(b.getPriority()>a.getPriority())
-                return b;
-            else return a;
-        }
-        if(b == null)
-            return a;
+        return a;
+    }
+
+
+    public static boolean isParsable(Class from, Class toType) {
+        return typeParsers.get(from) != null && typeParsers.get(from).get(toType) != null;
+    }
+
+    public static <T extends ScriptElement<?>, U extends ScriptElement<?>> U parse(T from, Class<U> toType) {
+        //System.out.println("Parsing "+from+" to "+toType);
+        if(from.getClass() == toType)
+            return (U) from;
+        TypeParserDefinition<T, U> typeParserDefinition = getParser(from, toType);
+        if (typeParserDefinition != null)
+            return typeParserDefinition.getParser().parse(from);
+        else if (toType == TypeString.class)
+            return (U) new TypeString(from.toString());
         else
-            return b;
+            return null;
+
     }
 
-    public static ScriptType parse(ScriptType from, Class toType) {
-        if (toType == TypeString.class)
-            return new TypeString(from.toString());
-        else {
-            TypeParserDefinition typeParserDefinition = getParser(from.getClass(),toType);
-            if (typeParserDefinition != null)
-                return typeParserDefinition.getParser().parse(from);
-            else return null;
-        }
-    }
-
-    public static OperatorDefinition getBinaryOperation(Class<? extends ScriptType> a, Class<? extends ScriptType> b, ScriptOperator o) {
+    public static OperatorDefinition getBinaryOperation(Class<? extends ScriptElement> a, Class<? extends ScriptElement> b, ScriptOperator o) {
         //System.out.println("Getting binary operation for : "+o+" from "+a+" to "+b);
+        if (a == null)
+            a = ScriptElement.class;
         OperatorDefinition op = null;
         if (binaryOperations.get(o) != null) {
             if (binaryOperations.get(o).get(ScriptElement.class) != null) {
-                final OperatorDefinition def = binaryOperations.get(o).get(ScriptElement.class).get(b);
-                if (def != null)
-                    op = binaryOperations.get(o).get(a).get(b);
-                //System.out.println("3)"+op+" for "+a +" "+b);
+                op = binaryOperations.get(o).get(ScriptElement.class).get(b);
+                if (op != null) {
+                    //System.out.println("3)"+op+" for "+a +" "+b);
+                    return op;
+                }
             }
             if (binaryOperations.get(o).get(a) != null) {
                 op = binaryOperations.get(o).get(a).get(ScriptElement.class);
-                //System.out.println("1)"+op+" for "+a +" "+b);
+                if (op != null) {
+                    //System.out.println("1)"+op+" for "+a +" "+b);
+                    return op;
+                }
             }
             if (binaryOperations.get(o).get(a) != null) {
                 final OperatorDefinition def = binaryOperations.get(o).get(a).get(b);
                 if (def != null && (op == null || def.getPriority() > op.getPriority()))
                     op = binaryOperations.get(o).get(a).get(b);
-                //System.out.println("2)"+op+" for "+a +" "+b);
+                if (op != null) {
+                    //System.out.println("2)"+op+" for "+a +" "+b);
+                    return op;
+                }
             }
-            TypeParserDefinition typeParserDefinition = getParser(a,b);
-            if(typeParserDefinition != null)
-                if (binaryOperations.get(o).get(typeParserDefinition.getFrom()) != null) {
-                    if((op = binaryOperations.get(o).get(typeParserDefinition.getFrom()).get(typeParserDefinition.getTo())) != null){
-                        return op;
+            if(typeParsers.get(a) != null){
+                TypeParserDefinition<?,?> typeParserDefinition = typeParsers.get(a).get(b);
+                if (typeParserDefinition != null) {
+                    if (binaryOperations.get(o).get(typeParserDefinition.getFrom()) != null) {
+                        if ((op = binaryOperations.get(o).get(typeParserDefinition.getFrom()).get(typeParserDefinition.getTo())) != null) {
+                            return op;
+                        }
                     }
                 }
+            }
+
+
+
         }
-        return op;
+        return null;
     }
 
     public static ScriptInstance getScriptFromName(String name) {
@@ -187,14 +203,14 @@ public class ScriptManager {
     }
 
     public static ExpressionDefinition getDefinitionFromExpression(Class<? extends ScriptExpression> cls) {
-        return expressions.get(new ExpressionIdentifier(0,cls));
+        return expressions.get(new ExpressionIdentifier(0, cls));
     }
 
     public static final boolean FULL_DEBUG = true;
 
     public static void registerExpression(Class<? extends ScriptExpression> expressionClass, String name, int priority, Feature... features) throws Exception {
-        expressions.put(new ExpressionIdentifier(priority,expressionClass),new ExpressionDefinition(name, expressionClass, priority, features));
-        log.debug("Registering expression : " + name + " (" + expressionClass.getSimpleName() + ")" + " hash : "+new ExpressionIdentifier(priority,expressionClass).hashCode());
+        expressions.put(new ExpressionIdentifier(priority, expressionClass), new ExpressionDefinition(name, expressionClass, priority, features));
+        log.debug("Registering expression : " + name + " (" + expressionClass.getSimpleName() + ")" + " hash : " + new ExpressionIdentifier(priority, expressionClass).hashCode());
         //log.debug(expressions);
         //log.debug(expressions.values());
     }
@@ -434,9 +450,9 @@ public class ScriptManager {
 
     public static void loadScripts(File mainFolder) throws Throwable {
         ScriptException.ScriptExceptionList elist = new ScriptException.ScriptExceptionList();
-        try{
+        try {
             loadFolder(mainFolder);
-        }catch(ScriptException.ScriptExceptionList e){
+        } catch (ScriptException.ScriptExceptionList e) {
             elist = e;
         }
 
@@ -445,11 +461,11 @@ public class ScriptManager {
 
 
         log.info("All scripts are loaded");
-        if(!elist.exceptionList.isEmpty())
+        if (!elist.exceptionList.isEmpty())
             throw elist;
 
         if (FULL_DEBUG) {
-            try{
+            try {
                 for (ScriptInstance instance : scripts) {
                     List<ScriptBlock> list = instance.getBlocksOfClass(ScriptBlockEvent.class);
                     list.addAll(instance.getBlocksOfClass(ScriptBlockCommand.class));
@@ -463,7 +479,8 @@ public class ScriptManager {
                     }
                     log.info("");
                 }
-            }catch (Exception ignored){}
+            } catch (Exception ignored) {
+            }
 
         }
     }
@@ -505,7 +522,7 @@ public class ScriptManager {
                         result = true;
                     }
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -541,9 +558,9 @@ public class ScriptManager {
 
         ScriptTimer.reload();
         ScriptException.ScriptExceptionList elist = new ScriptException.ScriptExceptionList();
-        try{
+        try {
             loadScripts(scriptDir);
-        }catch(ScriptException.ScriptExceptionList e){
+        } catch (ScriptException.ScriptExceptionList e) {
             elist = e;
         }
 
@@ -551,7 +568,9 @@ public class ScriptManager {
 
         RELOADING = false;
 
-        if(!elist.exceptionList.isEmpty())
+        if (!elist.exceptionList.isEmpty())
             throw elist;
     }
+
+
 }

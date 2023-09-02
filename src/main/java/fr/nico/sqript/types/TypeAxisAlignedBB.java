@@ -22,9 +22,5 @@ public class TypeAxisAlignedBB extends ScriptType< AxisAlignedBB > {
         return getObject().toString();
     }
 
-    @Nullable
-    @Override
-    public ScriptElement parse(String typeName) {
-        return null;
-    }
+
 }

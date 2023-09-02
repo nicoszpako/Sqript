@@ -40,12 +40,5 @@ public abstract class ScriptType<T>  extends ScriptElement<T>  {
         return null;
     }
 
-    /**
-     * Parse this element to another element with another type
-     * @param typeName
-     * @return the parsed element
-     */
-    @Nullable
-    public abstract ScriptElement parse(String typeName);
 
 }

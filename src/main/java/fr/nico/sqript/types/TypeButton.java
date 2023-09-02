@@ -10,11 +10,6 @@ import fr.nico.sqript.structures.ScriptElement;
 public class TypeButton extends ScriptType<Button> {
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return "container";
     }

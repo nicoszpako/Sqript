@@ -5,11 +5,10 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
-import fr.nico.sqript.types.TypeKey;
+import fr.nico.sqript.types.TypeKeyBind;
 import fr.nico.sqript.types.TypeNull;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.input.Keyboard;
@@ -35,7 +34,7 @@ public class ExprKeyInput extends ScriptExpression {
             case 0:
                 KeyBinding keyBinding = new KeyBinding((String) parameters[1].getObject(), Keyboard.getKeyIndex((String) parameters[0].getObject()), (String) parameters[2].getObject());
                 ClientRegistry.registerKeyBinding(keyBinding);
-                return new TypeKey(keyBinding);
+                return new TypeKeyBind(keyBinding);
             case 1:
                 return new TypeBoolean(((KeyBinding)parameters[0].getObject()).isPressed());
             case 2:
@@ -44,7 +43,7 @@ public class ExprKeyInput extends ScriptExpression {
                 String keyName = (String) parameters[0].getObject();
                 List<KeyBinding> l = Arrays.stream(Minecraft.getMinecraft().gameSettings.keyBindings).filter(a->a.getKeyDescription().equalsIgnoreCase(keyName)).collect(Collectors.toList());
                 if(!l.isEmpty() && l.get(0) != null)
-                    return new TypeKey(l.get(0));
+                    return new TypeKeyBind(l.get(0));
                 else return new TypeNull();
             case 4:
                 return new TypeBoolean(Keyboard.isKeyDown((Integer)parameters[0].getObject()));

@@ -10,6 +10,7 @@ import fr.nico.sqript.blocks.ScriptFunctionalBlock;
 import fr.nico.sqript.compiling.parsers.ScriptExpressionParser;
 import fr.nico.sqript.function.ScriptNativeFunction;
 import fr.nico.sqript.structures.*;
+import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeFunction;
 import fr.nico.sqript.types.primitive.PrimitiveType;
 import fr.nico.sqript.expressions.*;
@@ -666,10 +667,13 @@ public class ScriptDecoder {
      */
     public static ScriptAction parseAction(ScriptToken line, ScriptCompilationContext compileGroup) throws Exception {
         line = line.with(line.getText().replaceFirst("\\s*", ""));
-        //System.out.println("Parsing action for : "+line.getText());
+        //System.out.println();
+        //System.out.println("Parsing action for : "+line);
         //Removing strings from the line in order to avoid interpretation issues
         String[] strings = extractStrings(line.getText());
         String lineWithoutStrings = removeStrings(line.getText(), strings);
+        int currentPriority = 0;
+        ScriptAction action = null;
         for (ActionDefinition actionDefinition : ScriptManager.actions) {
             //System.out.println("Checking for action : "+actionDefinition.getActionClass().getSimpleName());
             int[] indexAndMarks = actionDefinition.getMatchedPatternIndexAndMarks(lineWithoutStrings);
@@ -677,16 +681,20 @@ public class ScriptDecoder {
                 int index = indexAndMarks[0];
                 int marks = indexAndMarks[1];
                 //System.out.println(index+" "+Integer.toBinaryString(marks));
-                //System.out.println("AA:"+infos.transformedPatterns[index].regex+" -- "+line.text);
                 String lineWithStrings = ScriptDecoder.replaceStrings(lineWithoutStrings, strings);
                 List<String> parameters = new ArrayList<>(Arrays.asList(actionDefinition.transformedPatterns[index].getAllArguments(lineWithStrings)));
-                //System.out.println("Parameters size : "+parameters.size()+" "+parameters);
-
-                ScriptAction action = actionDefinition.getActionClass().getConstructor().newInstance();
-                action.build(line.with(lineWithStrings), compileGroup, parameters, index, marks);
-                return action;
+                //System.out.println("Matched action : "+actionDefinition.transformedPatterns[index].getPattern()+" "+actionDefinition.getPriority());
+                //System.out.println("Parameters are : "+parameters);
+                if (action == null || actionDefinition.getPriority()>=currentPriority){
+                    action = actionDefinition.getActionClass().getConstructor().newInstance();
+                    action.build(line.with(lineWithStrings), compileGroup, parameters, index, marks);
+                    currentPriority = actionDefinition.getPriority();
+                }
             }
         }
+        if (action != null)
+            return action;
+
         ScriptExpression s = parse(line.with(ScriptDecoder.replaceStrings(lineWithoutStrings, strings)), compileGroup);
         if (s != null)
             return new ActSimpleExpression(s);

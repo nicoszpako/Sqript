@@ -17,23 +17,12 @@ import javax.annotation.Nullable;
 )
 public class TypeString extends PrimitiveType<String> implements ISerialisable {
 
-    @Nullable
-    @Override
-    public ScriptElement parse(String typeName) {
-        switch(typeName){
-            case "number":
-                return new TypeNumber(getObject());
-            case "resource":
-                return new TypeResource(new ResourceLocation(getObject()));
-        }
-        return null;
-    }
-
     public TypeString(String parameter){
         super(parameter);
     }
 
     static {
+
         ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeString.class, ScriptElement.class, TypeString.class,
                 (a, b) -> new TypeString((a==null ? "null" : a.getObject()) + (b==null ? "null" : b.toString())),1);
 

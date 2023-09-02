@@ -90,7 +90,7 @@ public class SimpleRegex {
 
                 }
             }else{
-                if(current.label != null && current.label.tokenType != EnumTokenType.CHAR)
+                if(current.label == null || current.label.tokenType != EnumTokenType.CHAR)
                     i.set(compile(current,parentPrecedentIsOptional && precedentIsOptional,indent+1));
                 precedentIsOptional = precedentIsOptional && allOptional(current);
             }

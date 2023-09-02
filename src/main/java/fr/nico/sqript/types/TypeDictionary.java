@@ -27,11 +27,7 @@ public class TypeDictionary extends ScriptType<HashMap<ScriptType,ScriptType>> i
         super(map);
     }
 
-    @Nullable
-    @Override
-    public ScriptElement parse(String typeName) {
-        return null;
-    }
+
 
 
 

@@ -12,8 +12,20 @@ register block
 open frame
 
 number is between
+elt is more/less than or equal to elt
+
+
+player's inventory
+remove item from player's inventory
+item is in player's inventory
+player has item
+player is connected
 
 get player look with partial ticks
+
+improved parsing
+all player and player with username fix if server not running yet
+sided functions
 
 syntax (simple pattern) fix
 

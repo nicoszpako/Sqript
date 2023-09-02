@@ -3,8 +3,8 @@ package fr.nico.sqript.structures;
 import fr.nico.sqript.types.ScriptType;
 
 @FunctionalInterface
-public interface ITypeParser {
+public interface ITypeParser<T extends ScriptElement<?>,U> {
 
-    ScriptType<?> parse(ScriptType<?> type);
+    U parse(T type);
 
 }

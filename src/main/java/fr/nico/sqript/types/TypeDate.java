@@ -29,12 +29,6 @@ public class TypeDate extends ScriptType<Long> implements IFormatable {
         return format.format(toDate());
     }
 
-    @Nullable
-    @Override
-    public ScriptElement parse(String typeName) {
-        return null;
-    }
-
     static {
         ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeDate.class, TypeDate.class, TypeDate.class,
                 (a, b) -> new TypeDate(((TypeDate) a).getObject() + ((TypeDate) b).getObject()));

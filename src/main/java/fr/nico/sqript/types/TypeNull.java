@@ -8,11 +8,6 @@ import fr.nico.sqript.structures.ScriptElement;
 public class TypeNull extends ScriptType<Object> {
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return "undefined";
     }

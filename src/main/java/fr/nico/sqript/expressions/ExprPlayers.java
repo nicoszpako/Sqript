@@ -25,7 +25,9 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Expression(name = "Player Expressions",
@@ -44,8 +46,11 @@ import java.util.Objects;
                 @Feature(name = "Player's gamemode", description = "Returns the current gamemode of a player", examples = "if gamemode of player is 0: #Checks if player is in survival mode", pattern = "{player}['s] gamemode", type = "number"),
                 @Feature(name = "Player's sneak", description = "Returns if the player is sneak.", examples = "if player is sneaking:", pattern = "{player}['s] is sneak[ing]", type = "boolean"),
                 @Feature(name = "Player's armor level", description = "Returns the given player's armor level.", examples = "player's armor", pattern = "{+player}['s] (armor [level])", type = "number"),
-                @Feature(name = "Player's bounding box", description = "Returns the AxisAlignedBB of player.", examples = "player bounding box", pattern = "{player}['s] bounding box", type = "axisalignedbb"),
-                @Feature(name = "Player's rotation yaw", description = "Returns the AxisAlignedBB of player.", examples = "player rotation yaw", pattern = "{player}['s] [head]['s] [rotation] yaw [smoothed with {number}]", type = "number"),
+                @Feature(name = "Player's bounding box", description = "Returns the bounding box of the player.", examples = "player bounding box", pattern = "{player}['s] bounding box", type = "axisalignedbb"),
+                @Feature(name = "Player's rotation yaw", description = "Returns the rotation taw of the player.", examples = "player rotation yaw", pattern = "{player}['s] [head]['s] [rotation] yaw [smoothed with {number}]", type = "number"),
+                @Feature(name = "Player's inventory", description = "Returns the player's inventory as an array of items.", examples = "player's inventory", pattern = "{player}['s] inventory", type = "array"),
+                @Feature(name = "Player is connected", description = "Returns the whether the given player is connected.", examples = "player with username \"Player001\" is connected", pattern = "player (named|with username) {string} is connected", type = "boolean"),
+
         }
 )
 public class ExprPlayers extends ScriptExpression {
@@ -59,18 +64,25 @@ public class ExprPlayers extends ScriptExpression {
     public ScriptType get(ScriptContext context, ScriptType[] parameters) {
         switch (getMatchedIndex()) {
             case 0:
-                synchronized (FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld()) {
-                    TypeArray a = new TypeArray();
-                    for (EntityPlayer p : FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().playerEntities) {
-                        a.getObject().add(new TypePlayer(p));
+                if(FMLCommonHandler.instance().getMinecraftServerInstance().isServerRunning()){
+                    synchronized (FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld()) {
+                        TypeArray a = new TypeArray();
+                        for (EntityPlayer p : FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().playerEntities) {
+                            a.getObject().add(new TypePlayer(p));
+                        }
+                        return a;
                     }
-                    return a;
+                }else{
+                    return new TypeArray();
                 }
             case 1:
                 TypeString s = (TypeString) parameters[0];
                 if(s.getObject() == null)
                     return new TypeNull();
-                return new TypePlayer(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(s.getObject()));
+                if(FMLCommonHandler.instance().getMinecraftServerInstance().isServerRunning()) {
+                    return new TypePlayer(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(s.getObject()));
+                }else
+                    return new TypeNull();
             case 2:
                 //System.out.println(parameters[0]);
                 EntityPlayer player = (EntityPlayer) parameters[0].getObject();
@@ -136,6 +148,22 @@ public class ExprPlayers extends ScriptExpression {
                 player = (EntityPlayer) parameters[0].getObject();
                 partialTicks = getParameterOrDefault(parameters[1],1d).floatValue();
                 return new TypeNumber( player.prevRotationYawHead + (player.rotationYawHead - player.prevRotationYawHead) * partialTicks);
+            case 16:
+                player = (EntityPlayer) parameters[0].getObject();
+                TypeArray array = new TypeArray();
+                ArrayList<ScriptType<?>> items = new ArrayList<>();
+                items.addAll(player.inventory.mainInventory.stream().map(TypeItemStack::new).collect(Collectors.toList()));
+                items.addAll(player.inventory.armorInventory.stream().map(TypeItemStack::new).collect(Collectors.toList()));
+                array.setObject(items);
+                return array;
+            case 17:
+                s = (TypeString) parameters[0];
+                if(s.getObject() == null)
+                    return new TypeNull();
+                if(FMLCommonHandler.instance().getMinecraftServerInstance().isServerRunning()) {
+                    return new TypeBoolean(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(s.getObject()) != null);
+                }else
+                    return new TypeBoolean(false);
         }
         return null;
     }

@@ -4,6 +4,7 @@ import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Primitive;
 import fr.nico.sqript.structures.ScriptElement;
+import fr.nico.sqript.types.TypeItem;
 import fr.nico.sqript.types.interfaces.ISerialisable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -19,14 +20,11 @@ public class TypeResource extends PrimitiveType<ResourceLocation> implements ISe
 
     static {
         ScriptManager.registerTypeParser(TypeString.class, TypeResource.class, a->new TypeResource(new ResourceLocation(((TypeString)(a)).getObject())), 0);
+        ScriptManager.registerTypeParser(TypeItem.class, TypeResource.class, a->new TypeResource((((TypeItem)(a)).getObject().getRegistryName())), 0);
     }
 
 
-    @Nullable
-    @Override
-    public ScriptElement parse(String typeName) {
-        return null;
-    }
+
 
     public TypeResource(ResourceLocation parameter){
         super(parameter);

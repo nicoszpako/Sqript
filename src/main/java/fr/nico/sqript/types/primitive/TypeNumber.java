@@ -20,13 +20,6 @@ import java.text.DecimalFormat;
 public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, IFormatable {
 
     @Override
-    public ScriptElement parse(String typeName) {
-        if (typeName.equals("string"))
-            return new TypeString(getObject().toString());
-        return null;
-    }
-
-    @Override
     public String toString() {
         DecimalFormat df = new DecimalFormat("#############.#######");
         df.setMaximumFractionDigits(8);
@@ -71,6 +64,9 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
     }
 
     static{
+        ScriptManager.registerTypeParser(TypeString.class, TypeNumber.class, s->new TypeNumber(Double.valueOf(((TypeString)s).getObject())),0);
+
+
         ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeNumber.class, TypeNumber.class, TypeNumber.class,
                  (a,b) -> new TypeNumber(((TypeNumber)a).getObject()+((TypeNumber)b).getObject()));
 

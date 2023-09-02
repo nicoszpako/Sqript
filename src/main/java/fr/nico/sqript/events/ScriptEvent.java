@@ -1,7 +1,13 @@
 package fr.nico.sqript.events;
 
+import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.expressions.ScriptExpression;
+import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeNull;
 
 public abstract class ScriptEvent {
 
@@ -51,4 +57,5 @@ public abstract class ScriptEvent {
     public boolean checkMark(int markIndex, int marks){
         return ((marks >> markIndex) & 1)==1;
     }
+
 }

@@ -13,11 +13,6 @@ import net.minecraft.util.math.Vec3d;
 public class TypeEntity extends ScriptType<Entity> implements ILocatable {
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return this.getObject().getName();
     }

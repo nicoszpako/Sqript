@@ -9,11 +9,6 @@ import net.minecraft.server.MinecraftServer;
 public class TypeConsole extends ScriptType<MinecraftServer> {
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return this.getObject().getName();
     }

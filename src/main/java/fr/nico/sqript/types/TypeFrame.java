@@ -12,11 +12,6 @@ import fr.nico.sqript.structures.ScriptOperator;
 public class TypeFrame extends ScriptType<Frame> {
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return "frame";
     }

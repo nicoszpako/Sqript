@@ -147,7 +147,7 @@ public class ScriptEventHandler {
                 context = ScriptManager.callEventAndGetContext(new EvtPlayer.EvtOnPlayerSendCommand((EntityPlayer) event.getSender(),  event.getCommand().getName(), event.getParameters()));
 
                 if (context.getAccessor("arguments") != null && context.getAccessor("arguments").element != null)
-                    event.setParameters(Arrays.stream(((TypeArray) context.getAccessor("arguments").element).getObject().toArray(new TypeString[0])).map(ScriptElement::getObject).toArray(String[]::new));
+                    event.setParameters(Arrays.stream(((TypeArray) context.getAccessor("arguments").element).getObject().toArray(new ScriptType<?>[0])).map(ScriptElement::getObject).toArray(String[]::new));
                 //System.out.println("Cancelled : "+(boolean) context.getReturnValue().element.getObject());
                 if ((boolean) context.getReturnValue().element.getObject()) {
                     event.setCanceled(true);

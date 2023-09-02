@@ -12,11 +12,6 @@ import net.minecraft.util.math.Vec3d;
 public class TypePlayer extends ScriptType<EntityPlayer> implements ILocatable {
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return this.getObject().getName();
     }

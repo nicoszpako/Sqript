@@ -24,12 +24,6 @@ public class TypeNBTTagCompound extends ScriptType< NBTTagCompound > implements 
         return getObject().toString();
     }
 
-    @Nullable
-    @Override
-    public ScriptElement parse(String typeName) {
-        return null;
-    }
-
     @Override
     public NBTTagCompound write(NBTTagCompound compound) {
         return getObject();

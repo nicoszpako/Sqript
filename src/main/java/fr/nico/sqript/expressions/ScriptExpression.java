@@ -1,5 +1,6 @@
 package fr.nico.sqript.expressions;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Expression;
@@ -33,6 +34,10 @@ public abstract class ScriptExpression {
 
     public ScriptType get(ScriptContext context) throws ScriptException {
         return this.get(context, new ScriptType[0]);
+    }
+
+    public <T extends ScriptType<?>> T get(ScriptContext context, Class<T> type) throws ScriptException {
+        return (T) ScriptManager.parse(get(context, new ScriptType[0]),type);
     }
 
     public boolean set(ScriptContext context, ScriptType to) throws ScriptException {

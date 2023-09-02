@@ -21,11 +21,13 @@ import net.minecraft.util.ResourceLocation;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.lang.reflect.Field;
+import java.util.stream.Collectors;
 
 @Action(name = "Registery Actions",
         features = {
-                @Feature(name = "Register a new item", description = "Creates and registers a new item in the game.", examples = "register a new item with identifier \"copper\" named \"Copper\" with texture \"test:copper_item\"", pattern = "register [a] [new] item [with identifier] {string} [named {string}] [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [in tab {string}]", side = Side.CLIENT),
-                @Feature(name = "Register a new block", description = "Creates and registers a new block in the game.", examples = "register a new block with identifier \"copper_ore\" named \"Copper Ore\" with texture \"test:copper_ore\"", pattern = "register [a] [new] block [with identifier] {string} [named {string}] [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [with hardness {number}] [with harvest level {number}] [with material {string}] [dropping {resource}] [in tab {string}]", side = Side.CLIENT),
+                @Feature(name = "Register a new item", description = "Creates and registers a new item in the game.", examples = "register a new item with identifier \"copper\" named \"Copper\" with texture \"test:copper_item\"", pattern = "register [a] [new] item [with identifier] {string} [named {string}] [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [in tab {string}]"),
+                @Feature(name = "Register a new block", description = "Creates and registers a new block in the game.", examples = "register a new block with identifier \"copper_ore\" named \"Copper Ore\" with texture \"test:copper_ore\"", pattern = "register [a] [new] block [with identifier] {string} [named {string}] [[and] with (texture {resource}|model {resource})] [with [max] stack size {number}] [with hardness {number}] [with harvest level {number}] [with material {string}] [dropping {resource}] [in tab {string}]"),
         }
 )
 public class ActRegistery extends ScriptAction {
@@ -43,6 +45,7 @@ public class ActRegistery extends ScriptAction {
     }
 
     private void registerNewBlock(ScriptContext context) throws ScriptException {
+        System.out.println("Registering new block");
         String identifier = (String) getParameter(1).get(context).getObject();
         String registryName = SqriptUtils.getIdentifier(identifier);
         String blockName = getParameterOrDefault(getParameter(2), null, context);
@@ -87,6 +90,7 @@ public class ActRegistery extends ScriptAction {
     }
 
     private void registerNewItem(ScriptContext context) throws ScriptException {
+        System.out.println("Registering new item");
         String name = (String) getParameter(1).get(context).getObject();
         String displayName = getParameterOrDefault(getParameter(2), name, context);
         String registryName = SqriptUtils.getIdentifier(name);
@@ -112,13 +116,19 @@ public class ActRegistery extends ScriptAction {
         SqriptForge.scriptItems.add(new ScriptItem(getLine().getScriptInstance().getName(), itemModel == null ? "" : itemModel.toString(), item));
     }
 
-    private CreativeTabs loadTabFromName(String creative_tab) {
-        //System.out.println("Getting creative tab from : " + creative_tab);
+    private CreativeTabs loadTabFromName(String tabName) {
         for (CreativeTabs tab : CreativeTabs.CREATIVE_TAB_ARRAY) {
-            if (tab.getTabLabel().equalsIgnoreCase(creative_tab) || creative_tab.startsWith(tab.getTabLabel()))
-                return tab;
+            try {
+                Field tabLabelField = CreativeTabs.class.getDeclaredField("tabLabel");
+                tabLabelField.setAccessible(true);
+                String tabLabel = (String) tabLabelField.get(tab);
+                if (tabLabel.equalsIgnoreCase(tabName) || tabName.startsWith(tabLabel))
+                    return tab;
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
         }
-        //System.out.println("Returning null for tab");
         return null;
     }
 

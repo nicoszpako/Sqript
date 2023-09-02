@@ -25,8 +25,4 @@ public class TypeDamageSource extends ScriptType<DamageSource>
         return o.toString().equalsIgnoreCase(getObject().getDamageType());
     }
 
-    @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
 }

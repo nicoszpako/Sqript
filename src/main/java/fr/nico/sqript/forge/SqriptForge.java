@@ -216,7 +216,9 @@ public class SqriptForge {
 
         for (ASMDataTable.ASMData c : actions) {
             try {
-                //System.out.println("Loading action : "+c.getClassName());
+                //System.out.println("Loading action : "+c.getClassName()+" "+c.getAnnotationInfo());
+                if(c.getAnnotationInfo().get("side") != null  && !(fr.nico.sqript.structures.Side.from(((ModAnnotation.EnumHolder) c.getAnnotationInfo().get("side")).getValue()).isValid()))
+                    continue;
                 Class toRegister = Class.forName(c.getClassName());
                 Action e = (Action) toRegister.getAnnotation(Action.class);
                 ScriptManager.registerAction(toRegister, e.name(), e.priority(), e.features());
@@ -310,13 +312,13 @@ public class SqriptForge {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        //System.out.println("Registering Sqript items, there are : "+ scriptItems.size()+" item(s) to register.");
+        System.out.println("Registering Sqript items, there are : "+ scriptItems.size()+" item(s) to register.");
         for (ScriptItem e : scriptItems) {
-            //System.out.println("Registering : "+e.getItem().getRegistryName());
+            System.out.println("Registering : "+e.getItem().getRegistryName());
             event.getRegistry().register(e.getItem());
         }
         for (Item e : items) {
-            //System.out.println("Registering : "+e.getRegistryName());
+            System.out.println("Registering : "+e.getRegistryName());
             event.getRegistry().register(e);
         }
 
@@ -325,7 +327,7 @@ public class SqriptForge {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<net.minecraft.block.Block> event) {
         for (net.minecraft.block.Block e : blocks) {
-            //System.out.println("Registering : "+e.getRegistryName());
+            System.out.println("Registering : "+e.getRegistryName());
             event.getRegistry().register(e);
         }
     }

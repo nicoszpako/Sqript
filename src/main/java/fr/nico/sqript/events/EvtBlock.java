@@ -1,7 +1,9 @@
 package fr.nico.sqript.events;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.meta.Feature;
+import fr.nico.sqript.meta.Type;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.types.primitive.TypeResource;
@@ -87,17 +89,18 @@ public class EvtBlock {
         }
 
         @Override
-        public boolean validate(ScriptType[] parameters, int marks) {
-            return (parameters[0] != null && parameters[0].getObject() != null && parameters[0] instanceof TypeBlock);
-        }
-
-        @Override
         public boolean check(ScriptType[] parameters, int marks) {
 
             //System.out.println("Checking with :"+Arrays.toString(parameters)+" "+parameters[0].getClass()+" "+clickedBlock.getObject()+" "+marks);
             ResourceLocation registryName = null;
-            if(parameters[0] != null)
-                registryName = ((TypeBlock)parameters[0]).getObject().getBlock().getRegistryName();
+            if (parameters[0] != null) {
+                TypeBlock block;
+                if(parameters[0] instanceof TypeBlock)
+                    block = (TypeBlock)parameters[0];
+                else
+                    block = ScriptManager.parse(parameters[0],TypeBlock.class);
+                registryName = block.getObject().getBlock().getRegistryName();
+            }
 
             boolean hand = this.hand == EnumHand.MAIN_HAND;
 

@@ -12,15 +12,6 @@ import java.util.Locale;
 public class TypeFile extends ScriptType<File> {
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        switch(typeName.toLowerCase(Locale.ROOT)){
-            case "string":
-                return new TypeString(getObject().getName());
-        }
-        return null;
-    }
-
-    @Override
     public String toString() {
         return this.getObject().getName();
     }

@@ -21,9 +21,4 @@ public class TypeUUID extends ScriptType< UUID > {
         return getObject().toString();
     }
 
-    @Nullable
-    @Override
-    public ScriptElement parse(String typeName) {
-        return null;
-    }
 }

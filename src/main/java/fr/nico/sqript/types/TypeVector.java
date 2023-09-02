@@ -14,12 +14,6 @@ import org.lwjgl.util.vector.Vector3f;
         parsableAs = {TypeString.class})
 public class TypeVector extends ScriptType<Vec3d> implements ILocatable {
 
-    @Override
-    public ScriptElement parse(String typeName) {
-        if(typeName.equals("string"))return new TypeString(this.getObject().toString());
-        return null;
-    }
-
     static {
         ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeVector .class, TypeVector.class, TypeVector.class,
                 (a,b) -> new TypeVector(((TypeVector)a).getObject().add(((TypeVector)b).getObject())));

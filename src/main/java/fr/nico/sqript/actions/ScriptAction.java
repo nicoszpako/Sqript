@@ -7,6 +7,7 @@ import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.meta.ActionDefinition;
 import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeNull;
 import fr.nico.sqript.types.primitive.TypeNumber;
@@ -33,6 +34,18 @@ public abstract class ScriptAction extends IScript {
         ScriptType result;
         return (parameter == null || ((result = parameter.get(context)) instanceof TypeNull)) ? defaultValue : (T) result.getObject();
     }
+
+    public <V,T extends ScriptElement<?>,U extends ScriptElement<V>> V getParameterOrDefault(int index, V defaultValue, ScriptContext context, Class<U> typeClass) throws ScriptException {
+        ScriptType result;
+        ScriptExpression parameter = getParameter(index);
+        T value = (parameter == null || ((result = parameter.get(context)) instanceof TypeNull)) ? null : (T) result;
+        if(value == null)
+            return defaultValue;
+        else
+            return ScriptManager.parse(value,typeClass).getObject();
+    }
+
+
 
     public void setParameters(List<ScriptExpression> parameters) {
         this.parameters = parameters;

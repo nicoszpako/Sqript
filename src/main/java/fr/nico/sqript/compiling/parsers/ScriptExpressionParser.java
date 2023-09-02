@@ -12,6 +12,7 @@ import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.TransformedPattern;
+import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeFunction;
 import fr.nico.sqript.types.primitive.PrimitiveType;
 import fr.nico.sqript.types.primitive.TypeString;
@@ -432,7 +433,10 @@ public class ScriptExpressionParser implements INodeParser {
             return true;
         for (Class validType : validTypes) {
             //System.out.println(type == null);
-            if (validType == ScriptElement.class || (validType != null && type!=null && type.isAssignableFrom(validType)))
+            if (validType == ScriptElement.class
+                    || (validType != null && type!=null && type.isAssignableFrom(validType))
+                    || ScriptManager.isParsable(type,validType)
+            )
                 return true;
         }
         return false;

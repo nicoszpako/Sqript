@@ -36,11 +36,11 @@ public class ScriptBlockImport extends ScriptBlock {
                     ScriptFunctionalBlock imported;
                     if(function.equals("*")){
                         getScriptInstance().getBlocksOfClass(ScriptBlockFunction.class).addAll(from.getBlocksOfClass(ScriptBlockFunction.class));
+                        getScriptInstance().getBlocksOfClass(ScriptBlockPacket.class).addAll(from.getBlocksOfClass(ScriptBlockPacket.class));
                     }else if((imported=from.getFunction(function))!=null){
                         getScriptInstance().getBlocksOfClass(ScriptBlockFunction.class).add(imported);
                     }else{
                         throw new ScriptException.ScriptUnknownFunctionException(s.with(function));
-
                     }
                 }else{
                     throw new ScriptException.ScriptUnknownInstanceException(s.with(script));

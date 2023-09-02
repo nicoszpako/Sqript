@@ -9,11 +9,6 @@ import fr.nico.sqript.structures.ScriptElement;
 public class TypeFunction extends ScriptType<ScriptBlockFunction> {
 
     @Override
-    public ScriptElement<?> parse(String typeName) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return this.getObject().name;
     }
