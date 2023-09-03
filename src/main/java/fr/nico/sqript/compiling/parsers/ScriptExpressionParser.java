@@ -34,29 +34,31 @@ public class ScriptExpressionParser implements INodeParser {
         parsers.add((token, group, type) -> {
             //Check if it is a function
             ExprNativeFunction f;
-            Matcher m = ScriptDecoder.pattern_function.matcher(token.getText());
-            if (m.find()) {
-                //System.out.println("Found for a function : "+m.group(1)+" with "+m.group(2)+" for "+token);
-                //Priority to not native functions
-                ScriptFunctionalBlock sf;
-                NodeExpression functionNode = null;
-                if ((sf = token.getScriptInstance().getFunction(m.group(1))) != null) {
-                    functionNode =  new NodeExpression(new ExprFunction(sf));
-                }
-                if ((f = ScriptDecoder.parseNativeFunction(token.with(m.group(1)))) != null) {
-                    functionNode = new NodeExpression(f);
-                }
-
-                if(functionNode != null){
-                    //System.out.println("Splitting "+m.group(2));
-                    for(String s : ScriptDecoder.splitAtComa(m.group(2))){
-                        //System.out.println("Adding function parameter : "+s);
-                        functionNode.addChild(ScriptDecoder.parseExpressionTree(token.with(s), group, new Class[]{ScriptElement.class}));
-                    }
-                    return functionNode;
-                }
+            //Matcher m = ScriptDecoder.pattern_function.matcher(token.getText());
+            //if (m.find()) {
+            //System.out.println("Found for a function : "+m.group(1)+" with "+m.group(2)+" for "+token);
+            //Priority to not native functions
+            ScriptFunctionalBlock sf;
+            NodeExpression functionNode = null;
+            if ((sf = token.getScriptInstance().getFunction(token.getText().trim())) != null) {
+                functionNode = new NodeExpression(new ExprFunction(sf));
+                functionNode.setChildren(new Node[sf.parameters.length]);
             }
-            return null;
+            if ((f = ScriptDecoder.parseNativeFunction(token)) != null) {
+                functionNode = new NodeExpression(f);
+                functionNode.setChildren(new Node[f.function.getNbParameters()]);
+            }
+
+            /*if (functionNode != null) {
+                //System.out.println("Splitting "+m.group(2));
+                for (String s : ScriptDecoder.splitAtComa(m.group(2))) {
+                    //System.out.println("Adding function parameter : "+s);
+                    functionNode.addChild(ScriptDecoder.parseExpressionTree(token.with(s), group, new Class[]{ScriptElement.class}));
+                }
+                return functionNode;
+            }*/
+            //}
+            return functionNode;
         });
 
         parsers.add((line, group, type) -> {
@@ -136,7 +138,7 @@ public class ScriptExpressionParser implements INodeParser {
         /*
          * Check if it is a variable
          */
-        parsers.add((line,group,type) ->{
+        parsers.add((line, group, type) -> {
             if (ScriptDecoder.checkIfVariable(line)) {
                 //System.out.println("It's a variable : "+line);
                 ScriptExpression expression = new ExprPrimitive(new TypeString(line.getText()));
@@ -149,6 +151,8 @@ public class ScriptExpressionParser implements INodeParser {
             }
             return null;
         });
+
+
     }
 
     @Override
@@ -211,30 +215,31 @@ public class ScriptExpressionParser implements INodeParser {
          * /!\ In this case, we place Nodes in a list as if they were in an infixed notation, and then we later transform this with infixToRPN, and then with rpnToAST.
          */
 
-        if (ScriptDecoder.containsOperator(lineWithoutStrings)) {
+        if (ScriptDecoder.isAlgebraic(lineWithoutStrings)) {
             //System.out.println("Parsing as algebraic expression : " + lineWithoutStrings);
             /*
              * We parse the operators in the string.
              */
-            String operatorsBuildString = ScriptDecoder.buildOperators(line,expressionString);
+            String operatorsBuildString = ScriptDecoder.buildOperators(line, expressionString);
             operatorsBuildString = ScriptDecoder.trim(operatorsBuildString);
-
+            //System.out.println("Built string : "+operatorsBuildString);
             /*
              * Now we extract each operand from the string, split at each operator.
              */
             ExpressionToken[] operatorSplitResult = ScriptDecoder.splitAtOperators(operatorsBuildString);
+            //System.out.println("Operator split result : "+Arrays.toString(operatorSplitResult));
             List<ExpressionToken> tokens = Arrays.asList(operatorSplitResult);
-            //System.out.println("Tokens are : "+tokens);
+            //System.out.println("Tokens are : " + tokens);
             List<Node> nodes = new ArrayList<>();
             for (ExpressionToken token : tokens) {
-                //System.out.println("Parsing elements from  "+ line+" : "+token.getExpressionString());
+                //System.out.println("Parsing elements from  " + line + " : " + token.getExpressionString());
 
                 if (token.getType() == EnumTokenType.LEFT_PARENTHESIS) {
                     nodes.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
                 } else if (token.getType() == EnumTokenType.RIGHT_PARENTHESIS) {
                     nodes.add(new NodeParenthesis(EnumTokenType.RIGHT_PARENTHESIS));
                 } else if (token.getType() == EnumTokenType.EXPRESSION) {
-                    if(token.getExpressionString().equals(expressionString)){
+                    if (token.getExpressionString().equals(expressionString)) {
                         return null;
                     }
                     try {
@@ -257,11 +262,11 @@ public class ScriptExpressionParser implements INodeParser {
                 return null;
             else {
                 try {
-                    //System.out.println("Nodes are : "+nodes);
+                    //System.out.println("Nodes are : " + nodes);
                     //System.out.println();
                     Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
-                    //System.out.println("Final tree for " +line+" : "+finalTree);
-                    //System.out.println("Checking types for line : "+line+" as "+finalTree+" for "+Arrays.toString(requiredTypes));
+                    //System.out.println("Final tree for " + line + " : " + finalTree);
+                    //System.out.println("Checking types for line : " + line + " as " + finalTree + " for " + Arrays.toString(requiredTypes));
                     //System.out.println("A");
                     //System.out.println(finalTree);
                     //System.out.println(finalTree.getReturnType());
@@ -429,13 +434,13 @@ public class ScriptExpressionParser implements INodeParser {
         //System.out.println("Is type valid : "+type+ " "+Arrays.toString(validTypes));
 
         // If type is null then it is uncertain, so it is considered as valid
-        if(type == null)
+        if (type == null)
             return true;
         for (Class validType : validTypes) {
             //System.out.println(type == null);
             if (validType == ScriptElement.class
-                    || (validType != null && type!=null && type.isAssignableFrom(validType))
-                    || ScriptManager.isParsable(type,validType)
+                    || (validType != null && type != null && type.isAssignableFrom(validType))
+                    || ScriptManager.isParsable(type, validType)
             )
                 return true;
         }

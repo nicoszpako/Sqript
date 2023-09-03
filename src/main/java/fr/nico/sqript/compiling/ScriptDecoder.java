@@ -137,12 +137,16 @@ public class ScriptDecoder {
         return false;
     }
 
+    public static boolean isAlgebraic(String expression){
+        return expression.contains("(") || expression.contains(")") || containsOperator(expression);
+    }
+
     public static boolean containsOperator(String expression) {
         for (Pattern p : operators_pattern) {
             Matcher m = p.matcher(expression);
             //System.out.println("Checking if "+expression+" matches "+p.pattern());
             if (m.find()) {
-                //System.out.println("Found for "+expression+" with "+p.pattern());
+                //System.out.println("Found contained operator for "+expression+" with "+p.pattern());
                 return true;
             }
         }
@@ -237,6 +241,7 @@ public class ScriptDecoder {
         testedExpression = emptyDelimiters('{', '}', testedExpression);
         testedExpression = emptyDelimiters('<', '>', testedExpression);
         //Placing operators
+        //System.out.println("Tested is : "+testedExpression);
         while (containsOperator(testedExpression)) {
             String newTestedExpression = testedExpression;
             for (ScriptOperator operator : ScriptManager.operators) {
@@ -276,7 +281,7 @@ public class ScriptDecoder {
                     //System.out.println(Pattern.quote(operator.symbol) + " expression: " + expression);
                     //System.out.println(operators.size());
                     operators.add(operator);
-                    //System.out.println("e:"+expression);
+                    //System.out.println("Now: "+expression);
                 }
             }
             if (newTestedExpression.equals(testedExpression)){
@@ -289,7 +294,6 @@ public class ScriptDecoder {
         //Replacing text between []'s
         //System.out.println("Not replaced : "+expression);
         //System.out.println("Pattern : "+pattern_L.pattern());
-
         //System.out.println("Saved are : "+saved);
         while ((matcher = pattern_L.matcher(expression)).find()) {
             //System.out.println("Found a group : "+matcher.group());
@@ -571,60 +575,71 @@ public class ScriptDecoder {
     public static ExpressionToken[] splitAtOperators(String transformedString) {
         //System.out.println("Splitting : " + transformedString);
         List<ExpressionToken> tokens = new ArrayList<>();
-        int c = 0;
+        int currentCharIndex = 0;
         StringBuilder current = new StringBuilder();
-        while (c < transformedString.length()) {
-            if (transformedString.charAt(c) == '"') {
-                while (c < transformedString.length() && transformedString.charAt(c) != '"') {
-                    c++;
+        int depth = 0;
+        while (currentCharIndex < transformedString.length()) {
+            if (transformedString.charAt(currentCharIndex) == '"') {
+                while (currentCharIndex < transformedString.length() && transformedString.charAt(currentCharIndex) != '"') {
+                    currentCharIndex++;
                 }
             }
-            if (transformedString.charAt(c) == ')') {
+            if (transformedString.charAt(currentCharIndex) == ')') {
+                if(depth == 1){
+                    String currentString = current.toString();
+                    //System.out.println("1 Current for "+transformedString+" : "+currentCharIndex+" '"+transformedString.charAt(currentCharIndex)+"'");
+                    if (!currentString.trim().isEmpty()) {
+                        //System.out.println("Adding token expression : " + currentString);
+                        tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, currentString)); //We add the current built word
+                    }
+                    current = new StringBuilder(); //We start a new word
+                    //System.out.println("Adding token right parenthesis");
+                    tokens.add(new ExpressionToken(EnumTokenType.RIGHT_PARENTHESIS, ""));
+                }else {
+                    current.append(transformedString.charAt(currentCharIndex));
+                    depth--;
+                }
+                currentCharIndex++;
+            } else if (transformedString.charAt(currentCharIndex) == '(') {
+                if(depth == 0){
+                    //System.out.println("2 Current for "+transformedString+" : "+currentCharIndex+" '"+transformedString.charAt(currentCharIndex)+"'");
+                    String currentString = current.toString();
+                    if (!currentString.trim().isEmpty()) {
+                        //System.out.println("Adding token expression : " + currentString);
+                        tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, currentString)); //We add the current built word
+                    }
+                    current = new StringBuilder(); //We start a new word
+                    //System.out.println("Adding token left parenthesis");
+                    tokens.add(new ExpressionToken(EnumTokenType.LEFT_PARENTHESIS, ""));
+                }else{
+                    current.append(transformedString.charAt(currentCharIndex));
+                }
+                depth++;
+                currentCharIndex++;
+            } else if (transformedString.charAt(currentCharIndex) == '#' && currentCharIndex + 1 < transformedString.length() && transformedString.charAt(currentCharIndex + 1) == '{' && (currentCharIndex == 0 || transformedString.charAt(currentCharIndex - 1) != '\\')) {
                 String r = current.toString();
-                //System.out.println("1 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
                 if (!r.trim().isEmpty()) {
                     //System.out.println("Adding token expression : " + r);
                     tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, r)); //We add the current built word
                 }
                 current = new StringBuilder(); //We start a new word
-                //System.out.println("Adding token right parenthesis");
-                tokens.add(new ExpressionToken(EnumTokenType.RIGHT_PARENTHESIS, ""));
-                c++;
-            } else if (transformedString.charAt(c) == '(') {
-                //System.out.println("2 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
-                String r = current.toString();
-                if (!r.trim().isEmpty()) {
-                    //System.out.println("Adding token expression : " + r);
-                    tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, r)); //We add the current built word
-                }
-                current = new StringBuilder(); //We start a new word
-                //System.out.println("Adding token left parenthesis");
-                tokens.add(new ExpressionToken(EnumTokenType.LEFT_PARENTHESIS, ""));
-                c++;
-            } else if (transformedString.charAt(c) == '#' && c + 1 < transformedString.length() && transformedString.charAt(c + 1) == '{' && (c == 0 || transformedString.charAt(c - 1) != '\\')) {
-                String r = current.toString();
-                if (!r.trim().isEmpty()) {
-                    //System.out.println("Adding token expression : " + r);
-                    tokens.add(new ExpressionToken(EnumTokenType.EXPRESSION, r)); //We add the current built word
-                }
-                current = new StringBuilder(); //We start a new word
-                c++; //First {
-                c++; //First number
+                currentCharIndex++; //First {
+                currentCharIndex++; //First number
                 StringBuilder number = new StringBuilder();
-                //System.out.println("3 Current for "+transformedString+" : "+c+" '"+transformedString.charAt(c)+"'");
+                //System.out.println("3 Current for "+transformedString+" : "+currentCharIndex+" '"+transformedString.charAt(currentCharIndex)+"'");
 
-                while (transformedString.charAt(c) >= '0' && transformedString.charAt(c) <= '9') {
-                    //System.out.println("Added : "+transformedString.charAt(c));
-                    number.append(transformedString.charAt(c));
-                    c++;
+                while (transformedString.charAt(currentCharIndex) >= '0' && transformedString.charAt(currentCharIndex) <= '9') {
+                    //System.out.println("Added : "+transformedString.charAt(currentCharIndex));
+                    number.append(transformedString.charAt(currentCharIndex));
+                    currentCharIndex++;
                 }
 
                 tokens.add(new ExpressionToken(ScriptManager.operators.get(Integer.parseInt(number.toString())))); //We add the current built word
-                c++; //Last }
+                currentCharIndex++; //Last }
             } else {
-                current.append(transformedString.charAt(c));
-                //System.out.println("c : "+c+" : "+transformedString.charAt(c));
-                c++;
+                current.append(transformedString.charAt(currentCharIndex));
+                //System.out.println("currentCharIndex : "+currentCharIndex+" : "+transformedString.charAt(currentCharIndex));
+                currentCharIndex++;
             }
 
         }
@@ -932,26 +947,35 @@ public class ScriptDecoder {
         return pattern;
     }
 
-    private static String emptyDelimiters(char start, char end, String pattern) {
-        //System.out.println("Removing delimiters : "+start+" -> "+end+" in : "+pattern);
-        int i = 0;
-        while (i < pattern.length()) {
-            char c = pattern.charAt(i);
-            if (c == start) {
-                int j = i + 1;
-                while (j < pattern.length()) {
-                    char e = pattern.charAt(j);
-                    if (e == end) {
-                        String s_start = pattern.substring(0, i + 1);
-                        String s_end = pattern.substring(j);
-                        //System.out.println("Stop at : "+i+" ->"+ j +" Start : "+s_start + " End : "+s_end);
-                        pattern = s_start + s_end;
-                        break;
+    private static String emptyDelimiters(char startToken, char endToken, String pattern) {
+        //System.out.println("Removing delimiters : "+startToken+" -> "+endToken+" in : "+pattern);
+        int charIndex = 0;
+        int depth = 0;
+        while (charIndex < pattern.length()) {
+            char currentChar = pattern.charAt(charIndex);
+            if (currentChar == startToken) {
+                int farCharIndex = charIndex + 1;
+                while (farCharIndex < pattern.length()) {
+                    char farChar = pattern.charAt(farCharIndex);
+                    if (farChar == startToken){
+                        depth++;
                     }
-                    j++;
+                    if (farChar == endToken) {
+                        if(depth == 0){
+                            String s_start = pattern.substring(0, charIndex + 1);
+                            String s_end = pattern.substring(farCharIndex);
+                            //System.out.println("Stop at : "+charIndex+" ->"+ farCharIndex +" Start : "+s_start + " End : "+s_end);
+                            pattern = s_start + s_end;
+                            break;
+                        }
+                        if(depth > 0)
+                            depth--;
+
+                    }
+                    farCharIndex++;
                 }
             }
-            i++;
+            charIndex++;
         }
         //System.out.println("Result : "+pattern);
         return pattern;
