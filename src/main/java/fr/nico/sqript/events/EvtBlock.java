@@ -91,6 +91,16 @@ public class EvtBlock {
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
 
+            if (checkMark(1,marks)){
+                if (clickType != 0)
+                    return false;
+            }
+
+            if (checkMark(2,marks)){
+                if (clickType != 1)
+                    return false;
+            }
+
             //System.out.println("Checking with :"+Arrays.toString(parameters)+" "+parameters[0].getClass()+" "+clickedBlock.getObject()+" "+marks);
             ResourceLocation registryName = null;
             if (parameters[0] != null) {
@@ -110,6 +120,8 @@ public class EvtBlock {
 
             if (registryName == null)
                 return hand;
+
+
 
             return registryName.equals(clickedBlock.getObject().getBlock().getRegistryName()) && hand;
         }

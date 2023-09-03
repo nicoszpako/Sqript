@@ -86,12 +86,15 @@ public class ScriptInstance {
 
         for (ScriptBlock b : getBlocksOfClass(ScriptBlockEvent.class)) {
             ScriptBlockEvent scriptBlockEvent = (ScriptBlockEvent) b;
+            if(event instanceof EvtBlock.EvtOnBlockBreak){
+                //System.out.println(scriptBlockEvent.eventType+" "+event.getClass());
+            }
             if (scriptBlockEvent.eventType == event.getClass() && event.check(scriptBlockEvent.getParameters(), scriptBlockEvent.getMarks()) && scriptBlockEvent.side.isEffectivelyValid()) {
                 //System.out.println("Calling event : "+event.getClass().getSimpleName()+" with accessors "+ Arrays.toString(event.getAccessors()));
                 ScriptClock clock = new ScriptClock(context);
                 context.wrap(event.getAccessors());
                 clock.start(scriptBlockEvent);
-                ////System.out.println("Finished ! It took : " + (System.currentTimeMillis() - t1) + " ms");
+                //System.out.println("Finished ! It took : " + (System.currentTimeMillis()) + " ms");
             }
         }
         return context;

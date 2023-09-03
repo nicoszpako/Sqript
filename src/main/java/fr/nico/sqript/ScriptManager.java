@@ -4,6 +4,7 @@ import com.google.gson.*;
 import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.blocks.*;
 import fr.nico.sqript.compiling.*;
+import fr.nico.sqript.events.EvtBlock;
 import fr.nico.sqript.events.EvtOnScriptLoad;
 import fr.nico.sqript.events.EvtPlayer;
 import fr.nico.sqript.events.ScriptEvent;
@@ -508,7 +509,9 @@ public class ScriptManager {
 
     //True if the event has been cancelled
     public static boolean callEvent(ScriptEvent event) {
-        Optional<EventDefinition> optional = ScriptManager.events.stream().filter(a -> a.eventClass == event.getClass()).findFirst();
+        Optional<EventDefinition> optional = ScriptManager.events.stream().filter(a -> {
+            return a.eventClass == event.getClass();
+        }).findFirst();
         EventDefinition eventDefinition = null;
         if (optional.isPresent())
             eventDefinition = optional.get();
