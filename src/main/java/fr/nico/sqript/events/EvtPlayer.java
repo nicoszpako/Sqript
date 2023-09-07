@@ -69,7 +69,7 @@ public class EvtPlayer {
 
         @Override
         public boolean validate(ScriptType[] parameters, int marks) {
-            return (parameters[0] != null && parameters[0].getObject() != null && parameters[0] instanceof TypeItem);
+            return (parameters[0] != null && parameters[0].getObject() != null);
         }
 
         @Override

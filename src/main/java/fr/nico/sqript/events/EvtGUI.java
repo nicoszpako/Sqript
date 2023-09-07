@@ -30,7 +30,7 @@ public class EvtGUI {
     }
 
     @Event(
-            feature = @Feature(name = "",
+            feature = @Feature(name = "Button click",
                     description = "Called when a button is clicked.",
                     examples = "on button click:",
                     pattern = "(button click|click on [a] button)",

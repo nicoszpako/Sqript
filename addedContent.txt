@@ -30,3 +30,18 @@ sided functions
 syntax (simple pattern) fix
 
 rewrote date expressions
+
+Sqript v1.3.0 est disponible. 
+https://www.curseforge.com/minecraft/mc-mods/sqript/files/4742735
+
+• Nouveau système permettant de réaliser des GUIs simples avec des boutons, des images et du texte.
+• Nouvelles possibilités de rendu.
+• Nouvelle expression : {number} is between {number} and {number}
+• Nouvelle expression : {element} is more/less than or equal to {element}
+• Nouvelles expressions de gestion de l'inventaire du joueur
+• Importants correctifs d'analyse syntaxique.
+• Possibilité de déclarer un côté d'exécution pour les fonctions.
+• Correctifs légers sur plusieurs actions/expressions.
+• Réécriture des expressions liés aux dates.
+• Nouveau système d'enregistrement des blocs et des items.
+Je vous invite à consulter https://sqript.fr/sqbase/ pour plus d'informations sur les expressions et actions concernées. Le site sqript.fr a également fait (un petit peu) peau neuve, et la partie addon n'est plus vide !
