@@ -20,7 +20,7 @@ import java.util.ArrayList;
 @Action(name = "Player Actions",
         features = {
             @Feature(name = "Teleport player", description = "Teleports a player to a given location.", examples = "teleport player at [10,25,20]", pattern = "teleport {player} (to|at) {array}"),
-            @Feature(name = "Give item to player", description = "Gives an item to a player.", examples = "give 1 minecraft:diamond_sword to player\n", pattern = "give {item} to {player}"),
+            @Feature(name = "Give item to player", description = "Gives an item to a player.", examples = "give a[n] minecraft:diamond_sword to player\n", pattern = "give {item} to {player}"),
             @Feature(name = "Kick player", description = "Kicks a player from the server.", examples = "kick player with message \"You've been kicked for cheating\"", pattern = "kick {player} [with message {string}]"),
             @Feature(name = "Remove item from player's inventory", description = "Attempts to remove the given item from player's inventory.", examples = "remove 1 of diamond from player's inventory", pattern = "remove [{number} of] {itemtype} from {player}['s] inventory")
         }
