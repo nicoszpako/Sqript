@@ -49,7 +49,7 @@ public class ExprNBTTagCompound extends ScriptExpression {
     @Override
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) {
         switch (getMatchedIndex()) {
-            case 2:
+            case 3:
                 String key = (String) parameters[0].getObject();
                 NBTTagCompound nbtTagCompound = (NBTTagCompound) parameters[1].getObject();
                 SqriptUtils.setTag(nbtTagCompound, key, to);
