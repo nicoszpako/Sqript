@@ -36,34 +36,25 @@ public class SqriptCommand extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length>0){
             if(args[0].equalsIgnoreCase("reload")){
-
-                if(args.length == 2 && args[1].equalsIgnoreCase("client")){
-                    SqriptForge.channel.sendToAll(new ScriptReloadMessage());
-                    return;
-                }
-                if(args.length == 1 || !args[1].equalsIgnoreCase("server")){
-                    SqriptForge.channel.sendToAll(new ScriptReloadMessage());
-                }
-                long t = System.currentTimeMillis();
-                SqriptUtils.sendMessage("Reloading all scripts on server side.",sender);
-                try{
-                    ScriptManager.reload();
-                }catch(Throwable e){
-                    if (e instanceof ScriptException.ScriptExceptionList) {
-                        SqriptUtils.sendError("\247cError while reloading the scripts on server side: ",sender);
-                        for(Throwable ex : ((ScriptException.ScriptExceptionList) e).exceptionList){
-                            SqriptUtils.sendError("\247c"+ex.getLocalizedMessage()+" (\2478"+ex.getStackTrace()[0]+"\247c)",sender);
-                            ex.printStackTrace();
-                        }
-                    }
-                    else{
-                        SqriptUtils.sendError("\247cError while reloading scripts on server side, see stacktrace for more information.",sender);
-                        SqriptUtils.sendError("\247c"+e.getLocalizedMessage(),sender);
-                        e.printStackTrace();
+                sender.sendMessage(new TextComponentString(""+sender.getEntityWorld().isRemote));
+                if(args.length == 2){
+                    if(args[1].equalsIgnoreCase("client")){
+                        SqriptForge.channel.sendToAll(new ScriptReloadMessage());
+                    } else if (args[1].equalsIgnoreCase("server")) {
+                        if(sender.getEntityWorld().isRemote)
+                            reloadServer(sender);
+                        else
+                            sender.sendMessage(new TextComponentString("\247cYou are not connected to a server."));
+                        return;
                     }
 
                 }
-                SqriptUtils.sendMessage("Done in "+((System.currentTimeMillis()-t)/1000d)+" seconds",sender);
+                if(args.length == 1){
+                    if (sender.getEntityWorld().isRemote){
+                        reloadServer(sender);
+                    }
+                    SqriptForge.channel.sendToAll(new ScriptReloadMessage());
+                }
             }
             else if(args[0].equalsIgnoreCase("generateDoc")){
                 try {
@@ -78,6 +69,29 @@ public class SqriptCommand extends CommandBase {
         }else{
             sendHelp(sender);
         }
+    }
+
+    private void reloadServer(ICommandSender sender) {
+        long t = System.currentTimeMillis();
+        SqriptUtils.sendMessage("Reloading all scripts on server side.",sender);
+        try{
+            ScriptManager.reload();
+        }catch(Throwable e){
+            if (e instanceof ScriptException.ScriptExceptionList) {
+                SqriptUtils.sendError("\247cError while reloading the scripts on server side: ",sender);
+                for(Throwable ex : ((ScriptException.ScriptExceptionList) e).exceptionList){
+                    SqriptUtils.sendError("\247c"+ex.getLocalizedMessage()+" (\2478"+ex.getStackTrace()[0]+"\247c)",sender);
+                    ex.printStackTrace();
+                }
+            }
+            else{
+                SqriptUtils.sendError("\247cError while reloading scripts on server side, see stacktrace for more information.",sender);
+                SqriptUtils.sendError("\247c"+e.getLocalizedMessage(),sender);
+                e.printStackTrace();
+            }
+        }
+        SqriptUtils.sendMessage("Done in "+((System.currentTimeMillis()-t)/1000d)+" seconds",sender);
+
     }
 
     @Override

@@ -22,7 +22,7 @@ import java.util.Arrays;
 @Expression(name = "Items Expressions",
         features = {
             @Feature(name = "Item NBT tag", description = "Returns the NBT tag of the given item.", examples = "item's nbt", pattern = "{item}['s] nbt [tag]", type = "nbttagcompound"),
-            @Feature(name = "Item stack", description = "Returns a stack of the given amount of the given item.", examples = "5 minecraft:stick", pattern = "(a|{+number} of) {resource} [with nbt {string|nbttagcompound}] [[and] with metadata {number}]", type = "item", settable = false),
+            @Feature(name = "Item stack", description = "Returns a stack of the given amount of the given item.", examples = "5 of minecraft:stick", pattern = "(a|{+number} of) {resource} [with nbt {string|nbttagcompound}] [[and] with metadata {number}]", type = "item", settable = false),
             @Feature(name = "Player has item", description = "Returns whether the player has the given item in his inventory.", examples = "5 of minecraft:stick is in player's inventory", pattern = "({item} is in {player}['s] inventory|{player} has {item})", type = "boolean", settable = false)
         }
 )
@@ -39,9 +39,9 @@ public class ExprItems extends ScriptExpression {
                     tagCompound = stack.getTagCompound();
                 return new TypeNBTTagCompound(tagCompound);
             case "Item stack":
-                System.out.println(Arrays.toString(parameters));
+                //System.out.println(Arrays.toString(parameters));
                 int amount = getParameterOrDefault(parameters[0], 1d).intValue();
-                Item item = (Item) parameters[1].getObject();
+                Item item = ScriptManager.parse(parameters[1],TypeItem.class).getObject();
                 int metadata = getParameterOrDefault(parameters[3], 0d).intValue();
                 ItemStack itemStack = new ItemStack(item, amount, metadata);
                 if(parameters[2] != null) {

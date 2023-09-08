@@ -1,5 +1,7 @@
 package fr.nico.sqript.events;
 
+import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.blocks.ScriptBlockEvent;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.Side;
@@ -62,6 +64,8 @@ public class EvtPlayer {
 
         public EvtOnItemRightClick(EntityPlayer player, ItemStack clicked, EnumHand hand, net.minecraftforge.fml.relauncher.Side side) {
             super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(new TypeItemStack(clicked),"[click[ed]] item"));
+            //System.out.println(ScriptManager.scripts.stream().map(a->a.getBlocks()).collect(Collectors.toList()));
+            //System.out.println(ScriptManager.scripts.stream().map(a->a.getName()).collect(Collectors.toList()));
             this.clickedItem = clicked;
             this.hand = hand;
             this.side = side;
@@ -74,7 +78,7 @@ public class EvtPlayer {
 
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
-            System.out.println(checkMark(2,marks)+" "+checkMark(1,marks));
+            System.out.println(side+" "+hand+" "+checkMark(2,marks)+" "+checkMark(1,marks)+" "+checkMark(4,marks));
 
             boolean correctSide = true;
             if(checkMark(2,marks))
@@ -86,13 +90,13 @@ public class EvtPlayer {
             if (checkMark(4,marks))
                 correctHands = hand == EnumHand.MAIN_HAND;
 
-            if (checkMark(3,marks))
+            else if (checkMark(3,marks))
                 correctHands = hand == EnumHand.OFF_HAND;
 
             if(parameters.length==0 || parameters[0] == null)
                 return correctHands;
 
-            return correctSide && correctHands && (((TypeItem)parameters[0]).getObject().equals(clickedItem.getItem()));
+            return correctSide && correctHands && ((ScriptManager.parse(parameters[0],TypeItem.class)).getObject().equals(clickedItem.getItem()));
         }
     }
 
