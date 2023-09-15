@@ -2,6 +2,7 @@ package fr.nico.sqript.actions;
 
 import com.google.common.collect.Lists;
 import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.expressions.ExprCompiledExpression;
 import fr.nico.sqript.expressions.ExprReference;
@@ -24,6 +25,7 @@ import java.util.List;
         },
         priority = -1
 )
+
 public class ActDefinition extends ScriptAction {
 
     @Override
@@ -34,6 +36,7 @@ public class ActDefinition extends ScriptAction {
         final ScriptType<?> b = second.get(context);
         //System.out.println("Executing line : "+getLine()+" with index:  "+getMatchedIndex());
         //System.out.println("a: "+a);
+
         //System.out.println("b: "+b);
         switch (getMatchedIndex()) {
             case 0:

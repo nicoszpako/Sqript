@@ -14,7 +14,8 @@ import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import java.io.File;
 
-public class ScriptDataManager {
+
+public abstract class ScriptDataManager {
 
     public static void load() throws Exception {
         File f = new File(ScriptManager.scriptDir, "data.dat");
@@ -54,6 +55,8 @@ public class ScriptDataManager {
         File f = new File(ScriptManager.scriptDir, "data.dat");
         CompressedStreamTools.write(total, f);
     }
+
+
 
     public static ScriptType instanciateWithData(String typeName, NBTTagCompound tag) throws Exception {
         //System.out.println("Instantiating : "+typeName+" with "+tag);

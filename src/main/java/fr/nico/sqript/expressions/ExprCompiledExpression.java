@@ -267,6 +267,7 @@ public class ExprCompiledExpression extends ScriptExpression {
             for (int i = 0; i < arity; i++) {
                 types[i] = get(ast.getChildren()[i], context, expressionDefinition.transformedPatterns[expression.getMatchedIndex()].getValidTypes(i));
             }
+            System.out.println("Setting with "+Arrays.toString(types));
             return expression.set(context, to, types);
         } else if (ast instanceof NodeSwitch) {
             for (Node n : ast.getChildren()) {
