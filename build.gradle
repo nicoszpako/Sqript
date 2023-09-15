@@ -62,17 +62,23 @@ minecraft {
     }
 }
 
+
+
+
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
     implementation('org.spongepowered:mixin:0.8.5') {
         exclude module: 'guava'
         exclude module: 'commons-io'
         exclude module: 'gson'
     }
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    testAnnotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
@@ -93,6 +99,12 @@ dependencies {
 
 }
 
+mixin {
+    add sourceSets.main, "refmap.sqript.json"
+    config 'mixins.sqript.json'
+    debug.verbose = true
+    debug.export = true
+}
 
 
 // Example for how to get properties into the manifest for reading by the runtime..

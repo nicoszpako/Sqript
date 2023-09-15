@@ -38,7 +38,7 @@ public class ExprLocation extends ScriptExpression {
             case 3:
                 locatable = parameters[0] == null ? (ILocatable) parameters[1] : (ILocatable) parameters[0];
                 Vec3d vector = locatable.getVector();
-                return new TypeArray(SqriptUtils.locactionToArray(vector.x, vector.y, vector.z));
+                return new TypeArray(SqriptUtils.locationToArray(vector.x, vector.y, vector.z));
             case 4:
                 ILocatable b1 = (ILocatable) parameters[0];
                 ILocatable b2 = (ILocatable) parameters[1];

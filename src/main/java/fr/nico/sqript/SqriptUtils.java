@@ -9,9 +9,7 @@ import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
@@ -62,16 +60,16 @@ public class SqriptUtils {
             return new Vec3d(((TypeNumber) list.get(0)).getObject(), ((TypeNumber) list.get(1)).getObject(), ((TypeNumber) list.get(2)).getObject());
     }
 
-    public static ArrayList locactionToArray(double x, double y, double z) {
-        return new ArrayList(Arrays.asList(new TypeNumber(x), new TypeNumber(y), new TypeNumber(z)));
+    public static ArrayList<ScriptType<?>> locationToArray(double x, double y, double z) {
+        return new ArrayList<>(Arrays.asList(new TypeNumber(x), new TypeNumber(y), new TypeNumber(z)));
     }
 
-    public static ArrayList locactionToArray(BlockPos pos) {
-        return locactionToArray(pos.getX(), pos.getY(), pos.getZ());
+    public static ArrayList<ScriptType<?>> locationToArray(BlockPos pos) {
+        return locationToArray(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public static ArrayList locactionToArray(EntityPlayer player) {
-        return locactionToArray(player.posX, player.posY, player.posZ);
+    public static ArrayList<ScriptType<?>> locationToArray(EntityPlayer player) {
+        return locationToArray(player.posX, player.posY, player.posZ);
     }
 
     public static void generateDoc() throws IOException {

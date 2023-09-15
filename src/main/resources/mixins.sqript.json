@@ -1,0 +1,11 @@
+{
+  "compatibilityLevel": "JAVA_8",
+  "package": "fr.nico.sqript.mixin",
+  "refmap": "refmap.sqript.json",
+  "mixins": [],
+  "minVersion": "0.6",
+  "server": [],
+  "client": [
+    "MixinModelPlayer"
+  ]
+}
