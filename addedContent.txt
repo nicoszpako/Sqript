@@ -1,4 +1,9 @@
 correctifs nbt et item stack
-correctifs commande /reload et manière dont c'est reload
+correctifs commande /reload et la manière dont c'est reload
 nouvelle expression pour les nbt à partir d'un dictionnaire
 nouvelle expression : string is a substring of a string
+nouvel event: on player render qui permet d'orienter les membres du joueurs
+nouvelle expression : content of text file
+nouvelle expression : content of image file
+nouvelle expression : new image file with height/width
+nouveau type: color

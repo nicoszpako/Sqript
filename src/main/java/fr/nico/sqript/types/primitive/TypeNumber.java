@@ -6,11 +6,13 @@ import fr.nico.sqript.meta.Primitive;
 import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.structures.ScriptOperator;
 import fr.nico.sqript.structures.IOperation;
+import fr.nico.sqript.types.TypeColor;
 import fr.nico.sqript.types.interfaces.IFormatable;
 import fr.nico.sqript.types.interfaces.ISerialisable;
 import fr.nico.sqript.types.ScriptType;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.awt.*;
 import java.text.DecimalFormat;
 
 @Primitive(name = "number",
@@ -65,6 +67,7 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
 
     static{
         ScriptManager.registerTypeParser(TypeString.class, TypeNumber.class, s->new TypeNumber(Double.valueOf(((TypeString)s).getObject())),0);
+
 
 
         ScriptManager.registerBinaryOperation(ScriptOperator.ADD, TypeNumber.class, TypeNumber.class, TypeNumber.class,

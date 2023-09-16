@@ -46,6 +46,11 @@ public class EvtRender {
             ),
             accessors = {
                     @Feature(name = "Player",description = "The player being rendered",type = "player",pattern = "player"),
+                    @Feature(name = "Limb swing",description = "The model's limb swing",type = "number",pattern = "limb swing"),
+                    @Feature(name = "Limb swing amount",description = "The model's limb swing amount",type = "number",pattern = "limb swing amount"),
+                    @Feature(name = "Head yaw",description = "The model's head yaw",type = "number",pattern = "head yaw"),
+                    @Feature(name = "Head Pitch",description = "The model's head pitch",type = "number",pattern = "head pitch"),
+                    @Feature(name = "Partial ticks",description = "The current partial ticks",type = "number",pattern = "partial ticks"),
                     @Feature(name = "Left arm rotation",description = "The player's left arm rotation",type = "array",pattern = "left arm rotation"),
                     @Feature(name = "Left arm position",description = "The player's left arm position",type = "array",pattern = "left arm position"),
                     @Feature(name = "Left arm anchor",description = "The player's left arm rotation anchor (or rotation origin, i.e the point that the part will be rotated around)",type = "array",pattern = "left arm anchor"),
@@ -66,7 +71,7 @@ public class EvtRender {
     )
     public static class EvtOnRenderPlayer extends ScriptEvent {
 
-        public EvtOnRenderPlayer(EntityPlayer player, ModelPlayer modelPlayer) {
+        public EvtOnRenderPlayer(EntityPlayer player, ModelPlayer modelPlayer, float partialTicks, float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
             ModelRenderer[] modelRenderers = new ModelRenderer[]{
                     modelPlayer.bipedLeftArm,
                     modelPlayer.bipedRightArm,
@@ -84,9 +89,14 @@ public class EvtRender {
             };
             List<ScriptTypeAccessor> accessorList = new ArrayList<>();
             accessorList.add(new ScriptTypeAccessor(new TypePlayer(player),"player"));
+            accessorList.add(new ScriptTypeAccessor(new TypeNumber(limbSwing),"limb swing"));
+            accessorList.add(new ScriptTypeAccessor(new TypeNumber(limbSwingAmount),"limb swing amount"));
+            accessorList.add(new ScriptTypeAccessor(new TypeNumber(netHeadYaw),"head yaw"));
+            accessorList.add(new ScriptTypeAccessor(new TypeNumber(headPitch),"head pitch"));
+            accessorList.add(new ScriptTypeAccessor(new TypeNumber(partialTicks),"partial ticks"));
             for (int i = 0; i < modelRenderers.length; i++) {
                 ModelRenderer part = modelRenderers[i];
-                accessorList.add(new ScriptTypeAccessor(new TypeArray(SqriptUtils.locationToArray(part.rotateAngleX,part.rotateAngleY,part.rotateAngleZ)),modelNames[i]+" rotation"));
+                accessorList.add(new ScriptTypeAccessor(new TypeArray(SqriptUtils.locationToArray(part.rotateAngleX/3.14159*180,part.rotateAngleY/3.14159*180,part.rotateAngleZ/3.14159*180)),modelNames[i]+" rotation"));
                 accessorList.add(new ScriptTypeAccessor(new TypeArray(SqriptUtils.locationToArray(part.offsetX,part.offsetY,part.offsetZ)),modelNames[i]+" position"));
                 accessorList.add(new ScriptTypeAccessor(new TypeArray(SqriptUtils.locationToArray(part.rotationPointX,part.rotationPointY,part.rotationPointZ)),modelNames[i]+" anchor"));
             }

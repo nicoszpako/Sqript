@@ -53,22 +53,7 @@ public abstract class MixinModelPlayer extends ModelBiped {
     @Inject(method = "setRotationAngles", at = @At("TAIL"))
     public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn, CallbackInfo callbackInfo)
     {
-        super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
-        copyModelAngles(this.bipedLeftLeg, this.bipedLeftLegwear);
-        copyModelAngles(this.bipedRightLeg, this.bipedRightLegwear);
-        copyModelAngles(this.bipedLeftArm, this.bipedLeftArmwear);
-        copyModelAngles(this.bipedRightArm, this.bipedRightArmwear);
-        copyModelAngles(this.bipedBody, this.bipedBodyWear);
-
-        if (entityIn.isSneaking())
-        {
-            this.bipedCape.rotationPointY = 2.0F;
-        }
-        else
-        {
-            this.bipedCape.rotationPointY = 0.0F;
-        }
-        MinecraftForge.EVENT_BUS.post(new ModelPlayerEvent((EntityPlayer) entityIn, (ModelPlayer) (Object) this, Minecraft.getMinecraft().getRenderPartialTicks()));
+        MinecraftForge.EVENT_BUS.post(new ModelPlayerEvent((EntityPlayer) entityIn, (ModelPlayer) (Object) this, Minecraft.getMinecraft().getRenderPartialTicks(), limbSwing, limbSwingAmount, netHeadYaw, headPitch, scaleFactor));
     }
 
 

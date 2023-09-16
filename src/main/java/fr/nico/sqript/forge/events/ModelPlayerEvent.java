@@ -1,6 +1,5 @@
 package fr.nico.sqript.forge.events;
 
-import com.sun.javafx.geom.Vec3f;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptException;
@@ -14,18 +13,20 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
-public class ModelPlayerEvent extends PlayerEvent
-{
+public class ModelPlayerEvent extends PlayerEvent {
     private ModelPlayer modelPlayer;
     private float partialTicks;
 
-    public ModelPlayerEvent(EntityPlayer player, ModelPlayer modelPlayer, float partialTicks)
-    {
+    public ModelPlayerEvent(EntityPlayer player, ModelPlayer modelPlayer, float partialTicks, float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch, float scaleFactor) {
         super(player);
         this.modelPlayer = modelPlayer;
         this.partialTicks = partialTicks;
         try {
-            ScriptContext context = ScriptManager.callEventAndGetContext(new EvtRender.EvtOnRenderPlayer(player,modelPlayer));
+            ScriptContext context = ScriptManager.callEventAndGetContext(new EvtRender.EvtOnRenderPlayer(player, modelPlayer, partialTicks, limbSwing, limbSwingAmount, netHeadYaw, headPitch));
+            //Check if event was called in a script
+            TypeArray leftArmRotation = (TypeArray) context.getVariable("left arm rotation".hashCode());
+            if (leftArmRotation == null)
+                return;
             ModelRenderer[] modelRenderers = new ModelRenderer[]{
                     modelPlayer.bipedLeftArm,
                     modelPlayer.bipedRightArm,
@@ -34,7 +35,7 @@ public class ModelPlayerEvent extends PlayerEvent
                     modelPlayer.bipedHead
             };
             TypeArray[] transformations = new TypeArray[]{
-                    (TypeArray) context.getVariable("left arm rotation".hashCode()),
+                    leftArmRotation,
                     (TypeArray) context.getVariable("left arm position".hashCode()),
                     (TypeArray) context.getVariable("left arm anchor".hashCode()),
                     (TypeArray) context.getVariable("right arm rotation".hashCode()),
@@ -50,18 +51,19 @@ public class ModelPlayerEvent extends PlayerEvent
                     (TypeArray) context.getVariable("head position".hashCode()),
                     (TypeArray) context.getVariable("head anchor".hashCode())
             };
+
             for (int i = 0; i < modelRenderers.length; i++) {
-                TypeArray rotation = transformations[3*i];
-                TypeArray position = transformations[3*i+1];
-                TypeArray anchor = transformations[3*i+2];
+                TypeArray rotation = transformations[3 * i];
+                TypeArray position = transformations[3 * i + 1];
+                TypeArray anchor = transformations[3 * i + 2];
                 ModelRenderer renderer = modelRenderers[i];
                 Vec3d rotationVec = SqriptUtils.arrayToLocation(rotation.getObject());
                 Vec3d positionVec = SqriptUtils.arrayToLocation(position.getObject());
                 Vec3d anchorVec = SqriptUtils.arrayToLocation(anchor.getObject());
 
-                renderer.rotateAngleX = (float) rotationVec.x/180*3.14159f;
-                renderer.rotateAngleY = (float) rotationVec.y/180*3.14159f;
-                renderer.rotateAngleZ = (float) rotationVec.z/180*3.14159f;
+                renderer.rotateAngleX = (float) rotationVec.x / 180 * 3.14159f;
+                renderer.rotateAngleY = (float) rotationVec.y / 180 * 3.14159f;
+                renderer.rotateAngleZ = (float) rotationVec.z / 180 * 3.14159f;
 
                 renderer.offsetX = (float) positionVec.x;
                 renderer.offsetY = (float) positionVec.y;
@@ -70,6 +72,7 @@ public class ModelPlayerEvent extends PlayerEvent
                 renderer.rotationPointX = (float) anchorVec.x;
                 renderer.rotationPointY = (float) anchorVec.y;
                 renderer.rotationPointZ = (float) anchorVec.z;
+
             }
 
         } catch (ScriptException e) {
@@ -77,24 +80,12 @@ public class ModelPlayerEvent extends PlayerEvent
         }
     }
 
-    public ModelPlayer getModelPlayer()
-    {
+    public ModelPlayer getModelPlayer() {
         return modelPlayer;
     }
 
-    public float getPartialTicks()
-    {
+    public float getPartialTicks() {
         return partialTicks;
     }
 
-    @Cancelable
-    public static class SetupAngles extends ModelPlayerEvent
-    {
-        private SetupAngles(EntityPlayer player, ModelPlayer modelPlayer, float partialTicks)
-        {
-            super(player, modelPlayer, partialTicks);
-        }
-
-    }
-
-    }
+}

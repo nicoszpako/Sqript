@@ -8,6 +8,7 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.TypeBlock;
 
+import fr.nico.sqript.types.TypeColor;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
@@ -23,13 +24,14 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 @Expression(name = "Block Expressions",
         features = {
                 @Feature(name = "Block at location", description = "Returns the block at the given location", examples = "block at player's location", pattern = "block at {array} [in world {number}]", type = "block"),
                 @Feature(name = "Blocks in radius of location", description = "Returns blocks in a radius of the given location", examples = "block in a radius of 5 around player's location", pattern = "blocks in [a] radius [of] {number} [blocks] around {element} [in world {number}]", type = "array"),
-                @Feature(name = "Block color", description = "Returns the color associated to the given block in a minecraft map.", examples = "color of minecraft:stone with metadata 2", pattern = "{block} color [in world {number}]", type = "number"),
+                @Feature(name = "Block color", description = "Returns the color associated to the given block in a minecraft map.", examples = "color of minecraft:stone with metadata 2", pattern = "{block} color [in world {number}]", type = "color"),
                 @Feature(name = "Terrain height", description = "Efficiently returns the terrain height at the given location.", examples = "terrain height at player's location", pattern = "terrain height at {array} [in world {number}]", type = "number"),
         }
 )
@@ -81,7 +83,7 @@ public class ExprBlock extends ScriptExpression {
                 else
                     world = getClientWorld();
                 TypeBlock blockstate = (TypeBlock) parameters[0];
-                return new TypeNumber(blockstate.getObject().getMapColor(world, blockstate.getPos()).colorValue);
+                return new TypeColor(new Color(blockstate.getObject().getMapColor(world, blockstate.getPos()).colorValue));
             case "Terrain height":
                 worldId = parameters[1] == null ? 0 : (int) parameters[2].getObject();
                 if (FMLCommonHandler.instance().getSide() == Side.SERVER)
