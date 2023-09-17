@@ -1,5 +1,6 @@
 package fr.nico.sqript.expressions;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.meta.Feature;
@@ -17,14 +18,15 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Expression(name = "File Expressions",
         features = {
-                @Feature(name = "Content of text file", description = "Returns an array containing the lines of the given file. Will create the file it it does not exist.", examples = "content of file \"/scripts/my_script_config.txt\"", pattern = "content of [text] file {string}", type = "array"),
-                @Feature(name = "Content of image file", description = "Returns the given file read as an image. Will create the image if it does not exist.", examples = "content of image \"/scripts/my_image.png\"", pattern = "content of image {string}", type = "image"),
-                @Feature(name = "New image", description = "Returns a new image sized with the given width and height.", examples = "new image with width 100 and height 450", pattern = "[new] image with width {number} and height {number}", type = "image"),
-                @Feature(name = "Image pixel", description = "Returns the color of an image's pixel.", examples = "set {my_image}'s pixel at [10,20] to 0xFFFF0000 #Sets the pixel to a full red pixel", pattern = "{image}['s] pixel at {array}", type = "color"),
+                @Feature(name = "Content of text file", description = "Returns an array containing the lines of the given file. The root folder is /.minecraft/. Will create the file it it does not exist when setting the content.", examples = "content of file \"/scripts/my_script_config.txt\"", pattern = "content of [text] file {string}", type = "array"),
+                @Feature(name = "Content of image file", description = "Returns the given file read as an image. The root folder is /.minecraft/. Will create the image if it does not exist when setting the content.", examples = "content of image \"/scripts/my_image.png\"", pattern = "content of image {string}", type = "image"),
+                @Feature(name = "New image", description = "Returns a new image sized with the given width and height.", examples = "new image with width 100 and height 450", pattern = "[a] [new] image with width {number} and height {number}", type = "image"),
+                @Feature(name = "Image pixel", description = "Returns the color of an image's pixel. Setting a pixel will only apply the changes in the memory, not on any file. Use the expression \"content of image file\" to save the content on a file.", examples = "set {my_image}'s pixel at [10,20] to 0xFFFF0000 #Sets the pixel to a full red pixel", pattern = "{image}['s] pixel at {array}", type = "color"),
 }
 )
 public class ExprFiles extends ScriptExpression {
@@ -65,7 +67,7 @@ public class ExprFiles extends ScriptExpression {
             case 3:
                 BufferedImage image = ((TypeImage)parameters[0]).getObject();
                 Vec3d pixelPos = SqriptUtils.arrayToLocation(((TypeArray)parameters[1]).getObject());
-                return new TypeNumber((image.getRGB((int)pixelPos.x,(int)pixelPos.y)));
+                return new TypeColor(new Color(image.getRGB((int)pixelPos.x,(int)pixelPos.y)));
 
         }
         return null;
@@ -73,6 +75,7 @@ public class ExprFiles extends ScriptExpression {
 
     @Override
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) {
+        //System.out.println("Called with "+ Arrays.toString(parameters)+" "+to+" "+getMatchedIndex());
         switch (getMatchedIndex()) {
             case 0:
                 ArrayList<ScriptType<?>> content = ((TypeArray) to).getObject();
@@ -89,7 +92,7 @@ public class ExprFiles extends ScriptExpression {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-                break;
+                return true;
             case 1:
                 TypeImage image = (TypeImage) to;
                 file = parameters[0].getObject().toString();
@@ -99,9 +102,15 @@ public class ExprFiles extends ScriptExpression {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                break;
+                return true;
             case 3:
-                int color = ((TypeNumber)to).getObject().intValue();
+
+                Color color = (ScriptManager.parse(to,TypeColor.class)).getObject();
+                //System.out.println("Color is : "+Integer.toHexString(color.getRGB())+" "+Integer.toHexString(color.getTransparency()));
+                image = ((TypeImage) parameters[0]);
+                Vec3d pixelPos = SqriptUtils.arrayToLocation(((TypeArray)parameters[1]).getObject());
+                image.getObject().setRGB((int)pixelPos.x,(int)pixelPos.y,color.getRGB());
+                return true;
         }
         return false;
     }

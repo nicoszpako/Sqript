@@ -21,7 +21,14 @@ public class TypeColor extends ScriptType<Color> {
     }
 
     static {
-        ScriptManager.registerTypeParser(TypeNumber.class, TypeColor.class, s->new TypeColor(new Color(s.getObject().intValue(),true)),0);
+        ScriptManager.registerTypeParser(TypeNumber.class, TypeColor.class, s->{
+            long c = (long)s.getObject().doubleValue();
+            int alpha = (int) ((c & 0xff000000) >> 24);
+            int red = (int) ((c & 0x00ff0000) >> 16);
+            int green = (int) ((c & 0x0000ff00) >> 8);
+            int blue = (int) (c & 0x000000ff);
+            return new TypeColor(new Color(red,green,blue,alpha));
+        },0);
         ScriptManager.registerTypeParser(TypeColor.class, TypeNumber.class, s->new TypeNumber(s.getObject().getRGB()),0);
     }
 

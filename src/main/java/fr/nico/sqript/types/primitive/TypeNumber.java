@@ -30,6 +30,7 @@ public class TypeNumber extends PrimitiveType<Double> implements ISerialisable, 
 
     public static Double fromString(String string){
         if(string.startsWith("0x")){
+            System.out.println("Parsed from string : "+string.substring(2)+" to "+Long.parseLong(string.substring(2), 16)+" giving "+Long.toHexString((long)(double) Long.parseLong(string.substring(2), 16)));
             return (double) Long.parseLong(string.substring(2), 16);
         }
         if(string.startsWith("0b")){

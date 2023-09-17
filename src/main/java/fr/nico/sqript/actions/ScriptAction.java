@@ -30,6 +30,15 @@ public abstract class ScriptAction extends IScript {
         return getParameters().get(index-1).get(context).getObject();
     }
 
+    public  <U,T extends ScriptElement<U>> U getParsed(int index, ScriptContext context, Class<T> to) throws ScriptException {
+        return ScriptManager.parse(getParameters().get(index-1).get(context), to).getObject();
+    }
+
+    public  <U,T extends ScriptElement<U>> U getParsed(int index, ScriptContext context, Class<T> to, U defaultValue) throws ScriptException {
+        ScriptType<?> type=getParameters().get(index-1).get(context);
+        return (type == null || (type instanceof TypeNull)) ? defaultValue : ScriptManager.parse(type, to).getObject();
+    }
+
     public <T> T getParameterOrDefault(ScriptExpression parameter, T defaultValue, ScriptContext context) throws ScriptException {
         ScriptType result;
         return (parameter == null || ((result = parameter.get(context)) instanceof TypeNull)) ? defaultValue : (T) result.getObject();

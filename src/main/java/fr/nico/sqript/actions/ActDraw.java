@@ -9,6 +9,7 @@ import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
+import fr.nico.sqript.types.TypeColor;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import net.minecraft.client.Minecraft;
@@ -120,7 +121,7 @@ public class ActDraw extends ScriptAction {
             case 1:
                 ILocatable location = (ILocatable) getParameter(1).get(context);
                 ILocatable size = (ILocatable) getParameter(2).get(context);
-                color = getParametersSize() >=3 ? ((Double) getParameter(3,context)).intValue() :0xFFFFFFFF;
+                color = getParsed(3,context, TypeNumber.class,(double)0xFFFFFFFF).intValue();
                 if(getMarkValue(1))
                     color = 0xFF000000 | color;
                 //System.out.println(Integer.toHexString(color));
@@ -171,7 +172,7 @@ public class ActDraw extends ScriptAction {
                 TypeArray p1 = (TypeArray) getParameter(1).get(context);
                 TypeArray p2 = (TypeArray) getParameter(2).get(context);
                 scale = getParametersSize()>=3? ((Double) getParameter(3,context)).floatValue() :1;
-                color = getParametersSize() >=4 ? ((Double) getParameter(4,context)).intValue() :0xFFFFFFFF;
+                color = getParsed(4,context, TypeNumber.class,(double)0xFFFFFFFF).intValue();
                 if(getMarkValue(1))
                     color = 0xFF000000 | color;
                 float red = (float)(color >> 16 & 255) / 255.0F;
@@ -222,8 +223,8 @@ public class ActDraw extends ScriptAction {
                 break;
             case 9:
                 location = (ILocatable) getParameter(1).get(context);
-                double radius = (double) getParameter(2).get(context).getObject();
-                color = getParametersSize() >=3 ? ((Double) getParameter(3,context)).intValue() :0xFFFFFFFF;
+                double radius = (Double) getParameter(2).get(context).getObject();
+                color = getParsed(3,context, TypeNumber.class,(double)0xFFFFFFFF).intValue();
                 if(getMarkValue(1))
                     color = 0xFF000000 | color;
                 red = (float)(color >> 16 & 255) / 255.0F;

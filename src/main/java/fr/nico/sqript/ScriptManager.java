@@ -63,8 +63,7 @@ public class ScriptManager {
     public static List<IScriptParser> parsers = new ArrayList<>();
 
     //Commands
-    public static List<ScriptBlockCommand> clientCommands = new ArrayList<>();
-    public static List<ScriptBlockCommand> serverCommands = new ArrayList<>();
+    public static List<ScriptBlockCommand> commands = new ArrayList<>();
 
     //Operations between types
     public static HashMap<ScriptOperator, HashMap<Class, HashMap<Class, OperatorDefinition>>> binaryOperations = new HashMap<>();
@@ -115,8 +114,7 @@ public class ScriptManager {
     }
 
     public static <T extends ScriptElement<?>, U extends ScriptElement<?>> U parse(T from, Class<U> toType) {
-        //System.out.println("Parsing "+from+" to "+toType);
-        if(from.getClass() == toType)
+        if(from.getClass() == toType || from.getClass().isAssignableFrom(toType))
             return (U) from;
         TypeParserDefinition<T, U> typeParserDefinition = getParser(from, toType);
         if (typeParserDefinition != null)
@@ -532,17 +530,18 @@ public class ScriptManager {
 
     @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
     public static void clearClientCommands() {
-        for (ScriptBlockCommand command : clientCommands) {
+        for (ScriptBlockCommand command : commands) {
+            System.out.println("Removing command : "+command.getName());
             ClientCommandHandler.instance.getCommands().remove(command.getName());
         }
-        clientCommands.clear();
     }
 
     public static void clearServerCommands() {
-        for (ScriptBlockCommand command : serverCommands) {
-            FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().getCommands().remove(command.getName());
+        if (FMLCommonHandler.instance().getMinecraftServerInstance() != null) {
+            for (ScriptBlockCommand command : commands) {
+                FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().getCommands().remove(command.getName());
+            }
         }
-        serverCommands.clear();
     }
 
     public static void reload() throws Throwable {
@@ -551,10 +550,9 @@ public class ScriptManager {
         scripts.clear();
         ScriptNetworkManager.clear();
 
-        if (FMLCommonHandler.instance().getEffectiveSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
-            clearClientCommands();
-        if (FMLCommonHandler.instance().getEffectiveSide() == net.minecraftforge.fml.relauncher.Side.SERVER)
-            clearServerCommands();
+        clearClientCommands();
+        clearServerCommands();
+        commands.clear();
 
         ScriptTimer.reload();
         ScriptException.ScriptExceptionList elist = new ScriptException.ScriptExceptionList();

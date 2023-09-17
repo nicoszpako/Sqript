@@ -16,12 +16,12 @@ import fr.nico.sqript.network.ScriptNetworkManager;
 import fr.nico.sqript.network.ScriptReloadMessage;
 import fr.nico.sqript.network.ScriptSyncDataMessage;
 import fr.nico.sqript.meta.*;
-import net.minecraft.client.audio.SoundRegistry;
-import net.minecraft.client.renderer.block.model.ModelManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.DefaultStateMapper;
 import net.minecraft.item.Item;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.World;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -35,7 +35,6 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -72,10 +71,12 @@ public class SqriptForge {
     @Mod.EventHandler
     public static void serverStartEvent(FMLServerStartingEvent event) {
         event.registerServerCommand(new SqriptCommand());
-        for (ScriptBlockCommand command : ScriptManager.serverCommands) {
-            ScriptManager.log.info("Registering server command : " + command.getName());
-            event.getServer().getCommandManager().getCommands().remove(command.getName());
-            event.registerServerCommand(command);
+        for (ScriptBlockCommand command : ScriptManager.commands) {
+            if(command.getSide().isValid()){
+                ScriptManager.log.info("Registering server command : " + command.getName());
+                event.getServer().getCommandManager().getCommands().remove(command.getName());
+                event.registerServerCommand(command);
+            }
         }
         ScriptManager.callEvent(new EvtFML.EvtOnServerStartingEvent(event.getServer()));
     }
@@ -249,32 +250,21 @@ public class SqriptForge {
         ClientCommandHandler.instance.registerCommand(command);
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void addClientCommand(ScriptBlockCommand command) {
-        ScriptManager.clientCommands.add(command);
-        registerClientCommand(command);
-
+    public static void addCommand(ScriptBlockCommand command) {
+        ScriptManager.commands.add(command);
     }
 
-    public static void addServerCommand(ScriptBlockCommand command) {
-        ScriptManager.serverCommands.add(command);
-
-    }
 
     public static void registerCommands() {
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-            for (ScriptBlockCommand command : ScriptManager.clientCommands) {
-                ScriptManager.log.info("Registering client command : " + command.getName());
-                ClientCommandHandler.instance.registerCommand(command);
-            }
-        } else {
-            for (ScriptBlockCommand command : ScriptManager.serverCommands) {
+        for (ScriptBlockCommand command : ScriptManager.commands) {
+            if(FMLCommonHandler.instance().getMinecraftServerInstance() != null && command.getSide() != fr.nico.sqript.structures.Side.CLIENT){
                 ScriptManager.log.info("Registering server command : " + command.getName());
-                Objects.requireNonNull(FMLCommonHandler.instance().getMinecraftServerInstance().getServer()).getCommandManager().getCommands().put(command.getName(), command);
-                Objects.requireNonNull(FMLCommonHandler.instance().getMinecraftServerInstance().getServer()).getCommandManager().getCommands().put(command.getName(), command);
+                FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().getCommands().put(command.getName(), command);
+            }else{
+                registerClientCommand(command);
             }
-
         }
+
     }
 
     @Mod.EventHandler

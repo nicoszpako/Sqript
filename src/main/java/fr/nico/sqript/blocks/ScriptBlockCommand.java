@@ -29,7 +29,6 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -109,14 +108,8 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
         if (fieldDefined("permission"))
             this.setPermission(getSubBlock("permission").getRawContent());
+        SqriptForge.addCommand(this);
 
-        if (side == fr.nico.sqript.structures.Side.BOTH || (side == fr.nico.sqript.structures.Side.CLIENT)) {
-            SqriptForge.addClientCommand(this);
-        }
-
-        if (side == fr.nico.sqript.structures.Side.BOTH || (side == fr.nico.sqript.structures.Side.SERVER)){
-            SqriptForge.addServerCommand(this);
-        }
 
         getScriptInstance().registerBlock(this);
     }
