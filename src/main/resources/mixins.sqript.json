@@ -6,6 +6,7 @@
   "minVersion": "0.6",
   "server": [],
   "client": [
-    "MixinModelPlayer"
+    "MixinModelPlayer",
+    "MixinRenderPlayer"
   ]
 }

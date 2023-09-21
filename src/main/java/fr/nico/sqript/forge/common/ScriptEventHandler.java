@@ -260,6 +260,17 @@ public class ScriptEventHandler {
         }
     }
 
+
+    @SubscribeEvent
+    public void onItemLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        if (event.getEntity() instanceof EntityPlayer) {
+            //System.out.println("clicking : "+event.getHand()+" "+event.getSide()+" "+event.getItemStack());
+            if (ScriptManager.callEvent(new EvtPlayer.EvtOnItemLeftClick((EntityPlayer) event.getEntity(), event.getItemStack(), event.getHand(), event.getSide()))) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
     @SubscribeEvent
     public void onLivingJump(LivingEvent.LivingJumpEvent event) {
         if (event.getEntity() instanceof EntityPlayer) {

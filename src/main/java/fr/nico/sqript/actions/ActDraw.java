@@ -1,5 +1,6 @@
 package fr.nico.sqript.actions;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
@@ -26,6 +27,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -95,7 +97,7 @@ public class ActDraw extends ScriptAction {
                 }
                 TypeArray array = (TypeArray) getParameter(2).get(context);
                 float scale = getParameterOrDefault(getParameter(3),1d,context).floatValue();
-                int color = getParameterOrDefault(getParameter(4), 0xFFFFFF, context);
+                int color = ScriptManager.parseOrDefault((ScriptType<?>)getParameter(4).get(context),TypeColor.class,new TypeColor(Color.white)).getObject().getRGB();
                 if(getMarkValue(2))
                     color = 0xFF000000 | color;
 
@@ -121,7 +123,7 @@ public class ActDraw extends ScriptAction {
             case 1:
                 ILocatable location = (ILocatable) getParameter(1).get(context);
                 ILocatable size = (ILocatable) getParameter(2).get(context);
-                color = getParsed(3,context, TypeNumber.class,(double)0xFFFFFFFF).intValue();
+                color = ScriptManager.parseOrDefault((ScriptType<?>)getParameter(3).get(context),TypeColor.class,new TypeColor(Color.white)).getObject().getRGB();
                 if(getMarkValue(1))
                     color = 0xFF000000 | color;
                 //System.out.println(Integer.toHexString(color));
@@ -172,7 +174,7 @@ public class ActDraw extends ScriptAction {
                 TypeArray p1 = (TypeArray) getParameter(1).get(context);
                 TypeArray p2 = (TypeArray) getParameter(2).get(context);
                 scale = getParametersSize()>=3? ((Double) getParameter(3,context)).floatValue() :1;
-                color = getParsed(4,context, TypeNumber.class,(double)0xFFFFFFFF).intValue();
+                color = ScriptManager.parseOrDefault((ScriptType<?>)getParameter(4).get(context),TypeColor.class,new TypeColor(Color.white)).getObject().getRGB();
                 if(getMarkValue(1))
                     color = 0xFF000000 | color;
                 float red = (float)(color >> 16 & 255) / 255.0F;
@@ -224,7 +226,7 @@ public class ActDraw extends ScriptAction {
             case 9:
                 location = (ILocatable) getParameter(1).get(context);
                 double radius = (Double) getParameter(2).get(context).getObject();
-                color = getParsed(3,context, TypeNumber.class,(double)0xFFFFFFFF).intValue();
+                color = ScriptManager.parseOrDefault((ScriptType<?>)getParameter(3).get(context),TypeColor.class,new TypeColor(Color.white)).getObject().getRGB();
                 if(getMarkValue(1))
                     color = 0xFF000000 | color;
                 red = (float)(color >> 16 & 255) / 255.0F;

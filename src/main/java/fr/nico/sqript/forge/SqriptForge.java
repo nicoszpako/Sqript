@@ -7,10 +7,13 @@ import fr.nico.sqript.blocks.ScriptBlockCommand;
 import fr.nico.sqript.events.EvtFML;
 import fr.nico.sqript.events.EvtOnWindowSetup;
 import fr.nico.sqript.forge.capabilities.CapabilityHandler;
+import fr.nico.sqript.forge.client.ClientProxy;
+import fr.nico.sqript.forge.common.CommonProxy;
 import fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock;
 import fr.nico.sqript.forge.common.ScriptEventHandler;
 import fr.nico.sqript.forge.common.SqriptCommand;
 import fr.nico.sqript.forge.common.item.ScriptItem;
+import fr.nico.sqript.forge.server.ServerProxy;
 import fr.nico.sqript.network.ScriptMessage;
 import fr.nico.sqript.network.ScriptNetworkManager;
 import fr.nico.sqript.network.ScriptReloadMessage;
@@ -27,10 +30,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
 import net.minecraftforge.fml.common.event.*;
@@ -49,6 +49,9 @@ import java.util.*;
 public class SqriptForge {
 
     public static String MODID = "sqript";
+
+    @SidedProxy(clientSide = "fr.nico.sqript.forge.client.ClientProxy", serverSide = "fr.nico.sqript.forge.server.ServerProxy")
+    private static CommonProxy proxy;
 
     public static SimpleNetworkWrapper channel = NetworkRegistry.INSTANCE.newSimpleChannel("sqript");
 
@@ -130,6 +133,20 @@ public class SqriptForge {
 
         ScriptManager.callEvent(new EvtOnWindowSetup());
 
+    }
+
+    public static CommonProxy getCommonProxy(){
+        return proxy;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static ClientProxy getClientProxy(){
+        return (ClientProxy)proxy;
+    }
+
+    @SideOnly(Side.SERVER)
+    public static ServerProxy getServerProxy(){
+        return (ServerProxy) proxy;
     }
 
     public static void modBuilding(FMLConstructionEvent event, ModContainer container) throws Exception {

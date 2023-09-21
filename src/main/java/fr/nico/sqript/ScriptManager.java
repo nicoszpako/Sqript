@@ -113,6 +113,16 @@ public class ScriptManager {
         return typeParsers.get(from) != null && typeParsers.get(from).get(toType) != null;
     }
 
+
+    public static <T extends ScriptElement<?>, U extends ScriptElement<?>> U parseOrDefault(T from, Class<U> toType, U defaultValue) {
+        if(from == null)
+            return defaultValue;
+        U result = parse(from,toType);
+        if (result != null)
+            return result;
+        else
+            return defaultValue;
+    }
     public static <T extends ScriptElement<?>, U extends ScriptElement<?>> U parse(T from, Class<U> toType) {
         if(from.getClass() == toType || from.getClass().isAssignableFrom(toType))
             return (U) from;

@@ -4,13 +4,19 @@ import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Primitive;
 import fr.nico.sqript.structures.ScriptElement;
+import fr.nico.sqript.types.TypeImage;
 import fr.nico.sqript.types.TypeItem;
 import fr.nico.sqript.types.interfaces.ISerialisable;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import sun.net.www.content.image.png;
 
 import javax.annotation.Nullable;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Primitive(name = "resource",
         parsableAs = {},
@@ -19,8 +25,19 @@ import javax.annotation.Nullable;
 public class TypeResource extends PrimitiveType<ResourceLocation> implements ISerialisable {
 
     static {
-        ScriptManager.registerTypeParser(TypeString.class, TypeResource.class, a->new TypeResource(new ResourceLocation(((TypeString)(a)).getObject())), 0);
-        ScriptManager.registerTypeParser(TypeItem.class, TypeResource.class, a->new TypeResource((((TypeItem)(a)).getObject().getRegistryName())), 0);
+        ScriptManager.registerTypeParser(TypeString.class, TypeResource.class, a->new TypeResource(new ResourceLocation(a.getObject())), 0);
+        ScriptManager.registerTypeParser(TypeItem.class, TypeResource.class, a->new TypeResource((a.getObject().getRegistryName())), 0);
+        ScriptManager.registerTypeParser(TypeResource.class, TypeImage.class, a->{
+            try {
+                InputStream inputStream = Minecraft.getMinecraft().getResourceManager().getResource(a.getObject()).getInputStream();
+                BufferedImage bufferedImage = ImageIO.read(inputStream);
+                return new TypeImage(bufferedImage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        },0);
+
     }
 
 

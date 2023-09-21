@@ -16,7 +16,7 @@ public class TypeItem extends ScriptType<Item> {
 
     static {
         ScriptManager.registerTypeParser(TypeResource.class,TypeItem.class, r-> {
-            System.out.println(r.getObject());
+            //System.out.println(r.getObject());
             return new TypeItem(Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(r.getObject())));
         },0);
     }

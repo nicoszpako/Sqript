@@ -47,6 +47,53 @@ public class EvtPlayer {
 
     @Cancelable
     @Event(
+            feature = @Feature(name = "Item left clicked",
+                    description = "Called when a player left clicks an item. This event only fires on client side",
+                    examples = "on item left click with minecraft:emerald:",
+                    pattern = "[item] left click [(with|on) {itemtype}] [with ((3;left)|(4;right)) hand]"),
+            accessors = {
+                    @Feature(name = "Player", description = "The player that clicked on the item.", pattern = "player", type = "player"),
+                    @Feature(name = "Clicked item", description = "The clicked item.", pattern = "[click[ed]] item", type = "item"),
+            }
+    )
+    public static class EvtOnItemLeftClick extends ScriptEvent {
+
+        public ItemStack clickedItem;
+        public EnumHand hand;
+        public net.minecraftforge.fml.relauncher.Side side;
+
+        public EvtOnItemLeftClick(EntityPlayer player, ItemStack clicked, EnumHand hand, net.minecraftforge.fml.relauncher.Side side) {
+            super(new ScriptTypeAccessor(new TypePlayer(player),"player"),new ScriptTypeAccessor(new TypeItemStack(clicked),"[click[ed]] item"));
+            //System.out.println(ScriptManager.scripts.stream().map(a->a.getBlocks()).collect(Collectors.toList()));
+            //System.out.println(ScriptManager.scripts.stream().map(a->a.getName()).collect(Collectors.toList()));
+            this.clickedItem = clicked;
+            this.hand = hand;
+            this.side = side;
+        }
+
+        @Override
+        public boolean validate(ScriptType[] parameters, int marks) {
+            return (parameters[0] != null && parameters[0].getObject() != null);
+        }
+
+        @Override
+        public boolean check(ScriptType[] parameters, int marks) {
+            boolean correctHands = true;
+            if (checkMark(4,marks))
+                correctHands = hand == EnumHand.MAIN_HAND;
+
+            else if (checkMark(3,marks))
+                correctHands = hand == EnumHand.OFF_HAND;
+
+            if(parameters.length==0 || parameters[0] == null)
+                return correctHands;
+
+            return correctHands && ((ScriptManager.parse(parameters[0],TypeItem.class)).getObject().equals(clickedItem.getItem()));
+        }
+    }
+
+    @Cancelable
+    @Event(
             feature = @Feature(name = "Item right clicked",
                     description = "Called when a player right clicks an item.",
                     examples = "on item click with minecraft:emerald:",
@@ -78,7 +125,7 @@ public class EvtPlayer {
 
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
-            System.out.println(side+" "+hand+" "+checkMark(2,marks)+" "+checkMark(1,marks)+" "+checkMark(4,marks));
+            //System.out.println(side+" "+hand+" "+checkMark(2,marks)+" "+checkMark(1,marks)+" "+checkMark(4,marks));
 
             boolean correctSide = true;
             if(checkMark(2,marks))
