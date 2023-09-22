@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
         features = {
                 @Feature(name = "All entities", description = "Returns an array of all entities.", examples = "all entities", pattern = "all entities", type = "array"),
                 @Feature(name = "Entity Name", description = "Returns the name of entity", examples = "entity's name", pattern = "{entity}['s] name", type = "string"),
-                @Feature(name = "Entity ID", description = "Returns the id of entity.", examples = "id of entity", pattern = "id of {entity}", type = "number"),
+                @Feature(name = "Entity ID", description = "Returns the id of entity.", examples = "id of entity", pattern = "id of {entity}", type = "number", priority = -1),
                 @Feature(name = "Entity NBT", description = "Returns the nbt tag compound of entity", examples = "entity's nbt", pattern = "{entity}['s] nbt", type = "nbttagcompound"),
 }
 )

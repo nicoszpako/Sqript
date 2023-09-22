@@ -125,7 +125,7 @@ public class EvtPlayer {
 
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
-            //System.out.println(side+" "+hand+" "+checkMark(2,marks)+" "+checkMark(1,marks)+" "+checkMark(4,marks));
+            //System.out.println(side+" "+hand+" "+checkMark(2,marks)+" "+checkMark(1,marks)+" "+checkMark(4,marks)+" "+parameters[0]+" "+clickedItem+" "+((ScriptManager.parse(parameters[0],TypeItem.class)).getObject().equals(clickedItem.getItem())));
 
             boolean correctSide = true;
             if(checkMark(2,marks))
