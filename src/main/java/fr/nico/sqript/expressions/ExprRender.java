@@ -1,6 +1,7 @@
 package fr.nico.sqript.expressions;
 
 import com.google.common.collect.Lists;
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import fr.nico.sqript.HSLColor;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.forge.SqriptForge;
@@ -15,16 +16,26 @@ import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import static org.lwjgl.opengl.GL11.*;
 
 @Expression(name = "Render Expressions",
         features = {
@@ -54,18 +65,46 @@ public class ExprRender extends ScriptExpression {
         switch (getMatchedIndex()) {
             case 0:
                 EntityPlayer player = ((TypePlayer)parameters[0]).getObject();
-                try {
-                    return new TypeImage(ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(Minecraft.getMinecraft().getConnection().getPlayerInfo(player.getUniqueID()).getLocationSkin()).getInputStream()));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                NetworkPlayerInfo networkPlayerInfo = Minecraft.getMinecraft().getConnection().getPlayerInfo(player.getUniqueID());
+                ResourceLocation resourceSkin = networkPlayerInfo.getLocationSkin();
+                ITextureObject textureObject = Minecraft.getMinecraft().getTextureManager().getTexture(resourceSkin);
+                glBindTexture(GL_TEXTURE_2D,textureObject.getGlTextureId());
+                int format = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT);
+                int width = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH);
+                int height = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT);
+                int channels = 4;
+                if (format == GL_RGB)
+                    channels = 3;
+
+                ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * channels);
+                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+                glGetTexImage(GL_TEXTURE_2D, 0, format, GL_UNSIGNED_BYTE, buffer);
+
+                for (int x = 0; x < width; ++x) {
+                    for (int y = 0; y < height; ++y) {
+                        int i = (x + y * width) * channels;
+
+                        int r = buffer.get(i) & 0xFF;
+                        int g = buffer.get(i + 1) & 0xFF;
+                        int b = buffer.get(i + 2) & 0xFF;
+                        int a = 255;
+                        if (channels == 4)
+                            a = buffer.get(i + 3) & 0xFF;
+
+                        image.setRGB(x, y, (a << 24) | (r << 16) | (g << 8) | b);
+                    }
                 }
-                return null;
+                //Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = Minecraft.getMinecraft().getSkinManager().loadSkinFromCache(player.getGameProfile());
+                //ResourceLocation resourceSkin = Minecraft.getMinecraft().getSkinManager().loadSkin(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
+                //InputStream stream = Minecraft.getMinecraft().getResourceManager().getResource(typeImage).getInputStream();
+                return new TypeImage(image);
             case 1:
-                TypeImage image = ScriptManager.parse(parameters[0],TypeImage.class);
-                return new TypeNumber(image.getObject().getWidth());
+                TypeImage typeImage = ScriptManager.parse(parameters[0],TypeImage.class);
+                return new TypeNumber(typeImage.getObject().getWidth());
             case 2:
-                image = ScriptManager.parse(parameters[0],TypeImage.class);
-                return new TypeNumber(image.getObject().getHeight());
+                typeImage = ScriptManager.parse(parameters[0],TypeImage.class);
+                return new TypeNumber(typeImage.getObject().getHeight());
             case 3:
                 return new TypeColor(Color.RED);
             case 4:

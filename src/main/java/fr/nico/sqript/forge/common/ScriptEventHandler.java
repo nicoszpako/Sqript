@@ -1,5 +1,9 @@
 package fr.nico.sqript.forge.common;
 
+import com.mojang.authlib.Agent;
+import com.mojang.authlib.exceptions.AuthenticationException;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.ScriptTimer;
 import fr.nico.sqript.compiling.ScriptException;
@@ -43,6 +47,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -183,6 +188,9 @@ public class ScriptEventHandler {
     public void onRenderLiving(RenderWorldLastEvent event) {
         ScriptManager.callEvent(new EvtRender.EvtOnRenderWorld(event.getPartialTicks()));
     }
+
+
+
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)

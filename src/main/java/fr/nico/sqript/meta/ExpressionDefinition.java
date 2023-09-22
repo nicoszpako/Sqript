@@ -33,7 +33,7 @@ public class ExpressionDefinition {
                     String[] t = ScriptDecoder.splitAtDoubleDot(features[i].pattern());
                     this.transformedPatterns[i] = ScriptDecoder.transformPattern(t[0]);
                     this.transformedPatterns[i].setReturnType(ScriptDecoder.parseType(features[i].type()));
-                    System.out.println("Pattern "+i+" : "+this.transformedPatterns[i].getPattern().pattern());
+                    //System.out.println("Pattern "+i+" : "+this.transformedPatterns[i].getPattern().pattern());
                 } catch (Exception e) {
                     ScriptManager.log.info("Error trying to build expression : " + name);
                     e.printStackTrace();

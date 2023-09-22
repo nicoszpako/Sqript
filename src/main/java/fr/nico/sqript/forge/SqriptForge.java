@@ -1,6 +1,10 @@
 package fr.nico.sqript.forge;
 
 import com.google.common.collect.SetMultimap;
+import com.mojang.authlib.Agent;
+import com.mojang.authlib.exceptions.AuthenticationException;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import fr.nico.sqript.EnumLoadPhase;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.blocks.ScriptBlockCommand;
@@ -42,6 +46,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Proxy;
 import java.util.*;
 
 @Mod(name = "Sqript", modid = "sqript", version = "1.0")
@@ -308,13 +313,6 @@ public class SqriptForge {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         ScriptManager.callEvent(new EvtFML.EvtOnInit());
-    }
-
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-
-        ScriptManager.callEvent(new EvtFML.EvtOnPostInit());
-        currentPhase = EnumLoadPhase.Run;
     }
 
     @SubscribeEvent

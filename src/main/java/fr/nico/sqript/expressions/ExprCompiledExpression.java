@@ -258,6 +258,7 @@ public class ExprCompiledExpression extends ScriptExpression {
     }
 
     private boolean set(Node ast, ScriptContext context, ScriptType to) throws ScriptException {
+        System.out.println("Setting with node : "+ast);
         if (ast instanceof NodeExpression) {
             ScriptExpression expression = ((NodeExpression) ast).getExpression();
             ExpressionDefinition expressionDefinition = ScriptManager.getDefinitionFromExpression(expression.getClass());
@@ -267,7 +268,7 @@ public class ExprCompiledExpression extends ScriptExpression {
             for (int i = 0; i < arity; i++) {
                 types[i] = get(ast.getChildren()[i], context, expressionDefinition.transformedPatterns[expression.getMatchedIndex()].getValidTypes(i));
             }
-            //System.out.println("Setting with "+Arrays.toString(types));
+            System.out.println("Setting "+expression.getClass()+" with "+Arrays.toString(types));
             return expression.set(context, to, types);
         } else if (ast instanceof NodeSwitch) {
             for (Node n : ast.getChildren()) {

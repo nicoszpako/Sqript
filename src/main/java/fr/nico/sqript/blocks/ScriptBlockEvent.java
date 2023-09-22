@@ -68,7 +68,7 @@ public class ScriptBlockEvent extends ScriptBlock {
                 //Parsing the arguments
                 TransformedPattern transformedPattern = eventDefinition.getTransformedPatterns()[matchedPatternIndex];
                 String[] arguments = transformedPattern.getAllArguments(line.getText());
-                //System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length+" "+Arrays.toString(arguments));
+                //System.out.println("Parsing event :"+eventDefinition.eventClass.getSimpleName()+" "+arguments.length+" "+Arrays.toString(arguments));
                 ScriptType[] parameters = new ScriptType[arguments.length];
                 int marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.getText());
                 for (int i = 0; i < arguments.length; i++) {

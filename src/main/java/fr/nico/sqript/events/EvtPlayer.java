@@ -50,7 +50,7 @@ public class EvtPlayer {
             feature = @Feature(name = "Item left clicked",
                     description = "Called when a player left clicks an item. This event only fires on client side",
                     examples = "on item left click with minecraft:emerald:",
-                    pattern = "[item] left click [(with|on) {itemtype}] [with ((3;left)|(4;right)) hand]"),
+                    pattern = "[item] left click [(with|on) {itemtype}] [with ((1;left)|(2;right)) hand]"),
             accessors = {
                     @Feature(name = "Player", description = "The player that clicked on the item.", pattern = "player", type = "player"),
                     @Feature(name = "Clicked item", description = "The clicked item.", pattern = "[click[ed]] item", type = "item"),
@@ -79,10 +79,10 @@ public class EvtPlayer {
         @Override
         public boolean check(ScriptType[] parameters, int marks) {
             boolean correctHands = true;
-            if (checkMark(4,marks))
+            if (checkMark(2,marks))
                 correctHands = hand == EnumHand.MAIN_HAND;
 
-            else if (checkMark(3,marks))
+            else if (checkMark(1,marks))
                 correctHands = hand == EnumHand.OFF_HAND;
 
             if(parameters.length==0 || parameters[0] == null)

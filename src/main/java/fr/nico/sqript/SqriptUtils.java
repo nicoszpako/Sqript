@@ -17,11 +17,14 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import org.apache.logging.log4j.core.util.JsonUtils;
 import sun.reflect.ReflectionFactory;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -40,11 +43,59 @@ public class SqriptUtils {
         else return 0;
     }
 
+    public static JsonElement getResult(String urlStr) {
+        try {
+
+            // Créez une URL à partir de la chaîne URL
+            URL url = new URL(urlStr);
+
+            // Ouvrez une connexion HTTP avec l'URL
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            // Configurez la méthode de la requête (GET, POST, etc.)
+            conn.setRequestMethod("GET");
+
+            // Obtenez le code de réponse HTTP
+            int responseCode = conn.getResponseCode();
+
+            // Vérifiez si la requête a réussi (code de réponse 200)
+            if (responseCode == 200) {
+                // Créez un flux d'entrée pour lire la réponse
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+
+                // Lisez la réponse ligne par ligne
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+
+                // Fermez le flux d'entrée
+                in.close();
+
+                // La réponse JSON est dans response.toString()
+                String jsonResponse = response.toString();
+                JsonParser jsonParser = new JsonParser();
+                return jsonParser.parse(jsonResponse);
+            } else {
+                System.out.println("La requête a échoué avec le code de réponse : " + responseCode);
+            }
+
+            // Fermez la connexion
+            conn.disconnect();
+
+        } catch (
+                IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static double getZ(TypeArray array) {
 
-        if(array.getObject().size() == 3)
+        if (array.getObject().size() == 3)
             return ((TypeNumber) (((ArrayList) (array.getObject())).get(2))).getObject();
-        else if(array.getObject().size() == 2)
+        else if (array.getObject().size() == 2)
             return ((TypeNumber) (((ArrayList) (array.getObject())).get(1))).getObject();
         else return 0;
     }
@@ -82,28 +133,28 @@ public class SqriptUtils {
 
         JsonObject events = new JsonObject();
         for (EventDefinition eventDefinition : ScriptManager.events) {
-                JsonObject event = new JsonObject();
-                event.addProperty("name",eventDefinition.getFeature().name());
+            JsonObject event = new JsonObject();
+            event.addProperty("name", eventDefinition.getFeature().name());
 
-                JsonObject accessors = new JsonObject();
-                for(Feature feature : eventDefinition.getAccessors()){
-                    JsonObject accessor = new JsonObject();
-                    accessor.addProperty("name", feature.name());
-                    accessor.addProperty("description", feature.description());
-                    accessor.addProperty("pattern", feature.pattern());
-                    accessor.addProperty("type", feature.type());
-                    accessor.addProperty("side", feature.side().toString());
-                    accessors.add(feature.name(),accessor);
-                }
-                event.add("accessors", accessors);
-                event.addProperty("cancelable",eventDefinition.eventClass.getAnnotation(Cancelable.class) != null);
-                event.addProperty("side",eventDefinition.getFeature().side().toString());
-                event.addProperty("description", eventDefinition.getFeature().description());
-                event.add("examples", toJsonArray(eventDefinition.getFeature().examples()));
-                event.addProperty("pattern", eventDefinition.getFeature().pattern());
-                events.add(eventDefinition.getFeature().name(), event);
+            JsonObject accessors = new JsonObject();
+            for (Feature feature : eventDefinition.getAccessors()) {
+                JsonObject accessor = new JsonObject();
+                accessor.addProperty("name", feature.name());
+                accessor.addProperty("description", feature.description());
+                accessor.addProperty("pattern", feature.pattern());
+                accessor.addProperty("type", feature.type());
+                accessor.addProperty("side", feature.side().toString());
+                accessors.add(feature.name(), accessor);
+            }
+            event.add("accessors", accessors);
+            event.addProperty("cancelable", eventDefinition.eventClass.getAnnotation(Cancelable.class) != null);
+            event.addProperty("side", eventDefinition.getFeature().side().toString());
+            event.addProperty("description", eventDefinition.getFeature().description());
+            event.add("examples", toJsonArray(eventDefinition.getFeature().examples()));
+            event.addProperty("pattern", eventDefinition.getFeature().pattern());
+            events.add(eventDefinition.getFeature().name(), event);
         }
-        object.add("events",events );
+        object.add("events", events);
 
         JsonObject actions = new JsonObject();
         for (ActionDefinition actionDefinition : ScriptManager.actions) {
@@ -118,7 +169,7 @@ public class SqriptUtils {
                 actions.add(feature.name(), action);
             }
         }
-        object.add("actions",actions);
+        object.add("actions", actions);
 
         JsonObject expressions = new JsonObject();
         for (ExpressionDefinition expressionDefinition : ScriptManager.expressions.values()) {
@@ -134,31 +185,31 @@ public class SqriptUtils {
                 expressions.add(feature.name(), expression);
             }
         }
-        object.add("expressions",expressions);
+        object.add("expressions", expressions);
 
         JsonObject blocks = new JsonObject();
         for (BlockDefinition blockDefinition : ScriptManager.blocks) {
             JsonObject block = new JsonObject();
-            block.addProperty("name",blockDefinition.getFeature().name());
-            block.addProperty("description",blockDefinition.getFeature().description());
-            block.addProperty("side",blockDefinition.getFeature().side().toString());
-            block.addProperty("reloadable",blockDefinition.isReloadable());
-            block.addProperty("regex",blockDefinition.getRegex().pattern());
-            block.add("examples",toJsonArray(blockDefinition.getFeature().examples()));
+            block.addProperty("name", blockDefinition.getFeature().name());
+            block.addProperty("description", blockDefinition.getFeature().description());
+            block.addProperty("side", blockDefinition.getFeature().side().toString());
+            block.addProperty("reloadable", blockDefinition.isReloadable());
+            block.addProperty("regex", blockDefinition.getRegex().pattern());
+            block.add("examples", toJsonArray(blockDefinition.getFeature().examples()));
             JsonObject fields = new JsonObject();
-            for(Feature feature : blockDefinition.getFields()){
+            for (Feature feature : blockDefinition.getFields()) {
                 JsonObject field = new JsonObject();
                 field.addProperty("name", feature.name());
                 field.addProperty("description", feature.description());
                 field.addProperty("pattern", feature.pattern());
                 field.addProperty("type", feature.type());
                 field.addProperty("side", feature.side().toString());
-                fields.add(feature.name(),field);
+                fields.add(feature.name(), field);
             }
             block.add("fields", fields);
             blocks.add(blockDefinition.getFeature().name(), block);
         }
-        object.add("blocks",blocks);
+        object.add("blocks", blocks);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -167,30 +218,30 @@ public class SqriptUtils {
         printWriter.close();
     }
 
-    public static JsonArray toJsonArray(String[] array){
+    public static JsonArray toJsonArray(String[] array) {
         JsonArray jsonArray = new JsonArray();
-        for(String string: array){
+        for (String string : array) {
             jsonArray.add(string);
         }
         return jsonArray;
     }
 
     public static String getIdentifier(String str) {
-        str = str.replaceAll(" ","_").toLowerCase(Locale.ROOT);
+        str = str.replaceAll(" ", "_").toLowerCase(Locale.ROOT);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             if ((i == 0 && Character.isJavaIdentifierStart(str.charAt(i))) || (i > 0 && Character.isJavaIdentifierPart(str.charAt(i))))
                 sb.append(str.charAt(i));
             else
-                sb.append((int)str.charAt(i));
+                sb.append((int) str.charAt(i));
         }
         return sb.toString();
     }
 
-    public static TypeDictionary NBTToDictionary(NBTTagCompound tag){
+    public static TypeDictionary NBTToDictionary(NBTTagCompound tag) {
         TypeDictionary typeDictionary = new TypeDictionary();
-        for(String key : tag.getKeySet()){
-            switch(tag.getTagId(key)){
+        for (String key : tag.getKeySet()) {
+            switch (tag.getTagId(key)) {
                 case Constants.NBT.TAG_INT:
                     typeDictionary.getObject().put(new TypeString(key), new TypeNumber(tag.getInteger(key)));
                     break;
@@ -211,7 +262,7 @@ public class SqriptUtils {
                     break;
                 case Constants.NBT.TAG_BYTE_ARRAY:
                     ArrayList list = new ArrayList();
-                    for(byte b : tag.getByteArray(key)){
+                    for (byte b : tag.getByteArray(key)) {
                         list.add(new TypeNumber(b));
                     }
                     typeDictionary.getObject().put(new TypeString(key), new TypeArray(list));
@@ -219,7 +270,7 @@ public class SqriptUtils {
                 case Constants.NBT.TAG_LONG_ARRAY:
                 case Constants.NBT.TAG_INT_ARRAY:
                     list = new ArrayList();
-                    for(int b : tag.getIntArray(key)){
+                    for (int b : tag.getIntArray(key)) {
                         list.add(new TypeNumber(b));
                     }
                     typeDictionary.getObject().put(new TypeString(key), new TypeArray(list));
@@ -248,17 +299,17 @@ public class SqriptUtils {
         return child.cast(intConstr.newInstance());
     }
 
-    public static void sendMessage(String message, ICommandSender sender){
+    public static void sendMessage(String message, ICommandSender sender) {
         sender.sendMessage(new TextComponentString("\2478[\2473Sqript\2478]\247r ").appendSibling(new TextComponentString(message)));
     }
 
-    public static void sendError(String message, ICommandSender sender){
+    public static void sendError(String message, ICommandSender sender) {
         sender.sendMessage(new TextComponentString("\2478[\2473Sqript\2478]\247r ").appendSibling(new TextComponentString(message).setStyle(new Style().setColor(TextFormatting.RED))));
     }
 
 
-    public static ScriptType<?> getTagFromTypeNBTTagCompound(NBTTagCompound tag, String key){
-        switch(tag.getTagId(key)){
+    public static ScriptType<?> getTagFromTypeNBTTagCompound(NBTTagCompound tag, String key) {
+        switch (tag.getTagId(key)) {
             case Constants.NBT.TAG_INT:
                 return new TypeNumber(tag.getInteger(key));
             case Constants.NBT.TAG_FLOAT:
@@ -273,27 +324,27 @@ public class SqriptUtils {
                 return new TypeBoolean(tag.getByte(key) == 0 ? false : true);
             case Constants.NBT.TAG_BYTE_ARRAY:
                 ArrayList list = new ArrayList();
-                for(byte b : tag.getByteArray(key)){
+                for (byte b : tag.getByteArray(key)) {
                     list.add(new TypeNumber(b));
                 }
                 return new TypeArray(list);
             case Constants.NBT.TAG_LONG_ARRAY:
             case Constants.NBT.TAG_INT_ARRAY:
                 list = new ArrayList();
-                for(int b : tag.getIntArray(key)){
+                for (int b : tag.getIntArray(key)) {
                     list.add(new TypeNumber(b));
                 }
                 return new TypeArray(list);
             case Constants.NBT.TAG_LIST:
                 list = new ArrayList();
-                for (int i = 0; i < tag.getTagList(key,Constants.NBT.TAG_COMPOUND).tagCount(); i++) {
-                    list.add(new TypeNBTTagCompound(tag.getTagList(key,Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
+                for (int i = 0; i < tag.getTagList(key, Constants.NBT.TAG_COMPOUND).tagCount(); i++) {
+                    list.add(new TypeNBTTagCompound(tag.getTagList(key, Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
                 }
                 return new TypeArray(list);
             case Constants.NBT.TAG_STRING:
                 return new TypeString(tag.getString(key));
             case Constants.NBT.TAG_COMPOUND:
-                if(tag.getCompoundTag(key).hasKey("list")){
+                if (tag.getCompoundTag(key).hasKey("list")) {
                     try {
                         TypeArray typeArray = new TypeArray();
                         typeArray.read(tag.getCompoundTag(key));
@@ -309,14 +360,14 @@ public class SqriptUtils {
         return new TypeNull();
     }
 
-    public static void setTag(NBTTagCompound tag, String key, ScriptType value){
-        if(value instanceof TypeString){
+    public static void setTag(NBTTagCompound tag, String key, ScriptType value) {
+        if (value instanceof TypeString) {
             tag.setString(key, (String) value.getObject());
-        } else if(value instanceof TypeBoolean){
+        } else if (value instanceof TypeBoolean) {
             tag.setBoolean(key, (Boolean) value.getObject());
-        } else if(value instanceof TypeNumber){
+        } else if (value instanceof TypeNumber) {
             tag.setDouble(key, (Double) value.getObject());
-        } else if(value instanceof TypeArray){
+        } else if (value instanceof TypeArray) {
             tag.setTag(key, ((TypeArray) value).write(new NBTTagCompound()));
         }
     }
