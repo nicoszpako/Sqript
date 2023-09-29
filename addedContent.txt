@@ -1,15 +1,8 @@
-correctifs nbt et item stack
-correctifs commande /reload et la manière dont c'est reload
-nouvelle expression pour les nbt à partir d'un dictionnaire
-nouvelle expression : string is a substring of a string
-nouveau type: image (et non image widget qui permet d'afficher une image dans un gui) et qui représente une image chargée en mémoire dont on peut modifier les pixels
-nouveau type : color qui représente une couleur argb, on peut passer de number à argb et réciproquement
-nouvel event: on player render qui permet d'orienter les membres du joueurs
-nouvelle expression : content of text file
-nouvelle expression : content of image file
-nouvelle expression : new image file with height/width
-nouvelle expression : pixel at x,y of image
-nouveau type: color
-nouvelles expressions : 15 nouvelles expressions pour la manipulation des couleurs
-nouvelle expression : player's skin, permet de définir un autre skin pour le joueur et de le modifier en temps réel
-nouvel event : on item left click
+Nouvelle action : replace each {string} with {string} in {string}
+Nouvelle expression : player's world id
+Nouvelle expression : block's nbt tag compound
+Nouvelle expression : nbt tag copy
+
+Petite amélioration sur la syntaxe des évènements de clic:
+Clic sur un bloc : click *on*
+Clic sur un item : click *with*

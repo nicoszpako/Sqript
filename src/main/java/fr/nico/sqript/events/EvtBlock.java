@@ -68,10 +68,10 @@ public class EvtBlock {
             feature = @Feature(name = "Block right clicked",
                     description = "Called when a player clicks on a block",
                     examples = "on right click on minecraft:diamond_block:\n",
-                    pattern = "((1;left)|(2;right)) click on block [of] {block} [with ((3;left)|(4;right)) hand]"),
+                    pattern = "[((1;left)|(2;right))] click on [[a] block of] {block} [with ((3;left)|(4;right)) hand]"),
             accessors = {
                     @Feature(name = "Player", description = "The player that clicked the block.", pattern = "player", type = "player"),
-                    @Feature(name = "Clicked block", description = "The clicked block.", pattern = "(clicked block|click-block)", type = "block"),
+                    @Feature(name = "Clicked block", description = "The clicked block.", pattern = "(clicked block|click-block|block)", type = "block"),
             }
 
     )
@@ -82,7 +82,9 @@ public class EvtBlock {
         public int clickType = 1; //1 = right, 0 = left
 
         public EvtOnBlockClick(EntityPlayer player, TypeBlock clicked, EnumHand hand, int clickType, BlockPos pos) {
-            super(new ScriptTypeAccessor(new TypePlayer(player), "player"), new ScriptTypeAccessor(clicked, "(clicked block|click-block)"));
+
+            super(new ScriptTypeAccessor(new TypePlayer(player), "player"), new ScriptTypeAccessor(clicked, "(clicked block|click-block|block)"));
+            //System.out.println("Clicked block : "+clicked);
             this.clickedBlock = clicked;
             this.hand = hand;
             this.clickType = clickType;

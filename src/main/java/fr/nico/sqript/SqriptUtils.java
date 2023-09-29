@@ -10,12 +10,15 @@ import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import org.apache.logging.log4j.core.util.JsonUtils;
 import sun.reflect.ReflectionFactory;
@@ -360,7 +363,22 @@ public class SqriptUtils {
         return new TypeNull();
     }
 
-    public static void setTag(NBTTagCompound tag, String key, ScriptType value) {
+    public static void setTag(NBTTagCompound tag, String key, String type, ScriptType value) {
+        if(type.equalsIgnoreCase("byte")){
+            tag.setByte(key, ((Double) value.getObject()).byteValue());
+        }
+        if(type.equalsIgnoreCase("float")){
+            tag.setFloat(key, ((Double) value.getObject()).floatValue());
+        }
+        if(type.equalsIgnoreCase("int")){
+            tag.setInteger(key, ((Double) value.getObject()).intValue());
+        }
+        if(type.equalsIgnoreCase("long")){
+            tag.setLong(key, ((Double) value.getObject()).longValue());
+        }
+        if(type.equalsIgnoreCase("short")){
+            tag.setShort(key, ((Double) value.getObject()).shortValue());
+        }
         if (value instanceof TypeString) {
             tag.setString(key, (String) value.getObject());
         } else if (value instanceof TypeBoolean) {
@@ -371,4 +389,7 @@ public class SqriptUtils {
             tag.setTag(key, ((TypeArray) value).write(new NBTTagCompound()));
         }
     }
+
+
+
 }

@@ -21,7 +21,6 @@ import java.util.Arrays;
 
 @Expression(name = "Items Expressions",
         features = {
-            @Feature(name = "Item NBT tag", description = "Returns the NBT tag of the given item.", examples = "item's nbt", pattern = "{item}['s] nbt [tag]", type = "nbttagcompound"),
             @Feature(name = "Item stack", description = "Returns a stack of the given amount of the given item.", examples = "5 of minecraft:stick", pattern = "(a[n]|{+number} of) {resource} [with nbt {string|nbttagcompound}] [[and] with metadata {number}]", type = "item", settable = false),
             @Feature(name = "Player has item", description = "Returns whether the player has the given item in his inventory.", examples = "5 of minecraft:stick is in player's inventory", pattern = "({item} is in {player}['s] inventory|{player} has {item})", type = "boolean", settable = false)
         }
@@ -32,12 +31,6 @@ public class ExprItems extends ScriptExpression {
     public ScriptType get(ScriptContext context, ScriptType[] parameters) {
         //System.out.println(Arrays.toString(parameters));
         switch(getMatchedName()){
-            case "Item NBT tag":
-                ItemStack stack = (ItemStack) parameters[0].getObject();
-                NBTTagCompound tagCompound = new NBTTagCompound();
-                if(stack.hasTagCompound())
-                    tagCompound = stack.getTagCompound();
-                return new TypeNBTTagCompound(tagCompound);
             case "Item stack":
                 //System.out.println(Arrays.toString(parameters));
                 int amount = getParameterOrDefault(parameters[0], 1d).intValue();
@@ -81,14 +74,6 @@ public class ExprItems extends ScriptExpression {
     @Override
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) {
         switch (getMatchedIndex()) {
-            case 0:
-                if(to instanceof TypeNBTTagCompound){
-                    ItemStack stack = (ItemStack) parameters[0].getObject();
-                    stack.setTagCompound((NBTTagCompound) to.getObject());
-                } else {
-                    ScriptManager.log.error("You can only set a NBTTagCompound in parameter");
-                }
-                return true;
         }
         return false;
     }

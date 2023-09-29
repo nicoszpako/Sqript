@@ -50,7 +50,7 @@ public class EvtPlayer {
             feature = @Feature(name = "Item left clicked",
                     description = "Called when a player left clicks an item. This event only fires on client side",
                     examples = "on item left click with minecraft:emerald:",
-                    pattern = "[item] left click [(with|on) {itemtype}] [with ((1;left)|(2;right)) hand]"),
+                    pattern = "[item] left click [with {itemtype}] [with ((1;left)|(2;right)) hand]"),
             accessors = {
                     @Feature(name = "Player", description = "The player that clicked on the item.", pattern = "player", type = "player"),
                     @Feature(name = "Clicked item", description = "The clicked item.", pattern = "[click[ed]] item", type = "item"),
@@ -97,7 +97,7 @@ public class EvtPlayer {
             feature = @Feature(name = "Item right clicked",
                     description = "Called when a player right clicks an item.",
                     examples = "on item click with minecraft:emerald:",
-                    pattern = "[((1;client)|(2;server))] [(item|right)] click [(with|on) {itemtype}] [with ((3;left)|(4;right)) hand]"),
+                    pattern = "[((1;client)|(2;server))] [(item|right)] click [with {itemtype}] [with ((3;left)|(4;right)) hand]"),
             accessors = {
                     @Feature(name = "Player", description = "The player that clicked on the item.", pattern = "player", type = "player"),
                     @Feature(name = "Clicked item", description = "The clicked item.", pattern = "[click[ed]] item", type = "item"),

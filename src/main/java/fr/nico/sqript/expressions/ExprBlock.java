@@ -1,20 +1,21 @@
 package fr.nico.sqript.expressions;
 
+import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.types.ScriptType;
-import fr.nico.sqript.types.TypeArray;
-import fr.nico.sqript.types.TypeBlock;
+import fr.nico.sqript.types.*;
 
-import fr.nico.sqript.types.TypeColor;
 import fr.nico.sqript.types.interfaces.ILocatable;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeResource;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -26,13 +27,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Expression(name = "Block Expressions",
         features = {
                 @Feature(name = "Block at location", description = "Returns the block at the given location", examples = "block at player's location", pattern = "block at {array} [in world {number}]", type = "block"),
                 @Feature(name = "Blocks in radius of location", description = "Returns blocks in a radius of the given location", examples = "block in a radius of 5 around player's location", pattern = "blocks in [a] radius [of] {number} [blocks] around {element} [in world {number}]", type = "array"),
-                @Feature(name = "Block color", description = "Returns the color associated to the given block in a minecraft map.", examples = "color of minecraft:stone with metadata 2", pattern = "{block} color [in world {number}]", type = "color"),
+                @Feature(name = "Block color", description = "Returns the color associated to the given block in a minecraft map.", examples = "color of minecraft:stone", pattern = "{block} color [in world {number}]", type = "color"),
                 @Feature(name = "Terrain height", description = "Efficiently returns the terrain height at the given location.", examples = "terrain height at player's location", pattern = "terrain height at {array} [in world {number}]", type = "number"),
+                @Feature(name = "Player's current world id", description = "Returns the id of the world the given player is. Setting a nbt tag must be done on server side or the effects won't persist.", examples = "send player's world id to player", pattern = "{player}['s] world id", type = "number"),
         }
 )
 public class ExprBlock extends ScriptExpression {
@@ -57,7 +61,7 @@ public class ExprBlock extends ScriptExpression {
                 }
                 return null;
             case "Blocks in radius of location":
-                worldId = parameters[1] == null ? 0 : (int) parameters[2].getObject();
+                worldId = parameters[2] == null ? 0 : (int) parameters[2].getObject();
                 if (FMLCommonHandler.instance().getSide() == Side.SERVER)
                     world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId];
                 else
@@ -77,7 +81,7 @@ public class ExprBlock extends ScriptExpression {
 
             case "Block color":
                 //System.out.println("Parameters : "+ Arrays.toString(parameters));
-                worldId = parameters[1] == null ? 0 : (int) parameters[2].getObject();
+                worldId = parameters[1] == null ? 0 : (int) parameters[1].getObject();
                 if (FMLCommonHandler.instance().getSide() == Side.SERVER)
                     world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId];
                 else
@@ -85,7 +89,7 @@ public class ExprBlock extends ScriptExpression {
                 TypeBlock blockstate = (TypeBlock) parameters[0];
                 return new TypeColor(new Color(blockstate.getObject().getMapColor(world, blockstate.getPos()).colorValue));
             case "Terrain height":
-                worldId = parameters[1] == null ? 0 : (int) parameters[2].getObject();
+                worldId = parameters[1] == null ? 0 : (int) parameters[1].getObject();
                 if (FMLCommonHandler.instance().getSide() == Side.SERVER)
                     world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId];
                 else
@@ -93,6 +97,9 @@ public class ExprBlock extends ScriptExpression {
                 ILocatable location = (ILocatable) parameters[0];
                 Chunk chunk = world.getChunkFromBlockCoords(location.getPos());
                 return new TypeNumber(chunk.getHeight(location.getPos()));
+            case "Player's current world id":
+                EntityPlayer player = (EntityPlayer) parameters[0].getObject();
+                return new TypeNumber(Arrays.stream(FMLCommonHandler.instance().getMinecraftServerInstance().worlds).collect(Collectors.toList()).indexOf(player.world));
         }
         return null;
     }
@@ -104,8 +111,8 @@ public class ExprBlock extends ScriptExpression {
 
     @Override
     public boolean set(ScriptContext context, ScriptType to, ScriptType[] parameters) throws ScriptException.ScriptTypeException {
-        switch (getMatchedIndex()) {
-            case 0:
+        switch (getMatchedName()) {
+            case "Block at location":
                 int worldId = getParameterOrDefault(parameters[1], 0);
                 BlockPos pos = null;
                 if (parameters[0] instanceof ILocatable) {
@@ -123,6 +130,7 @@ public class ExprBlock extends ScriptExpression {
                 //System.out.println("Setting block : "+state+" at "+pos);
                 FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId].setBlockState(pos, state);
                 return true;
+
         }
         return false;
     }
