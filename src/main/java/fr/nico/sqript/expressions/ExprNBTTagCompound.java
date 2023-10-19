@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -23,7 +24,9 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
                 @Feature(name = "NBTTagCompound from a dictionary", description = "Returns a new NBTTagCompound based on elements of a dictionary.", examples = "set {my_nbtcompound} to nbt from {dict}", pattern = "[a] [new] nbt [tag] [compound] from [dictionary] {dictionary}", type = "nbttagcompound"),
                 @Feature(name = "NBTTagCompound value", description = "Returns value of key NBTTagCompound. A type can be specified, valid specific types are int, byte, float, short, long.", examples = "tag {string} of {nbt} as \"byte\"", pattern = "tag {string} of {nbttagcompound} [as {string}]", type="nbttagcompound"),
                 @Feature(name = "NBTTagCompound copy", description = "Returns a copy of a NBTTagCompound.", examples = "a copy of {nbt}", pattern = "[a] copy [of] {nbttagcompound}", type="nbttagcompound"),
-                @Feature(name = "Item or block nbt tag", description = "Returns the NBTTagCompound of a block or an item.", examples = "block at [4,54,-52] nbt tag", pattern = "{item|block}['s] nbt [tag] [in world {number}]", type="nbttagcompound",side= Side.SERVER),
+                @Feature(name = "Item or block nbt tag", description = "Returns the NBTTagCompound of a block or an item.", examples = "block at [4,54,-52] nbt tag", pattern = "{item|block}['s] nbt [tag] [in world {number}]", type="nbttagcompound"),
+                @Feature(name = "NBTTagCompound keys", description = "Returns a list containing all the given NBTTagCompound keys.", examples = "block at [4,54,-52] nbt tag keys", pattern = "{nbttagcompound}['s] keys", type="array"),
+                @Feature(name = "NBTTagCompound to a dictionary", description = "Returns a dictionary containing all the given NBTTagCompound keys and NBT values.", examples = "block at [4,54,-52] nbt tag dictionary", pattern = "{nbttagcompound}['s] dictionary", type="dictionary"),
         }
 )
 public class ExprNBTTagCompound extends ScriptExpression {
@@ -66,8 +69,20 @@ public class ExprNBTTagCompound extends ScriptExpression {
                     else
                         return new TypeNBTTagCompound(tileEntity.serializeNBT());
                 }
-
-
+            case 6:
+                tagCompound = (TypeNBTTagCompound) parameters[0];
+                TypeArray typeArray = new TypeArray();
+                for (String key : tagCompound.getObject().getKeySet()) {
+                    typeArray.add(new TypeString(key));
+                }
+                return typeArray;
+            case 7:
+                tagCompound = (TypeNBTTagCompound) parameters[0];
+                TypeDictionary typeDictionary = new TypeDictionary();
+                for (String key : tagCompound.getObject().getKeySet()) {
+                    typeDictionary.getObject().put(new TypeString(key),SqriptUtils.getTagFromTypeNBTTagCompound(tagCompound.getObject(),key));
+                }
+                return typeDictionary;
         }
         return null;
     }
@@ -90,9 +105,11 @@ public class ExprNBTTagCompound extends ScriptExpression {
                     TypeBlock block = ScriptManager.parse(parameters[0],TypeBlock.class);
                     World world = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[worldId];
                     TileEntity tileEntity = world.getTileEntity(block.getPos());
+                    NBTTagCompound toNbt = ((TypeNBTTagCompound)(to)).getObject();
                     if(tileEntity != null){
-                        tileEntity.deserializeNBT(((TypeNBTTagCompound)(to)).getObject());
-                        tileEntity.invalidate();
+                        NBTTagCompound nbt = tileEntity.getTileData();
+                        nbt.getKeySet().forEach(nbt::removeTag);
+                        toNbt.getKeySet().forEach(k->nbt.setTag(k,toNbt.getTag(k)));
                         tileEntity.markDirty();
                     }
                     return true;

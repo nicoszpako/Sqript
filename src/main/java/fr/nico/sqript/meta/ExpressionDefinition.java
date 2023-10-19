@@ -7,6 +7,7 @@ import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.structures.ScriptParameterDefinition;
 import fr.nico.sqript.structures.TransformedPattern;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +61,7 @@ public class ExpressionDefinition {
                     if (!ScriptDecoder.isParenthesageGood(argument))
                         continue t;
                 }
+                //System.out.println("Added !");
                 matchResults.add(new MatchResult(i, transformedPatterns[i].getAllMarks(line)));
             }
         }

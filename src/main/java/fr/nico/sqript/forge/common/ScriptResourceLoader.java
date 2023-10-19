@@ -32,7 +32,7 @@ public class ScriptResourceLoader implements IResourcePack
 		}
 		else
 		{
-			File file = new File(new File(Minecraft.getMinecraft().mcDataDir, "scripts/" + rl.getResourceDomain()), rl.getResourcePath());
+			File file = new File(new File(Minecraft.getMinecraft().gameDir, "scripts/" + rl.getNamespace()), rl.getPath());
 
 			String realFileName = file.getCanonicalFile().getName();
 			if (!realFileName.equals(file.getName()))
@@ -47,7 +47,7 @@ public class ScriptResourceLoader implements IResourcePack
 	@Override
 	public boolean resourceExists(ResourceLocation rl)
 	{
-		File fileRequested = new File(new File(Minecraft.getMinecraft().mcDataDir, "scripts/" + rl.getResourceDomain()), rl.getResourcePath());
+		File fileRequested = new File(new File(Minecraft.getMinecraft().gameDir, "scripts/" + rl.getNamespace()), rl.getPath());
 
 		if (debug && !fileRequested.isFile())
 		{
@@ -60,7 +60,7 @@ public class ScriptResourceLoader implements IResourcePack
 	@Override
 	public Set getResourceDomains()
 	{
-		File folder = new File(Minecraft.getMinecraft().mcDataDir, "scripts");
+		File folder = new File(Minecraft.getMinecraft().gameDir, "scripts");
 		if (!folder.exists())
 		{
 			folder.mkdir();

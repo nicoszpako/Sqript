@@ -23,7 +23,7 @@ import java.io.FileWriter;
 
 @Block(
         feature = @Feature(name = "Item",
-                description = "Define an item that will be added to the game, that you can give a certain behavior to.",
+                description = "DEPRECATED : Use the register action instead. Define an item that will be added to the game, that you can give a certain behavior to.",
                 examples = "item test_item:\n" +
                         "    name: My Test Item\n" +
                         "    texture: sample:yellow_diamond.png\n" +
@@ -122,7 +122,7 @@ public class ScriptBlockItem extends ScriptBlock {
         }
         item.setRegistryName(this.getHead().getScriptInstance().getName(), registryName);
         texture = this.getHead().getScriptInstance().getName() + ":" + texture;
-        item.setUnlocalizedName(registryName);
+
         //System.out.println("Max stack size of item is : "+maxStackSize);
         item.setMaxStackSize(maxStackSize);
         item.setCreativeTab(tab);

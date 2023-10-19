@@ -21,7 +21,7 @@ import java.io.FileWriter;
 
 @Block(
         feature = @Feature(name = "Block",
-                description = "Define a Minecraft block that will be added to the game.",
+                description = "DEPRECATED : Use the register action instead. Define a Minecraft block that will be added to the game.",
                 examples = "block my_block:",
                 regex = "^block .*",
                 side = Side.BOTH),
@@ -75,7 +75,6 @@ public class ScriptBlockBlock extends ScriptBlock {
         fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock block = new fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock(material,new ResourceLocation(drop),harvestLevel);
         block.setRegistryName(this.getHead().getScriptInstance().getName(),registryName);
         texture = this.getHead().getScriptInstance().getName()+":"+texture;
-        block.setUnlocalizedName(registryName);
         block.setHardness(hardness);
         block.setCreativeTab(tab);
 
@@ -91,7 +90,7 @@ public class ScriptBlockBlock extends ScriptBlock {
             public String getItemStackDisplayName(ItemStack stack) {
                 return displayName;
             }
-        }.setUnlocalizedName(block.getUnlocalizedName()).setRegistryName(block.getRegistryName());
+        }.setRegistryName(block.getRegistryName());
         SqriptForge.items.add(itemBlock);
 
 

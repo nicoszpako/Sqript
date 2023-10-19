@@ -153,7 +153,7 @@ public class ActDraw extends ScriptAction {
                 //System.out.println("2:"+(getLine().scriptInstance==null));
                 //System.out.println("3:"+(getLine().scriptInstance.getName()==null));
                 resourceLocation = (ResourceLocation) resourceType.getObject();
-                resourceLocation = new ResourceLocation(resourceLocation.getResourceDomain(),"textures/"+resourceLocation.getResourcePath()+".png");
+                resourceLocation = new ResourceLocation(resourceLocation.getNamespace(),"textures/"+resourceLocation+".png");
                 TypeArray uv = getParameter(4) != null ? (TypeArray) getParameter(4).get(context) : null;
                 double u1 = uv != null && uv.getObject().size()>0 ? ((Double)uv.getObject().get(0).getObject()): 0.0D;
                 double v1 = uv != null && uv.getObject().size()>1 ? ((Double)uv.getObject().get(1).getObject()): 0.0D;

@@ -52,8 +52,8 @@ public class ExprSystem extends ScriptExpression {
                 ResourceLocation l16 = (ResourceLocation) array.getObject().get(0).getObject();
                 ResourceLocation l32 = (ResourceLocation) array.getObject().get(1).getObject();
                 try {
-                    InputStream i16 = new FileInputStream(new File(ScriptManager.scriptDir,l16.getResourceDomain()+"/"+l16.getResourcePath()));
-                    InputStream i32 = new FileInputStream(new File(ScriptManager.scriptDir,l32.getResourceDomain()+"/"+l32.getResourcePath()));
+                    InputStream i16 = new FileInputStream(new File(ScriptManager.scriptDir,l16.getNamespace()+"/"+l16.getPath()));
+                    InputStream i32 = new FileInputStream(new File(ScriptManager.scriptDir,l32.getNamespace()+"/"+l32.getPath()));
                     Display.setIcon(new ByteBuffer[]{loadIcon(i16), loadIcon(i32)});
                 } catch (IOException e) {
                     e.printStackTrace();

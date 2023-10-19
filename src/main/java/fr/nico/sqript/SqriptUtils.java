@@ -364,20 +364,26 @@ public class SqriptUtils {
     }
 
     public static void setTag(NBTTagCompound tag, String key, String type, ScriptType value) {
+        System.out.println("Setting with type : "+type);
         if(type.equalsIgnoreCase("byte")){
             tag.setByte(key, ((Double) value.getObject()).byteValue());
+            return;
         }
         if(type.equalsIgnoreCase("float")){
             tag.setFloat(key, ((Double) value.getObject()).floatValue());
+            return;
         }
         if(type.equalsIgnoreCase("int")){
             tag.setInteger(key, ((Double) value.getObject()).intValue());
+            return;
         }
         if(type.equalsIgnoreCase("long")){
             tag.setLong(key, ((Double) value.getObject()).longValue());
+            return;
         }
         if(type.equalsIgnoreCase("short")){
             tag.setShort(key, ((Double) value.getObject()).shortValue());
+            return;
         }
         if (value instanceof TypeString) {
             tag.setString(key, (String) value.getObject());

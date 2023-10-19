@@ -67,7 +67,6 @@ public class ActRegistery extends ScriptAction {
         Material material = Material.ROCK;
         fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock block = new fr.nico.sqript.forge.common.ScriptBlock.ScriptBlock(material,drop,harvestLevel);
         block.setRegistryName(getLine().getScriptInstance().getName(),registryName);
-        block.setUnlocalizedName(registryName);
         block.setHardness(hardness);
         block.setCreativeTab(creativeTab);
 
@@ -75,7 +74,7 @@ public class ActRegistery extends ScriptAction {
         SqriptForge.blocks.add(block);
 
         String blockModelName = blockTexture == null ? blockModel.toString() : blockTexture.toString().replaceAll("\\.png","");
-        String itemBlockModelName = blockTexture == null ? blockModel.getResourceDomain()+":block/"+blockModel.getResourcePath() : blockTexture.toString().replaceAll("\\.png","");
+        String itemBlockModelName = blockTexture == null ? blockModel.getNamespace()+":block/"+blockModel.getPath() : blockTexture.toString().replaceAll("\\.png","");
 
         try {
             if(blockTexture!=null)
@@ -91,7 +90,7 @@ public class ActRegistery extends ScriptAction {
             public String getItemStackDisplayName(ItemStack stack) {
                 return blockName == null ? identifier : blockName;
             }
-        }.setUnlocalizedName(block.getUnlocalizedName()).setRegistryName(block.getRegistryName());
+        }.setRegistryName(block.getRegistryName());
         SqriptForge.items.add(itemBlock);
     }
 
@@ -107,7 +106,6 @@ public class ActRegistery extends ScriptAction {
 
         Item item = new ScriptItemBase(displayName);
         item.setRegistryName(getLine().getScriptInstance().getName(), registryName);
-        item.setUnlocalizedName(registryName);
         //System.out.println("Max stack size of item is : "+maxStackSize);
         item.setMaxStackSize(itemStackSize);
         item.setCreativeTab(creativeTab);

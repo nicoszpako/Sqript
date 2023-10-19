@@ -36,19 +36,19 @@ public class SqriptCommand extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length>0){
             if(args[0].equalsIgnoreCase("reload")){
-                sender.sendMessage(new TextComponentString(""+sender.getEntityWorld().isRemote));
+                //sender.sendMessage(new TextComponentString(""+sender.getEntityWorld().isRemote));
                 if(args.length == 2){
                     if(args[1].equalsIgnoreCase("client")){
                         SqriptForge.channel.sendToAll(new ScriptReloadMessage());
                     } else if (args[1].equalsIgnoreCase("server")) {
-                        if (sender.getEntityWorld().isRemote)
+                        //if (sender.getEntityWorld().isRemote)
                             reloadServer(sender);
-                        else
-                            sender.sendMessage(new TextComponentString("\247cYou are not connected to a server."));
+                        //else
+                            //sender.sendMessage(new TextComponentString("\247cYou are not connected to a server."));
                     } else if (args[1].equalsIgnoreCase("all")){
                         SqriptForge.channel.sendToAll(new ScriptReloadMessage());
-                        if (sender.getEntityWorld().isRemote)
-                            reloadServer(sender);
+                        //if (sender.getEntityWorld().isRemote)
+                        reloadServer(sender);
                     }
 
                 }

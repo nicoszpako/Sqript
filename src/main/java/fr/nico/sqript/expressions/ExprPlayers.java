@@ -107,7 +107,7 @@ public class ExprPlayers extends ScriptExpression {
                 Vec3d vec3d = player.getPositionEyes(0);
                 Vec3d vec3d1 = player.getLook(0);
                 int blockReachDistance = 5;
-                Vec3d vec3d2 = vec3d.addVector(vec3d1.x * blockReachDistance, vec3d1.y * blockReachDistance, vec3d1.z * blockReachDistance);
+                Vec3d vec3d2 = vec3d.add(vec3d1.x * blockReachDistance, vec3d1.y * blockReachDistance, vec3d1.z * blockReachDistance);
                 RayTraceResult result = world.rayTraceBlocks(vec3d, vec3d2, false, false, true);
                 if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
                     return new TypeBlock(world.getBlockState(result.getBlockPos()), result.getBlockPos(), world);

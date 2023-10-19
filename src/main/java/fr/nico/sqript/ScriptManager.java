@@ -560,7 +560,8 @@ public class ScriptManager {
         scripts.clear();
         ScriptNetworkManager.clear();
 
-        clearClientCommands();
+        if(FMLCommonHandler.instance().getSide() == net.minecraftforge.fml.relauncher.Side.CLIENT)
+            clearClientCommands();
         clearServerCommands();
         commands.clear();
 

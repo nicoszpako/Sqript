@@ -3,16 +3,13 @@ package fr.nico.sqript.types.primitive;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Primitive;
-import fr.nico.sqript.structures.ScriptElement;
 import fr.nico.sqript.types.TypeImage;
 import fr.nico.sqript.types.TypeItem;
 import fr.nico.sqript.types.interfaces.ISerialisable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import sun.net.www.content.image.png;
 
-import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
