@@ -188,6 +188,7 @@ public class ScriptExpressionParser implements INodeParser {
          * Cleaning valid trees
          */
         if (!validTrees.isEmpty()) {
+
             validTrees.removeIf(n -> {
                 NodeExpression nodeExpression = (NodeExpression) n;
                 /*

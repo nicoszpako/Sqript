@@ -7,6 +7,7 @@ import fr.nico.sqript.types.*;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,6 +21,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.core.util.JsonUtils;
 import sun.reflect.ReflectionFactory;
 
@@ -364,7 +367,7 @@ public class SqriptUtils {
     }
 
     public static void setTag(NBTTagCompound tag, String key, String type, ScriptType value) {
-        System.out.println("Setting with type : "+type);
+        //System.out.println("Setting with type : "+type);
         if(type.equalsIgnoreCase("byte")){
             tag.setByte(key, ((Double) value.getObject()).byteValue());
             return;
@@ -392,10 +395,19 @@ public class SqriptUtils {
         } else if (value instanceof TypeNumber) {
             tag.setDouble(key, (Double) value.getObject());
         } else if (value instanceof TypeArray) {
-            tag.setTag(key, ((TypeArray) value).write(new NBTTagCompound()));
+            tag.setTag(key, ((TypeArray) value).toNbtList());
         }
     }
 
+    @SideOnly(Side.CLIENT)
+    public static World getClientWorld(){
+        return Minecraft.getMinecraft().world;
+    }
 
-
+    public static World getWorld(int id) {
+        if(FMLCommonHandler.instance().getMinecraftServerInstance() != null)
+            return FMLCommonHandler.instance().getMinecraftServerInstance().worlds[id];
+        else
+            return getClientWorld();
+    }
 }

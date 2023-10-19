@@ -95,7 +95,7 @@ public class ExprBlock extends ScriptExpression {
                 else
                     world = getClientWorld();
                 ILocatable location = (ILocatable) parameters[0];
-                Chunk chunk = world.getChunkFromBlockCoords(location.getPos());
+                Chunk chunk = world.getChunk(location.getPos());
                 return new TypeNumber(chunk.getHeight(location.getPos()));
             case "Player's current world id":
                 EntityPlayer player = (EntityPlayer) parameters[0].getObject();
@@ -118,7 +118,7 @@ public class ExprBlock extends ScriptExpression {
                 if (parameters[0] instanceof ILocatable) {
                     pos = ((ILocatable) parameters[0]).getPos();
                 } else {
-                    throw new ScriptException.ScriptTypeException(line, ILocatable.class, parameters[0].getClass());
+                    throw new ScriptException.ScriptTypeException(line, new Class[]{ILocatable.class}, parameters[0].getClass());
                 }
 
                 IBlockState state = null;

@@ -177,4 +177,17 @@ public class TypeArray extends ScriptType<ArrayList<ScriptType<?>>> implements I
         return SqriptUtils.arrayToLocation(getObject());
     }
 
+    public NBTBase toNbtList() {
+        NBTTagList list = new NBTTagList();
+        for(ScriptType t : getObject()){
+            //System.out.println("Looping on :" +t);
+            if(t instanceof ISerialisable){
+                ISerialisable i = (ISerialisable) t;
+                   list.appendTag(i.write(new NBTTagCompound()));
+            }else{
+                ScriptManager.log.error("Tried to register "+t.getClass().getSimpleName()+" but it's not serialisable.");
+            }
+        }
+        return list;
+    }
 }

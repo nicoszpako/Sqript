@@ -293,7 +293,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
             {
                 for (Object object : possibleCompletions)
                 {
-                    if (object instanceof ResourceLocation && doesStringStartWith(s, ((ResourceLocation)object).getPath()))
+                    if (object instanceof ResourceLocation && doesStringStartWith(s, ((ResourceLocation)object).getNamespace()))
                     {
                         list.add(String.valueOf(object));
                     }

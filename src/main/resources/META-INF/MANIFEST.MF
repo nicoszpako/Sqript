@@ -1,0 +1,1 @@
+MixinConnector: fr.nico.sqript.mixin

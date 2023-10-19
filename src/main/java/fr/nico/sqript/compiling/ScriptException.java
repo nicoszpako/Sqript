@@ -6,6 +6,7 @@ import fr.nico.sqript.types.ScriptType;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ScriptException extends Exception {
@@ -219,9 +220,10 @@ public class ScriptException extends Exception {
 
     public static class ScriptTypeException extends ScriptException {
 
-        Class wanted, given;
+        Class[] wanted;
+        Class given;
 
-        public ScriptTypeException(ScriptToken line, Class wanted, Class given) {
+        public ScriptTypeException(ScriptToken line, Class[] wanted, Class given) {
             super(line);
             this.wanted = wanted;
             this.given = given;
@@ -229,7 +231,7 @@ public class ScriptException extends Exception {
 
         @Override
         public String getMessage() {
-            return "Type error, given type is " + given.getSimpleName() + ", it should be " + wanted.getSimpleName() + ": \n" + line;
+            return "Type error, given type is " + given.getSimpleName() + ", it should be " + Arrays.toString(wanted) + ": \n" + line;
         }
     }
 

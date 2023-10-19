@@ -186,7 +186,7 @@ public class ScriptLoop extends ScriptWrapper {
                     type = scriptExpression.getReturnType();
 
                 if (type != null && !type.isAssignableFrom(TypeArray.class)) {
-                    throw new ScriptException.ScriptTypeException(line, TypeArray.class, type);
+                    throw new ScriptException.ScriptTypeException(line, new Class[]{TypeArray.class}, type);
                 }
                 this.varHash = varName.hashCode();
                 //System.out.println("This.varHash : " + varHash);
